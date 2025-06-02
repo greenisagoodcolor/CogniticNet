@@ -10,6 +10,9 @@ import { generateText, streamText } from "ai"
 import { openai } from "@ai-sdk/openai"
 import type { KnowledgeEntry } from "@/lib/types"
 import { extractTagsFromMarkdown } from "@/lib/utils"
+import { defaultSettings } from "@/lib/llm-constants"
+import { createOpenAI } from "@ai-sdk/openai"
+
 
 // Add a withTimeout utility function to handle API timeouts
 // Add this function near the top of the file, after the existing imports
@@ -43,18 +46,6 @@ export interface LLMSettings {
 export interface ResponseChunk {
   text: string
   isComplete: boolean
-}
-
-// Default settings
-export const defaultSettings: LLMSettings = {
-  provider: "openai",
-  model: "gpt-4o",
-  temperature: 0.7,
-  maxTokens: 1024,
-  topP: 0.9,
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  systemFingerprint: false,
 }
 
 // Log the defaultSettings object to check for server references
@@ -252,26 +243,24 @@ export async function generateResponse(
     } else if (completeSettings.provider === "openai") {
       console.log("[SERVER] Using OpenAI implementation")
       // For OpenAI, use the AI SDK
-      const model = openai(completeSettings.model, {
+      const openaiProvider = createOpenAI({
         apiKey: completeSettings.apiKey,
-        temperature: completeSettings.temperature,
-        maxTokens: completeSettings.maxTokens,
-        topP: completeSettings.topP,
-        frequencyPenalty: completeSettings.frequencyPenalty,
-        presencePenalty: completeSettings.presencePenalty,
-        systemFingerprint: completeSettings.systemFingerprint,
-      })
-
+      });
+      const model = openaiProvider(completeSettings.model);
+      
       // Add timeout to the OpenAI call
-      const generateTextPromise = generateText({
-        model,
-        system: systemPrompt,
-        prompt: userPrompt,
-      })
-
       const result = await withTimeout(
-        generateTextPromise,
-        60000, // 60 second timeout
+        generateText({
+          model,
+          system: systemPrompt,
+          prompt: userPrompt,
+          temperature: completeSettings.temperature,
+          maxTokens: completeSettings.maxTokens,
+          topP: completeSettings.topP,
+          frequencyPenalty: completeSettings.frequencyPenalty,
+          presencePenalty: completeSettings.presencePenalty,
+        }),
+        60000,
         "OpenAI API request timed out after 60 seconds",
       )
 
@@ -539,7 +528,7 @@ export async function* streamGenerateResponse(
 }
 
 // Add response validation function
-export function validateResponse(response: string): { valid: boolean; reason?: string } {
+export async function validateResponse(response: string): { valid: boolean; reason?: string } {
   // Basic validation to ensure response meets quality standards
   if (!response || response.trim().length === 0) {
     return { valid: false, reason: "Empty response" }
@@ -563,6 +552,7 @@ export function validateResponse(response: string): { valid: boolean; reason?: s
 
 // Enhanced implementation for extracting beliefs
 export async function extractBeliefs(
+  
   conversationText: string,
   agentName: string,
   extractionPriorities: string,
@@ -648,7 +638,8 @@ export async function generateKnowledgeEntries(beliefs: string, settings: LLMSet
 export async function validateApiKey(
   provider: "openai" | "openrouter",
   apiKey: string,
-): Promise<{ valid: boolean; message?: string }> {
+): Promise<{ valid: boolean; message?: string }> 
+{
   console.log("[SERVER] validateApiKey called (mock implementation)")
   return { valid: true, message: `API key validation successful for ${provider}. (This is a mock)` }
 }
@@ -661,7 +652,6 @@ export async function saveLLMSettings(settings: LLMSettings): Promise<boolean> {
     apiKey: settings.apiKey ? `[Length: ${settings.apiKey.length}]` : undefined,
     provider: settings.provider,
   })
-
   try {
     // In a real app, we would save to a database here
     // For now, we'll just return true to indicate success

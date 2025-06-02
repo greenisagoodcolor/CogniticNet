@@ -1,57 +1,35 @@
+
 import { type NextRequest, NextResponse } from "next/server"
-import { getApiKey } from "@/lib/api-key-service"
+import { retrieveApiKey } from "@/lib/api-key-service-server"  // ← Change this import
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {  // ← Change GET to POST
   try {
-    // Get provider and sessionId from query parameters
-    const provider = request.nextUrl.searchParams.get("provider")
-    const sessionId = request.nextUrl.searchParams.get("sessionId")
-
+    const { provider, sessionId } = await request.json()  // ← Get from body, not query params
+    
     // Validate input
-    if (!provider) {
+    if (!provider || !sessionId) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Provider is required",
-        },
-        { status: 400 },
+        { error: "Provider and sessionId are required" },
+        { status: 400 }
       )
     }
-
-    if (!sessionId) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Session ID is required",
-        },
-        { status: 400 },
-      )
-    }
-
+    
     // Retrieve the API key
-    const apiKey = await getApiKey(provider, sessionId)
-
-    // If no API key was found, return an error
+    const apiKey = await retrieveApiKey(provider, sessionId)  // ← Function name change
+    
     if (!apiKey) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "API key not found or session invalid",
-        },
-        { status: 404 },
+        { error: "API key not found" },
+        { status: 404 }
       )
     }
-
-    // Return the API key
-    return NextResponse.json({ success: true, apiKey })
+    
+    return NextResponse.json({ apiKey })
   } catch (error) {
-    console.error("Error retrieving API key:", error)
+    console.error("[API] Error retrieving API key:", error)
     return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error retrieving API key",
-      },
-      { status: 500 },
+      { error: "Failed to retrieve API key" },
+      { status: 500 }
     )
   }
 }

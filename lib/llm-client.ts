@@ -11,6 +11,7 @@ import type { LLMSettings } from "@/lib/llm-settings"
 import type { KnowledgeEntry } from "@/lib/types"
 import { clientDefaultSettings } from "@/lib/llm-settings"
 import { storeSessionId, getSessionId, getApiKeyFromSession } from "@/lib/session-management"
+import { isBrowser } from "./browser-check"
 
 // Client-side wrapper for the LLM service
 export class LLMClient {
@@ -31,14 +32,15 @@ export class LLMClient {
 
     // Try to load settings from localStorage first
     try {
-      const savedSettings = localStorage.getItem("llm-settings")
-      if (savedSettings) {
-        const parsedSettings = JSON.parse(savedSettings)
-        console.log("Loaded settings from localStorage:", {
-          provider: parsedSettings.provider,
-          model: parsedSettings.model,
-          hasApiKeySessionId: !!parsedSettings.apiKeySessionId,
-        })
+      if (isBrowser) {
+          const savedSettings = localStorage.getItem("llm-settings")
+        if (savedSettings) {
+          const parsedSettings = JSON.parse(savedSettings)
+          console.log("Loaded settings from localStorage:", {
+            provider: parsedSettings.provider,
+            model: parsedSettings.model,
+            hasApiKeySessionId: !!parsedSettings.apiKeySessionId,
+          })
 
         // Apply saved settings
         if (parsedSettings.provider) this.settings.provider = parsedSettings.provider
@@ -58,7 +60,7 @@ export class LLMClient {
         if (typeof parsedSettings.conversationCooldown === "number")
           this.settings.conversationCooldown = parsedSettings.conversationCooldown
       }
-
+    }
       // Check if we have a session ID in localStorage but not in settings
       const sessionId = getSessionId(this.settings.provider)
       if (sessionId && !this.settings.apiKeySessionId) {
@@ -208,6 +210,7 @@ export class LLMClient {
         hasApiKeySessionId: !!settingsCopy.apiKeySessionId,
       })
       return settingsCopy
+      
     } catch (error) {
       console.error("Error in LLMClient.getSettings:", error)
       // Return a safe default if there's an error

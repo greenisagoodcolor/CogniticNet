@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { storeApiKey } from "@/lib/api-key-service"
+import { storeApiKey } from "@/lib/api-key-service-server"
 
 export async function POST(request: NextRequest) {
   try {
