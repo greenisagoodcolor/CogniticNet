@@ -9,6 +9,7 @@ import { debugLog } from "@/lib/debug-logger"
 import { extractTagsFromMarkdown } from "@/lib/utils"
 import { LLMError, ApiKeyError, TimeoutError, NetworkError, withTimeout } from "@/lib/llm-errors"
 import { defaultSettings, type LLMSettings } from "@/lib/llm-settings"
+import { createOpenAI } from "@ai-sdk/openai"
 
 // Types and configuration
 const logger = createLogger("LLM-SERVICE")
@@ -141,21 +142,21 @@ async function callOpenRouterAPI(
 
 // Generate a response using a system prompt
 export async function generateResponse(
-  systemPrompt: string,
   userPrompt: string,
-  settings: LLMSettings,
+  systemPrompt: string,
+  settings: Partial<LLMSettings> = {},
 ): Promise<string> {
-  // CRITICAL FIX: Add detailed logging for provider and API key
-  debugLog(`[LLM SERVICE] generateResponse called with provider: ${settings.provider}`)
-  debugLog(`[LLM SERVICE] API key available: ${!!settings.apiKey}, length: ${settings.apiKey?.length || 0}`)
-
-  // Ensure provider is set
-  if (!settings.provider) {
-    debugLog("[LLM SERVICE] No provider specified, defaulting to openai")
-    settings.provider = "openai"
-  }
-
   try {
+    // CRITICAL FIX: Add detailed logging for provider and API key
+    debugLog(`[LLM SERVICE] generateResponse called with provider: ${settings.provider}`)
+    debugLog(`[LLM SERVICE] API key available: ${!!settings.apiKey}, length: ${settings.apiKey?.length || 0}`)
+
+    // Ensure provider is set
+    if (!settings.provider) {
+      debugLog("[LLM SERVICE] No provider specified, defaulting to openai")
+      settings.provider = "openai"
+    }
+
     // Log the incoming settings to check for server references
     logger.info("[SERVER] generateResponse called with settings:", {
       ...settings,
@@ -217,25 +218,26 @@ export async function generateResponse(
       )
     } else if (completeSettings.provider === "openai") {
       logger.info("[SERVER] Using OpenAI implementation")
-      // For OpenAI, use the AI SDK with environment variable for API key
-      const model = openai(completeSettings.model as any)
-
+      // For OpenAI, use the AI SDK
+      const openaiProvider = createOpenAI({
+        apiKey: completeSettings.apiKey,
+      });
+      const model = openaiProvider(completeSettings.model);
+      
       // Add timeout to the OpenAI call
-      const generateTextPromise = generateText({
-        model,
-        system: systemPrompt,
-        prompt: userPrompt,
-        temperature: completeSettings.temperature,
-        maxTokens: completeSettings.maxTokens,
-        topP: completeSettings.topP,
-        frequencyPenalty: completeSettings.frequencyPenalty,
-        presencePenalty: completeSettings.presencePenalty,
-      })
-
       const result = await withTimeout(
-        generateTextPromise,
-        60000, // 60 second timeout
-        "openai",
+        generateText({
+          model,
+          system: systemPrompt,
+          prompt: userPrompt,
+          temperature: completeSettings.temperature,
+          maxTokens: completeSettings.maxTokens,
+          topP: completeSettings.topP,
+          frequencyPenalty: completeSettings.frequencyPenalty,
+          presencePenalty: completeSettings.presencePenalty,
+        }),
+        60000,
+        "OpenAI API request timed out after 60 seconds",
       )
 
       return result.text
@@ -243,18 +245,8 @@ export async function generateResponse(
       throw new LLMError(`Unsupported provider: ${completeSettings.provider}`, "unknown", completeSettings.provider)
     }
   } catch (error) {
-    console.error("[SERVER] Error generating response:", error)
-    
-    // Re-throw structured errors as-is
-    if (error instanceof LLMError) {
-      throw error
-    }
-    
-    // Convert unknown errors to LLMError
-    throw new LLMError(
-      error instanceof Error ? error.message : "Unknown error occurred while generating response",
-      "unknown"
-    )
+    logger.error("[SERVER] Error in generateResponse:", error)
+    throw error
   }
 }
 
@@ -531,6 +523,7 @@ export async function validateResponse(response: string): Promise<{ valid: boole
 
 // Enhanced implementation for extracting beliefs
 export async function extractBeliefs(
+  
   conversationText: string,
   agentName: string,
   extractionPriorities: string,
@@ -564,7 +557,7 @@ Example format:
 - ${agentName} seems to prefer [[coffee]] over [[tea]] based on their ordering habits. (Medium)`
 
     // Call the LLM service to generate a response
-    return await generateResponse(systemPrompt, userPrompt, settings)
+    return await generateResponse(userPrompt, systemPrompt, settings)
   } catch (error) {
     console.error("[SERVER] Error in extractBeliefs:", error)
     throw error
@@ -629,7 +622,6 @@ export async function saveLLMSettings(settings: LLMSettings): Promise<boolean> {
     apiKey: settings.apiKey ? `[Length: ${settings.apiKey.length}]` : undefined,
     provider: settings.provider,
   })
-
   try {
     // In a real app, we would save to a database here
     // For now, we'll just return true to indicate success

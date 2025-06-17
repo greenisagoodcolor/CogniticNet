@@ -12,6 +12,7 @@ import type { KnowledgeEntry } from "@/lib/types"
 import { clientDefaultSettings } from "@/lib/llm-settings"
 import { storeSessionId, getSessionId, getApiKeyFromSession } from "@/lib/session-management"
 import { createLogger } from "@/lib/debug-logger"
+import { isBrowser } from "./browser-check"
 
 const logger = createLogger("LLM-CLIENT")
 
@@ -34,32 +35,34 @@ export class LLMClient {
 
     // Try to load settings from localStorage first
     try {
-      const savedSettings = localStorage.getItem("llm-settings")
-      if (savedSettings) {
-        const parsedSettings = JSON.parse(savedSettings)
-        logger.info("Loaded settings from localStorage:", {
-          provider: parsedSettings.provider,
-          model: parsedSettings.model,
-          hasApiKeySessionId: !!parsedSettings.apiKeySessionId,
-        })
+      if (isBrowser) {
+        const savedSettings = localStorage.getItem("llm-settings")
+        if (savedSettings) {
+          const parsedSettings = JSON.parse(savedSettings)
+          logger.info("Loaded settings from localStorage:", {
+            provider: parsedSettings.provider,
+            model: parsedSettings.model,
+            hasApiKeySessionId: !!parsedSettings.apiKeySessionId,
+          })
 
-        // Apply saved settings
-        if (parsedSettings.provider) this.settings.provider = parsedSettings.provider
-        if (parsedSettings.model) this.settings.model = parsedSettings.model
-        if (typeof parsedSettings.temperature === "number") this.settings.temperature = parsedSettings.temperature
-        if (typeof parsedSettings.maxTokens === "number") this.settings.maxTokens = parsedSettings.maxTokens
-        if (typeof parsedSettings.topP === "number") this.settings.topP = parsedSettings.topP
-        if (typeof parsedSettings.frequencyPenalty === "number")
-          this.settings.frequencyPenalty = parsedSettings.frequencyPenalty
-        if (typeof parsedSettings.presencePenalty === "number")
-          this.settings.presencePenalty = parsedSettings.presencePenalty
-        if (typeof parsedSettings.systemFingerprint === "boolean")
-          this.settings.systemFingerprint = parsedSettings.systemFingerprint
-        if (parsedSettings.apiKeySessionId) this.settings.apiKeySessionId = parsedSettings.apiKeySessionId
-        if (typeof parsedSettings.maxAutonomousMessages === "number")
-          this.settings.maxAutonomousMessages = parsedSettings.maxAutonomousMessages
-        if (typeof parsedSettings.conversationCooldown === "number")
-          this.settings.conversationCooldown = parsedSettings.conversationCooldown
+          // Apply saved settings
+          if (parsedSettings.provider) this.settings.provider = parsedSettings.provider
+          if (parsedSettings.model) this.settings.model = parsedSettings.model
+          if (typeof parsedSettings.temperature === "number") this.settings.temperature = parsedSettings.temperature
+          if (typeof parsedSettings.maxTokens === "number") this.settings.maxTokens = parsedSettings.maxTokens
+          if (typeof parsedSettings.topP === "number") this.settings.topP = parsedSettings.topP
+          if (typeof parsedSettings.frequencyPenalty === "number")
+            this.settings.frequencyPenalty = parsedSettings.frequencyPenalty
+          if (typeof parsedSettings.presencePenalty === "number")
+            this.settings.presencePenalty = parsedSettings.presencePenalty
+          if (typeof parsedSettings.systemFingerprint === "boolean")
+            this.settings.systemFingerprint = parsedSettings.systemFingerprint
+          if (parsedSettings.apiKeySessionId) this.settings.apiKeySessionId = parsedSettings.apiKeySessionId
+          if (typeof parsedSettings.maxAutonomousMessages === "number")
+            this.settings.maxAutonomousMessages = parsedSettings.maxAutonomousMessages
+          if (typeof parsedSettings.conversationCooldown === "number")
+            this.settings.conversationCooldown = parsedSettings.conversationCooldown
+        }
       }
 
       // Check if we have a session ID in localStorage but not in settings
@@ -211,6 +214,7 @@ export class LLMClient {
         hasApiKeySessionId: !!settingsCopy.apiKeySessionId,
       })
       return settingsCopy
+      
     } catch (error) {
       logger.error("Error in LLMClient.getSettings:", error)
       // Return a safe default if there's an error

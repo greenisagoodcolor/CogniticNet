@@ -13,6 +13,8 @@ export interface LLMSettings {
   apiKey?: string
   apiKeySessionId?: string
   hasServerRef?: boolean
+  maxAutonomousMessages?: number
+  conversationCooldown?: number
 }
 
 export const defaultSettings: LLMSettings = {
@@ -25,6 +27,8 @@ export const defaultSettings: LLMSettings = {
   presencePenalty: 0,
   systemFingerprint: false,
   hasServerRef: false,
+  maxAutonomousMessages: 4,
+  conversationCooldown: 5000,
 }
 
 export const clientDefaultSettings: Partial<LLMSettings> = {
@@ -36,6 +40,8 @@ export const clientDefaultSettings: Partial<LLMSettings> = {
   frequencyPenalty: 0,
   presencePenalty: 0,
   systemFingerprint: false,
+  maxAutonomousMessages: 4,
+  conversationCooldown: 5000,
 }
 
 // Provider configurations

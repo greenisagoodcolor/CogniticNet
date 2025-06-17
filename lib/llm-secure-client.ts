@@ -12,9 +12,13 @@ import type { KnowledgeEntry } from "@/lib/types"
 import { clientDefaultSettings } from "@/lib/llm-settings"
 import { getApiKeyFromSession } from "@/lib/session-management"
 import { isFeatureEnabled } from "@/lib/feature-flags"
+<<<<<<< HEAD
 import { createLogger } from "@/lib/debug-logger"
 
 const logger = createLogger("LLM-SECURE-CLIENT")
+=======
+import { isBrowser } from "./browser-check"
+>>>>>>> origin/api-storage-and-dependencies
 
 // Secure client-side wrapper for the LLM service
 export class LLMSecureClient {
@@ -33,6 +37,7 @@ export class LLMSecureClient {
 
     // Try to load settings from localStorage first
     try {
+<<<<<<< HEAD
       const savedSettings = localStorage.getItem("llm-settings")
       if (savedSettings) {
         const parsedSettings = JSON.parse(savedSettings)
@@ -43,6 +48,19 @@ export class LLMSecureClient {
           apiKeyLength: parsedSettings.apiKey ? parsedSettings.apiKey.length : 0,
           hasApiKeySessionId: !!parsedSettings.apiKeySessionId,
         })
+=======
+      if (isBrowser) {
+          const savedSettings = localStorage.getItem("llm-settings")
+        if (savedSettings) {
+          const parsedSettings = JSON.parse(savedSettings)
+          console.log("Loaded settings from localStorage:", {
+            provider: parsedSettings.provider,
+            model: parsedSettings.model,
+            hasApiKey: !!parsedSettings.apiKey,
+            apiKeyLength: parsedSettings.apiKey ? parsedSettings.apiKey.length : 0,
+            hasApiKeySessionId: !!parsedSettings.apiKeySessionId,
+          })
+>>>>>>> origin/api-storage-and-dependencies
 
         // Apply saved settings
         if (parsedSettings.provider) this.settings.provider = parsedSettings.provider
@@ -66,6 +84,7 @@ export class LLMSecureClient {
           this.settings.apiKey = parsedSettings.apiKey
         }
       }
+    }
     } catch (e) {
       logger.warn("Could not load settings from localStorage:", e)
     }
