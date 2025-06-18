@@ -420,8 +420,8 @@
               2,
               3
             ],
-            "details": "Implement the expected free energy calculation G(π) = E_q[log(q(s'|π)/p(s'|o',π)) - log p(o'|π)] for each policy π. Include both epistemic (information gain) and pragmatic (goal-seeking) value components.",
-            "status": "pending"
+            "details": "Implement the expected free energy calculation G(π) = E_q[log(q(s'|π)/p(s'|o',π)) - log p(o'|π)] for each policy π. Include both epistemic (information gain) and pragmatic (goal-seeking) value components.\n<info added on 2025-06-18T11:46:34.105Z>\nCompleted implementing policy selection mechanism:\n\n1. Created src/agents/active_inference/policy_selection.py with:\n   - PolicyConfig dataclass for configuration\n   - Policy class representing action sequences\n   - Abstract PolicySelector base class\n   - DiscreteExpectedFreeEnergy implementing G(π) calculation\n   - ContinuousExpectedFreeEnergy for continuous states\n   - HierarchicalPolicySelector for temporal abstraction\n   - SophisticatedInference for counterfactual reasoning\n   - Factory function create_policy_selector()\n\n2. Key features implemented:\n   - Expected free energy calculation: G(π) = E_q[log q(s'|π) - log p(s'|π) - log p(o'|π)]\n   - Epistemic value (information gain) component\n   - Pragmatic value (goal-seeking) component\n   - Policy enumeration and sampling strategies\n   - Softmax action selection with exploration\n   - Policy pruning for efficiency\n   - Hierarchical policy selection across time scales\n   - Sophisticated inference with future belief updates\n   - Support for both discrete and continuous state spaces\n\n3. Created comprehensive unit tests in src/tests/unit/test_policy_selection.py:\n   - Tests for all policy selection strategies\n   - Expected free energy computation validation\n   - Epistemic vs pragmatic value tests\n   - Policy enumeration and pruning tests\n   - Hierarchical selection tests\n   - Sophisticated inference tests\n\n4. Updated module __init__.py to export all policy selection components\n\nThe implementation provides flexible policy selection based on active inference principles, balancing exploration (epistemic value) and exploitation (pragmatic value).\n</info added on 2025-06-18T11:46:34.105Z>",
+            "status": "done"
           },
           {
             "id": 5,
@@ -2752,7 +2752,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T02:23:34.660Z",
-      "updated": "2025-06-18T11:39:59.261Z",
+      "updated": "2025-06-18T11:46:41.348Z",
       "description": "Tasks for master context"
     }
   }

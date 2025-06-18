@@ -38,6 +38,17 @@ from .precision import (
     create_precision_optimizer
 )
 
+from .policy_selection import (
+    PolicyConfig,
+    Policy,
+    PolicySelector,
+    DiscreteExpectedFreeEnergy,
+    ContinuousExpectedFreeEnergy,
+    HierarchicalPolicySelector,
+    SophisticatedInference,
+    create_policy_selector
+)
+
 __all__ = [
     # Generative models
     'ModelDimensions',
@@ -65,5 +76,14 @@ __all__ = [
     'HierarchicalPrecisionOptimizer',
     'MetaLearningPrecisionOptimizer',
     'AdaptivePrecisionController',
-    'create_precision_optimizer'
+    'create_precision_optimizer',
+    # Policy selection
+    'PolicyConfig',
+    'Policy',
+    'PolicySelector',
+    'DiscreteExpectedFreeEnergy',
+    'ContinuousExpectedFreeEnergy',
+    'HierarchicalPolicySelector',
+    'SophisticatedInference',
+    'create_policy_selector'
 ]
