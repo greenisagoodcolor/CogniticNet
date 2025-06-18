@@ -430,8 +430,8 @@
             "dependencies": [
               4
             ],
-            "details": "Create efficient tree search or trajectory sampling methods to evaluate expected free energy over multiple time steps. Consider pruning techniques to manage computational complexity with increasing horizon length.",
-            "status": "pending"
+            "details": "Create efficient tree search or trajectory sampling methods to evaluate expected free energy over multiple time steps. Consider pruning techniques to manage computational complexity with increasing horizon length.\n<info added on 2025-06-18T11:53:04.613Z>\nCompleted implementing temporal horizon planning system with multiple search algorithms and efficiency optimizations.\n\nCreated src/agents/active_inference/temporal_planning.py containing:\n- PlanningConfig dataclass for configuration management\n- TreeNode class for search tree representation\n- Abstract TemporalPlanner base class defining the planning interface\n- MonteCarloTreeSearch (MCTS) implementation with UCB1 selection policy\n- BeamSearchPlanner maintaining top-k trajectories for efficient exploration\n- AStarPlanner with heuristic-guided search for optimal path finding\n- TrajectorySampling for stochastic planning in continuous spaces\n- AdaptiveHorizonPlanner that dynamically adjusts planning depth based on belief uncertainty\n- Factory function create_temporal_planner() for easy instantiation\n\nKey features implemented:\n- Multiple search algorithms supporting different planning scenarios\n- Efficient tree search with node expansion and pruning mechanisms\n- Multi-step trajectory evaluation with expected free energy computation\n- Temporal discount factor for value aggregation across time steps\n- Exploration-exploitation balance in MCTS using UCB1\n- Heuristic functions for guided search in A* planner\n- Adaptive planning horizon that adjusts based on belief uncertainty\n- Memory-efficient node caching with configurable limits\n- Support for both discrete and continuous state spaces\n\nCreated comprehensive unit tests in src/tests/unit/test_temporal_planning.py covering:\n- All planning algorithm implementations\n- Tree node operations and UCB1 selection mechanics\n- Trajectory sampling and evaluation procedures\n- Pruning strategies and computational limit enforcement\n- Adaptive horizon adjustment logic\n- Factory function behavior\n\nUpdated module __init__.py to export all temporal planning components for easy access.\n\nThe implementation successfully provides efficient multi-step planning capabilities with various search strategies, effectively managing computational complexity through intelligent pruning and adaptive horizon adjustment.\n</info added on 2025-06-18T11:53:04.613Z>",
+            "status": "done"
           },
           {
             "id": 6,
@@ -2752,7 +2752,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T02:23:34.660Z",
-      "updated": "2025-06-18T11:46:41.348Z",
+      "updated": "2025-06-18T11:53:10.953Z",
       "description": "Tasks for master context"
     }
   }

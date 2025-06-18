@@ -49,6 +49,18 @@ from .policy_selection import (
     create_policy_selector
 )
 
+from .temporal_planning import (
+    PlanningConfig,
+    TreeNode,
+    TemporalPlanner,
+    MonteCarloTreeSearch,
+    BeamSearchPlanner,
+    AStarPlanner,
+    TrajectorySampling,
+    AdaptiveHorizonPlanner,
+    create_temporal_planner
+)
+
 __all__ = [
     # Generative models
     'ModelDimensions',
@@ -85,5 +97,15 @@ __all__ = [
     'ContinuousExpectedFreeEnergy',
     'HierarchicalPolicySelector',
     'SophisticatedInference',
-    'create_policy_selector'
+    'create_policy_selector',
+    # Temporal planning
+    'PlanningConfig',
+    'TreeNode',
+    'TemporalPlanner',
+    'MonteCarloTreeSearch',
+    'BeamSearchPlanner',
+    'AStarPlanner',
+    'TrajectorySampling',
+    'AdaptiveHorizonPlanner',
+    'create_temporal_planner'
 ]
