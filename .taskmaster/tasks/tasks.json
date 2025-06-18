@@ -130,8 +130,8 @@
               1,
               3
             ],
-            "details": "Update API documentation, code comments, README files, and any external documentation. Clearly explain the new conventions and provide examples of correct usage.",
-            "status": "in-progress"
+            "details": "Update API documentation, code comments, README files, and any external documentation. Clearly explain the new conventions and provide examples of correct usage.\n<info added on 2025-06-18T21:55:32.080Z>\nSuccessfully updated documentation to reflect naming convention changes:\n\n1. **Created ADR-002**: Architecture Decision Record documenting:\n   - Context and rationale for naming conventions\n   - Comprehensive standards adopted for all languages\n   - Implementation phases and results\n   - Metrics showing 36 violations fixed\n   - Next steps for enforcement\n\n2. **Documentation Hierarchy**:\n   - CONTRIBUTING.md: Human-readable conventions for developers\n   - naming-conventions.json: Machine-readable rules for tooling\n   - ADR-002: Permanent architectural record\n\n3. **Key Documentation Updates**:\n   - Clarified file naming patterns with examples\n   - Documented prohibited gaming terminology replacements\n   - Explained TypeScript interface 'I' prefix convention\n   - Added code examples for each language\n\n4. **References Updated**:\n   - Linked to audit and fix scripts\n   - Referenced ADR-001 for migration context\n   - Provided clear navigation between docs\n\nThe documentation now provides comprehensive guidance for developers and serves as the authoritative source for naming standards in the FreeAgentics project.\n</info added on 2025-06-18T21:55:32.080Z>",
+            "status": "done"
           },
           {
             "id": 5,
@@ -142,7 +142,7 @@
               3
             ],
             "details": "Configure linting tools to flag violations of the new naming rules. Integrate these checks into the CI/CD pipeline to prevent non-compliant names from being merged.",
-            "status": "pending"
+            "status": "in-progress"
           },
           {
             "id": 6,
@@ -831,7 +831,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T21:14:20.377Z",
-      "updated": "2025-06-18T21:54:02.054Z",
+      "updated": "2025-06-18T21:55:41.609Z",
       "description": "Tasks for master context"
     }
   }
