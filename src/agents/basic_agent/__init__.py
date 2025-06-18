@@ -130,6 +130,16 @@ from .persistence import (
     AGENT_SCHEMA_VERSION
 )
 
+from .active_inference_integration import (
+    IntegrationMode,
+    ActiveInferenceConfig,
+    StateToBeliefMapper,
+    PerceptionToObservationMapper,
+    ActionMapper,
+    ActiveInferenceIntegration,
+    create_active_inference_agent
+)
+
 __all__ = [
     # Core classes
     "Agent",
@@ -241,7 +251,16 @@ __all__ = [
     # Persistence
     "AgentPersistence",
     "AgentSnapshot",
-    "AGENT_SCHEMA_VERSION"
+    "AGENT_SCHEMA_VERSION",
+
+    # Active Inference Integration
+    "IntegrationMode",
+    "ActiveInferenceConfig",
+    "StateToBeliefMapper",
+    "PerceptionToObservationMapper",
+    "ActionMapper",
+    "ActiveInferenceIntegration",
+    "create_active_inference_agent"
 ]
 
 __version__ = "0.1.0"

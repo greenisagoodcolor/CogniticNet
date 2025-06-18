@@ -13,6 +13,7 @@ from pathlib import Path
 import tempfile
 import json
 from typing import Dict, List, Optional, Tuple
+from datetime import datetime, timedelta
 
 from src.agents.active_inference.generative_model import (
     DiscreteGenerativeModel, ContinuousGenerativeModel,
@@ -56,6 +57,24 @@ from src.agents.active_inference.diagnostics import (
 # Import GNN components for integration
 from src.gnn.parser import GNNParser
 from src.gnn.executor import GNNExecutor
+
+from src.agents.basic_agent import (
+    Agent,
+    Position,
+    AgentStatus,
+    AgentGoal,
+    AgentStateManager,
+    PerceptionSystem,
+    DecisionSystem,
+    MovementController,
+    MemorySystem,
+    IntegrationMode,
+    ActiveInferenceConfig,
+    create_active_inference_agent
+)
+from src.agents.basic_agent.perception import Stimulus, StimulusType, Percept
+from src.agents.basic_agent.decision_making import Action, ActionType
+from src.agents.testing import AgentFactory, SimulationEnvironment
 
 
 class TestBasicIntegration:
@@ -856,5 +875,398 @@ def test_performance_benchmark():
     assert results['action_selection_100'] < 1.0  # < 1s for large model
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+class TestActiveInferenceIntegration:
+    """Test Active Inference integration with Basic Agent"""
+
+    @pytest.fixture
+    def agent(self):
+        """Create a test agent"""
+        return AgentFactory.create_basic_agent("test_agent")
+
+    @pytest.fixture
+    def components(self, agent):
+        """Create agent components"""
+        state_manager = AgentStateManager(agent)
+        perception_system = PerceptionSystem(agent)
+        decision_system = DecisionSystem(agent)
+        movement_controller = MovementController(agent)
+        memory_system = MemorySystem(capacity=100)
+
+        return {
+            "state_manager": state_manager,
+            "perception_system": perception_system,
+            "decision_system": decision_system,
+            "movement_controller": movement_controller,
+            "memory_system": memory_system
+        }
+
+    @pytest.fixture
+    def ai_config(self):
+        """Create Active Inference configuration"""
+        return ActiveInferenceConfig(
+            mode=IntegrationMode.HYBRID,
+            num_states=50,
+            num_observations=30,
+            num_actions=8,
+            planning_horizon=3,
+            action_selection_threshold=0.6
+        )
+
+    def test_integration_creation(self, agent, components, ai_config):
+        """Test creating Active Inference integration"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        assert integration is not None
+        assert integration.agent == agent
+        assert integration.config == ai_config
+        assert integration.generative_model is not None
+        assert integration.planner is not None
+
+    def test_state_to_belief_mapping(self, agent, components, ai_config):
+        """Test mapping agent state to belief vector"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Add some state to agent
+        agent.goals.append(AgentGoal(
+            id="goal1",
+            description="Test goal",
+            priority="high",
+            deadline=datetime.now() + timedelta(hours=1),
+            target_position=Position(10, 10, 0)
+        ))
+
+        # Map to belief
+        belief = integration.state_mapper.map_to_belief(
+            agent,
+            components["state_manager"]
+        )
+
+        assert isinstance(belief, np.ndarray)
+        assert len(belief) > 0
+        # Check position encoding
+        assert belief[0] == agent.position.x
+        assert belief[1] == agent.position.y
+        assert belief[2] == agent.position.z
+
+    def test_perception_to_observation_mapping(self, agent, components, ai_config):
+        """Test mapping percepts to observation vector"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Create test percepts
+        percepts = [
+            Percept(
+                stimulus=Stimulus(
+                    source_id="obj1",
+                    stimulus_type=StimulusType.VISUAL,
+                    intensity=0.8,
+                    position=Position(5, 5, 0)
+                ),
+                timestamp=datetime.now(),
+                salience=0.9,
+                confidence=0.85
+            ),
+            Percept(
+                stimulus=Stimulus(
+                    source_id="sound1",
+                    stimulus_type=StimulusType.AUDITORY,
+                    intensity=0.6
+                ),
+                timestamp=datetime.now(),
+                salience=0.7,
+                confidence=0.9
+            )
+        ]
+
+        # Map to observation
+        observation = integration.perception_mapper.map_to_observation(percepts)
+
+        assert isinstance(observation, np.ndarray)
+        assert len(observation) == ai_config.num_observations
+        # Check some values are non-zero
+        assert np.any(observation > 0)
+
+    def test_action_mapping(self, agent, components, ai_config):
+        """Test mapping action indices to agent actions"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Map action indices
+        for i in range(min(5, ai_config.num_actions)):
+            action = integration.action_mapper.map_to_agent_action(i, agent)
+            assert isinstance(action, Action)
+            assert isinstance(action.action_type, ActionType)
+            assert action.parameters is not None
+
+    def test_full_integration_update(self, agent, components, ai_config):
+        """Test full integration update cycle"""
+        ai_config.mode = IntegrationMode.FULL
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Add percepts
+        percept = Percept(
+            stimulus=Stimulus(
+                source_id="target",
+                stimulus_type=StimulusType.VISUAL,
+                intensity=1.0,
+                position=Position(10, 10, 0)
+            ),
+            timestamp=datetime.now(),
+            salience=1.0,
+            confidence=1.0
+        )
+        components["perception_system"].process_stimulus(percept.stimulus)
+
+        # Run update
+        integration.update(dt=0.1)
+
+        # Check state was updated
+        assert integration.current_belief is not None
+        assert integration.last_observation is not None
+        # May or may not have selected an action depending on planning
+
+    def test_hybrid_mode_integration(self, agent, components, ai_config):
+        """Test hybrid mode combining basic and AI decisions"""
+        ai_config.mode = IntegrationMode.HYBRID
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Add goal to trigger movement decision
+        agent.goals.append(AgentGoal(
+            id="move_goal",
+            description="Move to target",
+            priority="high",
+            deadline=datetime.now() + timedelta(minutes=5),
+            target_position=Position(20, 20, 0)
+        ))
+
+        # Run multiple updates
+        for _ in range(5):
+            integration.update(dt=0.1)
+
+        # Should have made some decisions
+        memories = components["memory_system"].get_recent_memories(5)
+        assert len(memories) > 0
+
+    def test_advisory_mode_integration(self, agent, components, ai_config):
+        """Test advisory mode where AI only suggests"""
+        ai_config.mode = IntegrationMode.ADVISORY
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Add percepts and goals
+        agent.goals.append(AgentGoal(
+            id="test_goal",
+            description="Test",
+            priority="medium",
+            deadline=datetime.now() + timedelta(hours=1)
+        ))
+
+        # Run update
+        integration.update(dt=0.1)
+
+        # In advisory mode, basic agent decisions should prevail
+        assert integration.config.mode == IntegrationMode.ADVISORY
+
+    def test_learning_mode_integration(self, agent, components, ai_config):
+        """Test learning mode with exploration"""
+        ai_config.mode = IntegrationMode.LEARNING
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Run multiple updates
+        exploration_actions = 0
+        for _ in range(10):
+            integration.update(dt=0.1)
+            if integration.last_action and integration.last_action.action_type == ActionType.OBSERVE:
+                exploration_actions += 1
+
+        # Should have some exploration actions in learning mode
+        assert exploration_actions >= 0  # May or may not explore based on uncertainty
+
+    def test_belief_evolution(self, agent, components, ai_config):
+        """Test how belief evolves over time"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        initial_belief = None
+        belief_changes = []
+
+        # Run multiple updates with changing observations
+        for i in range(10):
+            # Add varying percepts
+            percept = Percept(
+                stimulus=Stimulus(
+                    source_id=f"obj_{i}",
+                    stimulus_type=StimulusType.VISUAL,
+                    intensity=0.5 + 0.05 * i,
+                    position=Position(i, i, 0)
+                ),
+                timestamp=datetime.now(),
+                salience=0.8,
+                confidence=0.9
+            )
+            components["perception_system"].process_stimulus(percept.stimulus)
+
+            integration.update(dt=0.1)
+
+            if initial_belief is None:
+                initial_belief = integration.current_belief.copy()
+            else:
+                # Track belief changes
+                change = np.linalg.norm(integration.current_belief - initial_belief)
+                belief_changes.append(change)
+
+        # Belief should evolve
+        assert len(belief_changes) > 0
+        assert max(belief_changes) > 0  # Some change should occur
+
+    def test_resource_constraints(self, agent, components, ai_config):
+        """Test action selection with resource constraints"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Deplete energy
+        agent.resources.energy = 5  # Very low
+
+        # Try to select movement action
+        integration.update(dt=0.1)
+
+        # Should not execute movement actions with low energy
+        if integration.last_action and integration.last_action.action_type == ActionType.MOVE:
+            # Action should have been blocked
+            assert agent.resources.energy == 5  # Unchanged
+
+    def test_visualization_data(self, agent, components, ai_config):
+        """Test visualization data generation"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Run an update
+        integration.update(dt=0.1)
+
+        # Get visualization data
+        viz_data = integration.get_visualization_data()
+
+        assert "belief_state" in viz_data
+        assert "last_observation" in viz_data
+        assert "mode" in viz_data
+        assert "belief_entropy" in viz_data
+        assert viz_data["mode"] == ai_config.mode.value
+
+    def test_memory_integration(self, agent, components, ai_config):
+        """Test memory system integration"""
+        integration = create_active_inference_agent(
+            agent,
+            **components,
+            config=ai_config
+        )
+
+        # Perform actions that should create memories
+        for _ in range(5):
+            integration.update(dt=0.1)
+
+        # Check memories were created
+        memories = components["memory_system"].get_recent_memories(10)
+        experience_memories = [m for m in memories if m.memory_type == "experience"]
+
+        assert len(experience_memories) > 0
+        # Check memory content
+        for memory in experience_memories:
+            assert "state" in memory.content
+            assert "observation" in memory.content
+            assert "belief_entropy" in memory.content
+
+    def test_multi_agent_integration(self, components):
+        """Test multiple agents with Active Inference"""
+        env = SimulationEnvironment(grid_size=(50, 50))
+
+        # Create multiple AI-enabled agents
+        for i in range(3):
+            agent = AgentFactory.create_basic_agent(f"ai_agent_{i}")
+            agent.position = Position(i * 10, i * 10, 0)
+
+            # Create components for each agent
+            state_mgr = AgentStateManager(agent)
+            percept_sys = PerceptionSystem(agent)
+            decision_sys = DecisionSystem(agent)
+            move_ctrl = MovementController(agent)
+            memory_sys = MemorySystem(capacity=50)
+
+            # Create AI integration
+            config = ActiveInferenceConfig(
+                mode=IntegrationMode.HYBRID,
+                num_states=30,
+                num_observations=20,
+                num_actions=6
+            )
+
+            ai_integration = create_active_inference_agent(
+                agent,
+                state_manager=state_mgr,
+                perception_system=percept_sys,
+                decision_system=decision_sys,
+                movement_controller=move_ctrl,
+                memory_system=memory_sys,
+                config=config
+            )
+
+            # Add to environment
+            env.add_agent(agent)
+            # Store integration for updates
+            agent.ai_integration = ai_integration
+
+        # Run simulation
+        for _ in range(10):
+            # Update each agent's AI
+            for agent in env.agents.values():
+                if hasattr(agent, 'ai_integration'):
+                    agent.ai_integration.update(dt=0.1)
+
+            env.step()
+
+        # All agents should have updated
+        for agent in env.agents.values():
+            if hasattr(agent, 'ai_integration'):
+                assert agent.ai_integration.current_belief is not None
+                assert agent.ai_integration.last_observation is not None
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

@@ -6,13 +6,13 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import type { Agent } from "@/lib/types"
 import type { AgentDetails } from "@/lib/types/agent-api"
 import {
-  Activity,
-  Brain,
-  Clock,
-  MessageSquare,
-  Navigation,
-  Target,
-  Zap
+    Activity,
+    Brain,
+    Clock,
+    MessageSquare,
+    Navigation,
+    Target,
+    Zap
 } from "lucide-react"
 import type React from "react"
 
