@@ -135,10 +135,10 @@ def check_imports():
     return broken_imports
 
 def check_old_references():
-    """Check for any remaining CogniticNet references"""
+    """Check for any remaining FreeAgentics references"""
     old_references = []
 
-    patterns = ["CogniticNet", "cogniticnet", "cogneticnet"]
+    patterns = ["FreeAgentics", "freeagentics", "cogneticnet"]
 
     for root, dirs, files in os.walk('.'):
         if '.git' in root or 'node_modules' in root or '.taskmaster' in root:
@@ -204,7 +204,7 @@ def main():
     print("\n5. Old Reference Check:")
     old_refs = check_old_references()
     if old_refs:
-        print(f"   ⚠️  Found {len(old_refs)} remaining CogniticNet references:")
+        print(f"   ⚠️  Found {len(old_refs)} remaining FreeAgentics references:")
         for file, line, pattern in old_refs[:5]:
             print(f"      - {file}:{line} ({pattern})")
         if len(old_refs) > 5:

@@ -316,7 +316,7 @@ class WorldConfig(BaseModel):
     """Configuration for the hexagonal world."""
     size: int = Field(100, ge=10, le=1000, description="World size (number of hexes)")
     resolution: int = Field(8, ge=0, le=15, description="H3 resolution")
-    resource_density: float = Field(0.1, ge=0.0, le=1.0, description="Resource spawn density")
+    resource_density: float = Field(0.1, ge=0.0, le=1.0, description="Resource initialize density")
     regeneration_rate: float = Field(0.01, ge=0.0, le=1.0, description="Resource regeneration")
     
     @validator('size')

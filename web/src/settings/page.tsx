@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Spinner } from "@/components/ui/spinner"
 import { useLLM } from "@/contexts/llm-context"
 import { useToast } from "@/hooks/use-toast"
-import LLMTest from "@/components/llm-test"
+import LLMTest from "@/components/LlmTest"
 import { validateStoredSession } from "@/lib/session-management"
 import { Shield, ShieldAlert, ShieldCheck } from "lucide-react"
 import type { LLMSettings } from "@/lib/llm-settings"

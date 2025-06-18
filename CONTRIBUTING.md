@@ -1,263 +1,248 @@
 # Contributing to FreeAgentics
 
-Thank you for your interest in contributing to FreeAgentics! This document provides guidelines and instructions for contributing to the project.
+Welcome to FreeAgentics! This document outlines our coding standards, naming conventions, and contribution guidelines. Following these standards ensures consistency and maintainability across our codebase.
 
 ## Table of Contents
+- [Naming Conventions](#naming-conventions)
+- [Code Style](#code-style)
+- [Git Workflow](#git-workflow)
+- [Testing Requirements](#testing-requirements)
+- [Documentation Standards](#documentation-standards)
 
-1. [Code of Conduct](#code-of-conduct)
-2. [Getting Started](#getting-started)
-3. [Development Process](#development-process)
-4. [Coding Standards](#coding-standards)
-5. [Testing Guidelines](#testing-guidelines)
-6. [Documentation](#documentation)
-7. [Pull Request Process](#pull-request-process)
-8. [Issue Guidelines](#issue-guidelines)
+## Naming Conventions
 
-## Code of Conduct
+### Overview
+FreeAgentics uses consistent naming conventions across all languages and file types. These conventions are enforced through automated linting and CI/CD checks.
 
-We are committed to providing a welcoming and inclusive environment for all contributors. Please read and follow our Code of Conduct:
+### File Naming
 
-- Be respectful and inclusive
-- Welcome newcomers and help them get started
-- Focus on constructive criticism
-- Accept feedback gracefully
-- Prioritize the project's best interests
+#### Python Files
+- Use **kebab-case** for all Python files: `agent-manager.py`, `belief-update.py`
+- Test files: `test-{module-name}.py` (e.g., `test-belief-update.py`)
+- Private modules: prefix with underscore `_internal-utils.py`
 
-## Getting Started
+#### TypeScript/JavaScript Files
+- Components: **PascalCase** for React components: `AgentDashboard.tsx`
+- Utilities: **camelCase** for utility files: `apiClient.ts`
+- Hooks: **camelCase** with 'use' prefix: `useAgentState.ts`
+- Tests: `{filename}.test.{ext}` (e.g., `AgentDashboard.test.tsx`)
 
-1. **Fork the Repository**
-   - Navigate to the [FreeAgentics repository](https://github.com/yourusername/freeagentics)
-   - Click the "Fork" button in the upper right corner
-   - Clone your fork locally
+#### Configuration Files
+- Use **kebab-case**: `docker-compose.yml`, `jest-config.js`
+- Environment specific: `{env}.yml` (e.g., `production.yml`)
 
-2. **Set Up Development Environment**
-   - Follow the instructions in [DEVELOPMENT.md](DEVELOPMENT.md)
-   - Ensure all tests pass before making changes
+### Code Naming Standards
 
-3. **Find an Issue to Work On**
-   - Check the [Issues](https://github.com/yourusername/freeagentics/issues) page
-   - Look for issues labeled `good first issue` or `help wanted`
-   - Comment on the issue to let others know you're working on it
-
-## Development Process
-
-### 1. Create a Feature Branch
-
-```bash
-git checkout -b feature/your-feature-name
-```
-
-### 2. Make Your Changes
-
-- Write clean, well-documented code
-- Follow the coding standards
-- Add tests for new functionality
-- Update documentation as needed
-
-### 3. Test Your Changes
-
-```bash
-# Run all tests
-npm test
-pytest
-
-# Run linters
-npm run lint
-python -m flake8 src/
-```
-
-### 4. Commit Your Changes
-
-We use [Conventional Commits](https://www.conventionalcommits.org/) for our commit messages:
-
-```bash
-git commit -m "feat: add new agent behavior"
-git commit -m "fix: resolve database connection issue"
-git commit -m "docs: update API documentation"
-```
-
-### 5. Push and Create Pull Request
-
-```bash
-git push origin feature/your-feature-name
-```
-
-Then create a pull request on GitHub.
-
-## Coding Standards
-
-### Python
-
-- Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/)
-- Use type hints for all functions
-- Maximum line length: 88 characters (Black default)
-- Use meaningful variable and function names
-
-Example:
+#### Python
 ```python
-from typing import List, Optional
+# Classes: PascalCase
+class ExplorerAgent(BaseAgent):
+    """Professional multi-agent system component."""
 
-def calculate_agent_score(
-    agent_id: str,
-    actions: List[str],
-    multiplier: Optional[float] = 1.0
-) -> float:
-    """Calculate the score for an agent based on their actions.
-    
-    Args:
-        agent_id: Unique identifier for the agent
-        actions: List of action names performed
-        multiplier: Optional score multiplier
-        
-    Returns:
-        The calculated score as a float
-    """
-    base_score = len(actions) * 10
-    return base_score * multiplier
+    # Instance variables: snake_case with underscore for private
+    def __init__(self):
+        self.belief_state = {}
+        self._internal_cache = {}
+
+    # Methods: snake_case, verb phrases
+    def update_beliefs(self, observation: Dict[str, Any]) -> BeliefState:
+        """Update agent's belief state based on observation."""
+        pass
+
+    # Constants: UPPER_SNAKE_CASE
+    MAX_BELIEF_PRECISION = 0.99
+    DEFAULT_LEARNING_RATE = 0.01
+
+    # Private methods: prefix with underscore
+    def _calculate_free_energy(self) -> float:
+        """Internal calculation method."""
+        pass
 ```
 
-### TypeScript/JavaScript
-
-- Use TypeScript for all new code
-- Follow the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
-- Use functional components with hooks for React
-- Prefer const over let, avoid var
-
-Example:
+#### TypeScript/React
 ```typescript
-interface AgentProps {
+// Interfaces: PascalCase with 'I' prefix for domain interfaces
+interface IAgent {
   id: string;
-  name: string;
-  onUpdate?: (id: string) => void;
+  beliefState: BeliefState;
 }
 
-export const AgentCard: React.FC<AgentProps> = ({ id, name, onUpdate }) => {
-  const handleClick = () => {
-    onUpdate?.(id);
+// Types: PascalCase
+type AgentConfig = {
+  learningRate: number;
+  maxIterations: number;
+};
+
+// Components: PascalCase
+export const AgentCreator: React.FC<AgentCreatorProps> = ({ onAgentCreate }) => {
+  // Hooks: camelCase with 'use' prefix
+  const [isCreating, setIsCreating] = useState(false);
+  const { agents, createAgent } = useAgentStore();
+
+  // Event handlers: camelCase with 'handle' prefix
+  const handleCreateAgent = async (config: AgentConfig) => {
+    // Implementation
   };
 
-  return (
-    <div className="agent-card" onClick={handleClick}>
-      <h3>{name}</h3>
-      <p>ID: {id}</p>
-    </div>
-  );
+  // Constants: UPPER_SNAKE_CASE
+  const MAX_AGENTS = 1000;
+  const DEFAULT_TIMEOUT = 5000;
 };
+
+// Utility functions: camelCase, verb phrases
+export const calculateBeliefEntropy = (beliefs: BeliefState): number => {
+  // Implementation
+};
+
+// Enums: PascalCase with PascalCase values
+enum AgentStatus {
+  Active = 'ACTIVE',
+  Learning = 'LEARNING',
+  Idle = 'IDLE'
+}
 ```
 
-## Testing Guidelines
+### Database Naming
+- Tables: **snake_case** plural: `agents`, `belief_states`
+- Columns: **snake_case**: `agent_id`, `created_at`
+- Indexes: `idx_{table}_{columns}`: `idx_agents_status_created_at`
+- Foreign keys: `fk_{table}_{referenced_table}`: `fk_beliefs_agents`
 
-### Unit Tests
+### API Endpoints
+```
+GET    /api/v1/agents              # List resources (plural)
+POST   /api/v1/agents              # Create resource
+GET    /api/v1/agents/:id          # Get specific resource
+PUT    /api/v1/agents/:id          # Update resource
+DELETE /api/v1/agents/:id          # Delete resource
+POST   /api/v1/agents/:id/beliefs  # Nested resource action
+```
 
-- Write tests for all new functions and components
-- Aim for at least 80% code coverage
-- Use descriptive test names
+### Prohibited Terms
+Never use gaming terminology. Use professional multi-agent system terms:
+- ❌ PlayerAgent → ✅ ExplorerAgent
+- ❌ NPCAgent → ✅ AutonomousAgent
+- ❌ EnemyAgent → ✅ CompetitiveAgent
+- ❌ GameWorld → ✅ Environment
+- ❌ spawn() → ✅ initialize()
+- ❌ respawn() → ✅ reset()
 
-### Integration Tests
+## Code Style
 
-- Test interactions between components
-- Verify API endpoints work correctly
-- Test database operations
+### Python
+- Follow [PEP 8](https://pep8.org/) with 100-character line limit
+- Use type hints for all function signatures
+- Docstrings for all public classes and methods
+- Run `black` formatter and `ruff` linter
 
-### End-to-End Tests
+### TypeScript
+- Follow [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+- Use strict TypeScript configuration
+- Prefer functional components and hooks in React
+- Run `prettier` formatter and `eslint` linter
 
-- Test critical user workflows
-- Ensure the application works as expected from a user's perspective
+### General Principles
+1. **Explicit over implicit**: Clear naming over brevity
+2. **Consistency**: Same patterns throughout codebase
+3. **Domain language**: Use Active Inference and multi-agent terminology
+4. **No magic numbers**: Always use named constants
+5. **Early returns**: Reduce nesting with guard clauses
 
-## Documentation
+## Git Workflow
+
+### Branch Naming
+- Feature: `feature/description-in-kebab-case`
+- Bugfix: `fix/description-in-kebab-case`
+- Refactor: `refactor/description-in-kebab-case`
+- Docs: `docs/description-in-kebab-case`
+
+### Commit Messages
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
+```
+feat(agents): add belief update mechanism
+fix(inference): correct free energy calculation
+docs(api): update agent endpoint documentation
+refactor(coalitions): improve formation algorithm
+test(beliefs): add edge case coverage
+```
+
+### Pull Request Process
+1. Create branch from `main`
+2. Make changes following conventions
+3. Add tests for new functionality
+4. Update documentation
+5. Run linters and tests locally
+6. Create PR with descriptive title
+7. Address review feedback
+
+## Testing Requirements
+
+### Coverage Requirements
+- Minimum 80% coverage for new code
+- Critical paths require 90%+ coverage
+- All public APIs must have tests
+
+### Test Structure
+```python
+# Python example
+def test_agent_belief_update_increases_precision():
+    """Test that belief updates increase precision over time."""
+    # Arrange
+    agent = ExplorerAgent()
+    initial_precision = agent.precision
+
+    # Act
+    agent.update_beliefs(observation)
+
+    # Assert
+    assert agent.precision > initial_precision
+```
+
+### Test Naming
+- Descriptive test names explaining the scenario
+- Format: `test_{unit}_{scenario}_{expected_outcome}`
+- Example: `test_belief_update_with_noisy_observation_maintains_stability`
+
+## Documentation Standards
 
 ### Code Documentation
+- All public APIs must have docstrings/JSDoc
+- Include parameters, return types, and examples
+- Document exceptions and edge cases
 
-- Add docstrings to all Python functions and classes
-- Use JSDoc comments for TypeScript/JavaScript
-- Include examples in complex functions
+### Architecture Decisions
+- Use ADR format in `docs/architecture/decisions/`
+- Number sequentially: `001-structure.md`, `002-inference.md`
+- Include context, decision, and consequences
 
-### README Updates
+### README Files
+- Each major module has its own README
+- Include purpose, usage examples, and API reference
+- Keep synchronized with code changes
 
-- Update README.md if you add new features
-- Keep installation instructions current
-- Add new dependencies to requirements
+## Pre-commit Hooks
 
-### API Documentation
-
-- Document all new API endpoints
-- Include request/response examples
-- Note any breaking changes
-
-## Pull Request Process
-
-### Before Submitting
-
-1. **Ensure all tests pass**
-2. **Run linters and fix any issues**
-3. **Update documentation**
-4. **Add entries to CHANGELOG.md**
-5. **Rebase on latest main branch**
-
-### Pull Request Template
-
-When creating a pull request, include:
-
-```markdown
-## Description
-Brief description of what this PR does
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-
-## Testing
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Manual testing completed
-
-## Checklist
-- [ ] Code follows style guidelines
-- [ ] Self-review completed
-- [ ] Documentation updated
-- [ ] No new warnings
+Install pre-commit hooks:
+```bash
+pip install pre-commit
+pre-commit install
 ```
 
-### Review Process
+Hooks will run:
+- Code formatters (black, prettier)
+- Linters (ruff, eslint)
+- Type checkers (mypy, tsc)
+- Naming convention validators
 
-1. At least one maintainer must review the PR
-2. All CI checks must pass
-3. Address all review comments
-4. Maintainer will merge when ready
+## Questions?
 
-## Issue Guidelines
+For questions about these conventions:
+1. Check existing code for examples
+2. Ask in development discussions
+3. Propose changes via PR to this document
 
-### Bug Reports
+Remember: Consistency is key. When in doubt, follow existing patterns in the codebase.
 
-Include:
-- Clear description of the bug
-- Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Environment details (OS, versions)
-- Screenshots if applicable
-
-### Feature Requests
-
-Include:
-- Clear description of the feature
-- Use case and benefits
-- Possible implementation approach
-- Any mockups or examples
-
-### Questions
-
-- Check documentation first
-- Search existing issues
-- Provide context and details
-
-## Recognition
-
-Contributors will be recognized in:
-- CONTRIBUTORS.md file
-- Release notes
-- Project documentation
-
-Thank you for contributing to FreeAgentics! 
+---
+*Last updated: 2025-06-18*
+*Version: 1.0*

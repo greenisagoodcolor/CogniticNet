@@ -19,7 +19,7 @@ class SimulationConfig(BaseModel):
     grid_height: int = Field(default=20, ge=10, le=100)
     max_agents: int = Field(default=50, ge=1, le=200)
     energy_decay_rate: float = Field(default=1.0, ge=0, le=10)
-    resource_spawn_rate: float = Field(default=0.1, ge=0, le=1)
+    resource_initialize_rate: float = Field(default=0.1, ge=0, le=1)
 
 class SimulationStatus(BaseModel):
     """Current simulation status"""

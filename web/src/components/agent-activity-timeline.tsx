@@ -21,7 +21,7 @@ interface AgentActivityTimelineProps {
   agentDetails: Record<string, AgentDetails>
 }
 
-interface ActivityEvent {
+interface IActivityEvent {
   id: string
   agentId: string
   agentName: string
@@ -33,8 +33,8 @@ interface ActivityEvent {
 }
 
 // Generate mock activity events
-function generateMockActivities(agents: Agent[], agentDetails: Record<string, AgentDetails>): ActivityEvent[] {
-  const activities: ActivityEvent[] = []
+function generateMockActivities(agents: Agent[], agentDetails: Record<string, AgentDetails>): IActivityEvent[] {
+  const activities: IActivityEvent[] = []
   const now = new Date()
 
   const eventTypes = [

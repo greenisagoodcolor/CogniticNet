@@ -72,7 +72,7 @@ class TestStateTransitionValidator(unittest.TestCase):
 class TestAgentStateManager(unittest.TestCase):
     """Test the main state management system"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.state_manager = AgentStateManager()
         self.test_agent = Agent(name="TestAgent")
@@ -361,7 +361,7 @@ class TestAgentStateManager(unittest.TestCase):
 class TestStateMonitor(unittest.TestCase):
     """Test state monitoring functionality"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.state_manager = AgentStateManager()
         self.monitor = StateMonitor(self.state_manager)

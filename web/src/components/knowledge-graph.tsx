@@ -15,7 +15,7 @@ interface KnowledgeGraphProps {
   selectedEntry: KnowledgeEntry | null
 }
 
-interface Node {
+interface INode {
   id: string
   title: string
   x: number
@@ -34,14 +34,14 @@ interface Link {
 export default function KnowledgeGraph({ knowledge, onSelectEntry, selectedEntry }: KnowledgeGraphProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [nodes, setNodes] = useState<Node[]>([])
+  const [nodes, setNodes] = useState<INode[]>([])
   const [links, setLinks] = useState<Link[]>([])
-  const [hoveredNode, setHoveredNode] = useState<Node | null>(null)
+  const [hoveredNode, setHoveredNode] = useState<INode | null>(null)
   const [zoomLevel, setZoomLevel] = useState(1)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [offset, setOffset] = useState({ x: 0, y: 0 })
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null)
+  const [selectedNode, setSelectedNode] = useState<INode | null>(null)
   const [debugInfo, setDebugInfo] = useState({ width: 0, height: 0, nodeCount: 0 })
   const [showDebug, setShowDebug] = useState(false)
 
@@ -63,7 +63,7 @@ export default function KnowledgeGraph({ knowledge, onSelectEntry, selectedEntry
     })
 
     // Create nodes for entries and tags with fixed initial positions
-    const newNodes: Node[] = [
+    const newNodes: INode[] = [
       // Entry nodes in an inner circle
       ...knowledge.map((entry, index) => {
         const angle = (index / knowledge.length) * Math.PI * 2

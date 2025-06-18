@@ -41,7 +41,7 @@ class TestMovementConstraints(unittest.TestCase):
 class TestCollisionSystem(unittest.TestCase):
     """Test collision detection system"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.collision_system = CollisionSystem()
 
@@ -92,7 +92,7 @@ class TestCollisionSystem(unittest.TestCase):
 class TestPathfindingGrid(unittest.TestCase):
     """Test grid-based pathfinding"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.grid = PathfindingGrid(10, 10, 1.0)
 
@@ -170,7 +170,7 @@ class TestPathfindingGrid(unittest.TestCase):
 class TestMovementController(unittest.TestCase):
     """Test the main movement controller"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.state_manager = AgentStateManager()
         self.collision_system = CollisionSystem()

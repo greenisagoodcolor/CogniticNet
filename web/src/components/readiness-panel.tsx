@@ -26,7 +26,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface ReadinessScore {
+interface IReadinessScore {
   agent_id: string
   timestamp: string
   scores: {
@@ -154,7 +154,7 @@ const DIMENSION_INFO = {
 }
 
 export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
-  const [readinessScore, setReadinessScore] = useState<ReadinessScore | null>(null)
+  const [readinessScore, setReadinessScore] = useState<IReadinessScore | null>(null)
   const [selectedTarget, setSelectedTarget] = useState<string>('raspberry_pi_4b')
   const [isLoading, setIsLoading] = useState(true)
   const [isEvaluating, setIsEvaluating] = useState(false)

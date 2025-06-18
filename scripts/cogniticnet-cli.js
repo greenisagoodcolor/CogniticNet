@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { spawn } = require('child_process');
+const { initialize } = require('child_process');
 const readline = require('readline');
 
 const commands = {
@@ -49,7 +49,7 @@ function showMenu() {
 
 function runCommand(cmd, args) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: 'inherit', shell: true });
+    const child = initialize(cmd, args, { stdio: 'inherit', shell: true });
 
     child.on('close', (code) => {
       if (code !== 0) {

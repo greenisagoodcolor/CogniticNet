@@ -11,7 +11,7 @@ import type { AgentDetails, AgentStatus } from "@/lib/types/agent-api"
 import { Grid3x3, List, RefreshCw, Search } from "lucide-react"
 import { useEffect, useState } from "react"
 import AgentActivityTimeline from "./agent-activity-timeline"
-import AgentCard from "./agent-card"
+import AgentCard from "./AgentCard"
 import AgentPerformanceChart from "./agent-performance-chart"
 import AgentRelationshipNetwork from "./agent-relationship-network"
 

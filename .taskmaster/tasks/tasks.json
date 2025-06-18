@@ -5,7 +5,7 @@
         "id": 1,
         "title": "Project Structure and Repository Setup",
         "description": "Transform CogniticNet to FreeAgentics with new directory structure preserving git history",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "details": "Lead: Martin Fowler\n\nThis is about FIXING the mess, not adding features.\n\n1. Create exact directory structure from PHASE 2: FINAL ARCHITECTURE\n2. Write migration script that preserves git history\n3. Execute migration in stages\n4. Update all import paths\n5. Validate all files moved correctly\n6. Document migration in docs/architecture/decisions/001-structure.md\n\nUse the following tools and versions:\n- Git 2.30+\n- Python 3.9+\n- Node.js 14+\n- Docker 20.10+\n- VS Code 1.60+\n\nEnsure all naming conventions are followed (kebab-case for files, PascalCase for TypeScript components, etc.).",
@@ -76,8 +76,8 @@
             "dependencies": [
               6
             ],
-            "details": "Write detailed ADR (Architecture Decision Record) documenting: why the migration was necessary, what structure was chosen and why, how the migration was performed, what challenges were encountered, and what the benefits are. Include diagrams of old vs new structure.",
-            "status": "in-progress"
+            "details": "Write detailed ADR (Architecture Decision Record) documenting: why the migration was necessary, what structure was chosen and why, how the migration was performed, what challenges were encountered, and what the benefits are. Include diagrams of old vs new structure.\n<info added on 2025-06-18T21:45:40.974Z>\nThe ADR has been successfully created at docs/architecture/decisions/001-structure.md. The document comprehensively covers all required aspects of the migration from CogniticNet to FreeAgentics structure.\n\nKey sections completed:\n- Context section details the specific problems with the original CogniticNet structure that necessitated the migration\n- Decision section provides clear rationale for adopting the FreeAgentics domain-driven design approach\n- Implementation section contains a detailed record of each migration stage and the steps taken\n- Consequences section analyzes both the positive impacts (improved modularity, clearer boundaries, better scalability) and challenges encountered during migration\n- Lessons Learned section captures key insights that will inform future architectural decisions\n- References section links to all migration artifacts, scripts, and related documentation\n- Appendix includes visual diagrams comparing the before and after directory structures\n\nThis ADR now serves as a permanent architectural record that will be valuable for developer onboarding and demonstrating the project's technical maturity and thoughtful approach to architecture decisions. The document follows standard ADR format and provides sufficient detail for anyone to understand the migration rationale and process.\n</info added on 2025-06-18T21:45:40.974Z>",
+            "status": "done"
           }
         ]
       },
@@ -91,15 +91,15 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
             "title": "Define naming convention rules",
             "description": "Create a comprehensive document outlining specific naming rules for different file types, classes, functions, variables, and other code elements.",
             "dependencies": [],
-            "details": "Include rules for file names, class names, function names, variable names, constant names, and database object names. Consider prefixes, suffixes, capitalization, and abbreviations.",
-            "status": "pending"
+            "details": "Include rules for file names, class names, function names, variable names, constant names, and database object names. Consider prefixes, suffixes, capitalization, and abbreviations.\n<info added on 2025-06-18T21:49:33.020Z>\nSuccessfully defined comprehensive naming convention rules:\n\n1. **Created CONTRIBUTING.md** with human-readable naming conventions covering:\n   - File naming (Python: kebab-case, TypeScript components: PascalCase)\n   - Code naming standards for both Python and TypeScript\n   - Database naming conventions\n   - API endpoint patterns\n   - Prohibited gaming terminology\n   - Git workflow conventions\n\n2. **Created docs/standards/naming-conventions.json** with machine-readable rules:\n   - JSON schema format for automated validation\n   - Regex patterns for all naming rules\n   - Prohibited terms list with replacements\n   - Examples for each convention type\n   \nKey conventions established:\n- Python files: kebab-case (agent-manager.py)\n- TypeScript components: PascalCase (AgentDashboard.tsx)  \n- No gaming terms (PlayerAgent → ExplorerAgent)\n- Professional multi-agent terminology throughout\n- Consistent patterns across all languages\n\nThese documents provide the foundation for automated naming validation in CI/CD pipelines.\n</info added on 2025-06-18T21:49:33.020Z>",
+            "status": "done"
           },
           {
             "id": 2,
@@ -108,8 +108,8 @@
             "dependencies": [
               1
             ],
-            "details": "Use automated tools to scan the codebase and generate a report of non-compliant names. Categorize issues by severity and file type.",
-            "status": "pending"
+            "details": "Use automated tools to scan the codebase and generate a report of non-compliant names. Categorize issues by severity and file type.\n<info added on 2025-06-18T21:51:31.798Z>\nSuccessfully completed comprehensive codebase audit for naming conventions. Created audit-naming.py script that scans all code files and generates detailed reports.\n\nAudit Results:\n- Total files scanned: 523\n- Total violations found: 301\n- Violation categories: 9\n\nKey Violations by Severity:\n\n1. Prohibited Terms (6 violations):\n   - Found 'cogniticnet' and 'CogniticNet' in migration scripts\n   - Found gaming term 'spawn' in simulation modules\n\n2. Python Files (111 violations):\n   - Many Python files not using kebab-case (e.g., update_import_paths.py → update-import-paths.py)\n   - Test files not following test- prefix pattern\n\n3. TypeScript Components (71 violations):\n   - Component files using kebab-case instead of PascalCase (e.g., agent-dashboard.tsx → AgentDashboard.tsx)\n\n4. TypeScript Interfaces (76 violations):\n   - Interfaces missing 'I' prefix (e.g., LLMContextType → ILLMContextType)\n\n5. Other Issues:\n   - Config files not using kebab-case\n   - Python methods using camelCase (setUp, tearDown)\n   - Event handlers starting with 'on' instead of 'handle'\n\nGenerated reports:\n- NAMING_AUDIT_REPORT.json (machine-readable for CI/CD)\n- NAMING_AUDIT_REPORT.md (human-readable summary)\n\nThis provides a comprehensive baseline for the refactoring phase.\n</info added on 2025-06-18T21:51:31.798Z>",
+            "status": "done"
           },
           {
             "id": 3,
@@ -120,7 +120,7 @@
               2
             ],
             "details": "Start with low-risk changes and progress to more complex refactoring. Use IDE refactoring tools where possible to minimize errors. Update all references and dependencies.",
-            "status": "pending"
+            "status": "in-progress"
           },
           {
             "id": 4,
@@ -831,7 +831,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T21:14:20.377Z",
-      "updated": "2025-06-18T21:44:11.303Z",
+      "updated": "2025-06-18T21:51:41.577Z",
       "description": "Tasks for master context"
     }
   }

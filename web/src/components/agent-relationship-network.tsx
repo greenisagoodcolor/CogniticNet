@@ -9,7 +9,7 @@ interface AgentRelationshipNetworkProps {
   agents: Agent[]
 }
 
-interface NetworkNode {
+interface INetworkNode {
   id: string
   name: string
   x: number
@@ -76,7 +76,7 @@ export default function AgentRelationshipNetwork({
     const radius = Math.min(centerX, centerY) - 50
 
     // Position nodes in a circle
-    const nodes: NetworkNode[] = agents.map((agent, index) => {
+    const nodes: INetworkNode[] = agents.map((agent, index) => {
       const angle = (index / agents.length) * 2 * Math.PI
       return {
         id: agent.id,

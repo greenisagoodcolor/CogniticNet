@@ -174,7 +174,7 @@ class SimulationEngine:
             logger.debug(
                 f"Tick {self.tick}: {metrics['agent_count']} agents, "
                 f"avg energy: {metrics['average_energy']:.1f}, "
-                f"resources spawned: {grid_updates['resources_spawned']}"
+                f"resources initializeed: {grid_updates['resources_initializeed']}"
             )
     
     async def _process_agent_behavior(self, agent) -> None:

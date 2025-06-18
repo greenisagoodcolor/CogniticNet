@@ -205,12 +205,12 @@ class TestHardwareAccelerator:
 class TestGraphCache:
     """Test graph caching functionality"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test cache directory"""
         self.temp_dir = tempfile.mkdtemp()
         self.cache_dir = Path(self.temp_dir) / "test_cache"
 
-    def tearDown(self):
+    def tear_down(self):
         """Clean up test cache directory"""
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)

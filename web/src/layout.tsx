@@ -1,11 +1,11 @@
 import type React from "react"
 import "./globals.css"
 import { Poppins } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/ThemeProvider"
 import { LLMProvider } from "@/contexts/llm-context"
 // Make sure we're explicitly importing from the .tsx file
 import { IsSendingProvider } from "@/contexts/is-sending-context"
-import NavBar from "@/components/nav-bar"
+import NavBar from "@/components/NavBar"
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],

@@ -10,7 +10,7 @@ import { createLogger } from "@/lib/debug-logger"
 const logger = createLogger("LLM-CONTEXT")
 
 // Create the context with default values
-export interface LLMContextType {
+export interface ILLMContextType {
   // Client management
   client: typeof llmClient | typeof llmSecureClient | null
   clientType: "LLMClient" | "LLMSecureClient" | null
@@ -26,7 +26,7 @@ export interface LLMContextType {
 }
 
 // Create context with default values
-const LLMContext = createContext<LLMContextType>({
+const LLMContext = createContext<ILLMContextType>({
   client: isFeatureEnabled("useSecureApiStorage") ? llmSecureClient : llmClient,
   settings: null,
   updateSettings: () => {},

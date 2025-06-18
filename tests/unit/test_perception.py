@@ -139,7 +139,7 @@ class TestPerceptionMemory(unittest.TestCase):
 class TestVisualSensor(unittest.TestCase):
     """Test VisualSensor"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.sensor = VisualSensor()
         self.agent = Agent(
@@ -218,7 +218,7 @@ class TestVisualSensor(unittest.TestCase):
 class TestAuditorySensor(unittest.TestCase):
     """Test AuditorySensor"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.sensor = AuditorySensor()
         self.agent = Agent(name="Listener", position=Position(0, 0, 0))
@@ -286,7 +286,7 @@ class TestAuditorySensor(unittest.TestCase):
 class TestProximitySensor(unittest.TestCase):
     """Test ProximitySensor"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.sensor = ProximitySensor()
         self.agent = Agent(name="Toucher", position=Position(0, 0, 0))
@@ -380,7 +380,7 @@ class TestPerceptionFilters(unittest.TestCase):
 class TestPerceptionSystem(unittest.TestCase):
     """Test the main PerceptionSystem"""
 
-    def setUp(self):
+    def set_up(self):
         """Set up test fixtures"""
         self.state_manager = AgentStateManager()
         self.perception_system = PerceptionSystem(self.state_manager)

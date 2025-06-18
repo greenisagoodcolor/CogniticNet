@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 class TestGNNStructure(unittest.TestCase):
     """Test that the repository follows GNN-based structure."""
     
-    def setUp(self):
+    def set_up(self):
         """Set up test environment."""
         self.root_dir = Path(__file__).parent.parent
         
@@ -185,7 +185,7 @@ class TestGNNStructure(unittest.TestCase):
 class TestGNNModelParsing(unittest.TestCase):
     """Test GNN model parsing and validation."""
     
-    def setUp(self):
+    def set_up(self):
         """Set up test environment."""
         self.root_dir = Path(__file__).parent.parent
         sys.path.insert(0, str(self.root_dir))
@@ -234,7 +234,7 @@ class TestGNNModelParsing(unittest.TestCase):
 class TestPipelineIntegration(unittest.TestCase):
     """Test pipeline integration."""
     
-    def setUp(self):
+    def set_up(self):
         """Set up test environment."""
         self.root_dir = Path(__file__).parent.parent
         sys.path.insert(0, str(self.root_dir))
