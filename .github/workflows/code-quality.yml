@@ -151,8 +151,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.projectKey=cogniticnet
-          -Dsonar.organization=cogniticnet
+          -Dsonar.projectKey=freeagentics
+          -Dsonar.organization=freeagentics
           -Dsonar.sources=src,app
           -Dsonar.tests=tests,app/**/__tests__
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info

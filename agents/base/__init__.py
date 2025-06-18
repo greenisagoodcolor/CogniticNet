@@ -1,5 +1,5 @@
 """
-Basic Agent System for CogniticNet
+Basic Agent System for FreeAgentics
 
 This module provides the foundational agent system with:
 - Agent data models and state management

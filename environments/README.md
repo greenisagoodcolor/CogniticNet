@@ -1,10 +1,10 @@
-# CogniticNet Environment Configuration
+# FreeAgentics Environment Configuration
 
 This directory contains environment-specific configurations for different deployment scenarios.
 
 ## Overview
 
-CogniticNet uses environment variables to configure the application for different deployment contexts. The system supports multiple environments:
+FreeAgentics uses environment variables to configure the application for different deployment contexts. The system supports multiple environments:
 
 - **Development** - Local development with hot reload and debugging tools
 - **Test** - Automated testing with mocked services

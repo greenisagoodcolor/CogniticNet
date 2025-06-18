@@ -7,7 +7,7 @@ Tests parsing of .gnn.md files, syntax validation, and AST generation.
 import pytest
 from pathlib import Path
 from datetime import datetime
-from src.gnn.parser import (
+from inference.gnn.parser import (
     GNNParser, GNNLexer, GNNBlockParser, GNNSyntaxError,
     Token, ASTNode, ParseResult, SectionType
 )
@@ -217,7 +217,7 @@ architecture {
 
 ## Metadata
 - Version: 1.0.0
-- Author: CogniticNet Team
+- Author: FreeAgentics Team
 - Created: 2024-01-15T10:00:00Z
 - Modified: 2024-01-15T10:00:00Z
 - Tags: [explorer, cautious, efficient]
@@ -276,7 +276,7 @@ node_features {
         # Check metadata
         assert result.metadata['name'] == 'Explorer Cautious Model'
         assert result.metadata['version'] == '1.0.0'
-        assert result.metadata['author'] == 'CogniticNet Team'
+        assert result.metadata['author'] == 'FreeAgentics Team'
         assert result.metadata['tags'] == ['explorer', 'cautious', 'efficient']
 
         # Check sections

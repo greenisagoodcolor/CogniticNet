@@ -8,12 +8,12 @@ import numpy as np
 from unittest.mock import Mock, patch, MagicMock
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, Position, Orientation, AgentStatus, AgentCapability,
     AgentPersonality, AgentResources, SocialRelationship, AgentGoal,
     ResourceAgent, SocialAgent
 )
-from src.agents.basic_agent.persistence import (
+from agents.base.persistence import (
     AgentPersistence, AgentSnapshot, AGENT_SCHEMA_VERSION
 )
 

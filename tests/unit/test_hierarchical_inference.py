@@ -8,7 +8,7 @@ import torch.nn as nn
 import numpy as np
 from unittest.mock import Mock, MagicMock
 
-from src.agents.active_inference.hierarchical_inference import (
+from inference.engine.hierarchical_inference import (
     HierarchicalConfig,
     HierarchicalState,
     HierarchicalLevel,
@@ -16,17 +16,17 @@ from src.agents.active_inference.hierarchical_inference import (
     TemporalHierarchicalInference,
     create_hierarchical_inference
 )
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel,
     ContinuousGenerativeModel,
     ModelDimensions,
     ModelParameters
 )
-from src.agents.active_inference.inference import (
+from inference.engine.inference import (
     VariationalMessagePassing,
     InferenceConfig
 )
-from src.agents.active_inference.precision import (
+from inference.engine.precision import (
     GradientPrecisionOptimizer,
     PrecisionConfig
 )

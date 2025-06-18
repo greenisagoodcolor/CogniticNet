@@ -8,7 +8,7 @@ import pytest
 import torch
 import torch.nn as nn
 import numpy as np
-from src.gnn.model_mapper import (
+from inference.gnn.model_mapper import (
     GraphAnalyzer, ModelSelector, GraphToModelMapper,
     GraphProperties, ModelConfig, MappingConfig,
     GraphTaskType, ModelArchitecture, AggregationType

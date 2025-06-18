@@ -1,6 +1,6 @@
 # Code Quality Documentation Index
 
-Welcome to the CogniticNet code quality documentation. This index helps you find the right guide for your needs.
+Welcome to the FreeAgentics code quality documentation. This index helps you find the right guide for your needs.
 
 ## 📚 Documentation Overview
 
@@ -84,7 +84,7 @@ Welcome to the CogniticNet code quality documentation. This index helps you find
 
 ## 📊 Interactive Tools
 
-### CogniticNet CLI
+### FreeAgentics CLI
 ```bash
 npm run cli
 ```

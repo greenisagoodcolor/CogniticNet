@@ -7,7 +7,7 @@ Tests feature extraction for various node types and normalization methods.
 import pytest
 import numpy as np
 from datetime import datetime
-from src.gnn.feature_extractor import (
+from inference.gnn.feature_extractor import (
     NodeFeatureExtractor, FeatureConfig, FeatureType,
     NormalizationType, ExtractionResult
 )

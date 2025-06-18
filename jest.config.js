@@ -23,7 +23,7 @@ const customJestConfig = {
 
     // Handle module aliases
     '^@/(.*)$': '<rootDir>/$1',
-    '^@/components/(.*)$': '<rootDir>/app/components/$1',
+    '^@/components/(.*)$': '<rootDir>/web/src/components/$1',
     '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
     '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^@/contexts/(.*)$': '<rootDir>/src/contexts/$1',

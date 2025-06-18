@@ -72,8 +72,8 @@ export async function generateOpenRouterResponse(
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
-      "HTTP-Referer": "https://cogniticnet.vercel.app",
-      "X-Title": "CogniticNet",
+      "HTTP-Referer": "https://freeagentics.vercel.app",
+      "X-Title": "FreeAgentics",
     },
     body: JSON.stringify({
       model,

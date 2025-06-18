@@ -381,7 +381,7 @@ class OllamaManager:
         Returns:
             True if successful
         """
-        modelfile_content = f"""# Modelfile for CogniticNet Agent
+        modelfile_content = f"""# Modelfile for FreeAgentics Agent
 FROM {base_model}
 
 # System prompt
@@ -442,7 +442,7 @@ Assistant: "
 
 
 class OllamaAgentAdapter:
-    """Adapts Ollama for CogniticNet agent use."""
+    """Adapts Ollama for FreeAgentics agent use."""
     
     def __init__(self, model_name: str, agent_class: str):
         """
@@ -458,28 +458,28 @@ class OllamaAgentAdapter:
         
         # Agent-specific system prompts
         self.system_prompts = {
-            'explorer': """You are an Explorer agent in CogniticNet. Your role is to:
+            'explorer': """You are an Explorer agent in FreeAgentics. Your role is to:
 - Discover new locations and resources
 - Map territories and identify patterns
 - Share discoveries with other agents
 - Optimize exploration paths
 Be curious, thorough, and collaborative.""",
             
-            'merchant': """You are a Merchant agent in CogniticNet. Your role is to:
+            'merchant': """You are a Merchant agent in FreeAgentics. Your role is to:
 - Identify trading opportunities
 - Negotiate fair exchanges
 - Manage resources efficiently
 - Build trading relationships
 Be fair, strategic, and profit-oriented.""",
             
-            'scholar': """You are a Scholar agent in CogniticNet. Your role is to:
+            'scholar': """You are a Scholar agent in FreeAgentics. Your role is to:
 - Analyze data and extract patterns
 - Formulate theories and hypotheses
 - Share knowledge with the community
 - Advance collective understanding
 Be analytical, precise, and educational.""",
             
-            'guardian': """You are a Guardian agent in CogniticNet. Your role is to:
+            'guardian': """You are a Guardian agent in FreeAgentics. Your role is to:
 - Protect assigned territories
 - Detect and respond to threats
 - Coordinate security measures
@@ -492,7 +492,7 @@ Be vigilant, protective, and responsive."""
         # Create custom model for agent
         system_prompt = self.system_prompts.get(
             self.agent_class,
-            "You are a CogniticNet agent. Be helpful and collaborative."
+            "You are a FreeAgentics agent. Be helpful and collaborative."
         )
         
         # Agent-specific parameters
@@ -505,7 +505,7 @@ Be vigilant, protective, and responsive."""
         }
         
         # Create Modelfile
-        modelfile_path = Path(f"/tmp/cogniticnet_{self.agent_class}.modelfile")
+        modelfile_path = Path(f"/tmp/freeagentics_{self.agent_class}.modelfile")
         success = await self.manager.create_modelfile(
             self.model_name,
             system_prompt,
@@ -515,7 +515,7 @@ Be vigilant, protective, and responsive."""
         
         if success:
             # Create custom model
-            custom_name = f"cogniticnet-{self.agent_class}:latest"
+            custom_name = f"freeagentics-{self.agent_class}:latest"
             return await self.manager.create_custom_model(custom_name, modelfile_path)
         
         return False
@@ -531,7 +531,7 @@ Be vigilant, protective, and responsive."""
         Returns:
             Agent's response/decision
         """
-        model = f"cogniticnet-{self.agent_class}:latest"
+        model = f"freeagentics-{self.agent_class}:latest"
         
         # Fallback to base model if custom not available
         models = await self.manager.list_models()

@@ -6,9 +6,9 @@ import unittest
 import numpy as np
 import math
 from datetime import datetime, timedelta
-from src.agents.basic_agent.data_model import Agent, Position, Orientation
-from src.agents.basic_agent.state_manager import AgentStateManager
-from src.agents.basic_agent.perception import (
+from agents.base.data_model import Agent, Position, Orientation
+from agents.base.state_manager import AgentStateManager
+from agents.base.perception import (
     PerceptionSystem, PerceptionCapabilities, PerceptionType,
     Stimulus, StimulusType, Percept, PerceptionMemory,
     VisualSensor, AuditorySensor, ProximitySensor,

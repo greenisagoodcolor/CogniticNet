@@ -1,6 +1,6 @@
 # Agent Creator Guide
 
-The Agent Creator is CogniticNet's visual tool for designing Active Inference agents. This guide covers all features and best practices for creating compelling, functional agents.
+The Agent Creator is FreeAgentics's visual tool for designing Active Inference agents. This guide covers all features and best practices for creating compelling, functional agents.
 
 ## Overview
 
@@ -15,7 +15,7 @@ The Agent Creator provides:
 
 ### The Big Five Model
 
-CogniticNet uses the Big Five personality model to generate agent behaviors:
+FreeAgentics uses the Big Five personality model to generate agent behaviors:
 
 #### Openness (0-100)
 - **Low (0-30)**: Traditional, routine-focused, cautious

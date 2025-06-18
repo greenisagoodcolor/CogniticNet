@@ -19,17 +19,17 @@ import numpy as np
 from contextlib import contextmanager
 import logging
 
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, Position, Orientation, AgentStatus, AgentCapability,
     AgentPersonality, AgentResources, SocialRelationship, AgentGoal,
     ResourceAgent, SocialAgent
 )
-from src.agents.basic_agent.state_manager import AgentStateManager
-from src.agents.basic_agent.movement import MovementController
-from src.agents.basic_agent.perception import PerceptionSystem
-from src.agents.basic_agent.decision_making import DecisionSystem
-from src.agents.basic_agent.interaction import InteractionSystem
-from src.agents.basic_agent.memory import MemorySystem
+from agents.base.state_manager import AgentStateManager
+from agents.base.movement import MovementController
+from agents.base.perception import PerceptionSystem
+from agents.base.decision_making import DecisionSystem
+from agents.base.interaction import InteractionSystem
+from agents.base.memory import MemorySystem
 
 logger = logging.getLogger(__name__)
 

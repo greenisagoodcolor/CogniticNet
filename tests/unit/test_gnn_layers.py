@@ -7,7 +7,7 @@ Tests various GNN layer types including GCN, GAT, GraphSAGE, GIN, and EdgeConv.
 import pytest
 import torch
 import torch.nn as nn
-from src.gnn.layers import (
+from inference.gnn.layers import (
     GCNLayer, GATLayer, SAGELayer, GINLayer, EdgeConvLayer,
     ResGNNLayer, GNNStack, LayerConfig, AggregationType
 )

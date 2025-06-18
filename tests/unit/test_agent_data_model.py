@@ -5,7 +5,7 @@ Unit tests for Agent Data Model
 import unittest
 import numpy as np
 from datetime import datetime, timedelta
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, Position, Orientation, AgentStatus, AgentCapability,
     AgentPersonality, AgentResources, SocialRelationship, AgentGoal,
     ResourceAgent, SocialAgent

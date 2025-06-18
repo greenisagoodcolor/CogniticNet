@@ -30,7 +30,7 @@ export default function HomePage() {
             Active Inference Platform
           </Badge>
           <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            CogniticNet
+            FreeAgentics
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Create, simulate, and deploy Active Inference agents in a rich hexagonal world

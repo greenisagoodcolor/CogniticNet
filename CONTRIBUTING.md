@@ -1,6 +1,6 @@
-# Contributing to CogniticNet
+# Contributing to FreeAgentics
 
-Thank you for your interest in contributing to CogniticNet! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to FreeAgentics! This document provides guidelines and instructions for contributing to the project.
 
 ## Table of Contents
 
@@ -26,7 +26,7 @@ We are committed to providing a welcoming and inclusive environment for all cont
 ## Getting Started
 
 1. **Fork the Repository**
-   - Navigate to the [CogniticNet repository](https://github.com/yourusername/cogniticnet)
+   - Navigate to the [FreeAgentics repository](https://github.com/yourusername/freeagentics)
    - Click the "Fork" button in the upper right corner
    - Clone your fork locally
 
@@ -35,7 +35,7 @@ We are committed to providing a welcoming and inclusive environment for all cont
    - Ensure all tests pass before making changes
 
 3. **Find an Issue to Work On**
-   - Check the [Issues](https://github.com/yourusername/cogniticnet/issues) page
+   - Check the [Issues](https://github.com/yourusername/freeagentics/issues) page
    - Look for issues labeled `good first issue` or `help wanted`
    - Comment on the issue to let others know you're working on it
 
@@ -260,4 +260,4 @@ Contributors will be recognized in:
 - Release notes
 - Project documentation
 
-Thank you for contributing to CogniticNet! 
+Thank you for contributing to FreeAgentics! 

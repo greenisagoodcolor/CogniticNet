@@ -1,5 +1,5 @@
 """
-SQLAlchemy models for CogniticNet database.
+SQLAlchemy models for FreeAgentics database.
 
 Defines the core database schema for agents, conversations, knowledge graphs,
 coalitions, and system logs.

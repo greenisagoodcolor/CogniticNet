@@ -146,7 +146,7 @@ npm install
 ## 📱 Interactive Tools
 
 ```bash
-npm run cli             # CogniticNet CLI menu
+npm run cli             # FreeAgentics CLI menu
 make help               # Show all make commands
 ./scripts/view-coverage.sh  # View coverage reports
 ```

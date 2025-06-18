@@ -3,7 +3,7 @@
 /**
  * Coverage Report Generator and Viewer
  *
- * This script manages code coverage reporting for the CogniticNet project,
+ * This script manages code coverage reporting for the FreeAgentics project,
  * including:
  * - Generating coverage reports for frontend and backend
  * - Merging coverage data from multiple sources
@@ -213,7 +213,7 @@ function generateCoverageBadge() {
 
 // Interactive menu
 function showMenu() {
-  console.log(`\n${colors.magenta}${colors.bright}CogniticNet Coverage Report Manager${colors.reset}`);
+  console.log(`\n${colors.magenta}${colors.bright}FreeAgentics Coverage Report Manager${colors.reset}`);
   console.log(`${colors.dim}${'='.repeat(40)}${colors.reset}\n`);
 
   console.log('1. Generate Frontend Coverage');

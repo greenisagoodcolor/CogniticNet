@@ -1,7 +1,7 @@
 {
-  "name": "cogniticnet",
+  "name": "freeagentics",
   "version": "0.1.0",
-  "description": "CogniticNet - A multi-agent AI platform for emergent cognitive networks",
+  "description": "FreeAgentics - A multi-agent AI platform for emergent cognitive networks",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -46,7 +46,7 @@
     "backend:quality": "npm run python:quality && npm run python:test",
     "all:quality": "npm run quality:full && npm run backend:quality",
     "all:format": "npm run format && npm run python:format",
-    "cogniticnet": "node scripts/cogniticnet-cli.js"
+    "freeagentics": "node scripts/freeagentics-cli.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

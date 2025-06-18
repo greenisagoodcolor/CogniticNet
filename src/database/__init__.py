@@ -1,5 +1,5 @@
 """
-Database module for CogniticNet.
+Database module for FreeAgentics.
 
 This module handles all database operations including:
 - SQLAlchemy models and ORM

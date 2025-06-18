@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CogniticNet Demo Scenario Runner
+FreeAgentics Demo Scenario Runner
 
 Executes predefined scenarios for compelling demonstrations.
 """

@@ -1,5 +1,5 @@
 """
-Spatial Computing API for CogniticNet
+Spatial Computing API for FreeAgentics
 
 This module provides a comprehensive API for spatial operations using H3 hexagonal grid,
 including neighbor calculation, pathfinding, resource distribution, and observation modeling.
@@ -161,7 +161,7 @@ class ObservationModel:
 
 class SpatialAPI:
     """
-    Main API for spatial operations in CogniticNet.
+    Main API for spatial operations in FreeAgentics.
 
     Provides high-level functions for:
     - Hexagonal grid operations

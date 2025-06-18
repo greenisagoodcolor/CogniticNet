@@ -7,7 +7,7 @@ Tests edge processing, feature extraction, and graph conversion functionality.
 import pytest
 import numpy as np
 import torch
-from src.gnn.edge_processor import (
+from inference.gnn.edge_processor import (
     EdgeProcessor, EdgeConfig, Edge, EdgeBatch,
     EdgeType, EdgeFeatureType
 )

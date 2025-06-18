@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Agent API provides a comprehensive RESTful interface for managing AI agents in the CogniticNet system. This API enables full lifecycle management of agents, from creation and configuration to real-time monitoring and control.
+The Agent API provides a comprehensive RESTful interface for managing AI agents in the FreeAgentics system. This API enables full lifecycle management of agents, from creation and configuration to real-time monitoring and control.
 
 ## Architecture
 

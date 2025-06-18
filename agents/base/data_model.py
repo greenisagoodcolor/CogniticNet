@@ -1,5 +1,5 @@
 """
-Agent Data Model for CogniticNet
+Agent Data Model for FreeAgentics
 
 This module defines the core data structures for agents, including:
 - Agent properties (position, orientation, health, etc.)

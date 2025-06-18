@@ -1,7 +1,7 @@
 """
 System Integration Tests
 
-Tests the complete CogniticNet system including:
+Tests the complete FreeAgentics system including:
 - Full simulation scenarios
 - Multi-agent interactions
 - Performance under load

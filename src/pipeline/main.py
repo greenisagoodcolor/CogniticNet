@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CogniticNet Pipeline Orchestrator
+FreeAgentics Pipeline Orchestrator
 
 This script discovers and executes numbered pipeline steps in order,
 following the GNN pattern for modular processing.
@@ -166,7 +166,7 @@ class PipelineOrchestrator:
         """Run the entire pipeline."""
         self.start_time = time.time()
         
-        logger.info("CogniticNet Pipeline Starting...")
+        logger.info("FreeAgentics Pipeline Starting...")
         logger.info(f"Output directory: {self.output_dir}")
         
         # Discover available steps
@@ -214,7 +214,7 @@ class PipelineOrchestrator:
     def _save_results(self, overall_success: bool):
         """Save pipeline execution results."""
         report = {
-            'pipeline': 'CogniticNet',
+            'pipeline': 'FreeAgentics',
             'version': '1.0.0',
             'execution': {
                 'start_time': datetime.fromtimestamp(self.start_time).isoformat(),
@@ -246,7 +246,7 @@ class PipelineOrchestrator:
         summary_file = self.output_dir / 'pipeline_summary.md'
         
         with open(summary_file, 'w') as f:
-            f.write("# CogniticNet Pipeline Execution Summary\n\n")
+            f.write("# FreeAgentics Pipeline Execution Summary\n\n")
             f.write(f"**Date**: {report['execution']['start_time']}\n")
             f.write(f"**Duration**: {report['execution']['total_seconds']:.2f} seconds\n")
             f.write(f"**Status**: {'✅ Success' if report['execution']['success'] else '❌ Failed'}\n\n")
@@ -268,7 +268,7 @@ class PipelineOrchestrator:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="CogniticNet Pipeline Orchestrator",
+        description="FreeAgentics Pipeline Orchestrator",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )

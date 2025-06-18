@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Agent API provides comprehensive endpoints for creating, managing, and interacting with AI agents in the CogniticNet system. All endpoints require authentication and implement rate limiting.
+The Agent API provides comprehensive endpoints for creating, managing, and interacting with AI agents in the FreeAgentics system. All endpoints require authentication and implement rate limiting.
 
 ## Authentication
 

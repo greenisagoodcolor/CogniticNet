@@ -18,7 +18,7 @@ from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, Position, Orientation, AgentStatus, AgentCapability,
     AgentPersonality, AgentResources, SocialRelationship, AgentGoal,
     ResourceAgent, SocialAgent

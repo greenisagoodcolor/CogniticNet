@@ -17,14 +17,14 @@ from pathlib import Path
 import tempfile
 import pickle
 
-from src.agents.basic_agent.memory import (
+from agents.base.memory import (
     MemoryType, MemoryImportance, Memory, Experience, Pattern,
     InMemoryStorage, WorkingMemory, MemoryConsolidator,
     ReinforcementLearner, PatternRecognizer, MemorySystem
 )
-from src.agents.basic_agent.decision_making import Action, ActionType, DecisionContext
-from src.agents.basic_agent.data_model import Agent, Position, AgentGoal
-from src.agents.basic_agent.perception import Percept, Stimulus, StimulusType, PerceptionType
+from agents.base.decision_making import Action, ActionType, DecisionContext
+from agents.base.data_model import Agent, Position, AgentGoal
+from agents.base.perception import Percept, Stimulus, StimulusType, PerceptionType
 
 
 @pytest.fixture

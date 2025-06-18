@@ -1,6 +1,6 @@
-# CogniticNet Demo Environment
+# FreeAgentics Demo Environment
 
-A fully-featured demonstration environment showcasing the CogniticNet Agent Simulator platform. This environment runs in Docker and provides an accelerated, pre-populated simulation perfect for presentations, testing, and exploration.
+A fully-featured demonstration environment showcasing the FreeAgentics Agent Simulator platform. This environment runs in Docker and provides an accelerated, pre-populated simulation perfect for presentations, testing, and exploration.
 
 ## 🚀 Quick Start
 
@@ -49,7 +49,7 @@ demo-nginx (8080)
 ## 🛠️ Services
 
 ### demo-web
-The main CogniticNet application running in demo mode with:
+The main FreeAgentics application running in demo mode with:
 - Enhanced UI animations
 - Demo-specific features enabled
 - Pre-configured for optimal presentation
@@ -180,7 +180,7 @@ docker-compose -f docker/demo/docker-compose.yml logs [service-name]
 ### Database Connection Issues
 ```bash
 # Check database is running
-docker exec -it cogniticnet-demo-db psql -U demo -d cogniticnet_demo
+docker exec -it freeagentics-demo-db psql -U demo -d freeagentics_demo
 
 # Verify data is loaded
 SELECT COUNT(*) FROM agents.agents;
@@ -231,13 +231,13 @@ ws.on('message', (data) => {
 ### Redis Pub/Sub
 Monitor events directly:
 ```bash
-docker exec -it cogniticnet-demo-redis redis-cli
+docker exec -it freeagentics-demo-redis redis-cli
 > SUBSCRIBE demo:events:all
 ```
 
 ### Direct Database Access
 ```bash
-psql postgresql://demo:demo123@localhost:5433/cogniticnet_demo
+psql postgresql://demo:demo123@localhost:5433/freeagentics_demo
 ```
 
 ## 📝 Notes

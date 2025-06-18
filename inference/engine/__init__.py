@@ -1,5 +1,5 @@
 """
-Active Inference Engine for CogniticNet
+Active Inference Engine for FreeAgentics
 
 This module implements the Active Inference framework for agent cognition,
 including generative models, inference algorithms, and action selection.

@@ -361,9 +361,9 @@ class ExportPackageBuilder:
             'telemetry_enabled': True,
             'update_check_enabled': True,
             'api_endpoints': {
-                'telemetry': 'https://api.cogniticnet.ai/telemetry',
-                'updates': 'https://api.cogniticnet.ai/updates',
-                'knowledge_sync': 'https://api.cogniticnet.ai/knowledge'
+                'telemetry': 'https://api.freeagentics.ai/telemetry',
+                'updates': 'https://api.freeagentics.ai/updates',
+                'knowledge_sync': 'https://api.freeagentics.ai/knowledge'
             }
         }
         
@@ -391,12 +391,12 @@ class ExportPackageBuilder:
         # Service script (systemd/launchd)
         if target.platform in ['raspberrypi', 'jetson']:
             service_script = self._generate_systemd_service(target)
-            service_path = scripts_dir / "cogniticnet-agent.service"
+            service_path = scripts_dir / "freeagentics-agent.service"
             with open(service_path, 'w') as f:
                 f.write(service_script)
         elif target.platform == 'mac':
             service_script = self._generate_launchd_plist(target)
-            service_path = scripts_dir / "com.cogniticnet.agent.plist"
+            service_path = scripts_dir / "com.freeagentics.agent.plist"
             with open(service_path, 'w') as f:
                 f.write(service_script)
         
@@ -489,12 +489,12 @@ class ExportPackageBuilder:
     def _generate_install_script(self, target: HardwareTarget) -> str:
         """Generate installation script for target platform."""
         script = f"""#!/bin/bash
-# CogniticNet Agent Installation Script
+# FreeAgentics Agent Installation Script
 # Target: {target.name}
 
 set -e
 
-echo "Installing CogniticNet Agent for {target.name}..."
+echo "Installing FreeAgentics Agent for {target.name}..."
 
 # Check system requirements
 check_requirements() {{
@@ -532,7 +532,7 @@ install_dependencies() {{
     if [ -n "$(lsusb | grep Google)" ]; then
         echo "Installing Coral TPU runtime..."
         echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
-        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+        curl https://packages.cloud.google.com/apt/docs/apt-key.gpg | sudo apt-key add -
         sudo apt-get update
         sudo apt-get install -y libedgetpu1-std
     fi
@@ -608,14 +608,14 @@ configure_service() {{
         
         if target.platform in ['raspberrypi', 'jetson']:
             script += """    # Install systemd service
-    sudo cp scripts/cogniticnet-agent.service /etc/systemd/system/
+    sudo cp scripts/freeagentics-agent.service /etc/systemd/system/
     sudo systemctl daemon-reload
-    sudo systemctl enable cogniticnet-agent.service
+    sudo systemctl enable freeagentics-agent.service
 """
         elif target.platform == 'mac':
             script += """    # Install launchd service
-    cp scripts/com.cogniticnet.agent.plist ~/Library/LaunchAgents/
-    launchctl load ~/Library/LaunchAgents/com.cogniticnet.agent.plist
+    cp scripts/com.freeagentics.agent.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.freeagentics.agent.plist
 """
         
         script += """
@@ -632,7 +632,7 @@ main() {
     
     echo "Installation complete!"
     echo "Start the agent with: ./scripts/run.sh"
-    echo "Or use the system service: sudo systemctl start cogniticnet-agent"
+    echo "Or use the system service: sudo systemctl start freeagentics-agent"
 }
 
 main "$@"
@@ -643,7 +643,7 @@ main "$@"
     def _generate_run_script(self, target: HardwareTarget) -> str:
         """Generate run script for the agent."""
         script = f"""#!/bin/bash
-# CogniticNet Agent Run Script
+# FreeAgentics Agent Run Script
 # Target: {target.name}
 
 # Activate virtual environment
@@ -653,35 +653,35 @@ source venv/bin/activate
 ulimit -m {target.max_memory_mb * 1024}  # Memory limit in KB
 
 # Set environment variables
-export COGNITICNET_CONFIG_DIR="./config"
-export COGNITICNET_MODEL_DIR="./model"
-export COGNITICNET_KNOWLEDGE_DIR="./knowledge"
-export COGNITICNET_LLM_MODEL="./models/{target.llm_model}.gguf"
-export COGNITICNET_LLM_THREADS={target.llm_inference_threads}
-export COGNITICNET_LLM_CONTEXT={target.llm_context_size}
-export COGNITICNET_MAX_CPU_PERCENT={target.max_cpu_percent}
+export FREEAGENTICS_CONFIG_DIR="./config"
+export FREEAGENTICS_MODEL_DIR="./model"
+export FREEAGENTICS_KNOWLEDGE_DIR="./knowledge"
+export FREEAGENTICS_LLM_MODEL="./models/{target.llm_model}.gguf"
+export FREEAGENTICS_LLM_THREADS={target.llm_inference_threads}
+export FREEAGENTICS_LLM_CONTEXT={target.llm_context_size}
+export FREEAGENTICS_MAX_CPU_PERCENT={target.max_cpu_percent}
 
 """
         
         # Platform-specific environment
         if 'coral_tpu' in target.accelerators:
             script += """# Enable Coral TPU
-export COGNITICNET_USE_TPU=1
+export FREEAGENTICS_USE_TPU=1
 """
         elif 'cuda' in target.accelerators:
             script += """# Enable CUDA
 export CUDA_VISIBLE_DEVICES=0
-export COGNITICNET_USE_CUDA=1
+export FREEAGENTICS_USE_CUDA=1
 """
         elif 'metal' in target.accelerators:
             script += """# Enable Metal acceleration
-export COGNITICNET_USE_METAL=1
+export FREEAGENTICS_USE_METAL=1
 """
         
         script += """
 # Run the agent
-echo "Starting CogniticNet Agent..."
-python -m cogniticnet_agent \\
+echo "Starting FreeAgentics Agent..."
+python -m freeagentics_agent \\
     --config ./config/agent_config.json \\
     --hardware ./config/hardware_config.json \\
     --runtime ./config/runtime_config.json \\
@@ -694,15 +694,15 @@ python -m cogniticnet_agent \\
     def _generate_systemd_service(self, target: HardwareTarget) -> str:
         """Generate systemd service file."""
         return f"""[Unit]
-Description=CogniticNet Agent
+Description=FreeAgentics Agent
 After=network.target
 
 [Service]
 Type=simple
 User=pi
 Group=pi
-WorkingDirectory=/home/pi/cogniticnet-agent
-ExecStart=/home/pi/cogniticnet-agent/scripts/run.sh
+WorkingDirectory=/home/pi/freeagentics-agent
+ExecStart=/home/pi/freeagentics-agent/scripts/run.sh
 Restart=always
 RestartSec=10
 
@@ -724,15 +724,15 @@ WantedBy=multi-user.target
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.cogniticnet.agent</string>
+    <string>com.freeagentics.agent</string>
     
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/$USER/cogniticnet-agent/scripts/run.sh</string>
+        <string>/Users/$USER/freeagentics-agent/scripts/run.sh</string>
     </array>
     
     <key>WorkingDirectory</key>
-    <string>/Users/$USER/cogniticnet-agent</string>
+    <string>/Users/$USER/freeagentics-agent</string>
     
     <key>RunAtLoad</key>
     <true/>
@@ -741,10 +741,10 @@ WantedBy=multi-user.target
     <true/>
     
     <key>StandardOutPath</key>
-    <string>/Users/$USER/cogniticnet-agent/logs/stdout.log</string>
+    <string>/Users/$USER/freeagentics-agent/logs/stdout.log</string>
     
     <key>StandardErrorPath</key>
-    <string>/Users/$USER/cogniticnet-agent/logs/stderr.log</string>
+    <string>/Users/$USER/freeagentics-agent/logs/stderr.log</string>
     
     <key>EnvironmentVariables</key>
     <dict>
@@ -758,16 +758,16 @@ WantedBy=multi-user.target
     def _generate_update_script(self, target: HardwareTarget) -> str:
         """Generate update script."""
         return """#!/bin/bash
-# CogniticNet Agent Update Script
+# FreeAgentics Agent Update Script
 
 set -e
 
 echo "Checking for updates..."
 
 # Stop the service
-if systemctl is-active --quiet cogniticnet-agent; then
+if systemctl is-active --quiet freeagentics-agent; then
     echo "Stopping agent service..."
-    sudo systemctl stop cogniticnet-agent
+    sudo systemctl stop freeagentics-agent
 fi
 
 # Backup current installation
@@ -779,7 +779,7 @@ mkdir -p ./backup
 cp -r model knowledge config ./backup/
 
 # Download and apply update
-update_url="https://api.cogniticnet.ai/updates/check"
+update_url="https://api.freeagentics.ai/updates/check"
 agent_id=$(jq -r '.agent_id' config/agent_config.json)
 
 # Check for updates
@@ -807,16 +807,16 @@ else
 fi
 
 # Restart service
-if [ -f /etc/systemd/system/cogniticnet-agent.service ]; then
-    sudo systemctl start cogniticnet-agent
+if [ -f /etc/systemd/system/freeagentics-agent.service ]; then
+    sudo systemctl start freeagentics-agent
 fi
 """
     
     def _generate_readme(self, target: HardwareTarget) -> str:
         """Generate README for the deployment package."""
-        return f"""# CogniticNet Agent Deployment Package
+        return f"""# FreeAgentics Agent Deployment Package
 
-This package contains a CogniticNet agent configured for deployment on **{target.name}**.
+This package contains a FreeAgentics agent configured for deployment on **{target.name}**.
 
 ## Contents
 
@@ -838,7 +838,7 @@ This package contains a CogniticNet agent configured for deployment on **{target
    ```
 
 3. **Enable auto-start on boot:**
-   - Linux: `sudo systemctl enable cogniticnet-agent`
+   - Linux: `sudo systemctl enable freeagentics-agent`
    - macOS: Already configured via launchd
 
 ## Hardware Requirements
@@ -863,12 +863,12 @@ Edit `config/runtime_config.json` to configure logging, telemetry, and API endpo
 ## Management
 
 ### View Logs
-- Linux: `journalctl -u cogniticnet-agent -f`
-- macOS: `tail -f ~/cogniticnet-agent/logs/stdout.log`
+- Linux: `journalctl -u freeagentics-agent -f`
+- macOS: `tail -f ~/freeagentics-agent/logs/stdout.log`
 
 ### Stop Agent
-- Linux: `sudo systemctl stop cogniticnet-agent`
-- macOS: `launchctl unload ~/Library/LaunchAgents/com.cogniticnet.agent.plist`
+- Linux: `sudo systemctl stop freeagentics-agent`
+- macOS: `launchctl unload ~/Library/LaunchAgents/com.freeagentics.agent.plist`
 
 ### Update Agent
 ```bash
@@ -890,16 +890,16 @@ Edit `config/runtime_config.json` to configure logging, telemetry, and API endpo
 ### Network Issues
 1. Check firewall settings for outbound HTTPS
 2. Verify API endpoints in `config/runtime_config.json`
-3. Test connectivity: `curl https://api.cogniticnet.ai/health`
+3. Test connectivity: `curl https://api.freeagentics.ai/health`
 
 ## Support
 
-- Documentation: https://docs.cogniticnet.ai
-- Community: https://discord.gg/cogniticnet
-- Issues: https://github.com/cogniticnet/agent/issues
+- Documentation: https://docs.freeagentics.ai
+- Community: https://discord.gg/freeagentics
+- Issues: https://github.com/freeagentics/agent/issues
 
 ## License
 
-This deployment package is licensed under the terms specified in the CogniticNet Agent License.
-See https://cogniticnet.ai/license for details.
+This deployment package is licensed under the terms specified in the FreeAgentics Agent License.
+See https://freeagentics.ai/license for details.
 """ 

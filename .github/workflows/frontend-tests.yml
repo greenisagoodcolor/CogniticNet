@@ -142,7 +142,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: false
-        tags: cogniticnet-frontend:test
+        tags: freeagentics-frontend:test
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: |
@@ -151,7 +151,7 @@ jobs:
     - name: Test Docker image
       run: |
         # Run the container
-        docker run -d --name test-frontend -p 3000:3000 cogniticnet-frontend:test
+        docker run -d --name test-frontend -p 3000:3000 freeagentics-frontend:test
         
         # Wait for it to start
         sleep 15

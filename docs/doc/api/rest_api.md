@@ -1,8 +1,8 @@
-# CogniticNet REST API Documentation
+# FreeAgentics REST API Documentation
 
 ## Overview
 
-The CogniticNet REST API provides programmatic access to all platform features including agent management, world simulation, knowledge graphs, and conversations.
+The FreeAgentics REST API provides programmatic access to all platform features including agent management, world simulation, knowledge graphs, and conversations.
 
 **Base URL**: `http://localhost:8000/api` (development)
 

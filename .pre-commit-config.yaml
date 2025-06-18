@@ -1,4 +1,4 @@
-# Pre-commit hooks for CogniticNet
+# Pre-commit hooks for FreeAgentics
 # Install: pre-commit install
 # Run manually: pre-commit run --all-files
 

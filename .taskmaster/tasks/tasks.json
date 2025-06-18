@@ -46,8 +46,8 @@
             "dependencies": [
               3
             ],
-            "details": "Execute the migration in logical stages (e.g., core modules first, then utilities, then tests). Document each stage and verify success before proceeding to the next. Create git tags at each successful stage for potential rollback.",
-            "status": "in-progress"
+            "details": "Execute the migration in logical stages (e.g., core modules first, then utilities, then tests). Document each stage and verify success before proceeding to the next. Create git tags at each successful stage for potential rollback.\n<info added on 2025-06-18T21:38:00.127Z>\nSuccessfully executed migration in stages. The migration was performed in the following stages:\n\nStage 1-2: Core Agent Structure and Active Inference Engine\n- Moved basic_agent → agents/base\n- Moved active_inference → inference/engine\n- Moved GNN and LLM modules to inference/\n- Created git commit with 165 files changed\n\nStage 3-5: Coalition, World, API, Frontend, Tests, and Documentation  \n- Moved coalition → coalitions/\n- Moved world and spatial → world/\n- Moved app/api → api/rest\n- Moved app/components, src/hooks, src/lib, src/contexts → web/src/\n- Moved src/tests → tests/\n- Moved doc → docs/\n- Created git commit with 240 files changed\n\nAll migrations preserved git history using git mv commands. Created rollback tag 'pre-freeagentics-migration' for safety. The directory structure now matches the FreeAgentics architecture from the PRD.\n</info added on 2025-06-18T21:38:00.127Z>",
+            "status": "done"
           },
           {
             "id": 5,
@@ -57,7 +57,7 @@
               4
             ],
             "details": "Use automated tools (e.g., sed, awk, or custom scripts) to update import paths. Manually review critical imports. Ensure both relative and absolute imports are correctly updated.",
-            "status": "pending"
+            "status": "in-progress"
           },
           {
             "id": 6,
@@ -831,7 +831,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T21:14:20.377Z",
-      "updated": "2025-06-18T21:36:14.840Z",
+      "updated": "2025-06-18T21:38:12.332Z",
       "description": "Tasks for master context"
     }
   }

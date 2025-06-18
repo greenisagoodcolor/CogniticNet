@@ -1,6 +1,6 @@
-# CogniticNet Development Guide
+# FreeAgentics Development Guide
 
-This guide provides comprehensive instructions for setting up and working with the CogniticNet development environment.
+This guide provides comprehensive instructions for setting up and working with the FreeAgentics development environment.
 
 ## Table of Contents
 
@@ -33,8 +33,8 @@ Before starting development, ensure you have the following installed:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/cogniticnet.git
-   cd cogniticnet
+   git clone https://github.com/yourusername/freeagentics.git
+   cd freeagentics
    ```
 
 2. **Set Up Environment Variables**
@@ -77,7 +77,7 @@ Before starting development, ensure you have the following installed:
 ## Project Structure
 
 ```
-cogniticnet/
+freeagentics/
 ├── app/                    # Next.js frontend application
 │   ├── (dashboard)/       # Dashboard routes
 │   ├── api/              # API routes
@@ -222,7 +222,7 @@ docker-compose -f environments/development/docker-compose.yml build --no-cache
    docker network ls
 
    # Inspect network
-   docker network inspect cogniticnet_default
+   docker network inspect freeagentics_default
    ```
 
 3. **Container Resources**
@@ -260,13 +260,13 @@ docker-compose -f environments/development/docker-compose.yml build --no-cache
 
 ```bash
 # Access database shell
-docker-compose exec postgres psql -U cogniticnet -d cogniticnet_dev
+docker-compose exec postgres psql -U freeagentics -d freeagentics_dev
 
 # Backup database
-docker-compose exec postgres pg_dump -U cogniticnet cogniticnet_dev > backup.sql
+docker-compose exec postgres pg_dump -U freeagentics freeagentics_dev > backup.sql
 
 # Restore database
-docker-compose exec -T postgres psql -U cogniticnet cogniticnet_dev < backup.sql
+docker-compose exec -T postgres psql -U freeagentics freeagentics_dev < backup.sql
 
 # Reset database
 cd src/database && python manage.py drop-db && python manage.py init

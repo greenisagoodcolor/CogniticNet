@@ -1,6 +1,6 @@
-# Getting Started with CogniticNet
+# Getting Started with FreeAgentics
 
-Welcome to CogniticNet! This guide will help you get up and running with the agent simulator platform.
+Welcome to FreeAgentics! This guide will help you get up and running with the agent simulator platform.
 
 ## Table of Contents
 
@@ -62,8 +62,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/cogniticnet.git
-cd cogniticnet
+git clone https://github.com/yourusername/freeagentics.git
+cd freeagentics
 ```
 
 ### 2. Install Dependencies
@@ -146,7 +146,7 @@ Open your browser and navigate to:
 - API: `http://localhost:3000/api`
 - Documentation: `http://localhost:3000/docs`
 
-You should see the CogniticNet dashboard.
+You should see the FreeAgentics dashboard.
 
 ## Your First Agent
 
@@ -422,7 +422,7 @@ PORT=3001 npm run dev
 pg_isready
 
 # Verify connection string in .env
-# Format: postgresql://user:password@localhost:5432/cogniticnet
+# Format: postgresql://user:password@localhost:5432/freeagentics
 ```
 
 #### Module Not Found
@@ -451,12 +451,12 @@ pip install -r requirements.txt --force-reinstall
 ## Summary
 
 You've successfully:
-- ✅ Installed CogniticNet
+- ✅ Installed FreeAgentics
 - ✅ Created your first agent
 - ✅ Run a simulation
 - ✅ Explored the UI
 
-Welcome to the CogniticNet community! We're excited to see what you'll create.
+Welcome to the FreeAgentics community! We're excited to see what you'll create.
 
 ---
 

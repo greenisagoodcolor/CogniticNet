@@ -11,13 +11,13 @@ import tempfile
 import os
 from pathlib import Path
 
-from src.gnn.parser import GNNParser
-from src.gnn.feature_extractor import NodeFeatureExtractor
-from src.gnn.edge_processor import EdgeProcessor
-from src.gnn.layers import GNNStack, GCNLayer, GATLayer
-from src.gnn.model_mapper import GraphToModelMapper
-from src.gnn.batch_processor import GraphBatchProcessor, GraphData
-from src.gnn.testing_framework import GNNValidator, GNNTestSuite, create_test_graphs
+from inference.gnn.parser import GNNParser
+from inference.gnn.feature_extractor import NodeFeatureExtractor
+from inference.gnn.edge_processor import EdgeProcessor
+from inference.gnn.layers import GNNStack, GCNLayer, GATLayer
+from inference.gnn.model_mapper import GraphToModelMapper
+from inference.gnn.batch_processor import GraphBatchProcessor, GraphData
+from inference.gnn.testing_framework import GNNValidator, GNNTestSuite, create_test_graphs
 
 
 class TestGNNPipelineIntegration:
@@ -377,7 +377,7 @@ output_dim: 3
             large_graphs.append(graph)
 
         # Test streaming batch processor
-        from src.gnn.batch_processor import StreamingBatchProcessor
+        from inference.gnn.batch_processor import StreamingBatchProcessor
 
         base_processor = GraphBatchProcessor()
         streaming_processor = StreamingBatchProcessor(

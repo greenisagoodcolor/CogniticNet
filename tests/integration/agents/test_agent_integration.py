@@ -10,18 +10,18 @@ import time
 from datetime import datetime, timedelta
 import numpy as np
 
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, Position, Orientation, AgentStatus, AgentCapability,
     AgentPersonality, AgentResources, AgentGoal,
     ResourceAgent, SocialAgent
 )
-from src.agents.basic_agent.state_manager import AgentStateManager
-from src.agents.basic_agent.movement import MovementController
-from src.agents.basic_agent.perception import PerceptionSystem, Stimulus, StimulusType
-from src.agents.basic_agent.decision_making import DecisionSystem, ActionType
-from src.agents.basic_agent.interaction import InteractionSystem, InteractionType
-from src.agents.basic_agent.memory import MemorySystem
-from src.agents.basic_agent.persistence import AgentPersistence
+from agents.base.state_manager import AgentStateManager
+from agents.base.movement import MovementController
+from agents.base.perception import PerceptionSystem, Stimulus, StimulusType
+from agents.base.decision_making import DecisionSystem, ActionType
+from agents.base.interaction import InteractionSystem, InteractionType
+from agents.base.memory import MemorySystem
+from agents.base.persistence import AgentPersistence
 
 from src.agents.testing.agent_test_framework import (
     AgentFactory, SimulationEnvironment, TestOrchestrator,

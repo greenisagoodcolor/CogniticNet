@@ -15,50 +15,50 @@ import json
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel, ContinuousGenerativeModel,
     ModelDimensions, ModelParameters
 )
-from src.agents.active_inference.inference import (
+from inference.engine.inference import (
     VariationalInference, ParticleFilter, create_inference_algorithm
 )
-from src.agents.active_inference.policy_selection import (
+from inference.engine.policy_selection import (
     PolicySelector, PolicyConfig
 )
-from src.agents.active_inference.precision import (
+from inference.engine.precision import (
     PrecisionController, PrecisionConfig
 )
-from src.agents.active_inference.temporal_planning import (
+from inference.engine.temporal_planning import (
     TemporalPlanner, PlanningConfig
 )
-from src.agents.active_inference.hierarchical_inference import (
+from inference.engine.hierarchical_inference import (
     HierarchicalInference, HierarchyConfig, LevelConfig
 )
-from src.agents.active_inference.belief_update import (
+from inference.engine.belief_update import (
     BeliefUpdater, UpdateConfig
 )
-from src.agents.active_inference.gnn_integration import (
+from inference.engine.gnn_integration import (
     GNNActiveInferenceIntegration, GNNIntegrationConfig
 )
-from src.agents.active_inference.active_learning import (
+from inference.engine.active_learning import (
     ActiveLearner, LearningConfig as ActiveLearningConfig
 )
-from src.agents.active_inference.parameter_learning import (
+from inference.engine.parameter_learning import (
     OnlineParameterLearner, LearningConfig as ParamLearningConfig,
     create_parameter_learner
 )
-from src.agents.active_inference.computational_optimization import (
+from inference.engine.computational_optimization import (
     ComputationalOptimizer, OptimizationConfig
 )
-from src.agents.active_inference.diagnostics import (
+from inference.engine.diagnostics import (
     DiagnosticSuite, DiagnosticConfig
 )
 
 # Import GNN components for integration
-from src.gnn.parser import GNNParser
-from src.gnn.executor import GNNExecutor
+from inference.gnn.parser import GNNParser
+from inference.gnn.executor import GNNExecutor
 
-from src.agents.basic_agent import (
+from agents.base import (
     Agent,
     Position,
     AgentStatus,
@@ -72,8 +72,8 @@ from src.agents.basic_agent import (
     ActiveInferenceConfig,
     create_active_inference_agent
 )
-from src.agents.basic_agent.perception import Stimulus, StimulusType, Percept
-from src.agents.basic_agent.decision_making import Action, ActionType
+from agents.base.perception import Stimulus, StimulusType, Percept
+from agents.base.decision_making import Action, ActionType
 from src.agents.testing import AgentFactory, SimulationEnvironment
 
 

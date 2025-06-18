@@ -8,7 +8,7 @@ import torch.nn as nn
 import numpy as np
 from unittest.mock import Mock, MagicMock
 
-from src.agents.active_inference.belief_update import (
+from inference.engine.belief_update import (
     BeliefUpdateConfig,
     DirectGraphObservationModel,
     LearnedGraphObservationModel,
@@ -17,13 +17,13 @@ from src.agents.active_inference.belief_update import (
     HierarchicalBeliefUpdater,
     create_belief_updater
 )
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel,
     ContinuousGenerativeModel,
     ModelDimensions,
     ModelParameters
 )
-from src.agents.active_inference.inference import (
+from inference.engine.inference import (
     VariationalMessagePassing,
     InferenceConfig
 )

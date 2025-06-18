@@ -1,5 +1,5 @@
 """
-Seed data scripts for CogniticNet database.
+Seed data scripts for FreeAgentics database.
 
 Provides functions to populate the database with test data
 for different environments.

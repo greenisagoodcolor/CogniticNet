@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CogniticNet Demo Simulator
+FreeAgentics Demo Simulator
 
 Runs agents at accelerated speed for compelling demonstrations.
 """

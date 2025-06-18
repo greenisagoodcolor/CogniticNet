@@ -9,7 +9,7 @@ import pytest
 import numpy as np
 from typing import List, Dict, Set
 
-from src.spatial import (
+from world.spatial import (
     SpatialAPI,
     SpatialCoordinate,
     ResourceType,

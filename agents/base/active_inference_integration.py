@@ -21,7 +21,7 @@ from .movement import MovementController
 from .memory import MemorySystem, Memory
 
 # Active Inference imports
-from ..active_inference import (
+from inference.engine import (
     GenerativeModel,
     InferenceAlgorithm,
     PolicySelector,
@@ -35,12 +35,12 @@ from ..active_inference import (
     create_precision_optimizer,
     create_belief_updater
 )
-from ..active_inference.generative_model import ModelDimensions, ModelParameters
-from ..active_inference.inference import InferenceConfig
-from ..active_inference.policy_selection import PolicyConfig, Policy
-from ..active_inference.temporal_planning import PlanningConfig
-from ..active_inference.precision import PrecisionConfig
-from ..active_inference.belief_update import BeliefUpdateConfig
+from inference.engine.generative_model import ModelDimensions, ModelParameters
+from inference.engine.inference import InferenceConfig
+from inference.engine.policy_selection import PolicyConfig, Policy
+from inference.engine.temporal_planning import PlanningConfig
+from inference.engine.precision import PrecisionConfig
+from inference.engine.belief_update import BeliefUpdateConfig
 
 logger = logging.getLogger(__name__)
 

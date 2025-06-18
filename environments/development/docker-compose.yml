@@ -66,9 +66,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=cogniticnet
+      - POSTGRES_USER=freeagentics
       - POSTGRES_PASSWORD=dev_password
-      - POSTGRES_DB=cogniticnet_dev
+      - POSTGRES_DB=freeagentics_dev
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -93,6 +93,6 @@ volumes:
   redis_data:
 
 networks:
-  cogniticnet:
+  freeagentics:
     driver: bridge
-    name: cogniticnet_dev_network 
+    name: freeagentics_dev_network 

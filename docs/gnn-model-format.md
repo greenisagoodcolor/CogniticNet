@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `.gnn.md` (Generalized Notation Notation Markdown) format is a human-readable specification language for defining Graph Neural Network models in CogniticNet. It combines the expressiveness of natural language with structured notation to enable intuitive model definition while maintaining precision.
+The `.gnn.md` (Generalized Notation Notation Markdown) format is a human-readable specification language for defining Graph Neural Network models in FreeAgentics. It combines the expressiveness of natural language with structured notation to enable intuitive model definition while maintaining precision.
 
 ## File Structure
 
@@ -441,7 +441,7 @@ architecture {
 
 ## Personality Templates
 
-CogniticNet provides predefined personality templates:
+FreeAgentics provides predefined personality templates:
 
 ### Explorer Template
 
@@ -510,7 +510,7 @@ active_inference {
 
 ## Metadata
 - Version: 1.0.0
-- Author: CogniticNet Team
+- Author: FreeAgentics Team
 - Created: 2024-01-15T10:00:00Z
 - Modified: 2024-01-15T10:00:00Z
 - Tags: [explorer, cautious, efficient]
@@ -679,4 +679,4 @@ When updating model formats:
 
 ---
 
-This specification defines the complete format for `.gnn.md` files in CogniticNet. Models following this format can be parsed, validated, and converted into executable Graph Neural Networks for agent behavior modeling.
+This specification defines the complete format for `.gnn.md` files in FreeAgentics. Models following this format can be parsed, validated, and converted into executable Graph Neural Networks for agent behavior modeling.

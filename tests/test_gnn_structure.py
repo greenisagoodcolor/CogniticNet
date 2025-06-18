@@ -74,7 +74,7 @@ class TestGNNStructure(unittest.TestCase):
         # Check that it contains pipeline stages
         with open(main_path) as f:
             content = f.read()
-            self.assertIn('CogniticNetPipeline', content)
+            self.assertIn('FreeAgenticsPipeline', content)
             self.assertIn('_stage_parse_gnn', content)
             self.assertIn('_stage_create_agents', content)
             
@@ -95,26 +95,26 @@ class TestGNNStructure(unittest.TestCase):
     def test_gnn_modules_can_be_imported(self):
         """Test that GNN modules can be imported."""
         try:
-            from src.gnn.parser import GNNParser
-            from src.gnn.validator import GNNValidator
-            from src.gnn.executor import GNNExecutor
-            from src.gnn.generator import GNNGenerator
+            from inference.gnn.parser import GNNParser
+            from inference.gnn.validator import GNNValidator
+            from inference.gnn.executor import GNNExecutor
+            from inference.gnn.generator import GNNGenerator
         except ImportError as e:
             self.fail(f"Failed to import GNN modules: {e}")
             
     def test_agent_modules_can_be_imported(self):
         """Test that agent modules can be imported."""
         try:
-            from src.agents.active_inference import ActiveInferenceAgent
+            from inference.engine import ActiveInferenceAgent
             from src.agents.movement_perception import MovementPerceptionSystem
-            from src.agents.agent_conversation import AgentConversation
+            from src.agents.agents.base.communication import AgentConversation
         except ImportError as e:
             self.fail(f"Failed to import agent modules: {e}")
             
     def test_world_module_can_be_imported(self):
         """Test that world module can be imported."""
         try:
-            from src.world.h3_world import H3World
+            from world.h3_world import H3World
         except ImportError as e:
             self.fail(f"Failed to import world module: {e}")
             
@@ -192,7 +192,7 @@ class TestGNNModelParsing(unittest.TestCase):
         
     def test_can_parse_base_models(self):
         """Test that base GNN models can be parsed."""
-        from src.gnn.parser import GNNParser
+        from inference.gnn.parser import GNNParser
         
         parser = GNNParser()
         model_files = [
@@ -212,8 +212,8 @@ class TestGNNModelParsing(unittest.TestCase):
                     
     def test_can_validate_models(self):
         """Test that GNN models can be validated."""
-        from src.gnn.parser import GNNParser
-        from src.gnn.validator import GNNValidator
+        from inference.gnn.parser import GNNParser
+        from inference.gnn.validator import GNNValidator
         
         parser = GNNParser()
         validator = GNNValidator()
@@ -242,15 +242,15 @@ class TestPipelineIntegration(unittest.TestCase):
     def test_pipeline_can_be_imported(self):
         """Test that the pipeline can be imported."""
         try:
-            from src.main import CogniticNetPipeline
+            from src.main import FreeAgenticsPipeline
         except ImportError as e:
             self.fail(f"Failed to import pipeline: {e}")
             
     def test_pipeline_has_all_stages(self):
         """Test that pipeline has all required stages."""
-        from src.main import CogniticNetPipeline
+        from src.main import FreeAgenticsPipeline
         
-        pipeline = CogniticNetPipeline()
+        pipeline = FreeAgenticsPipeline()
         required_stages = [
             'initialize',
             'parse_gnn',

@@ -7,7 +7,7 @@ import torch
 import numpy as np
 from unittest.mock import Mock, MagicMock
 
-from src.agents.active_inference.active_learning import (
+from inference.engine.active_learning import (
     ActiveLearningConfig,
     InformationMetric,
     EntropyBasedSeeker,
@@ -16,16 +16,16 @@ from src.agents.active_inference.active_learning import (
     InformationGainPlanner,
     create_active_learner
 )
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel,
     ModelDimensions,
     ModelParameters
 )
-from src.agents.active_inference.inference import (
+from inference.engine.inference import (
     VariationalMessagePassing,
     InferenceConfig
 )
-from src.agents.active_inference.policy_selection import (
+from inference.engine.policy_selection import (
     DiscreteExpectedFreeEnergy,
     PolicyConfig,
     Policy

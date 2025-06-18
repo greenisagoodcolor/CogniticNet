@@ -33,7 +33,7 @@ function clearScreen() {
 
 function showMenu() {
   clearScreen();
-  console.log('\n🧠 CogniticNet Development CLI\n');
+  console.log('\n🧠 FreeAgentics Development CLI\n');
   console.log('📋 Available Commands:\n');
 
   Object.entries(commands).forEach(([key, { name }]) => {
@@ -104,5 +104,5 @@ process.on('SIGINT', () => {
 });
 
 // Start the CLI
-console.log('🧠 Welcome to CogniticNet Development CLI');
+console.log('🧠 Welcome to FreeAgentics Development CLI');
 promptUser();

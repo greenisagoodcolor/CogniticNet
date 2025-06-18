@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 FreeAgentics Migration Script
-Preserves git history while transforming CogniticNet to FreeAgentics structure
+Preserves git history while transforming FreeAgentics to FreeAgentics structure
 Lead: Martin Fowler
 """
 
@@ -62,7 +62,7 @@ class MigrationManager:
             # Agent files
             "src/agents/basic_agent": "agents/base",
             "src/agents/active_inference": "inference/engine",
-            "src/agents/agent_conversation.py": "agents/base/communication.py",
+            "src/agents/agents.base.communication.py": "agents/base/communication.py",
 
             # Active Inference
             "src/agents/active_inference/inference.py": "inference/engine/active-inference.py",
@@ -104,13 +104,13 @@ class MigrationManager:
             "doc": "docs",
 
             # Scripts
-            "scripts/cogniticnet-cli.js": "scripts/freeagentics-cli.js",
+            "scripts/freeagentics-cli.js": "scripts/freeagentics-cli.js",
         }
 
         return mappings
 
     def rename_references(self, file_path: str):
-        """Update references from CogniticNet to FreeAgentics in file content"""
+        """Update references from FreeAgentics to FreeAgentics in file content"""
         if not os.path.exists(file_path):
             return
 
@@ -120,10 +120,10 @@ class MigrationManager:
 
             # Replace various forms of the old name
             replacements = [
-                ("CogniticNet", "FreeAgentics"),
-                ("cogniticnet", "freeagentics"),
-                ("cogneticnet", "freeagentics"),  # Fix typo variant
-                ("COGNITICNET", "FREEAGENTICS"),
+                ("FreeAgentics", "FreeAgentics"),
+                ("freeagentics", "freeagentics"),
+                ("freeagentics", "freeagentics"),  # Fix typo variant
+                ("FREEAGENTICS", "FREEAGENTICS"),
             ]
 
             modified = False
@@ -258,7 +258,7 @@ class MigrationManager:
         self.log(f"Migration report saved to: {report_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description="Migrate CogniticNet to FreeAgentics structure")
+    parser = argparse.ArgumentParser(description="Migrate FreeAgentics to FreeAgentics structure")
     parser.add_argument("--dry-run", action="store_true", help="Perform dry run without making changes")
     parser.add_argument("--source", default=".", help="Source directory")
     parser.add_argument("--target", default="freeagentics_new", help="Target directory")

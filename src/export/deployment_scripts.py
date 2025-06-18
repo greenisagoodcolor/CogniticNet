@@ -142,7 +142,7 @@ class DeploymentScriptGenerator:
             # Python runner
             ScriptTemplate(
                 name="Python Runner",
-                filename="cogniticnet_agent.py",
+                filename="freeagentics_agent.py",
                 content=self._python_runner_template()
             )
         ]
@@ -163,7 +163,7 @@ class DeploymentScriptGenerator:
     def _run_script_template(self) -> str:
         """Template for main run script."""
         return '''#!/bin/bash
-# CogniticNet Agent Run Script
+# FreeAgentics Agent Run Script
 # Platform: {{platform}}
 
 set -e
@@ -192,30 +192,30 @@ if [ -d "$BASE_DIR/venv" ]; then
 fi
 
 # Set environment variables
-export COGNITICNET_BASE_DIR="$BASE_DIR"
-export COGNITICNET_CONFIG_DIR="$BASE_DIR/config"
-export COGNITICNET_MODEL_DIR="$BASE_DIR/model"
-export COGNITICNET_KNOWLEDGE_DIR="$BASE_DIR/knowledge"
-export COGNITICNET_LOG_DIR="$BASE_DIR/logs"
-export COGNITICNET_PLATFORM="{{platform}}"
+export FREEAGENTICS_BASE_DIR="$BASE_DIR"
+export FREEAGENTICS_CONFIG_DIR="$BASE_DIR/config"
+export FREEAGENTICS_MODEL_DIR="$BASE_DIR/model"
+export FREEAGENTICS_KNOWLEDGE_DIR="$BASE_DIR/knowledge"
+export FREEAGENTICS_LOG_DIR="$BASE_DIR/logs"
+export FREEAGENTICS_PLATFORM="{{platform}}"
 
 # Hardware-specific settings
-export COGNITICNET_CPU_THREADS="{{hardware.cpu_threads}}"
-export COGNITICNET_MEMORY_LIMIT_MB="{{hardware.memory_limit_mb}}"
-export COGNITICNET_INFERENCE_THREADS="{{hardware.inference_threads}}"
+export FREEAGENTICS_CPU_THREADS="{{hardware.cpu_threads}}"
+export FREEAGENTICS_MEMORY_LIMIT_MB="{{hardware.memory_limit_mb}}"
+export FREEAGENTICS_INFERENCE_THREADS="{{hardware.inference_threads}}"
 
 # Create necessary directories
-mkdir -p "$COGNITICNET_LOG_DIR"
+mkdir -p "$FREEAGENTICS_LOG_DIR"
 mkdir -p "$BASE_DIR/checkpoints"
 mkdir -p "$BASE_DIR/cache"
 
 # Log rotation
-if [ -f "$COGNITICNET_LOG_DIR/agent.log" ]; then
-    mv "$COGNITICNET_LOG_DIR/agent.log" "$COGNITICNET_LOG_DIR/agent.log.$(date +%Y%m%d_%H%M%S)"
+if [ -f "$FREEAGENTICS_LOG_DIR/agent.log" ]; then
+    mv "$FREEAGENTICS_LOG_DIR/agent.log" "$FREEAGENTICS_LOG_DIR/agent.log.$(date +%Y%m%d_%H%M%S)"
 fi
 
 # Start agent
-echo "Starting CogniticNet Agent..."
+echo "Starting FreeAgentics Agent..."
 echo "Platform: {{platform}}"
 echo "Agent ID: {{agent.agent_id}}"
 echo "CPU Threads: {{hardware.cpu_threads}}"
@@ -225,25 +225,25 @@ echo "Memory Limit: {{hardware.memory_limit_mb}}MB"
 if command -v systemd-run &> /dev/null; then
     # Use systemd-run for resource limits on Linux
     systemd-run --scope -p MemoryLimit={{hardware.memory_limit_mb}}M \
-        python "$SCRIPT_DIR/cogniticnet_agent.py" \
-        > "$COGNITICNET_LOG_DIR/agent.log" 2>&1 &
+        python "$SCRIPT_DIR/freeagentics_agent.py" \
+        > "$FREEAGENTICS_LOG_DIR/agent.log" 2>&1 &
 else
     # Basic run
-    python "$SCRIPT_DIR/cogniticnet_agent.py" \
-        > "$COGNITICNET_LOG_DIR/agent.log" 2>&1 &
+    python "$SCRIPT_DIR/freeagentics_agent.py" \
+        > "$FREEAGENTICS_LOG_DIR/agent.log" 2>&1 &
 fi
 
 # Save PID
 echo $! > "$BASE_DIR/agent.pid"
 
 echo "Agent started with PID: $(cat $BASE_DIR/agent.pid)"
-echo "Logs: $COGNITICNET_LOG_DIR/agent.log"
+echo "Logs: $FREEAGENTICS_LOG_DIR/agent.log"
 '''
     
     def _stop_script_template(self) -> str:
         """Template for stop script."""
         return '''#!/bin/bash
-# CogniticNet Agent Stop Script
+# FreeAgentics Agent Stop Script
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
@@ -288,12 +288,12 @@ echo "Agent stopped."
     def _status_script_template(self) -> str:
         """Template for status script."""
         return '''#!/bin/bash
-# CogniticNet Agent Status Script
+# FreeAgentics Agent Status Script
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
 
-echo "CogniticNet Agent Status"
+echo "FreeAgentics Agent Status"
 echo "========================"
 
 # Check if running
@@ -350,7 +350,7 @@ fi
     def _backup_script_template(self) -> str:
         """Template for backup script."""
         return '''#!/bin/bash
-# CogniticNet Agent Backup Script
+# FreeAgentics Agent Backup Script
 
 set -e
 
@@ -397,7 +397,7 @@ echo "Backup complete."
     def _restore_script_template(self) -> str:
         """Template for restore script."""
         return '''#!/bin/bash
-# CogniticNet Agent Restore Script
+# FreeAgentics Agent Restore Script
 
 set -e
 
@@ -455,7 +455,7 @@ echo "Pre-restore backup saved to: $PRE_RESTORE_BACKUP"
     def _monitor_script_template(self) -> str:
         """Template for monitoring script."""
         return '''#!/bin/bash
-# CogniticNet Agent Monitor Script
+# FreeAgentics Agent Monitor Script
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
@@ -463,14 +463,14 @@ BASE_DIR="$(dirname "$SCRIPT_DIR")"
 # Monitoring interval (seconds)
 INTERVAL=${1:-60}
 
-echo "CogniticNet Agent Monitor"
+echo "FreeAgentics Agent Monitor"
 echo "Interval: ${INTERVAL}s"
 echo "Press Ctrl+C to stop"
 echo ""
 
 while true; do
     clear
-    echo "=== CogniticNet Agent Monitor ==="
+    echo "=== FreeAgentics Agent Monitor ==="
     echo "Time: $(date)"
     echo ""
     
@@ -522,7 +522,7 @@ done
         """Template for Python runner script."""
         return '''#!/usr/bin/env python3
 """
-CogniticNet Agent Runner
+FreeAgentics Agent Runner
 
 Main entry point for the deployed agent.
 """
@@ -537,7 +537,7 @@ from pathlib import Path
 from typing import Dict, Any
 
 # Setup paths
-BASE_DIR = Path(os.environ.get('COGNITICNET_BASE_DIR', Path(__file__).parent.parent))
+BASE_DIR = Path(os.environ.get('FREEAGENTICS_BASE_DIR', Path(__file__).parent.parent))
 sys.path.insert(0, str(BASE_DIR))
 
 # Configure logging
@@ -557,7 +557,7 @@ logger = logging.getLogger(__name__)
 
 
 class AgentRunner:
-    """Runs the CogniticNet agent."""
+    """Runs the FreeAgentics agent."""
     
     def __init__(self):
         """Initialize runner."""
@@ -600,13 +600,13 @@ class AgentRunner:
     
     def run(self):
         """Run the agent."""
-        logger.info("Starting CogniticNet Agent")
+        logger.info("Starting FreeAgentics Agent")
         logger.info(f"Agent ID: {self.config.get('agent', {}).get('agent_id', 'unknown')}")
-        logger.info(f"Platform: {os.environ.get('COGNITICNET_PLATFORM', 'unknown')}")
+        logger.info(f"Platform: {os.environ.get('FREEAGENTICS_PLATFORM', 'unknown')}")
         
         try:
             # Import agent module (would be the actual agent implementation)
-            # from cogniticnet.agent import Agent
+            # from freeagentics.agent import Agent
             
             # Initialize agent
             # self.agent = Agent.from_config(self.config)
@@ -699,7 +699,7 @@ fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
-PLIST_NAME="com.cogniticnet.agent.plist"
+PLIST_NAME="com.freeagentics.agent.plist"
 
 # Create LaunchAgent plist
 cat > ~/Library/LaunchAgents/$PLIST_NAME << EOF
@@ -708,7 +708,7 @@ cat > ~/Library/LaunchAgents/$PLIST_NAME << EOF
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.cogniticnet.agent</string>
+    <string>com.freeagentics.agent</string>
     <key>ProgramArguments</key>
     <array>
         <string>$BASE_DIR/scripts/run.sh</string>

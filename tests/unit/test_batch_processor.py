@@ -8,7 +8,7 @@ masking, and memory optimization.
 import pytest
 import torch
 import numpy as np
-from src.gnn.batch_processor import (
+from inference.gnn.batch_processor import (
     GraphData, BatchedGraphData, GraphBatchProcessor,
     DynamicBatchSampler, StreamingBatchProcessor,
     create_mini_batches

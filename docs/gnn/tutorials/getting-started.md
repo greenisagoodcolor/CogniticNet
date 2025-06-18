@@ -12,8 +12,8 @@ This tutorial will walk you through the basics of using the GNN Processing Core 
 
 ```bash
 # Clone the repository
-git clone https://github.com/cogniticnet/cogniticnet.git
-cd cogniticnet
+git clone https://github.com/freeagentics/freeagentics.git
+cd freeagentics
 
 # Install dependencies
 pip install -r requirements.txt

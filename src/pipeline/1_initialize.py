@@ -2,7 +2,7 @@
 """
 1_initialize.py - Environment Setup and Validation
 
-This script handles the initialization phase of the CogniticNet pipeline,
+This script handles the initialization phase of the FreeAgentics pipeline,
 ensuring all dependencies are installed and the environment is properly configured.
 """
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class InitializationStep:
-    """Handles environment setup and validation for CogniticNet."""
+    """Handles environment setup and validation for FreeAgentics."""
     
     def __init__(self, args):
         self.args = args
@@ -27,7 +27,7 @@ class InitializationStep:
         
     def run(self):
         """Execute the initialization process."""
-        logger.info("Starting CogniticNet initialization...")
+        logger.info("Starting FreeAgentics initialization...")
         
         results = {
             'step': 'initialize',

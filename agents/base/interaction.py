@@ -14,8 +14,8 @@ import queue
 import uuid
 import logging
 
-from src.agents.basic_agent.data_model import Agent, AgentStatus, Position, AgentResources
-from src.agents.basic_agent.perception import Percept, StimulusType
+from agents.base.data_model import Agent, AgentStatus, Position, AgentResources
+from agents.base.perception import Percept, StimulusType
 
 logger = logging.getLogger(__name__)
 

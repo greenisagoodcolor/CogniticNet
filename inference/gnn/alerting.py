@@ -586,8 +586,8 @@ if __name__ == "__main__":
     #     smtp_port=587,
     #     username="your_email@gmail.com",
     #     password="your_password",
-    #     from_email="alerts@cogniticnet.ai",
-    #     to_emails=["admin@cogniticnet.ai"]
+    #     from_email="alerts@freeagentics.ai",
+    #     to_emails=["admin@freeagentics.ai"]
     # )
     # manager.add_channel(email_channel)
 

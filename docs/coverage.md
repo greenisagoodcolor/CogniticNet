@@ -1,10 +1,10 @@
 # Code Coverage Guide
 
-This guide explains how to generate, view, and manage code coverage reports for the CogniticNet project.
+This guide explains how to generate, view, and manage code coverage reports for the FreeAgentics project.
 
 ## Overview
 
-CogniticNet uses comprehensive code coverage tracking for both frontend (TypeScript/React) and backend (Python) code. Coverage reports help ensure code quality and identify untested areas.
+FreeAgentics uses comprehensive code coverage tracking for both frontend (TypeScript/React) and backend (Python) code. Coverage reports help ensure code quality and identify untested areas.
 
 ## Quick Start
 
@@ -252,7 +252,7 @@ If Codecov upload fails:
 
 3. Add to README:
    ```markdown
-   ![Coverage](https://codecov.io/gh/username/cogniticnet/branch/main/graph/badge.svg)
+   ![Coverage](https://codecov.io/gh/username/freeagentics/branch/main/graph/badge.svg)
    ```
 
 ## Resources

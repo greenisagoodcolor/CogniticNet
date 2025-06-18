@@ -1,6 +1,6 @@
 # GNN Model Format Specification
 
-This document describes the Generalized Notation Notation (GNN) format used in CogniticNet for defining Active Inference agent models.
+This document describes the Generalized Notation Notation (GNN) format used in FreeAgentics for defining Active Inference agent models.
 
 ## Overview
 
@@ -53,7 +53,7 @@ model_name: CuriousExplorer
 version: 1.0
 agent_class: Explorer
 description: An agent driven by curiosity to map the unknown
-author: CogniticNet Team
+author: FreeAgentics Team
 created: 2024-01-15
 personality:
   openness: 85
@@ -305,7 +305,7 @@ personality:
 
 ## Validation Rules
 
-CogniticNet validates GNN models for:
+FreeAgentics validates GNN models for:
 
 1. **Required Sections**: Must have Beliefs, Preferences, and Policies
 2. **Valid YAML**: Frontmatter must parse correctly

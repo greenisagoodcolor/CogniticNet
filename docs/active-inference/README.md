@@ -1,8 +1,8 @@
-# Active Inference Framework for CogniticNet
+# Active Inference Framework for FreeAgentics
 
 ## Overview
 
-The Active Inference framework in CogniticNet provides a comprehensive implementation of the Free Energy Principle and Active Inference for creating adaptive, intelligent agents. This framework enables agents to:
+The Active Inference framework in FreeAgentics provides a comprehensive implementation of the Free Energy Principle and Active Inference for creating adaptive, intelligent agents. This framework enables agents to:
 
 - **Perceive** their environment through probabilistic inference
 - **Learn** from experience by updating their generative models
@@ -44,7 +44,7 @@ The Active Inference framework in CogniticNet provides a comprehensive implement
 # Install required dependencies
 pip install torch numpy scipy matplotlib networkx
 
-# Install CogniticNet (if not already installed)
+# Install FreeAgentics (if not already installed)
 pip install -e .
 ```
 
@@ -103,4 +103,4 @@ print(f"Selected action: {action} with probability {action_probs[action]:.3f}")
 
 ## License
 
-This module is part of CogniticNet and is released under the same license.
+This module is part of FreeAgentics and is released under the same license.

@@ -1,8 +1,8 @@
-# CogniticNet Agent Simulator
+# FreeAgentics Agent Simulator
 
 <div align="center">
 
-![CogniticNet Logo](public/placeholder-logo.svg)
+![FreeAgentics Logo](public/placeholder-logo.svg)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
@@ -11,13 +11,13 @@
 
 **A sophisticated multi-agent simulation platform implementing Active Inference principles for emergent intelligence and collaborative behavior.**
 
-[Demo](https://cogniticnet.demo) | [Documentation](doc/) | [Getting Started](doc/platform/getting_started.md) | [API Reference](doc/api/rest_api.md)
+[Demo](https://freeagentics.demo) | [Documentation](doc/) | [Getting Started](doc/platform/getting_started.md) | [API Reference](doc/api/rest_api.md)
 
 </div>
 
 ## 🌟 Overview
 
-CogniticNet is an advanced agent-based modeling platform that combines Active Inference theory with graph neural networks to create intelligent, autonomous agents capable of:
+FreeAgentics is an advanced agent-based modeling platform that combines Active Inference theory with graph neural networks to create intelligent, autonomous agents capable of:
 
 - **Emergent Behavior**: Agents develop complex behaviors through interaction and learning
 - **Collaborative Intelligence**: Multi-agent systems that share knowledge and coordinate actions
@@ -37,8 +37,8 @@ CogniticNet is an advanced agent-based modeling platform that combines Active In
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cogniticnet.git
-cd cogniticnet
+git clone https://github.com/yourusername/freeagentics.git
+cd freeagentics
 
 # Install dependencies
 npm install
@@ -79,7 +79,7 @@ docker-compose down
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -105,7 +105,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -197,7 +197,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -223,7 +223,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -315,7 +315,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -341,7 +341,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -433,7 +433,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -459,7 +459,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -551,7 +551,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -577,7 +577,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -669,7 +669,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -695,7 +695,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -787,7 +787,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -813,7 +813,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -905,7 +905,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -931,7 +931,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1023,7 +1023,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1049,7 +1049,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1141,7 +1141,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1167,7 +1167,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1259,7 +1259,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1285,7 +1285,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1377,7 +1377,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1403,7 +1403,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1495,7 +1495,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1521,7 +1521,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1613,7 +1613,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1639,7 +1639,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1731,7 +1731,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1757,7 +1757,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1849,7 +1849,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1875,7 +1875,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -1967,7 +1967,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -1993,7 +1993,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2085,7 +2085,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2111,7 +2111,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2203,7 +2203,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2229,7 +2229,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2321,7 +2321,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2347,7 +2347,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2439,7 +2439,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2465,7 +2465,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2557,7 +2557,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2583,7 +2583,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2675,7 +2675,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2701,7 +2701,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2793,7 +2793,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2819,7 +2819,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -2911,7 +2911,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -2937,7 +2937,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3029,7 +3029,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3055,7 +3055,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3147,7 +3147,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3173,7 +3173,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3265,7 +3265,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3291,7 +3291,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3383,7 +3383,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3409,7 +3409,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3501,7 +3501,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3527,7 +3527,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3619,7 +3619,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3645,7 +3645,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3737,7 +3737,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3763,7 +3763,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3855,7 +3855,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3881,7 +3881,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -3973,7 +3973,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -3999,7 +3999,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4091,7 +4091,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4117,7 +4117,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4209,7 +4209,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4235,7 +4235,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4327,7 +4327,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4353,7 +4353,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4445,7 +4445,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4471,7 +4471,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4563,7 +4563,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4589,7 +4589,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4681,7 +4681,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4707,7 +4707,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4799,7 +4799,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4825,7 +4825,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -4917,7 +4917,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -4943,7 +4943,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5035,7 +5035,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5061,7 +5061,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5153,7 +5153,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5179,7 +5179,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5271,7 +5271,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5297,7 +5297,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5389,7 +5389,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5415,7 +5415,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5507,7 +5507,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5533,7 +5533,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5625,7 +5625,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5651,7 +5651,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5743,7 +5743,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5769,7 +5769,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5861,7 +5861,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -5887,7 +5887,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -5979,7 +5979,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6005,7 +6005,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6097,7 +6097,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6123,7 +6123,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6215,7 +6215,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6241,7 +6241,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6333,7 +6333,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6359,7 +6359,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6451,7 +6451,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6477,7 +6477,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6569,7 +6569,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6595,7 +6595,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6687,7 +6687,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6713,7 +6713,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6805,7 +6805,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6831,7 +6831,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -6923,7 +6923,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -6949,7 +6949,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7041,7 +7041,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7067,7 +7067,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7159,7 +7159,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7185,7 +7185,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7277,7 +7277,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7303,7 +7303,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7395,7 +7395,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7421,7 +7421,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7513,7 +7513,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7539,7 +7539,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7631,7 +7631,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7657,7 +7657,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7749,7 +7749,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7775,7 +7775,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7867,7 +7867,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -7893,7 +7893,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -7985,7 +7985,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -8011,7 +8011,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources
@@ -8103,7 +8103,7 @@ npm run dev
 
 ## 🏗️ Architecture
 
-CogniticNet follows a modular, microservices-inspired architecture:
+FreeAgentics follows a modular, microservices-inspired architecture:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
@@ -8129,7 +8129,7 @@ CogniticNet follows a modular, microservices-inspired architecture:
 
 ## 🤖 Agent Types
 
-CogniticNet includes four specialized agent classes:
+FreeAgentics includes four specialized agent classes:
 
 ### 🔍 Explorer
 - Discovers new territories and resources

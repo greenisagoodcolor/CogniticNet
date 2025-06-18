@@ -8,7 +8,7 @@ import numpy as np
 import time
 from unittest.mock import Mock, patch, MagicMock
 
-from src.agents.active_inference.computational_optimization import (
+from inference.engine.computational_optimization import (
     OptimizationConfig, SparseOperations, ParallelInference,
     CachedInference, GPUOptimizer, BatchProcessor,
     ComputationalOptimizer

@@ -187,7 +187,7 @@ class ExportValidator:
     
     def _extract_package(self, package_path: Path) -> Optional[Path]:
         """Extract compressed package."""
-        extract_dir = Path(tempfile.mkdtemp(prefix="cogniticnet_validate_"))
+        extract_dir = Path(tempfile.mkdtemp(prefix="freeagentics_validate_"))
         
         try:
             if package_path.suffix == '.zip':

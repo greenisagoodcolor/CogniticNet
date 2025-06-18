@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Database management script for CogniticNet.
+Database management script for FreeAgentics.
 
 This script provides utilities for:
 - Creating and dropping databases
@@ -40,13 +40,13 @@ def get_db_config():
         "password": user_pass[1] if len(user_pass) > 1 else "",
         "host": host_port[0],
         "port": host_port[1] if len(host_port) > 1 else "5432",
-        "database": host_port_db[1] if len(host_port_db) > 1 else "cogniticnet_dev"
+        "database": host_port_db[1] if len(host_port_db) > 1 else "freeagentics_dev"
     }
 
 
 @click.group()
 def cli():
-    """CogniticNet database management commands."""
+    """FreeAgentics database management commands."""
     pass
 
 

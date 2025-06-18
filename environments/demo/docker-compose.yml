@@ -8,7 +8,7 @@ services:
       dockerfile: docker/demo/Dockerfile.web
       args:
         - NODE_ENV=demo
-    container_name: cogniticnet-demo-web
+    container_name: freeagentics-demo-web
     ports:
       - "3030:3000"  # Demo on port 3030
     environment:
@@ -16,7 +16,7 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:3030
       - NEXT_PUBLIC_DEMO_MODE=true
       - NEXT_PUBLIC_DEMO_SPEED=fast
-      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/cogniticnet_demo
+      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/freeagentics_demo
     volumes:
       - ../../:/app
       - /app/node_modules
@@ -31,11 +31,11 @@ services:
   # Demo Database with Pre-populated Data
   demo-db:
     image: postgres:15-alpine
-    container_name: cogniticnet-demo-db
+    container_name: freeagentics-demo-db
     environment:
       - POSTGRES_USER=demo
       - POSTGRES_PASSWORD=demo123
-      - POSTGRES_DB=cogniticnet_demo
+      - POSTGRES_DB=freeagentics_demo
     volumes:
       - demo-db-data:/var/lib/postgresql/data
       - ./init-demo-db.sql:/docker-entrypoint-initdb.d/01-init.sql
@@ -49,7 +49,7 @@ services:
   # Demo Redis for Caching
   demo-redis:
     image: redis:7-alpine
-    container_name: cogniticnet-demo-redis
+    container_name: freeagentics-demo-redis
     ports:
       - "6380:6379"  # Different port for demo Redis
     volumes:
@@ -63,13 +63,13 @@ services:
     build:
       context: ../..
       dockerfile: docker/demo/Dockerfile.simulator
-    container_name: cogniticnet-demo-simulator
+    container_name: freeagentics-demo-simulator
     environment:
       - DEMO_MODE=true
       - SIMULATION_SPEED=10x  # 10x speed for demos
       - AUTO_PLAY=true
       - SCENARIO_LOOP=true
-      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/cogniticnet_demo
+      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/freeagentics_demo
       - REDIS_URL=redis://demo-redis:6379
     depends_on:
       - demo-db
@@ -83,11 +83,11 @@ services:
     build:
       context: ../..
       dockerfile: docker/demo/Dockerfile.scenarios
-    container_name: cogniticnet-demo-scenarios
+    container_name: freeagentics-demo-scenarios
     environment:
       - RUN_SCENARIOS=explorer_discovery,merchant_trade,scholar_research,guardian_patrol,collaboration
       - SCENARIO_INTERVAL=300  # Run scenarios every 5 minutes
-      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/cogniticnet_demo
+      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/freeagentics_demo
       - REDIS_URL=redis://demo-redis:6379
     depends_on:
       - demo-db
@@ -100,7 +100,7 @@ services:
   # Nginx for Demo UI Polish
   demo-nginx:
     image: nginx:alpine
-    container_name: cogniticnet-demo-nginx
+    container_name: freeagentics-demo-nginx
     ports:
       - "8080:80"  # Main demo entry point
     volumes:
@@ -117,11 +117,11 @@ services:
     build:
       context: ../..
       dockerfile: docker/demo/Dockerfile.monitor
-    container_name: cogniticnet-demo-monitor
+    container_name: freeagentics-demo-monitor
     ports:
       - "3031:3000"  # Monitor on port 3031
     environment:
-      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/cogniticnet_demo
+      - DATABASE_URL=postgresql://demo:demo123@demo-db:5432/freeagentics_demo
       - REDIS_URL=redis://demo-redis:6379
     depends_on:
       - demo-db
@@ -133,7 +133,7 @@ services:
 networks:
   demo-network:
     driver: bridge
-    name: cogniticnet-demo
+    name: freeagentics-demo
 
 volumes:
   demo-db-data:

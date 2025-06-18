@@ -716,7 +716,7 @@ class CompatibilityTester:
         try:
             # Start agent process
             env = os.environ.copy()
-            env['COGNITICNET_TEST_MODE'] = '1'  # Run in test mode
+            env['FREEAGENTICS_TEST_MODE'] = '1'  # Run in test mode
             
             process = subprocess.Popen(
                 [str(run_script)],

@@ -7,12 +7,12 @@ import torch
 import numpy as np
 from unittest.mock import Mock, patch
 
-from src.agents.active_inference.parameter_learning import (
+from inference.engine.parameter_learning import (
     LearningConfig, Experience, ExperienceBuffer,
     DiscreteParameterLearner, ContinuousParameterLearner,
     OnlineParameterLearner, create_parameter_learner
 )
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel, ContinuousGenerativeModel,
     ModelDimensions, ModelParameters
 )

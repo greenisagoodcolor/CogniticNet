@@ -1,5 +1,5 @@
 """
-Hardware Abstraction Layer (HAL) for CogniticNet
+Hardware Abstraction Layer (HAL) for FreeAgentics
 
 This module provides a unified interface for hardware operations across different
 platforms and devices, enabling deployment on edge devices with resource constraints.

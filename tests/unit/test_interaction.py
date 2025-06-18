@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 import time
 import threading
 
-from src.agents.basic_agent.data_model import Agent, Position, AgentPersonality, AgentResources
-from src.agents.basic_agent.interaction import (
+from agents.base.data_model import Agent, Position, AgentPersonality, AgentResources
+from agents.base.interaction import (
     InteractionType, MessageType, ResourceType, Message, InteractionRequest,
     InteractionResult, ResourceExchange, CommunicationProtocol, ResourceManager,
     ConflictResolver, InteractionSystem

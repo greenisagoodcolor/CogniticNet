@@ -8,7 +8,7 @@ import torch.nn as nn
 import numpy as np
 from unittest.mock import Mock, MagicMock
 
-from src.agents.active_inference.gnn_integration import (
+from inference.engine.gnn_integration import (
     GNNIntegrationConfig,
     DirectGraphMapper,
     LearnedGraphMapper,
@@ -17,13 +17,13 @@ from src.agents.active_inference.gnn_integration import (
     HierarchicalGraphIntegration,
     create_gnn_adapter
 )
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel,
     ContinuousGenerativeModel,
     ModelDimensions,
     ModelParameters
 )
-from src.agents.active_inference.inference import (
+from inference.engine.inference import (
     VariationalMessagePassing,
     InferenceConfig
 )

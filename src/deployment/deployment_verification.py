@@ -706,7 +706,7 @@ class DeploymentVerifier:
         else:
             # Default configuration
             config_data = {
-                'agent_name': 'cogniticnet_agent',
+                'agent_name': 'freeagentics_agent',
                 'base_url': 'http://localhost:8080',
                 'health_checks': [
                     {

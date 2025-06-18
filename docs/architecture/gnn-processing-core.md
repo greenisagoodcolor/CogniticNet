@@ -14,7 +14,7 @@
 
 ## Overview
 
-The GNN (Generalized Notation Notation) Processing Core is a critical component of the CogniticNet platform that enables natural language to Active Inference parameter mapping. It processes .gnn.md files, validates models, and generates appropriate Graph Neural Network architectures for agent behavior modeling.
+The GNN (Generalized Notation Notation) Processing Core is a critical component of the FreeAgentics platform that enables natural language to Active Inference parameter mapping. It processes .gnn.md files, validates models, and generates appropriate Graph Neural Network architectures for agent behavior modeling.
 
 ### Key Objectives
 - Parse and validate GNN model definitions from .gnn.md files
@@ -470,7 +470,7 @@ Queue-based:
 ### Client Libraries
 ```python
 # Python client example
-from cogniticnet import GNNClient
+from freeagentics import GNNClient
 
 client = GNNClient(api_key="...")
 model = client.create_model(file_path="model.gnn.md")
@@ -503,14 +503,14 @@ result = client.process_graph(model_id=model.id, graph=graph_data)
 ```yaml
 services:
   gnn-parser:
-    image: cogniticnet/gnn-parser:latest
+    image: freeagentics/gnn-parser:latest
     replicas: 3
     resources:
       cpu: 2
       memory: 4Gi
 
   gnn-processor:
-    image: cogniticnet/gnn-processor:latest
+    image: freeagentics/gnn-processor:latest
     replicas: 5
     resources:
       cpu: 4
@@ -518,7 +518,7 @@ services:
       gpu: 1
 
   gnn-api:
-    image: cogniticnet/gnn-api:latest
+    image: freeagentics/gnn-api:latest
     replicas: 3
     resources:
       cpu: 2
@@ -543,7 +543,7 @@ spec:
     spec:
       containers:
       - name: gnn-processor
-        image: cogniticnet/gnn-processor:latest
+        image: freeagentics/gnn-processor:latest
         resources:
           requests:
             memory: "4Gi"

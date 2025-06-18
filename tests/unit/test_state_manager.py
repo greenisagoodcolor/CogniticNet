@@ -6,8 +6,8 @@ import unittest
 import threading
 import time
 from datetime import datetime
-from src.agents.basic_agent.data_model import Agent, AgentStatus, Position
-from src.agents.basic_agent.state_manager import (
+from agents.base.data_model import Agent, AgentStatus, Position
+from agents.base.state_manager import (
     AgentStateManager, StateTransitionValidator, StateTransitionError,
     StateEvent, StateEventType, StateObserver, StateCondition, StateMonitor
 )

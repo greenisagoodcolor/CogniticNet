@@ -1,5 +1,5 @@
 """
-Alembic environment configuration for CogniticNet.
+Alembic environment configuration for FreeAgentics.
 
 This file configures Alembic to use our SQLAlchemy models and
 database connection settings from environment variables.

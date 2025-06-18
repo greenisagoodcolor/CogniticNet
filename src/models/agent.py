@@ -1,5 +1,5 @@
 """
-Agent Models - Enhanced for CogniticNet with GNN compatibility
+Agent Models - Enhanced for FreeAgentics with GNN compatibility
 """
 from pydantic import BaseModel, Field, validator
 from typing import Optional, Dict, Any, List

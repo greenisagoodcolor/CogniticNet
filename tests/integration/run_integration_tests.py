@@ -201,7 +201,7 @@ class IntegrationTestRunner:
     </style>
 </head>
 <body>
-    <h1>CogniticNet Integration Test Report</h1>
+    <h1>FreeAgentics Integration Test Report</h1>
     
     <div class="summary">
         <h2>Summary</h2>
@@ -290,7 +290,7 @@ def setup_test_environment():
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Run CogniticNet integration tests"
+        description="Run FreeAgentics integration tests"
     )
     parser.add_argument(
         "--output-dir",

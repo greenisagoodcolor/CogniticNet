@@ -1,6 +1,6 @@
 # Code Quality Guide
 
-This guide documents all code quality processes, tools, and best practices for the CogniticNet project.
+This guide documents all code quality processes, tools, and best practices for the FreeAgentics project.
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@ This guide documents all code quality processes, tools, and best practices for t
 
 ## Overview
 
-CogniticNet maintains high code quality through automated tooling, consistent standards, and continuous monitoring. Our quality toolchain includes:
+FreeAgentics maintains high code quality through automated tooling, consistent standards, and continuous monitoring. Our quality toolchain includes:
 
 - **Linting**: ESLint (JS/TS), Flake8 (Python)
 - **Formatting**: Prettier (JS/TS), Black (Python)
@@ -535,7 +535,7 @@ npm run all:format    # Format all
 
 ## Interactive Tools
 
-### CogniticNet CLI
+### FreeAgentics CLI
 
 ```bash
 npm run cli

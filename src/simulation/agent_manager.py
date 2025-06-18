@@ -206,7 +206,7 @@ class AgentManager:
                     break
         return agents_with_tag
     
-    def set_agent_conversation_status(self, agent_id: UUID, in_conversation: bool) -> Optional[Agent]:
+    def set_agents.base.communication_status(self, agent_id: UUID, in_conversation: bool) -> Optional[Agent]:
         """Update an agent's conversation status"""
         agent = self.state.get_agent(agent_id)
         if not agent:

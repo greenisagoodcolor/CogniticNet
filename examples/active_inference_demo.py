@@ -1,7 +1,7 @@
 """
 Active Inference Demo
 
-This example demonstrates how to use the Active Inference framework in CogniticNet
+This example demonstrates how to use the Active Inference framework in FreeAgentics
 to create an intelligent agent that learns and adapts to its environment.
 """
 
@@ -10,16 +10,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from src.agents.active_inference.generative_model import (
+from inference.engine.generative_model import (
     DiscreteGenerativeModel, ModelDimensions, ModelParameters
 )
-from src.agents.active_inference.inference import VariationalInference
-from src.agents.active_inference.policy_selection import PolicySelector, PolicyConfig
-from src.agents.active_inference.precision import PrecisionController, PrecisionConfig
-from src.agents.active_inference.parameter_learning import create_parameter_learner, LearningConfig
-from src.agents.active_inference.active_learning import ActiveLearner, LearningConfig as ActiveLearningConfig
-from src.agents.active_inference.computational_optimization import ComputationalOptimizer, OptimizationConfig
-from src.agents.active_inference.diagnostics import DiagnosticSuite, DiagnosticConfig
+from inference.engine.inference import VariationalInference
+from inference.engine.policy_selection import PolicySelector, PolicyConfig
+from inference.engine.precision import PrecisionController, PrecisionConfig
+from inference.engine.parameter_learning import create_parameter_learner, LearningConfig
+from inference.engine.active_learning import ActiveLearner, LearningConfig as ActiveLearningConfig
+from inference.engine.computational_optimization import ComputationalOptimizer, OptimizationConfig
+from inference.engine.diagnostics import DiagnosticSuite, DiagnosticConfig
 
 
 class GridWorldEnvironment:

@@ -1,5 +1,5 @@
 """
-Database connection management for CogniticNet.
+Database connection management for FreeAgentics.
 
 Handles database connections, sessions, and connection pooling.
 """
@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
 
 # Get database URL from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://cogniticnet:dev_password@localhost:5432/cogniticnet_dev")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://freeagentics:dev_password@localhost:5432/freeagentics_dev")
 
 # Configure connection pooling based on environment
 POOL_SIZE = int(os.getenv("DATABASE_POOL_SIZE", "5"))

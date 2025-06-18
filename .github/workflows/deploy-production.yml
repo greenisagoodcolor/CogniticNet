@@ -16,7 +16,7 @@ on:
 env:
   ENVIRONMENT: production
   DOCKER_REGISTRY: ghcr.io
-  IMAGE_PREFIX: ${{ github.repository_owner }}/cogniticnet
+  IMAGE_PREFIX: ${{ github.repository_owner }}/freeagentics
 
 jobs:
   prepare:
@@ -134,12 +134,12 @@ jobs:
         key: ${{ secrets.PROD_SERVER_SSH_KEY }}
         script: |
           # Create backup of current deployment
-          cd /opt/cogniticnet
+          cd /opt/freeagentics
           docker-compose -f docker-compose.prod.yml ps -q | xargs docker commit -m "Backup before ${{ needs.prepare.outputs.version }}"
 
           # Tag current images as previous
-          docker tag cogniticnet-backend:stable cogniticnet-backend:previous
-          docker tag cogniticnet-frontend:stable cogniticnet-frontend:previous
+          docker tag freeagentics-backend:stable freeagentics-backend:previous
+          docker tag freeagentics-frontend:stable freeagentics-frontend:previous
 
     - name: Deploy to Production
       uses: appleboy/ssh-action@v0.1.5
@@ -148,7 +148,7 @@ jobs:
         username: ${{ secrets.PROD_SERVER_USER }}
         key: ${{ secrets.PROD_SERVER_SSH_KEY }}
         script: |
-          cd /opt/cogniticnet
+          cd /opt/freeagentics
 
           # Update image tags in docker-compose
           export VERSION=${{ needs.prepare.outputs.version }}
@@ -211,11 +211,11 @@ jobs:
         username: ${{ secrets.PROD_SERVER_USER }}
         key: ${{ secrets.PROD_SERVER_SSH_KEY }}
         script: |
-          cd /opt/cogniticnet
+          cd /opt/freeagentics
 
           # Restore previous images
-          docker tag cogniticnet-backend:previous cogniticnet-backend:stable
-          docker tag cogniticnet-frontend:previous cogniticnet-frontend:stable
+          docker tag freeagentics-backend:previous freeagentics-backend:stable
+          docker tag freeagentics-frontend:previous freeagentics-frontend:stable
 
           # Redeploy previous version
           docker-compose -f docker-compose.prod.yml up -d

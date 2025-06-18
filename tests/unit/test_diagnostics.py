@@ -11,7 +11,7 @@ import tempfile
 import shutil
 from unittest.mock import Mock, patch, MagicMock
 
-from src.agents.active_inference.diagnostics import (
+from inference.engine.diagnostics import (
     DiagnosticConfig, BeliefTracker, FreeEnergyMonitor,
     GradientAnalyzer, InferenceVisualizer, DiagnosticSuite
 )

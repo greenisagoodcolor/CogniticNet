@@ -509,7 +509,7 @@ class ConversationManager:
     
     def __init__(self):
         self.conversations: Dict[str, AgentConversation] = {}
-        self.agent_conversations: Dict[str, List[str]] = {}  # agent_id -> conversation_ids
+        self.agents.base.communications: Dict[str, List[str]] = {}  # agent_id -> conversation_ids
         
     def create_conversation(self, 
                            participants: List[str],
@@ -524,16 +524,16 @@ class ConversationManager:
             )
             
             # Track agent's conversations
-            if participant not in self.agent_conversations:
-                self.agent_conversations[participant] = []
-            self.agent_conversations[participant].append(conversation.conversation_id)
+            if participant not in self.agents.base.communications:
+                self.agents.base.communications[participant] = []
+            self.agents.base.communications[participant].append(conversation.conversation_id)
             
         self.conversations[conversation.conversation_id] = conversation
         return conversation
         
-    def get_agent_conversations(self, agent_id: str) -> List[AgentConversation]:
+    def get_agents.base.communications(self, agent_id: str) -> List[AgentConversation]:
         """Get all conversations an agent is participating in."""
-        conversation_ids = self.agent_conversations.get(agent_id, [])
+        conversation_ids = self.agents.base.communications.get(agent_id, [])
         return [
             self.conversations[cid] 
             for cid in conversation_ids 

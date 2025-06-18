@@ -14,21 +14,21 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 
-from src.agents.basic_agent.decision_making import (
+from agents.base.decision_making import (
     ActionType, DecisionStrategy, Action, DecisionContext,
     SafetyUtility, GoalUtility, ResourceUtility, SocialUtility,
     DecisionMaker, BehaviorTree, SequenceNode, SelectorNode,
     ConditionNode, ActionNode, ActionGenerator, DecisionSystem
 )
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, AgentGoal, AgentStatus, Position, AgentResources,
     AgentCapability, SocialRelationship
 )
-from src.agents.basic_agent.perception import (
+from agents.base.perception import (
     Percept, Stimulus, StimulusType, PerceptionSystem, PerceptionType
 )
-from src.agents.basic_agent.state_manager import AgentStateManager
-from src.agents.basic_agent.movement import MovementController
+from agents.base.state_manager import AgentStateManager
+from agents.base.movement import MovementController
 
 
 @pytest.fixture

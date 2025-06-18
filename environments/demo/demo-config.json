@@ -1,7 +1,7 @@
 {
   "demo": {
     "version": "1.0.0",
-    "name": "CogniticNet Demo Environment",
+    "name": "FreeAgentics Demo Environment",
     "description": "Pre-configured environment for demonstrations and investor presentations",
     "features": {
       "accelerated_simulation": true,

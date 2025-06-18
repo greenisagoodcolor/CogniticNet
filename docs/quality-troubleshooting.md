@@ -1,6 +1,6 @@
 # Code Quality Troubleshooting Guide
 
-This guide helps resolve common code quality issues in the CogniticNet project.
+This guide helps resolve common code quality issues in the FreeAgentics project.
 
 ## Table of Contents
 

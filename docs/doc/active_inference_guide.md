@@ -1,8 +1,8 @@
-# Active Inference Principles in CogniticNet
+# Active Inference Principles in FreeAgentics
 
 ## Introduction
 
-Active Inference is the theoretical foundation of CogniticNet. It provides a unified framework for perception, learning, and action based on the Free Energy Principle. This guide explains how Active Inference is implemented throughout the platform.
+Active Inference is the theoretical foundation of FreeAgentics. It provides a unified framework for perception, learning, and action based on the Free Energy Principle. This guide explains how Active Inference is implemented throughout the platform.
 
 ## Core Concepts
 
@@ -44,7 +44,7 @@ Agents continuously update their beliefs using variational inference:
 2. **Prediction**: Anticipate future states based on current beliefs
 3. **Action Selection**: Choose actions that minimize expected free energy
 
-## Implementation in CogniticNet
+## Implementation in FreeAgentics
 
 ### 1. Agent Base Class
 

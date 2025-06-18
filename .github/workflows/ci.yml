@@ -190,9 +190,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: cogniticnet
+          POSTGRES_USER: freeagentics
           POSTGRES_PASSWORD: testpassword
-          POSTGRES_DB: cogniticnet_test
+          POSTGRES_DB: freeagentics_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -236,7 +236,7 @@ jobs:
 
     - name: Set up test environment
       env:
-        DATABASE_URL: postgresql://cogniticnet:testpassword@localhost:5432/cogniticnet_test
+        DATABASE_URL: postgresql://freeagentics:testpassword@localhost:5432/freeagentics_test
         REDIS_URL: redis://localhost:6379
       run: |
         # Run database migrations
@@ -246,7 +246,7 @@ jobs:
 
     - name: Run integration tests
       env:
-        DATABASE_URL: postgresql://cogniticnet:testpassword@localhost:5432/cogniticnet_test
+        DATABASE_URL: postgresql://freeagentics:testpassword@localhost:5432/freeagentics_test
         REDIS_URL: redis://localhost:6379
         NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
       run: |
@@ -282,7 +282,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: false
-        tags: cogniticnet-backend:test
+        tags: freeagentics-backend:test
         cache-from: type=gha
         cache-to: type=gha,mode=max
         target: backend
@@ -293,7 +293,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: false
-        tags: cogniticnet-frontend:test
+        tags: freeagentics-frontend:test
         cache-from: type=gha
         cache-to: type=gha,mode=max
         target: frontend

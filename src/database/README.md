@@ -1,6 +1,6 @@
-# CogniticNet Database Management
+# FreeAgentics Database Management
 
-This directory contains all database-related code for CogniticNet, including:
+This directory contains all database-related code for FreeAgentics, including:
 - SQLAlchemy models
 - Alembic migrations
 - Seed data scripts
@@ -8,7 +8,7 @@ This directory contains all database-related code for CogniticNet, including:
 
 ## Overview
 
-CogniticNet uses PostgreSQL as its primary database with SQLAlchemy as the ORM and Alembic for migrations.
+FreeAgentics uses PostgreSQL as its primary database with SQLAlchemy as the ORM and Alembic for migrations.
 
 ## Database Schema
 
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 Create a `.env` file or set environment variables:
 
 ```bash
-export DATABASE_URL=postgresql://user:password@localhost:5432/cogniticnet_dev
+export DATABASE_URL=postgresql://user:password@localhost:5432/freeagentics_dev
 export DATABASE_POOL_SIZE=5
 export DATABASE_AUTO_MIGRATE=true
 export DATABASE_SEED_DATA=true
@@ -259,8 +259,8 @@ knowledge = KnowledgeGraph(
 2. **Role Does Not Exist**
    - Create PostgreSQL user:
      ```sql
-     CREATE USER cogniticnet WITH PASSWORD 'password';
-     CREATE DATABASE cogniticnet_dev OWNER cogniticnet;
+     CREATE USER freeagentics WITH PASSWORD 'password';
+     CREATE DATABASE freeagentics_dev OWNER freeagentics;
      ```
 
 3. **Migration Conflicts**

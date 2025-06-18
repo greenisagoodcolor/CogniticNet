@@ -1,6 +1,6 @@
-# About CogniticNet
+# About FreeAgentics
 
-CogniticNet is a comprehensive platform for creating, simulating, and deploying Active Inference agents. It bridges the gap between theoretical Active Inference concepts and practical implementation, providing both powerful core functionality and an intuitive web interface.
+FreeAgentics is a comprehensive platform for creating, simulating, and deploying Active Inference agents. It bridges the gap between theoretical Active Inference concepts and practical implementation, providing both powerful core functionality and an intuitive web interface.
 
 ## Vision
 
@@ -23,7 +23,7 @@ Active Inference is a theory of cognition where agents:
 
 ### GNN (Generalized Notation Notation)
 
-CogniticNet builds on GNN principles:
+FreeAgentics builds on GNN principles:
 - Natural language model specification
 - Human-readable yet machine-parsable
 - Standardized representation of cognitive models
@@ -149,7 +149,7 @@ The platform supports:
 
 ## Community
 
-CogniticNet is open source and welcomes contributions:
+FreeAgentics is open source and welcomes contributions:
 - Model templates
 - Visualization improvements
 - New algorithms

@@ -2,7 +2,7 @@
 
 ## Metadata
 - Version: 1.0.0
-- Author: CogniticNet Team
+- Author: FreeAgentics Team
 - Created: 2024-01-15T10:00:00Z
 - Modified: 2024-01-15T10:00:00Z
 - Tags: [explorer, cautious, efficient]

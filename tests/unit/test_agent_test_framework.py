@@ -6,7 +6,7 @@ import pytest
 from datetime import datetime
 import time
 
-from src.agents.basic_agent.data_model import (
+from agents.base.data_model import (
     Agent, Position, AgentStatus, AgentCapability
 )
 from src.agents.testing.agent_test_framework import (

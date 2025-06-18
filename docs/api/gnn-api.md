@@ -7,7 +7,7 @@ The GNN Processing Core API provides RESTful endpoints for processing graphs usi
 ## Base URL
 
 ```
-https://api.cogniticnet.ai/api/gnn
+https://api.freeagentics.ai/api/gnn
 ```
 
 ## Authentication
@@ -17,7 +17,7 @@ The API requires authentication using either:
 - **Session**: Valid user session (for web app users)
 
 ```bash
-curl -H "x-api-key: YOUR_API_KEY" https://api.cogniticnet.ai/api/gnn/models
+curl -H "x-api-key: YOUR_API_KEY" https://api.freeagentics.ai/api/gnn/models
 ```
 
 ## Rate Limiting
@@ -256,7 +256,7 @@ All errors follow a consistent format:
 ### Example 1: Node Classification on Social Network
 
 ```bash
-curl -X POST https://api.cogniticnet.ai/api/gnn/process \
+curl -X POST https://api.freeagentics.ai/api/gnn/process \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -281,7 +281,7 @@ curl -X POST https://api.cogniticnet.ai/api/gnn/process \
 ### Example 2: Graph Classification for Molecules
 
 ```bash
-curl -X POST https://api.cogniticnet.ai/api/gnn/process \
+curl -X POST https://api.freeagentics.ai/api/gnn/process \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -309,7 +309,7 @@ curl -X POST https://api.cogniticnet.ai/api/gnn/process \
 ### Example 3: Link Prediction
 
 ```bash
-curl -X POST https://api.cogniticnet.ai/api/gnn/process \
+curl -X POST https://api.freeagentics.ai/api/gnn/process \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -347,10 +347,10 @@ curl -X POST https://api.cogniticnet.ai/api/gnn/process \
 ## SDK Support
 
 Official SDKs available for:
-- Python: `pip install cogniticnet-gnn`
-- JavaScript/TypeScript: `npm install @cogniticnet/gnn`
+- Python: `pip install freeagentics-gnn`
+- JavaScript/TypeScript: `npm install @freeagentics/gnn`
 - Java: Maven package available
-- Go: `go get github.com/cogniticnet/gnn-go`
+- Go: `go get github.com/freeagentics/gnn-go`
 
 ## Changelog
 
