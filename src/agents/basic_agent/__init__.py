@@ -74,6 +74,62 @@ from .perception import (
     ProximitySensor,
 )
 
+from .decision_making import (
+    DecisionSystem,
+    DecisionMaker,
+    DecisionStrategy,
+    DecisionContext,
+    ActionType,
+    Action,
+    ActionGenerator,
+    UtilityFunction,
+    SafetyUtility,
+    GoalUtility,
+    ResourceUtility,
+    SocialUtility,
+    BehaviorTree,
+    BehaviorNode,
+    SequenceNode,
+    SelectorNode,
+    ConditionNode,
+    ActionNode,
+)
+
+from .memory import (
+    MemorySystem,
+    Memory,
+    MemoryType,
+    MemoryImportance,
+    Experience,
+    Pattern,
+    WorkingMemory,
+    MemoryConsolidator,
+    ReinforcementLearner,
+    PatternRecognizer,
+    InMemoryStorage,
+    MemoryStorage,
+)
+
+from .interaction import (
+    InteractionType,
+    MessageType,
+    ResourceType,
+    Message,
+    InteractionRequest,
+    InteractionResult,
+    ResourceExchange,
+    CommunicationProtocol,
+    ResourceManager,
+    ConflictResolver,
+    InteractionSystem,
+)
+
+from .persistence import (
+    AgentPersistence,
+    AgentSnapshot,
+    AGENT_SCHEMA_VERSION
+)
+
 __all__ = [
     # Core classes
     "Agent",
@@ -134,6 +190,58 @@ __all__ = [
     "VisualSensor",
     "AuditorySensor",
     "ProximitySensor",
+
+    # Decision-making system
+    "DecisionSystem",
+    "DecisionMaker",
+    "DecisionStrategy",
+    "DecisionContext",
+    "ActionType",
+    "Action",
+    "ActionGenerator",
+    "UtilityFunction",
+    "SafetyUtility",
+    "GoalUtility",
+    "ResourceUtility",
+    "SocialUtility",
+    "BehaviorTree",
+    "BehaviorNode",
+    "SequenceNode",
+    "SelectorNode",
+    "ConditionNode",
+    "ActionNode",
+
+    # Memory system
+    "MemorySystem",
+    "Memory",
+    "MemoryType",
+    "MemoryImportance",
+    "Experience",
+    "Pattern",
+    "WorkingMemory",
+    "MemoryConsolidator",
+    "ReinforcementLearner",
+    "PatternRecognizer",
+    "InMemoryStorage",
+    "MemoryStorage",
+
+    # Interaction
+    "InteractionType",
+    "MessageType",
+    "ResourceType",
+    "Message",
+    "InteractionRequest",
+    "InteractionResult",
+    "ResourceExchange",
+    "CommunicationProtocol",
+    "ResourceManager",
+    "ConflictResolver",
+    "InteractionSystem",
+
+    # Persistence
+    "AgentPersistence",
+    "AgentSnapshot",
+    "AGENT_SCHEMA_VERSION"
 ]
 
 __version__ = "0.1.0"
