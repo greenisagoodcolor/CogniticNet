@@ -119,8 +119,8 @@
               1,
               2
             ],
-            "details": "Start with low-risk changes and progress to more complex refactoring. Use IDE refactoring tools where possible to minimize errors. Update all references and dependencies.",
-            "status": "in-progress"
+            "details": "Start with low-risk changes and progress to more complex refactoring. Use IDE refactoring tools where possible to minimize errors. Update all references and dependencies.\n<info added on 2025-06-18T21:53:51.676Z>\nSuccessfully refactored code to apply naming conventions. Created and executed fix-naming.py script that systematically fixed violations.\n\n**Fixes Applied**:\n- Fixed 36 naming violations across the codebase\n- Zero errors during the fixing process\n\n**Key Refactoring Changes**:\n\n1. **Prohibited Terms** (5 files):\n   - Replaced 'cogniticnet' → 'freeagentics'\n   - Replaced 'CogniticNet' → 'FreeAgentics'\n   - Replaced 'spawn' → 'initialize' in simulation modules\n\n2. **Python File Names** (6 files):\n   - Converted to kebab-case: update_import_paths.py → update-import-paths.py\n   - Fixed test files: test_gnn_structure.py → test-gnn-structure.py\n   - Fixed demo files: demo_simulator.py → demo-simulator.py\n\n3. **TypeScript Component Names** (10 files):\n   - Converted from kebab-case to PascalCase\n   - agent-dashboard.tsx → AgentDashboard.tsx\n   - error-boundary.tsx → ErrorBoundary.tsx\n   - Updated all imports automatically\n\n4. **Configuration Files** (5 files):\n   - Applied kebab-case: fileMock.js → file-mock.js\n\n5. **Code Conventions**:\n   - Fixed Python test methods: setUp → set_up, tearDown → tear_down\n   - Added 'I' prefix to TypeScript interfaces: LLMContextType → ILLMContextType\n\nUsed git mv to preserve file history. All changes committed successfully.\n</info added on 2025-06-18T21:53:51.676Z>",
+            "status": "done"
           },
           {
             "id": 4,
@@ -131,7 +131,7 @@
               3
             ],
             "details": "Update API documentation, code comments, README files, and any external documentation. Clearly explain the new conventions and provide examples of correct usage.",
-            "status": "pending"
+            "status": "in-progress"
           },
           {
             "id": 5,
@@ -831,7 +831,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T21:14:20.377Z",
-      "updated": "2025-06-18T21:51:41.577Z",
+      "updated": "2025-06-18T21:54:02.054Z",
       "description": "Tasks for master context"
     }
   }
