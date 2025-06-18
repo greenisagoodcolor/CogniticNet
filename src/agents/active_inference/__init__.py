@@ -28,6 +28,16 @@ from .inference import (
     create_inference_algorithm
 )
 
+from .precision import (
+    PrecisionConfig,
+    PrecisionOptimizer,
+    GradientPrecisionOptimizer,
+    HierarchicalPrecisionOptimizer,
+    MetaLearningPrecisionOptimizer,
+    AdaptivePrecisionController,
+    create_precision_optimizer
+)
+
 __all__ = [
     # Generative models
     'ModelDimensions',
@@ -47,5 +57,13 @@ __all__ = [
     'NaturalGradientInference',
     'ExpectationMaximization',
     'ParticleFilterInference',
-    'create_inference_algorithm'
+    'create_inference_algorithm',
+    # Precision optimization
+    'PrecisionConfig',
+    'PrecisionOptimizer',
+    'GradientPrecisionOptimizer',
+    'HierarchicalPrecisionOptimizer',
+    'MetaLearningPrecisionOptimizer',
+    'AdaptivePrecisionController',
+    'create_precision_optimizer'
 ]
