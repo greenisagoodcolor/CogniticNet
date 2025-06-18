@@ -46,6 +46,34 @@ from .state_manager import (
     StateMonitor,
 )
 
+from .movement import (
+    MovementController,
+    MovementConstraints,
+    MovementState,
+    MovementMode,
+    TerrainType,
+    CollisionSystem,
+    PathfindingGrid,
+    SteeringBehaviors,
+)
+
+from .perception import (
+    PerceptionSystem,
+    PerceptionCapabilities,
+    PerceptionType,
+    PerceptionMemory,
+    PerceptionFilter,
+    ImportanceFilter,
+    AttentionFilter,
+    Stimulus,
+    StimulusType,
+    Percept,
+    SensorSystem,
+    VisualSensor,
+    AuditorySensor,
+    ProximitySensor,
+)
+
 __all__ = [
     # Core classes
     "Agent",
@@ -80,6 +108,32 @@ __all__ = [
     "StateSnapshot",
     "StateCondition",
     "StateMonitor",
+
+    # Movement system
+    "MovementController",
+    "MovementConstraints",
+    "MovementState",
+    "MovementMode",
+    "TerrainType",
+    "CollisionSystem",
+    "PathfindingGrid",
+    "SteeringBehaviors",
+
+    # Perception system
+    "PerceptionSystem",
+    "PerceptionCapabilities",
+    "PerceptionType",
+    "PerceptionMemory",
+    "PerceptionFilter",
+    "ImportanceFilter",
+    "AttentionFilter",
+    "Stimulus",
+    "StimulusType",
+    "Percept",
+    "SensorSystem",
+    "VisualSensor",
+    "AuditorySensor",
+    "ProximitySensor",
 ]
 
 __version__ = "0.1.0"
