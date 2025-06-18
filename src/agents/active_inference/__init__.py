@@ -61,6 +61,38 @@ from .temporal_planning import (
     create_temporal_planner
 )
 
+# GNN integration
+from .gnn_integration import (
+    GNNIntegrationConfig,
+    DirectGraphMapper,
+    LearnedGraphMapper,
+    GNNActiveInferenceAdapter,
+    GraphFeatureAggregator,
+    HierarchicalGraphIntegration,
+    create_gnn_adapter
+)
+
+# Belief update
+from .belief_update import (
+    BeliefUpdateConfig,
+    DirectGraphObservationModel,
+    LearnedGraphObservationModel,
+    GNNBeliefUpdater,
+    AttentionGraphBeliefUpdater,
+    HierarchicalBeliefUpdater,
+    create_belief_updater
+)
+
+# Hierarchical inference
+from .hierarchical_inference import (
+    HierarchicalConfig,
+    HierarchicalState,
+    HierarchicalLevel,
+    HierarchicalInference,
+    TemporalHierarchicalInference,
+    create_hierarchical_inference
+)
+
 __all__ = [
     # Generative models
     'ModelDimensions',
@@ -107,5 +139,28 @@ __all__ = [
     'AStarPlanner',
     'TrajectorySampling',
     'AdaptiveHorizonPlanner',
-    'create_temporal_planner'
+    'create_temporal_planner',
+    # GNN integration
+    'GNNIntegrationConfig',
+    'DirectGraphMapper',
+    'LearnedGraphMapper',
+    'GNNActiveInferenceAdapter',
+    'GraphFeatureAggregator',
+    'HierarchicalGraphIntegration',
+    'create_gnn_adapter',
+    # Belief update
+    'BeliefUpdateConfig',
+    'DirectGraphObservationModel',
+    'LearnedGraphObservationModel',
+    'GNNBeliefUpdater',
+    'AttentionGraphBeliefUpdater',
+    'HierarchicalBeliefUpdater',
+    'create_belief_updater',
+    # Hierarchical inference
+    'HierarchicalConfig',
+    'HierarchicalState',
+    'HierarchicalLevel',
+    'HierarchicalInference',
+    'TemporalHierarchicalInference',
+    'create_hierarchical_inference'
 ]
