@@ -16,7 +16,20 @@ from .generative_model import (
     create_generative_model
 )
 
+from .inference import (
+    InferenceConfig,
+    InferenceAlgorithm,
+    VariationalMessagePassing,
+    BeliefPropagation,
+    GradientDescentInference,
+    NaturalGradientInference,
+    ExpectationMaximization,
+    ParticleFilterInference,
+    create_inference_algorithm
+)
+
 __all__ = [
+    # Generative models
     'ModelDimensions',
     'ModelParameters',
     'GenerativeModel',
@@ -24,5 +37,15 @@ __all__ = [
     'ContinuousGenerativeModel',
     'HierarchicalGenerativeModel',
     'FactorizedGenerativeModel',
-    'create_generative_model'
+    'create_generative_model',
+    # Inference algorithms
+    'InferenceConfig',
+    'InferenceAlgorithm',
+    'VariationalMessagePassing',
+    'BeliefPropagation',
+    'GradientDescentInference',
+    'NaturalGradientInference',
+    'ExpectationMaximization',
+    'ParticleFilterInference',
+    'create_inference_algorithm'
 ]
