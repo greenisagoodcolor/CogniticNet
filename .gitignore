@@ -48,3 +48,10 @@ node_modules/
 # Task files
 tasks.json
 tasks/ 
+
+# Cleanup artifacts
+cleanup_report.json
+scripts/cleanup_*.py
+__pycache__/
+*.pyc
+.pytest_cache/

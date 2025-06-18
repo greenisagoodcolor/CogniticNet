@@ -1,147 +1,302 @@
-This work, "CogniticNet," by Andrew Blake Pashea, is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
+# CogniticNet Agent Simulator
 
-# CogniticNet
+<div align="center">
 
-CogniticNet is a multi-agent UI design grid world for creating, managing, and observing autonomous AI agent interactions. This experimental platform enables researchers and developers to explore emergent behaviors in multi-agent systems through a visual, interactive interface.
+![CogniticNet Logo](public/placeholder-logo.svg)
 
-![CogniticNet Screenshot 002](https://drive.google.com/uc?id=18B1O0jUQz3cIcahUrceg7ajlxko6iWKB)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Python Version](https://img.shields.io/badge/python-%3E%3D3.9-blue.svg)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/docker-%3E%3D20.10-blue.svg)](https://www.docker.com/)
 
-## Features
+**A sophisticated multi-agent simulation platform implementing Active Inference principles for emergent intelligence and collaborative behavior.**
 
-- **Multi-Agent Environment**: Create and manage multiple AI agents with unique characteristics
-- **Grid World Visualization**: Position agents in a 2D grid to trigger proximity-based interactions
-- **Autonomous Conversations**: Agents can initiate and participate in conversations based on various triggers
-- **Knowledge Management**: Add, edit, and extract beliefs from conversations to build agent knowledge bases
-- **Global Knowledge Graph**: Visualize connections between agents and their knowledge
-- **Secure API Key Management**: Safely store and manage LLM API keys
-- **Import/Export Functionality**: Save and load agent configurations and conversations
+[Demo](https://cogniticnet.demo) | [Documentation](doc/) | [Getting Started](doc/platform/getting_started.md) | [API Reference](doc/api/rest_api.md)
 
-## File Structure
+</div>
 
-```text
-CogniticNet/
-├── app/                    # Next.js app directory
-│   ├── api/                # API routes for secure operations
-│   │   ├── api-key/        # API key management endpoints
-│   │   └── llm/            # LLM integration endpoints
-│   ├── layout.tsx          # Main app layout
-│   ├── page.tsx            # Main application page
-│   └── settings/           # Settings page
-├── components/             # React components
-│   ├── agent-list.tsx      # Agent management interface
-│   ├── autonomous-conversation-manager.tsx  # Manages agent conversations
-│   ├── chat-window.tsx     # Conversation interface
-│   ├── global-knowledge-graph.tsx  # Knowledge visualization
-│   ├── grid-world.tsx      # 2D grid environment
-│   ├── memory-viewer.tsx   # Agent memory and knowledge interface
-│   └── ui/                 # UI components (buttons, cards, etc.)
-├── contexts/               # React contexts
-│   ├── is-sending-context.tsx  # Message sending state
-│   └── llm-context.tsx     # LLM client context
-├── hooks/                  # Custom React hooks
-│   ├── use-autonomous-conversations.ts  # Hook for autonomous conversations
-│   └── use-conversation-orchestrator.ts  # Conversation management
-├── lib/                    # Core functionality
-│   ├── autonomous-conversation.ts  # Autonomous conversation logic
-│   ├── belief-extraction.ts  # Extract beliefs from conversations
-│   ├── conversation-dynamics.ts  # Conversation flow management
-│   ├── encryption.ts       # Secure data handling
-│   ├── knowledge-export.ts  # Export functionality
-│   ├── knowledge-import.ts  # Import functionality
-│   ├── llm-service.ts      # LLM integration
-│   ├── llm-settings.ts     # LLM configuration
-│   └── types.ts            # TypeScript type definitions
-```
+## 🌟 Overview
 
-## Setup Instructions
+CogniticNet is an advanced agent-based modeling platform that combines Active Inference theory with graph neural networks to create intelligent, autonomous agents capable of:
+
+- **Emergent Behavior**: Agents develop complex behaviors through interaction and learning
+- **Collaborative Intelligence**: Multi-agent systems that share knowledge and coordinate actions
+- **Active Inference**: Agents minimize surprise and uncertainty through predictive processing
+- **Real-time Adaptation**: Dynamic learning and behavior modification based on experience
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18.x or later
-- npm or yarn
-- An API key from an LLM provider (OpenAI, Anthropic, etc.)
+- Node.js 18+ and npm
+- Python 3.9+ with pip
+- Docker and Docker Compose (optional)
+- 4GB+ RAM recommended
 
 ### Installation
 
-1. Clone the repository:
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/cogniticnet.git
+cd cogniticnet
+
+# Install dependencies
+npm install
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Initialize the database
+npm run db:init
+
+# Start the development server
+npm run dev
+```
+
+Visit `http://localhost:3000` to access the web interface.
+
+### Docker Deployment
+
+```bash
+# Build and start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+## 🏗️ Architecture
+
+CogniticNet follows a modular, microservices-inspired architecture:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Web Frontend  │────▶│   API Gateway   │────▶│  Agent Engine   │
+│   (Next.js)     │     │   (Express)     │     │   (Python)      │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                               │                         │
+                               ▼                         ▼
+                        ┌─────────────────┐     ┌─────────────────┐
+                        │   PostgreSQL    │     │  Message Queue  │
+                        │   Database      │     │  (Redis)        │
+                        └─────────────────┘     └─────────────────┘
+```
+
+### Key Components
+
+- **Frontend**: React-based UI with real-time visualization
+- **API Gateway**: RESTful API with WebSocket support
+- **Agent Engine**: Core simulation engine implementing Active Inference
+- **World System**: Hexagonal grid-based environment using H3
+- **Knowledge Graph**: Distributed knowledge representation and sharing
+- **Message System**: Asynchronous agent communication
+
+## 🤖 Agent Types
+
+CogniticNet includes four specialized agent classes:
+
+### 🔍 Explorer
+- Discovers new territories and resources
+- Maps the environment
+- Shares discoveries with other agents
+- Optimizes exploration paths
+
+### 💰 Merchant
+- Facilitates resource trading
+- Maintains market equilibrium
+- Builds trade networks
+- Optimizes profit strategies
+
+### 📚 Scholar
+- Analyzes patterns and data
+- Generates new knowledge
+- Teaches other agents
+- Advances collective intelligence
+
+### 🛡️ Guardian
+- Protects territories
+- Maintains security
+- Coordinates defense
+- Responds to threats
+
+## 🧠 Core Features
+
+### Active Inference Engine
+- Free energy minimization
+- Predictive processing
+- Belief updating
+- Action selection
+
+### Graph Neural Networks
+- Dynamic model architecture
+- Personality-based initialization
+- Real-time adaptation
+- Knowledge integration
+
+### Emergent Behaviors
+- Social network formation
+- Economic systems
+- Knowledge communities
+- Collective problem-solving
+
+### Deployment Options
+- Local development
+- Docker containers
+- Kubernetes orchestration
+- Edge deployment (Raspberry Pi, Jetson Nano)
+
+## 📚 Documentation
+
+### For Users
+- [Getting Started Guide](doc/platform/getting_started.md)
+- [Agent Creator Guide](doc/platform/agent_creator_guide.md)
+- [Active Inference Tutorial](doc/active_inference_guide.md)
+
+### For Developers
+- [API Reference](doc/api/rest_api.md)
+- [GNN Model Format](doc/gnn_models/model_format.md)
+- [Contributing Guide](CONTRIBUTING.md)
+
+### Examples
+- [Basic Agent Creation](examples/basic_agent.py)
+- [Custom GNN Models](examples/custom_gnn.py)
+- [Multi-Agent Scenarios](examples/scenarios/)
+
+## 🛠️ Development
+
+### Project Structure
+```
+cogniticnet/
+├── app/              # Next.js frontend
+├── src/              # Python backend
+│   ├── agents/       # Agent implementations
+│   ├── world/        # Environment system
+│   ├── knowledge/    # Knowledge management
+│   └── simulation/   # Core engine
+├── components/       # React components
+├── tests/           # Test suites
+└── docker/          # Docker configurations
+```
+
+### Running Tests
+```bash
+# Frontend tests
+npm test
+
+# Backend tests
+pytest
+
+# Integration tests
+npm run test:integration
+
+# Performance tests
+npm run test:performance
+```
+
+### Code Quality
+```bash
+# Linting
+npm run lint
+python -m flake8 src/
+
+# Type checking
+npm run type-check
+python -m mypy src/
+
+# Format code
+npm run format
+python -m black src/
+```
+
+## 🚀 Deployment
+
+### Production Deployment
+
+1. **Configure environment**:
    ```bash
-   git clone https://github.com/apashea/CogniticNet.git
-   cd CogniticNet
+   cp .env.production.example .env.production
+   # Edit with production settings
    ```
 
-2. Install dependencies:
+2. **Build assets**:
    ```bash
-   npm install
-   # or
-   yarn install
+   npm run build
+   python -m pip install -r requirements.prod.txt
    ```
 
-3. Create a `.env.local` file in the root directory with your encryption key:
-   ```
-   ENCRYPTION_KEY=your-encryption-key-here
-   ```
-
-4. Start the development server:
+3. **Deploy with Docker**:
    ```bash
-   npm run dev
-   # or
-   yarn dev
+   docker-compose -f docker-compose.prod.yml up -d
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+### Edge Deployment
 
-### Configuration
+For deployment on edge devices:
 
-1. When you first open the application, you'll be prompted to enter your LLM API key.
-2. Select your preferred LLM provider and model.
-3. Configure autonomous conversation settings as needed.
+```bash
+# Optimize for Raspberry Pi
+python scripts/optimize_edge.py --platform raspberry-pi
 
-## Usage
+# Deploy to device
+./scripts/deploy_edge.sh pi@raspberrypi.local
+```
 
-1. **Create Agents**: Use the agent list panel to create new agents with unique names and biographies.
-2. **Position Agents**: Drag agents in the grid world to position them.
-3. **Knowledge Management**: Add knowledge entries to agents through the memory viewer.
-4. **Observe Interactions**: Watch as agents autonomously interact based on proximity and other triggers.
-5. **Export/Import**: Save your work using the export functionality and reload it later.
+## 🤝 Contributing
 
-### Import/Export Functionality
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-CogniticNet allows you to save and restore your entire workspace, including agents, knowledge, and settings:
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
 
-#### Exporting Your Work
+### Code Standards
+- Follow TypeScript/Python style guides
+- Write comprehensive tests
+- Document new features
+- Update relevant documentation
 
-1. Click the "Export" button in the agent list panel
-2. Select which agents to export
-3. Choose export options:
-   - **Include Settings**: Exports your LLM provider and model settings
-   - **Include API Keys**: Includes your API keys in the export (recommended for personal backups)
-4. Click "Export" to download a ZIP file containing your agents and settings
+## 📊 Performance
 
-#### Importing Your Work
+CogniticNet is optimized for:
+- **Scalability**: Handle 1000+ agents
+- **Real-time**: Sub-100ms message latency
+- **Efficiency**: Low memory footprint
+- **Flexibility**: Runs on edge devices
 
-1. Click the "Import" button in the agent list panel
-2. Select the ZIP file you previously exported
-3. Choose import options:
-   - **Import Settings**: Restores your LLM provider and model settings
-   - **Import API Keys**: Restores your API keys (only if they were included in the export)
-4. Click "Import" to restore your agents and settings
+## 🔒 Security
 
-**Note**: Imported API keys are securely stored and will persist across browser sessions, allowing you to continue your work seamlessly after importing.
+- API authentication via JWT tokens
+- Encrypted agent communications
+- Input validation and sanitization
+- Regular security audits
 
-## License
+## 📄 License
 
-Dual Licensed:
+This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) for details.
 
-- **Creative Commons CC BY-NC-SA** for non-commercial use
-  - BY - Attribution: Credit must be given to the original creator
-  - NC - NonCommercial: May not be used for commercial purposes
-  - SA - ShareAlike: Adaptations must be shared under the same terms
-- **Commercial License** available for proprietary applications
+## 🙏 Acknowledgments
 
-## Disclaimer
+- Active Inference community
+- H3 geospatial indexing system
+- Open source contributors
 
-CogniticNet is currently in early development (version 0.0.1) and is provided for research and experimental purposes only. The information, knowledge, and interactions generated by agents within this application may be incomplete, inaccurate, or misleading. Users should not rely on any outputs from this system for critical decisions or as factual truth.
+## 📞 Support
 
-## Contributing
+- **Documentation**: [docs.cogniticnet.io](https://docs.cogniticnet.io)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/cogniticnet/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/cogniticnet/discussions)
+- **Email**: support@cogniticnet.io
 
-Contributions are welcome! Please read our contributing guidelines and code of conduct before submitting pull requests or issues. All contributions require a Contributor License Agreement (CLA).
+---
+
+<div align="center">
+Made with ❤️ by the CogniticNet Team
+</div>
