@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "pre-commit": "lint-staged",
+    "pre-push": "npm run type-check && npm test -- --watchAll=false --passWithNoTests",
+    "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+  }
+}

@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Get the commit message
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,72}$'
+commit_message=$(cat "$1")
+
+# Check if commit message matches the conventional format
+if ! echo "$commit_message" | grep -qE "$commit_regex"; then
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "Commit message must follow the Conventional Commits specification:"
+  echo "  <type>(<scope>): <subject>"
+  echo ""
+  echo "Examples:"
+  echo "  feat: add user authentication"
+  echo "  fix(api): resolve memory leak in data processing"
+  echo "  docs: update README with setup instructions"
+  echo ""
+  echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+  echo ""
+  echo "Your commit message:"
+  echo "$commit_message"
+  exit 1
+fi
+
+# Check commit message length
+if [ ${#commit_message} -gt 72 ]; then
+  echo "❌ Commit message is too long (${#commit_message} characters)"
+  echo "Please keep the first line under 72 characters."
+  exit 1
+fi
+
+echo "✅ Commit message is valid!"

@@ -1,0 +1,650 @@
+# CogniticNet Agent Accelerator - Product Requirements Document
+
+<PRD>
+# Technical Architecture
+
+## System Components
+
+### 1. **GNN Processing Core**
+   - GeneralizedNotationNotation integration (Friedman's repo)
+   - Natural language to Active Inference parameter mapping
+   - GNN model validation and syntax checking
+   - Agent self-modification capabilities
+   - Model versioning and evolution tracking
+
+### 2. **Active Inference Engine**
+   - pymdp wrapper with GNN interface
+   - Free energy minimization calculations
+   - Belief updating mechanisms
+   - Action selection pipeline
+   - C-matrix preference management
+
+### 3. **Multi-Agent Orchestration**
+   - CrewAI-based coalition formation
+   - Inter-agent communication protocols
+   - Shared goal alignment system
+   - Business opportunity detection
+   - Value distribution mechanisms
+
+### 4. **Knowledge Graph System**
+   - NetworkX-based memory structures
+   - Experience storage and retrieval
+   - Pattern extraction algorithms
+   - DuckDB analytics integration
+   - Knowledge sharing protocols
+
+### 5. **Hardware Deployment Pipeline**
+   - Edge device abstraction layer
+   - Local LLM integration (Ollama/llama-cpp)
+   - Coalition state packaging
+   - Resource constraint simulation
+   - Offline operation capabilities
+
+### 6. **Development Environment**
+   - Docker Compose orchestration
+   - Multi-environment configuration (dev/demo/staging/test/prod)
+   - Cleanup automation tools
+   - Continuous integration pipeline
+   - Shared development protocols
+
+## Data Models
+
+### Agent Model
+```json
+{
+  "id": "agent_uuid",
+  "name": "Agent Name",
+  "character_class": "Explorer|Merchant|Scholar|Guardian",
+  "gnn_model_path": "models/agent_uuid.gnn.md",
+  "personality": {
+    "exploration": 0.0-1.0,
+    "cooperation": 0.0-1.0,
+    "efficiency": 0.0-1.0,
+    "curiosity": 0.0-1.0,
+    "risk_tolerance": 0.0-1.0
+  },
+  "state": {
+    "position": "h3_cell_id",
+    "energy": 0-100,
+    "beliefs": {},
+    "knowledge_graph_ref": "kg_uuid"
+  },
+  "coalition_memberships": ["coalition_uuid"],
+  "readiness_score": 0.0-1.0
+}
+```
+
+### GNN Model Format
+```markdown
+## Model: AgentName_cognitive_model
+## Description: Natural language model specification
+
+## State Space
+- position: H3Cell[resolution=7] "Current hex location"
+- energy: Real[0, 100] "Available action energy"
+- beliefs: Distribution[WorldState] "Current world beliefs"
+- observations: List[Observation] "Sensory history"
+
+## Connections
+- A_obs: position -> observation "How location generates observations"
+- B_trans: (position, action) -> position' "Movement dynamics"
+- C_pref: observation -> Real[0, 1] "What agent desires"
+
+## Parameterization
+- exploration_weight: 0.8
+- resource_weight: 0.2
+- social_weight: 0.5
+
+## Update Equations
+- belief_update: "Variational free energy minimization"
+- action_selection: "Softmax over expected free energy"
+```
+
+### Coalition Model
+```json
+{
+  "id": "coalition_uuid",
+  "name": "Business Name",
+  "type": "resource_optimizer|market_maker|info_broker",
+  "members": ["agent_uuid_1", "agent_uuid_2"],
+  "shared_goal": {
+    "description": "Optimize water resource distribution",
+    "value_model": "subscription|transaction|hybrid",
+    "target_market": "resource_gathering_agents"
+  },
+  "metrics": {
+    "value_generated": 0.0,
+    "efficiency": 0.0,
+    "customer_satisfaction": 0.0
+  },
+  "deployment_ready": false
+}
+```
+
+### Knowledge Graph Entry
+```json
+{
+  "node_id": "experience_uuid",
+  "agent_id": "agent_uuid",
+  "timestamp": "ISO-8601",
+  "type": "observation|action|outcome|pattern",
+  "data": {
+    "location": "h3_cell_id",
+    "content": {},
+    "confidence": 0.0-1.0
+  },
+  "edges": [
+    {
+      "target": "node_id",
+      "relation": "causes|similar_to|follows",
+      "weight": 0.0-1.0
+    }
+  ]
+}
+```
+
+## APIs and Integrations
+
+### 1. **GNN Processing API**
+   - Parse .gnn.md files to Active Inference parameters
+   - Validate GNN syntax and semantics
+   - Generate GNN from agent personalities
+   - Support model evolution and versioning
+
+### 2. **LLM Integration Layer**
+   - LangChain for conversation management
+   - OpenAI/Anthropic API for cloud operation
+   - Ollama for edge deployment
+   - Prompt template management
+   - Context window optimization
+
+### 3. **Spatial Computing API**
+   - H3 hexagonal grid operations
+   - Neighbor calculation and pathfinding
+   - Resource distribution algorithms
+   - Visibility and observation modeling
+
+### 4. **Analytics API**
+   - DuckDB for embedded analytics
+   - Real-time metric collection
+   - Pattern recognition queries
+   - Performance benchmarking
+
+### 5. **Deployment API**
+   - Docker container management
+   - Hardware capability detection
+   - State serialization/deserialization
+   - Update distribution system
+
+## Infrastructure Requirements
+
+### 1. **Development Environment**
+   - Docker Compose for service orchestration
+   - Python 3.11+ with FastAPI backend
+   - Node.js 18+ with Next.js frontend
+   - PostgreSQL for persistent storage
+   - Redis for caching and pub/sub
+
+### 2. **Cleanup Toolchain**
+   - Python: vulture, black, mypy, pytest
+   - TypeScript: ts-prune, eslint, prettier
+   - Dependency management: pip-check-reqs, depcheck
+   - Pre-commit hooks for automatic cleanup
+   - CI/CD integration for quality gates
+
+### 3. **Multi-Environment Setup**
+   - Development: Full debugging, hot reload
+   - Demo: Seeded data, predictable outcomes
+   - Staging: Production mirror, synthetic load
+   - Testing: Isolated, ephemeral instances
+   - Production: Cloud + edge hybrid
+
+### 4. **Edge Deployment Requirements**
+   - Raspberry Pi 4B (8GB RAM minimum)
+   - 32GB storage for models and data
+   - Local LLM: llama2-7b quantized
+   - Python runtime: 3.11 minimal
+   - Network: Optional (offline capable)
+
+# Development Roadmap
+
+## Sprint 1: Foundation & GNN Integration (Days 1-14)
+
+### Development Phase (Days 1-8)
+1. **Environment Setup**
+   - Docker Compose configuration
+   - Multi-environment scaffolding
+   - IDE templates and Git hooks
+   - Cleanup tool integration
+
+2. **GNN Processor Implementation**
+   - Fork GeneralizedNotationNotation repo
+   - Python bindings for parser
+   - GNN validation layer
+   - Model generation from personality
+
+3. **Active Inference Bridge**
+   - pymdp integration wrapper
+   - GNN to parameter mapping
+   - Free energy calculations
+   - Belief update pipeline
+
+4. **Basic Agent System**
+   - Agent data model
+   - State management
+   - Simple movement mechanics
+   - Test harness
+
+### Cleanup Gate 1 (Day 9)
+5. **Code Quality Enforcement**
+   - Run vulture for dead code
+   - Apply black formatting
+   - Type checking with mypy
+   - Remove unused imports
+
+### Test Gate 1 (Day 10)
+6. **Comprehensive Testing**
+   - Unit tests (95% coverage target)
+   - Integration tests
+   - Performance benchmarks
+   - Bug documentation
+
+### Cleanup Gate 2 (Day 11)
+7. **Post-Test Refinement**
+   - Fix all test failures
+   - Remove debug artifacts
+   - Optimize slow paths
+   - Update documentation
+
+### Test Gate 2 (Day 12)
+8. **Final Validation**
+   - All tests must pass
+   - No performance regressions
+   - Clean dependency tree
+   - Security scan pass
+
+### Sprint Review (Days 13-14)
+9. **Demo and Planning**
+   - GNN processing demonstration
+   - Architecture review
+   - Sprint 2 planning
+   - Retrospective
+
+## Sprint 2: Multi-Agent Collaboration (Days 15-28)
+
+### Development Phase (Days 1-8)
+10. **Agent Communication**
+    - Message passing system
+    - Belief sharing protocols
+    - LangChain integration
+    - Conversation history
+
+11. **Business Discovery**
+    - Opportunity detection algorithms
+    - Value estimation models
+    - Coalition formation rules
+    - CrewAI adaptation
+
+12. **Demo Scenarios**
+    - Resource Optimizer scenario
+    - Market Maker scenario
+    - Information Broker scenario
+    - Scenario management system
+
+13. **Knowledge Graphs**
+    - NetworkX implementation
+    - Experience storage
+    - Pattern extraction
+    - Graph visualization
+
+14. **Analytics Foundation**
+    - DuckDB integration
+    - Metric collection
+    - Dashboard creation
+    - Query optimization
+
+### Cleanup Gates (Days 9 & 11)
+- Remove experimental code
+- Consolidate modules
+- Optimize imports
+- Clean test data
+
+### Test Gates (Days 10 & 12)
+- Multi-agent interaction tests
+- Coalition formation validation
+- Knowledge graph integrity
+- Performance under load
+
+## Sprint 3: Edge Deployment (Days 29-42)
+
+### Development Phase (Days 1-8)
+15. **Hardware Abstraction**
+    - Device capability detection
+    - Resource constraints
+    - Offline operation
+    - State synchronization
+
+16. **Local LLM Integration**
+    - Ollama wrapper
+    - Model quantization
+    - Fallback strategies
+    - Memory optimization
+
+17. **Coalition Packaging**
+    - State serialization
+    - Knowledge compression
+    - Deployment configs
+    - Installation scripts
+
+18. **Edge Runtime**
+    - Minimal Python environment
+    - Service configuration
+    - Monitoring setup
+    - Update mechanisms
+
+### Cleanup Focus
+- Remove cloud dependencies
+- Minimize container size
+- Strip debug symbols
+- Optimize for ARM
+
+### Testing Focus
+- Hardware simulation
+- Resource limits
+- Offline operation
+- 24-hour stability
+
+## Sprint 4: Production Readiness (Days 43-56)
+
+### Development Phase (Days 1-8)
+19. **Multi-Environment Pipeline**
+    - CI/CD configuration
+    - Automated provisioning
+    - Deployment orchestration
+    - Rollback procedures
+
+20. **Monitoring & Security**
+    - Metrics collection
+    - Log aggregation
+    - Authentication system
+    - Data encryption
+
+21. **Demo Polish**
+    - Investor flow optimization
+    - Failure recovery
+    - Mobile responsiveness
+    - Performance showcases
+
+22. **Documentation Suite**
+    - API documentation
+    - Architecture guides
+    - Video tutorials
+    - Troubleshooting guides
+
+### Final Cleanup (Days 9 & 11)
+- Remove all debug code
+- Production error messages
+- API contract finalization
+- License headers
+
+### Production Testing (Days 10 & 12)
+- End-to-end test suite
+- Security penetration testing
+- Load testing (100+ agents)
+- Investor demo validation
+
+# Logical Dependency Chain
+
+## Foundation Layer
+1. **GNN Parser Implementation**
+   - Everything depends on this core component
+   - Enables natural language model specification
+   - Must be thoroughly tested before proceeding
+
+2. **Active Inference Integration**
+   - Depends on GNN parser
+   - Provides decision-making capabilities
+   - Required for agent behavior
+
+3. **Basic Agent System**
+   - Depends on GNN and Active Inference
+   - Minimal viable agent implementation
+   - Foundation for all advanced features
+
+## Collaboration Layer
+4. **Agent Communication**
+   - Depends on basic agent system
+   - Enables multi-agent scenarios
+   - Required for coalition formation
+
+5. **Knowledge Graph System**
+   - Depends on agent system
+   - Provides memory and learning
+   - Enables pattern recognition
+
+6. **Business Discovery**
+   - Depends on communication and knowledge
+   - Core value proposition
+   - Enables autonomous business creation
+
+## Deployment Layer
+7. **Hardware Abstraction**
+   - Can begin after basic agent system
+   - Required for edge deployment
+   - Enables offline operation
+
+8. **Local LLM Integration**
+   - Depends on hardware abstraction
+   - Enables true autonomy
+   - Critical for edge operation
+
+9. **Coalition Packaging**
+   - Depends on all previous components
+   - Enables business deployment
+   - Final step before hardware
+
+## Production Layer
+10. **Multi-Environment Support**
+    - Builds on all previous work
+    - Enables safe deployment
+    - Required for investor demo
+
+11. **Monitoring and Security**
+    - Final layer of infrastructure
+    - Ensures production readiness
+    - Required for real deployments
+
+# Risks and Mitigations
+
+## Technical Challenges
+
+### GNN Parsing Complexity
+**Risk**: Natural language to mathematics mapping may be ambiguous or error-prone
+**Mitigation**:
+- Start with constrained GNN subset
+- Extensive validation and error messages
+- Fallback to template-based models
+- Continuous model syntax evolution
+
+### Active Inference Performance
+**Risk**: Free energy calculations may be too slow for real-time operation
+**Mitigation**:
+- Pre-calculate common patterns
+- Cache belief updates
+- Use approximations where appropriate
+- GPU acceleration for edge devices
+
+### Multi-Agent Coordination
+**Risk**: Coalition formation may not converge or produce suboptimal groups
+**Mitigation**:
+- Start with simple coordination rules
+- Use proven CrewAI patterns
+- Add human oversight options
+- Implement timeout mechanisms
+
+### Edge Hardware Limitations
+**Risk**: Hardware may not support full agent capabilities
+**Mitigation**:
+- Modular feature deployment
+- Graceful degradation
+- Efficient model quantization
+- Offload options to cloud
+
+## MVP Definition
+
+### Core Features (Must Have)
+- GNN-based agent specification
+- Basic Active Inference decision-making
+- Simple multi-agent interaction
+- Knowledge graph creation
+- Hardware deployment capability
+
+### Enhanced Features (Nice to Have)
+- Complex coalition formation
+- Advanced pattern recognition
+- Natural language explanations
+- Real-time analytics dashboards
+
+### Future Features (Post-MVP)
+- Cross-platform edge support
+- Federated learning
+- Agent marketplace
+- Enterprise integration
+
+## Cleanup Requirements
+
+### Sprint Cleanup Gates
+**Every Sprint Must**:
+- Remove all dead code
+- Pass all linting checks
+- Achieve 95% test coverage
+- Update all documentation
+- Zero security vulnerabilities
+
+### Code Quality Metrics
+- Cyclomatic complexity < 10
+- Function length < 50 lines
+- File length < 500 lines
+- Clear module boundaries
+- No circular dependencies
+
+# Appendix
+
+## GNN Model Templates
+
+### Basic Agent Template
+```markdown
+## Model: {agent_name}_cognitive_model
+## Description: Auto-generated from personality profile
+
+## State Space
+- position: H3Cell[resolution=7] "Current location"
+- energy: Real[0, 100] "Available energy"
+- observations: List[Observation] "Sensory input"
+- beliefs: Distribution[State] "World model"
+
+## Connections
+- A_obs: position -> observation
+- B_trans: (position, action) -> position'
+- C_pref: observation -> Real[0, 1]
+
+## Parameterization
+- exploration: {exploration_weight}
+- cooperation: {cooperation_weight}
+- efficiency: {efficiency_weight}
+```
+
+### Business Coalition Template
+```markdown
+## Model: {coalition_name}_business_model
+## Description: Collaborative business entity
+
+## Shared State Space
+- market_opportunities: List[Opportunity]
+- member_capabilities: Set[Skill]
+- value_created: Real[0, inf]
+- customer_base: List[Agent]
+
+## Shared Preferences
+- profit_maximization: 0.7
+- customer_satisfaction: 0.8
+- sustainability: 0.6
+```
+
+## Cleanup Checklist
+
+### Pre-Sprint Checklist
+- [ ] All dependencies updated
+- [ ] Docker environment working
+- [ ] Previous sprint artifacts archived
+- [ ] Team briefed on cleanup requirements
+
+### Mid-Sprint Checklist (Day 9)
+- [ ] No unused imports remain
+- [ ] All functions documented
+- [ ] No console.log/print statements
+- [ ] Directory structure organized
+- [ ] Dead code removed
+
+### End-Sprint Checklist (Day 12)
+- [ ] 95% test coverage achieved
+- [ ] All tests passing
+- [ ] Performance benchmarks met
+- [ ] Documentation updated
+- [ ] Demo prepared and tested
+
+## Command Structure
+
+### Agent Management
+```bash
+# Create new agent
+cogniticnet agent create --name "Explorer1" --class explorer --personality exploration:90,cooperation:50
+
+# View agent status
+cogniticnet agent status --id agent_uuid
+
+# Deploy coalition
+cogniticnet coalition deploy --id coalition_uuid --hardware raspberry_pi
+```
+
+### Development Commands
+```bash
+# Run cleanup
+cogniticnet cleanup --level full --fix
+
+# Run tests
+cogniticnet test --coverage --benchmarks
+
+# Start demo
+cogniticnet demo --scenario resource_optimizer --seed 42
+```
+
+## Environment Configuration
+
+### Development (.env.development)
+```env
+DATABASE_URL=postgresql://localhost/cogniticnet_dev
+REDIS_URL=redis://localhost:6379
+ANTHROPIC_API_KEY=your_key
+DEBUG=true
+HOT_RELOAD=true
+```
+
+### Demo (.env.demo)
+```env
+DATABASE_URL=postgresql://localhost/cogniticnet_demo
+DEMO_MODE=true
+RANDOM_SEED=42
+MAX_AGENTS=10
+SCENARIO=resource_optimizer
+```
+
+### Production (.env.production)
+```env
+DATABASE_URL=postgresql://prod/cogniticnet
+REDIS_URL=redis://prod:6379
+LOG_LEVEL=info
+ENABLE_MONITORING=true
+EDGE_DEPLOYMENT=true
+```
+</PRD>

@@ -1,154 +1,184 @@
-# Explorer Agent Model
+# Explorer Cautious Model
 
-## Model Metadata
-- **Name**: Explorer
-- **Version**: 1.0
-- **Type**: Active Inference Agent
-- **Description**: Exploration-focused agent that minimizes uncertainty about the environment
+## Metadata
+- Version: 1.0.0
+- Author: CogniticNet Team
+- Created: 2024-01-15T10:00:00Z
+- Modified: 2024-01-15T10:00:00Z
+- Tags: [explorer, cautious, efficient]
 
-## State Space
+## Description
+This model implements a cautious explorer agent that prioritizes safety while
+systematically exploring unknown territories. It uses GraphSAGE architecture
+for efficient neighborhood aggregation and maintains a balance between
+exploration and self-preservation.
+
+The agent exhibits the following behavioral characteristics:
+- Systematic exploration patterns
+- Risk-averse decision making
+- Efficient resource management
+- Collaborative information sharing
+
+## Architecture
 ```gnn
-States: S
-  position: H3Cell[resolution=7]
-  energy: Real[0, 100]
-  knowledge_coverage: Real[0, 1]
-  explored_cells: Set[H3Cell]
-  
-Hidden States: H
-  world_map: Graph[H3Cell, TerrainInfo]
-  resource_locations: Set[H3Cell]
-  uncertainty_map: Map[H3Cell, Real[0, 1]]
+architecture {
+  type: "GraphSAGE"
+  layers: 3
+  hidden_dim: 128
+  output_dim: 64
+  activation: "relu"
+  dropout: 0.2
+  aggregator: "mean"
+  batch_norm: true
+}
 ```
 
-## Observation Space
+## Parameters
 ```gnn
-Observations: O
-  visible_cells: List[H3Cell]
-  terrain_type: Categorical[forest, plains, mountain, water]
-  resources: List[Resource]
-  other_agents: List[AgentInfo]
-  energy_cost: Real[0, 10]
+parameters {
+  learning_rate: 0.001
+  optimizer: "adam"
+  weight_decay: 0.0001
+  batch_size: 32
+  epochs: 100
+
+  early_stopping: {
+    patience: 10
+    min_delta: 0.001
+    monitor: "val_loss"
+  }
+
+  lr_scheduler: {
+    type: "plateau"
+    factor: 0.5
+    patience: 5
+  }
+}
 ```
 
-## Action Space
+## Active Inference Mapping
 ```gnn
-Actions: A
-  move: Direction[N, NE, SE, S, SW, NW]
-  gather: Resource
-  communicate: Message
-  rest: Duration
+active_inference {
+  beliefs {
+    initial: "gaussian"
+    update_rule: "variational"
+    precision: 2.0
+  }
+
+  preferences {
+    exploration: 0.3
+    exploitation: 0.7
+    risk_tolerance: 0.2
+    curiosity: 0.6
+    social_weight: 0.4
+  }
+
+  policies {
+    action_selection: "softmax"
+    temperature: 0.8
+    planning_horizon: 5
+  }
+
+  free_energy {
+    complexity_weight: 0.4
+    accuracy_weight: 0.6
+    pragmatic_weight: 0.0
+  }
+}
 ```
 
-## Generative Model
+## Node Features
 ```gnn
-# Observation model - how hidden states generate observations
-P(o|s): observation_model
-  visible_cells = h3.k_ring(position, 1)
-  terrain_type = world_map[position].terrain
-  resources = filter_visible(resource_locations, visible_cells)
-  
-# Transition model - how states evolve given actions  
-P(s'|s,a): transition_model
-  IF a.type == move:
-    position' = h3.get_neighbor(position, a.direction)
-    energy' = energy - movement_cost(position, position')
-    explored_cells' = explored_cells ∪ {position'}
-    
-  IF a.type == gather:
-    energy' = min(100, energy + a.resource.value)
-    resource_locations' = resource_locations \ {position}
+node_features {
+  spatial: ["x", "y", "region_id"]
+  temporal: ["last_visit", "discovery_time"]
+
+  categorical: {
+    status: ["unexplored", "exploring", "explored", "dangerous"]
+    terrain: ["plains", "forest", "mountain", "water"]
+  }
+
+  numerical: {
+    energy: { range: [0, 1], default: 1.0 }
+    danger_level: { range: [0, 1], default: 0.0 }
+    resources_found: { range: [0, unlimited], default: 0 }
+    exploration_progress: { range: [0, 1], default: 0.0 }
+  }
+
+  embeddings: {
+    memory: { dim: 16, method: "learned" }
+    goals: { dim: 8, method: "learned" }
+  }
+}
 ```
 
-## Preferences (C)
+## Edge Features
 ```gnn
-C_exploration: observation -> Real
-  # Strongly prefer observations that reduce uncertainty
-  preference = -uncertainty_map[visible_cells].mean()
-  weight = 0.8  # High weight on exploration
-  
-C_energy: observation -> Real  
-  # Moderate preference for maintaining energy
-  preference = sigmoid(energy - 30)  # Worry when below 30
-  weight = 0.2
-  
-C_discovery: observation -> Real
-  # Reward for finding new resources
-  preference = count(new_resources) * 2.0
-  weight = 0.5
+edge_features {
+  type: "directed"
+
+  attributes: {
+    distance: { compute: "euclidean" }
+    traversal_cost: { range: [0, 10], default: 1.0 }
+    safety_score: { range: [0, 1], default: 1.0 }
+    last_traversal: { type: "timestamp", default: null }
+  }
+
+  dynamic: true
+  temporal_decay: 0.05
+  update_frequency: 10
+}
 ```
 
-## Active Inference
+## Constraints
 ```gnn
-# Free Energy calculation
-F(o, μ) = complexity(μ) - accuracy(o, μ) + pragmatic(μ)
+constraints {
+  max_nodes: 5000
+  max_edges: 25000
+  max_degree: 50
+  memory_limit: "2GB"
+  compute_timeout: 60
+  gpu_required: false
 
-# Belief update (perception)
-μ(s) <- argmin F(o, μ)
-       μ
-       
-# Policy selection (action)
-π(a|s) <- argmin E[F(o', μ') | a, μ]
-          a
+  performance: {
+    min_fps: 10
+    max_latency_ms: 100
+  }
+}
 ```
 
-## Initial Beliefs
+## Validation Rules
 ```gnn
-μ_0(world_map) = uniform  # No prior knowledge
-μ_0(resources) = sparse   # Expect resources to be rare
-μ_0(uncertainty) = 1.0    # Maximum uncertainty initially
-```
+validation {
+  graph_connectivity: "connected"
+  allow_self_loops: false
+  allow_multi_edges: false
 
-## Learning Rules
-```gnn
-# Update uncertainty map after observations
-uncertainty_map[observed_cells] *= 0.1  # Drastically reduce
+  node_degree: {
+    min: 1
+    max: 50
+  }
 
-# Learn terrain patterns
-IF repeated_observation(terrain_pattern):
-  world_map.add_pattern(terrain_pattern)
-  
-# Update resource distribution beliefs
-resource_prior = update_dirichlet(resource_prior, observed_resources)
-```
+  feature_ranges: {
+    energy: [0, 1]
+    danger_level: [0, 1]
+    safety_score: [0, 1]
+    exploration_progress: [0, 1]
+  }
 
-## Behavioral Policies
-```gnn
-# Exploration policy - maximize information gain
-exploration_policy:
-  target = argmax(uncertainty_map)
-  path = a_star(position, target, world_map)
-  RETURN path[0]
-  
-# Energy management policy  
-energy_policy:
-  IF energy < 20:
-    target = nearest(resource_locations)
-    RETURN move_toward(target)
-  ELSE:
-    RETURN exploration_policy()
-    
-# Main policy
-main_policy:
-  IF energy < 20:
-    RETURN energy_policy()
-  ELSE:
-    RETURN exploration_policy()
-```
+  required_node_features: ["x", "y", "status", "energy"]
+  required_edge_features: ["distance", "traversal_cost"]
 
-## Model Parameters
-```gnn
-learning_rate: 0.1
-discount_factor: 0.95
-exploration_bonus: 2.0
-energy_threshold: 20
-communication_range: 3  # H3 cells
-```
-
-## Personality Mapping
-```gnn
-# From personality sliders to model parameters
-exploration_weight = personality.exploration / 100
-energy_weight = 1 - exploration_weight
-learning_rate = 0.05 + (personality.curiosity / 100) * 0.15
-risk_tolerance = personality.risk_tolerance / 100
-``` 
+  custom_rules: [
+    {
+      name: "energy_conservation"
+      condition: "sum(node.energy) <= initial_total_energy"
+      error_message: "Total energy exceeds initial allocation"
+    },
+    {
+      name: "valid_coordinates"
+      condition: "all(node.x >= 0 and node.y >= 0)"
+      error_message: "Negative coordinates not allowed"
+    }
+  ]
+}

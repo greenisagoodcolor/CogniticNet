@@ -1,0 +1,89 @@
+# Core Python Dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Database
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+sqlalchemy==2.0.23
+alembic==1.13.0
+
+# Redis
+redis==5.0.1
+aioredis==2.0.1
+
+# Active Inference & Scientific Computing
+numpy==1.26.2
+scipy==1.11.4
+networkx==3.2.1
+pymdp==0.0.7
+
+# Machine Learning
+torch==2.1.2
+scikit-learn==1.3.2
+pandas==2.1.4
+
+# Graph Neural Networks
+torch-geometric==2.4.0
+dgl==1.1.3
+
+# LLM Integration
+langchain==0.0.350
+langchain-community==0.0.10
+openai==1.6.1
+anthropic==0.8.1
+ollama==0.1.7
+
+# Spatial Computing
+h3==3.7.6
+geopandas==0.14.1
+shapely==2.0.2
+
+# Analytics
+duckdb==0.9.2
+pyarrow==14.0.1
+
+# Web & API
+httpx==0.25.2
+websockets==12.0
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Utilities
+python-dotenv==1.0.0
+click==8.1.7
+rich==13.7.0
+tqdm==4.66.1
+pyyaml==6.0.1
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+black==23.12.0
+flake8==6.1.0
+mypy==1.7.1
+pre-commit==3.6.0
+
+# Monitoring & Logging
+prometheus-client==0.19.0
+structlog==23.2.0
+python-json-logger==2.0.7
+
+# Demo & Development
+faker==22.0.0
+colorlog==6.7.0
+psutil==5.9.8
+matplotlib==3.8.2
+seaborn==0.13.0
+
+# Scheduling
+apscheduler==3.10.4
+
+# Documentation
+mkdocs==1.5.3
+mkdocs-material==9.5.2
+mkdocstrings[python]==0.24.0 
