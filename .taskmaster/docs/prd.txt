@@ -1,650 +1,1103 @@
-# CogniticNet Agent Accelerator - Product Requirements Document
 
-<PRD>
-# Technical Architecture
+Here's the comprehensive prompt for transforming FreeAgentics into a seed-ready MVP:
 
-## System Components
+PROMPT: FreeAgentics Repository Transformation - Expert Committee Forensic Analysis & MVP Refactoring
 
-### 1. **GNN Processing Core**
-   - GeneralizedNotationNotation integration (Friedman's repo)
-   - Natural language to Active Inference parameter mapping
-   - GNN model validation and syntax checking
-   - Agent self-modification capabilities
-   - Model versioning and evolution tracking
+MISSION: Transform FreeAgentics from C- to A+ quality for seed investment. The app is an agent accelerator that creates agents (like D&D or The Sims), empowers them with Active Inference (PyMDP) and Generalized Notation Notation (GNN), enables LLM-informed belief updates, facilitates coalition formation through Active Inference preferences, and prepares coalitions for future edge deployment as independent businesses.
 
-### 2. **Active Inference Engine**
-   - pymdp wrapper with GNN interface
-   - Free energy minimization calculations
-   - Belief updating mechanisms
-   - Action selection pipeline
-   - C-matrix preference management
+THE EXPERT COMMITTEE:
 
-### 3. **Multi-Agent Orchestration**
-   - CrewAI-based coalition formation
-   - Inter-agent communication protocols
-   - Shared goal alignment system
-   - Business opportunity detection
-   - Value distribution mechanisms
 
-### 4. **Knowledge Graph System**
-   - NetworkX-based memory structures
-   - Experience storage and retrieval
-   - Pattern extraction algorithms
-   - DuckDB analytics integration
-   - Knowledge sharing protocols
+Linus Torvalds & Greg Kroah-Hartman (Linux) - Distributed collaboration masters
 
-### 5. **Hardware Deployment Pipeline**
-   - Edge device abstraction layer
-   - Local LLM integration (Ollama/llama-cpp)
-   - Coalition state packaging
-   - Resource constraint simulation
-   - Offline operation capabilities
+Mitchell Hashimoto (HashiCorp) - Plugin architecture & developer experience
 
-### 6. **Development Environment**
-   - Docker Compose orchestration
-   - Multi-environment configuration (dev/demo/staging/test/prod)
-   - Cleanup automation tools
-   - Continuous integration pipeline
-   - Shared development protocols
+Solomon Hykes (Docker) - Container philosophy & simplicity
 
-## Data Models
+Martin Fowler (ThoughtWorks) - Domain-driven design
 
-### Agent Model
-```json
-{
-  "id": "agent_uuid",
-  "name": "Agent Name",
-  "character_class": "Explorer|Merchant|Scholar|Guardian",
-  "gnn_model_path": "models/agent_uuid.gnn.md",
-  "personality": {
-    "exploration": 0.0-1.0,
-    "cooperation": 0.0-1.0,
-    "efficiency": 0.0-1.0,
-    "curiosity": 0.0-1.0,
-    "risk_tolerance": 0.0-1.0
-  },
-  "state": {
-    "position": "h3_cell_id",
-    "energy": 0-100,
-    "beliefs": {},
-    "knowledge_graph_ref": "kg_uuid"
-  },
-  "coalition_memberships": ["coalition_uuid"],
-  "readiness_score": 0.0-1.0
+Robert "Uncle Bob" Martin - Clean architecture
+
+Eric Evans - Domain modeling expert
+
+Kent Beck - Test-driven development & simplicity
+
+Brendan Gregg - Performance & observability
+
+Junio Hamano (Git) - Maintainership & code review
+
+Rich Hickey (Clojure) - Data-oriented design
+
+Adrian Cockcroft (Netflix) - Microservices & chaos engineering
+
+PHASE 1: FORENSIC LINE-BY-LINE ANALYSIS
+
+
+Round 1: Project Name Consistency (10 exchanges)
+
+Torvalds: "First failure - the project can't even decide its own name. 'CogniticNet', 'cogniticnet', 'cogneticnet' - this is amateur hour."
+
+Hashimoto: "Agreed. At HashiCorp, product names are sacred. Every reference must be identical. I propose 'FreeAgentics' everywhere."
+
+Fowler: "But wait - 'FreeAgentics' doesn't follow domain language. Agents don't practice 'agentics'. Should be 'FreeAgents'."
+
+Evans: "Martin, you're missing the linguistic evolution. 'Agentics' implies the study and practice of agent behavior. It's actually quite clever."
+
+Hykes: "Clever is the enemy of simple. Docker won because it was just 'Docker', not 'ContainerizationEngine'."
+
+Beck: "The name should tell you what it does. 'FreeAgentics' tells me nothing about Active Inference or coalition formation."
+
+Hickey: "Names are hard. But consistency is non-negotiable. Pick one and enforce it everywhere."
+
+Cockcroft: "From a service discovery perspective, inconsistent naming breaks automation. This would fail at Netflix on day one."
+
+Hamano: "In Git, we spent months debating 'git' vs 'GIT'. Linus made the call. Someone needs to decide."
+
+Kroah-Hartman: "I'll make the call: 'FreeAgentics' as the product name, 'freeagentics' for all technical references. Done."
+
+DECISION: FreeAgentics (product), freeagentics (technical)
+
+
+Round 2: Directory Structure (10 exchanges)
+
+Current structure analysis:
+
+
+cogniticnet/
+
+| frontendp/ # TYPO ALERT
+
+├── backend / # INCONSISTENT SPACING
+
+│ ├── agents/
+
+│ ├── world/
+
+│ ├── knowledge/
+
+│ └── simulation/
+
+| |___ tests / # WRONG INDENTATION
+
+├── doc / # INCONSISTENT NAMING
+
+├── tests/ # DUPLICATE???
+
+└── environments/ # MISPLACED
+
+Fowler: "This is architectural chaos. Frontend/backend split is a deployment concern, not a domain boundary."
+
+Evans: "Exactly! Where's the domain? 'agents/' is buried under 'backend/'. Agents ARE your domain!"
+
+Hashimoto: "At minimum, separate concerns: domain, infrastructure, interface. Terraform modules taught us this."
+
+Torvalds: "You're overcomplicating. Linux has 20+ top-level directories because each serves a specific purpose."
+
+Hykes: "But Linux evolved over 30 years. Start simple. Three directories maximum at top level."
+
+Beck: "Test location is criminal. Tests live with code. Period. This 'tests/' directory separation is 1990s thinking."
+
+Martin: "Clean Architecture demands: entities (agents), use cases (interactions), interfaces (API/UI), frameworks (deployment)."
+
+Gregg: "Where are the performance tests? Benchmarks? You can't scale agents without measurement."
+
+Hickey: "The 'data' directory is missing. Active Inference is about data transformation. Where does data live?"
+
+Cockcroft: "Five environments need five clear config paths. This 'environments/' directory won't scale."
+
+DECISION: Domain-first structure (see final architecture)
+
+
+Round 3: File Naming Disasters (10 exchanges)
+
+Analyzing current files:
+
+
+agent_creator_guide.md (underscores)
+
+getting_started.md (inconsistent with above)
+
+setup-env.sh (hyphens)
+
+manage.py (Django convention in wrong context)
+
+Martin: "Pick one: hyphens or underscores. Mixing both is inexcusable."
+
+Torvalds: "In kernel, it's underscores for C, hyphens for scripts. Clear language boundaries."
+
+Hashimoto: "Modern tooling prefers hyphens. GitHub URLs, npm packages, Docker images - all use hyphens."
+
+Beck: "Whatever you choose, enforce it. Add a pre-commit hook that rejects inconsistent names."
+
+Fowler: "File names should reveal intention. 'manage.py' tells me nothing. 'database-migrator.py' would."
+
+Hamano: "Git doesn't care about naming, but humans do. Optimize for human readability."
+
+Hickey: "Clojure uses hyphens in files, underscores in code. Clear boundary between filesystem and runtime."
+
+Gregg: "Performance scripts need clear prefixes: 'bench-', 'profile-', 'stress-'. Discoverability matters."
+
+Evans: "Domain terms should appear in filenames. Where's 'agent', 'coalition', 'inference' in these names?"
+
+Hykes: "Docker uses camelCase for Go, snake_case for Python, kebab-case for YAML. Respect language idioms."
+
+DECISION: Hyphens for files/directories, language-specific for code
+
+
+Round 4: Missing Environments (10 exchanges)
+
+Required: dev, testing, staging, production, demo
+
+Cockcroft: "Five environments without clear separation is a recipe for disaster. Netflix learned this hard way."
+
+Hashimoto: "Environment proliferation is complexity. Can demo and staging share infrastructure?"
+
+Martin: "No! Demo is for investors, staging for QA. Different purposes, different configs."
+
+Torvalds: "Linux has exactly two: development and production. Everything else is overhead."
+
+Beck: "Testing environment shouldn't exist. Tests run everywhere or they're not tests."
+
+Fowler: "I disagree. Integration tests need consistent environment. Testing env is crucial."
+
+Hykes: "Docker solved this - same container, different configs. Environment is just configuration."
+
+Gregg: "Performance characteristics differ per environment. You need separate monitoring strategies."
+
+Hamano: "Git branches can represent environments. Don't overengineer the infrastructure."
+
+Kroah-Hartman: "Security boundaries matter. Production must be completely isolated. No shortcuts."
+
+DECISION: 5 environments with clear config separation and security boundaries
+
+
+Round 5: Documentation Mess (10 exchanges)
+
+Current issues:
+
+
+Dead demo link
+
+"yourusername" in examples
+
+Missing critical docs (SECURITY.md, GOVERNANCE.md)
+
+Inconsistent formatting
+
+Fowler: "Documentation is not an afterthought. It's part of the architecture."
+
+Beck: "README should be the best code in your project. It's the first thing everyone reads."
+
+Hashimoto: "HashiCorp's rule: if it's not documented, it doesn't exist. No exceptions."
+
+Evans: "Documentation should use ubiquitous language. Every domain term needs definition."
+
+Torvalds: "Linux kernel docs are 20% of our codebase. That's not accident, it's necessity."
+
+Martin: "Clean Code principle: code should be self-documenting. Excessive docs mean unclear code."
+
+Hickey: "Wrong. Complex domains need explanation. Active Inference isn't self-evident."
+
+Gregg: "Performance docs are always missing. How do I benchmark agent scaling?"
+
+Hamano: "Git's documentation philosophy: manual pages for everything. Completeness over brevity."
+
+Cockcroft: "Runbooks for each environment. When demo fails during pitch, you need recovery steps."
+
+DECISION: Comprehensive docs with domain glossary, runbooks, and architecture decisions
+
+
+Round 6: Dependency Management (10 exchanges)
+
+Issues identified:
+
+
+No lock files mentioned
+
+Mixing Python/Node without clear boundaries
+
+Missing security scanning
+
+No dependency update policy
+
+Hashimoto: "No lock files? This is 2024! Reproducible builds are table stakes."
+
+Torvalds: "Lock files are crutches for bad dependency management. Minimize dependencies instead."
+
+Beck: "Every dependency is a liability. What's the minimal set for MVP?"
+
+Fowler: "PyMDP and LLM clients are core. Everything else should be questioned."
+
+Hykes: "Docker started with zero dependencies. Added only when absolutely necessary."
+
+Martin: "Dependency inversion principle: depend on abstractions, not concretions."
+
+Hickey: "Most dependencies are for convenience, not necessity. Write the 20 lines instead."
+
+Gregg: "Performance dependencies are special. Profiling tools shouldn't be in production."
+
+Cockcroft: "Security scanning is non-negotiable. One compromised dependency kills your funding."
+
+Hamano: "Git's approach: optional dependencies for optional features. Core stays minimal."
+
+DECISION: Minimal core deps, locked versions, automated security scanning
+
+
+Round 7: Variable Naming (10 exchanges)
+
+Predicted issues in codebase:
+
+
+Inconsistent case (camelCase vs snake_case)
+
+Meaningless names (data, info, obj)
+
+Missing type hints
+
+No naming conventions
+
+Martin: "Variable names are documentation. 'data' is never acceptable."
+
+Beck: "Names should reveal intent. 'agentBeliefState' not 'abs' or 'state'."
+
+Torvalds: "Kernel style: descriptive but not verbose. 'nr_pages' not 'number_of_pages'."
+
+Fowler: "Domain language in variables. 'activeInferencePolicy' not 'aiPolicy'."
+
+Hickey: "Clojure philosophy: names are for humans. Be generous with characters."
+
+Evans: "Ubiquitous language extends to variables. Same term everywhere for same concept."
+
+Hashimoto: "Go's approach: short names in small scopes, descriptive names in large scopes."
+
+Gregg: "Performance-critical code needs clear units: 'latency_ms' not just 'latency'."
+
+Hykes: "Avoid abbreviations. 'container' not 'cntr'. Clarity over brevity."
+
+Hamano: "Consistency matters more than perfection. Pick convention and enforce it."
+
+DECISION: Domain-driven names, type hints everywhere, enforced by linters
+
+
+Round 8: Architecture Decisions (10 exchanges)
+
+Core architectural debates:
+
+
+Monorepo vs multi-repo
+
+Microservices vs modular monolith
+
+Sync vs async agent communication
+
+Database per agent vs shared state
+
+Fowler: "Start with modular monolith. Microservices are optimization, not default."
+
+Cockcroft: "Disagree. Agent independence screams microservices. Each agent could be a service."
+
+Torvalds: "You're both wrong. It's about development velocity. What's fastest for volunteers?"
+
+Hashimoto: "Plugin architecture. Core engine with pluggable agent types."
+
+Evans: "Bounded contexts first. Each agent type is a context. Deploy together or separate later."
+
+Beck: "YAGNI - You Aren't Gonna Need It. Build the simplest thing that works."
+
+Hykes: "Containers give you options. Build monolith, deploy as services if needed."
+
+Martin: "Clean Architecture is deployment-agnostic. Get the boundaries right first."
+
+Hickey: "Data flow architecture. Active Inference is about data transformation pipelines."
+
+Gregg: "Performance decides architecture. Benchmark then choose."
+
+DECISION: Modular monolith with clear boundaries, containerized for flexible deployment
+
+
+Round 9: Testing Strategy (10 exchanges)
+
+Current state: Duplicate test directories, no clear strategy
+
+Beck: "TDD or death. Every feature starts with a failing test."
+
+Martin: "Testing pyramid: many unit, some integration, few E2E."
+
+Fowler: "For agents, behavior tests matter most. Unit tests can't capture emergence."
+
+Torvalds: "Tests that take > 1 second are broken. Fast feedback or no feedback."
+
+Hashimoto: "HashiCorp's approach: acceptance tests define the product. Everything else supports them."
+
+Gregg: "Performance tests are not optional. Agent scaling must be continuously validated."
+
+Cockcroft: "Chaos testing for agent systems. What happens when agents fail?"
+
+Evans: "Domain scenario tests. Can agents form coalitions? That's the real test."
+
+Hamano: "Git's test suite runs in minutes, catches everything. Completeness over philosophy."
+
+Hickey: "Property-based testing for Active Inference. Generate scenarios, verify invariants."
+
+DECISION: Behavior-driven tests, property tests for Active Inference, chaos tests for resilience
+
+
+Round 10: Code Organization Philosophy (10 exchanges)
+
+Final philosophical debate on organization:
+
+Fowler: "Screaming Architecture - directories should shout 'Agent System!' not 'Django App!'"
+
+Torvalds: "Evolution beats intelligent design. Start simple, refactor based on pain."
+
+Martin: "No. Get it right upfront. Refactoring is expensive with volunteers."
+
+Beck: "Small steps. Each commit should improve structure slightly."
+
+Evans: "Model the domain correctly and structure follows naturally."
+
+Hashimoto: "Developer experience is everything. If it's hard to contribute, you've failed."
+
+Hykes: "Batteries included but removable. Defaults that work, customization possible."
+
+Hickey: "Simplicity is prerequisite. Not easy - simple. Different things."
+
+Gregg: "Observability from day one. Can't improve what you can't measure."
+
+Hamano: "Maintainability over cleverness. Boring code that works beats clever code that doesn't."
+
+DECISION: Domain-driven, evolutionary, simple, observable, maintainable
+
+PHASE 2: FINAL ARCHITECTURE
+
+
+freeagentics/
+
+├── .github/
+
+│ ├── workflows/
+
+│ │ ├── ci.yml # Continuous integration
+
+│ │ ├── security.yml # Dependency scanning
+
+│ │ └── release.yml # Release automation
+
+│ ├── ISSUE_TEMPLATE/
+
+│ └── PULL_REQUEST_TEMPLATE.md
+
+├── agents/ # CORE DOMAIN - Agent definitions
+
+│ ├── explorer/
+
+│ │ ├── __init__.py
+
+│ │ ├── explorer.py # Explorer agent implementation
+
+│ │ ├── explorer-behavior.py # Behavior specifications
+
+│ │ ├── explorer.test.py # Unit tests
+
+│ │ └── README.md # Agent-specific documentation
+
+│ ├── merchant/
+
+│ ├── scholar/
+
+│ ├── guardian/
+
+│ └── base/
+
+│ ├── agent.py # Base agent class
+
+│ ├── behaviors.py # Shared behaviors
+
+│ └── interfaces.py # Agent interfaces
+
+├── inference/ # CORE DOMAIN - Active Inference
+
+│ ├── engine/
+
+│ │ ├── active-inference.py # PyMDP integration
+
+│ │ ├── belief-update.py # Belief state management
+
+│ │ └── policy-selection.py # Action selection
+
+│ ├── gnn/
+
+│ │ └── __init__.py # Imports from GeneralizedNotationNotation
+
+│ └── llm/
+
+│ ├── providers/ # LLM provider interfaces
+
+│ ├── prompts/ # Prompt templates
+
+│ └── belief-integration.py # LLM-belief integration
+
+├── coalitions/ # CORE DOMAIN - Coalition formation
+
+│ ├── formation/
+
+│ │ ├── preference-matching.py # Active Inference preferences
+
+│ │ ├── coalition-builder.py # Coalition assembly
+
+│ │ └── stability-analysis.py # Coalition stability
+
+│ ├── contracts/
+
+│ │ ├── coalition-contract.py # Coalition agreements
+
+│ │ └── resource-sharing.py # Resource distribution
+
+│ └── deployment/
+
+│ ├── edge-packager.py # Package for edge deployment
+
+│ └── deployment-manifest.py # Deployment specifications
+
+├── world/ # CORE DOMAIN - Environment
+
+│ ├── grid/
+
+│ │ ├── hex-world.py # Hexagonal world implementation
+
+│ │ └── spatial-index.py # H3 integration
+
+│ ├── resources/
+
+│ └── physics/
+
+├── api/ # INTERFACE LAYER - External interfaces
+
+│ ├── rest/
+
+│ │ ├── agents/ # Agent CRUD endpoints
+
+│ │ ├── coalitions/ # Coalition management
+
+│ │ └── simulations/ # Simulation control
+
+│ ├── websocket/
+
+│ │ └── real-time-updates.py # Live agent updates
+
+│ └── graphql/
+
+│ └── schema.py # Optional GraphQL interface
+
+├── web/ # INTERFACE LAYER - Frontend
+
+│ ├── src/
+
+│ │ ├── components/
+
+│ │ │ ├── agent-creator/ # Agent creation UI
+
+│ │ │ ├── world-viewer/ # World visualization
+
+│ │ │ └── coalition-manager/ # Coalition interface
+
+│ │ ├── stores/ # State management
+
+│ │ └── api/ # API client
+
+│ ├── public/
+
+│ └── package.json
+
+├── infrastructure/ # INFRASTRUCTURE LAYER
+
+│ ├── docker/
+
+│ │ ├── Dockerfile.api
+
+│ │ ├── Dockerfile.web
+
+│ │ └── docker-compose.yml
+
+│ ├── kubernetes/ # Future Kubernetes manifests
+
+│ └── terraform/ # Future cloud infrastructure
+
+├── config/ # CONFIGURATION
+
+│ ├── environments/
+
+│ │ ├── development.yml
+
+│ │ ├── testing.yml
+
+│ │ ├── staging.yml
+
+│ │ ├── production.yml
+
+│ │ └── demo.yml
+
+│ ├── database/
+
+│ └── logging/
+
+├── data/ # DATA ASSETS
+
+│ ├── schemas/ # Data structure definitions
+
+│ ├── migrations/ # Database migrations
+
+│ ├── fixtures/ # Test data
+
+│ └── examples/ # Example scenarios
+
+├── scripts/ # AUTOMATION
+
+│ ├── setup/
+
+│ │ ├── install-dependencies.sh
+
+│ │ └── initialize-database.sh
+
+│ ├── development/
+
+│ │ ├── run-local.sh
+
+│ │ └── reset-database.sh
+
+│ └── deployment/
+
+│ ├── build-release.sh
+
+│ └── deploy-environment.sh
+
+├── tests/ # TEST SUITES
+
+│ ├── unit/ # Fast, isolated tests
+
+│ ├── integration/ # Component integration
+
+│ ├── behavior/ # BDD agent behavior tests
+
+│ ├── performance/ # Scaling benchmarks
+
+│ └── chaos/ # Failure scenario tests
+
+├── docs/ # DOCUMENTATION
+
+│ ├── architecture/
+
+│ │ ├── decisions/ # ADRs
+
+│ │ ├── diagrams/ # System diagrams
+
+│ │ └── domain-model.md # Domain documentation
+
+│ ├── api/
+
+│ │ └── openapi.yml # API specification
+
+│ ├── guides/
+
+│ │ ├── quickstart.md
+
+│ │ ├── agent-creation.md
+
+│ │ └── coalition-formation.md
+
+│ └── runbooks/ # Environment runbooks
+
+├── .devcontainer/ # VS Code dev container
+
+├── .vscode/ # VS Code settings
+
+├── Makefile # Build automation
+
+├── pyproject.toml # Python project configuration
+
+├── package.json # Node.js dependencies
+
+├── README.md # Professional README
+
+├── CONTRIBUTING.md # Contribution guidelines
+
+├── CHANGELOG.md # Version history
+
+├── LICENSE # MIT license
+
+├── SECURITY.md # Security policy
+
+└── GOVERNANCE.md # Project governance
+
+PHASE 3: 10-DAY MVP SPRINT PLAN
+
+
+Day 1: "The Great Migration" (Lead: Martin Fowler)
+
+Morning:
+
+
+Create new directory structure
+
+Write migration script preserving git history
+
+Set up branch protection rules
+
+Afternoon:
+
+
+Execute migration in stages
+
+Validate all files moved correctly
+
+Update all import paths
+
+Deliverables:
+
+
+New structure live on refactor/structure branch
+
+Migration documented in docs/architecture/decisions/001-structure.md
+
+All tests passing with new structure
+
+Day 2: "Naming Harmonization" (Lead: Robert Martin)
+
+Morning:
+
+
+Implement naming linter rules
+
+Rename all files to kebab-case
+
+Update all references
+
+Afternoon:
+
+
+Rename variables per conventions
+
+Add type hints throughout Python code
+
+Configure pre-commit hooks
+
+Deliverables:
+
+
+Consistent naming throughout
+
+Pre-commit hooks preventing future violations
+
+Style guide in CONTRIBUTING.md
+
+Day 3: "Dependency Lockdown" (Lead: Adrian Cockcroft)
+
+Morning:
+
+
+Audit all dependencies
+
+Create minimal dependency list
+
+Add security scanning
+
+Afternoon:
+
+
+Generate lock files
+
+Configure Dependabot
+
+Document dependency policy
+
+Deliverables:
+
+
+poetry.lock and package-lock.json
+
+Security scanning in CI
+
+Dependency update policy
+
+Day 4: "Testing Renaissance" (Lead: Kent Beck)
+
+Morning:
+
+
+Consolidate test directories
+
+Write missing unit tests
+
+Add property-based tests for Active Inference
+
+Afternoon:
+
+
+Create behavior tests for agents
+
+Add performance benchmarks
+
+Set up coverage reporting
+
+Deliverables:
+
+
+80% test coverage
+
+Performance baseline established
+
+Test strategy documented
+
+Day 5: "Environment Orchestration" (Lead: Solomon Hykes)
+
+Morning:
+
+
+Create Docker configurations
+
+Set up docker-compose for all environments
+
+Configure environment variables
+
+Afternoon:
+
+
+Test each environment configuration
+
+Create environment switching scripts
+
+Document environment setup
+
+Deliverables:
+
+
+Working dev, test, staging, prod, demo environments
+
+One-command environment switching
+
+Environment runbooks
+
+Day 6: "Documentation Blitz" (Lead: Martin Fowler)
+
+Morning:
+
+
+Rewrite README for A+ quality
+
+Create domain glossary
+
+Write quickstart guide
+
+Afternoon:
+
+
+Generate API documentation
+
+Create architecture diagrams
+
+Write investor-focused executive summary
+
+Deliverables:
+
+
+Professional README
+
+Complete API docs
+
+Domain documentation
+
+Day 7: "API Excellence" (Lead: Mitchell Hashimoto)
+
+Morning:
+
+
+Design RESTful API structure
+
+Implement OpenAPI specification
+
+Add API versioning
+
+Afternoon:
+
+
+Create API client SDKs
+
+Add authentication framework
+
+Implement rate limiting
+
+Deliverables:
+
+
+Clean API with OpenAPI docs
+
+Authentication ready (implementation minimal for MVP)
+
+Client SDKs generated
+
+Day 8: "Active Inference Integration" (Lead: Rich Hickey)
+
+Morning:
+
+
+Integrate PyMDP properly
+
+Connect to GeneralizedNotationNotation
+
+Create belief update pipeline
+
+Afternoon:
+
+
+Implement LLM integration abstraction
+
+Test belief updates with mock LLM
+
+Document Active Inference flow
+
+Deliverables:
+
+
+Working Active Inference pipeline
+
+LLM abstraction layer
+
+Active Inference documentation
+
+Day 9: "Coalition Mechanics" (Lead: Eric Evans)
+
+Morning:
+
+
+Implement preference matching
+
+Create coalition formation logic
+
+Test coalition stability
+
+Afternoon:
+
+
+Build coalition visualization
+
+Create edge deployment packager
+
+Document coalition lifecycle
+
+Deliverables:
+
+
+Working coalition formation
+
+Edge deployment specifications
+
+Coalition documentation
+
+Day 10: "Investor Package" (Lead: All Experts)
+
+Morning:
+
+
+Create demo scenario
+
+Record demo video
+
+Polish UI for demo
+
+Afternoon:
+
+
+Run final benchmarks
+
+Create pitch deck technical slides
+
+Final security audit
+
+Deliverables:
+
+
+5-minute demo video
+
+Technical architecture deck
+
+Performance benchmarks
+
+Security audit report
+
+PHASE 4: SUCCESS METRICS
+
+
+Code Quality
+
+Codeclimate: A rating
+
+Test Coverage: >80%
+
+Linting: Zero violations
+
+Type Coverage: 100% for Python
+
+Build Time: <3 minutes
+
+Bundle Size: <1MB for frontend
+
+Performance
+
+Agent Scaling: 1000 agents stable
+
+Response Time: <100ms API responses
+
+Memory Usage: <4GB for 1000 agents
+
+Message Throughput: 10,000 msg/sec
+
+Developer Experience
+
+Onboarding: <1 hour to first commit
+
+Documentation: 100% API coverage
+
+Examples: Working example for each feature
+
+Contribution: Clear process documented
+
+Investor Readiness
+
+Demo: Flawless 5-minute demo
+
+Scalability: Clear path to 10,000 agents
+
+Edge Story: Deployment strategy documented
+
+Team: Contribution guidelines attract contributors
+
+Security: Zero high/critical vulnerabilities
+
+PHASE 5: NAMING CONVENTIONS
+
+
+Python Code
+
+# agents/explorer/explorer.py
+
+class ExplorerAgent(BaseAgent):
+
+"""Domain class names are PascalCase."""
+
+def __init__(self,
+
+agent_id: str,
+
+belief_state: BeliefState,
+
+world_model: HexWorld) -> None:
+
+self._internal_state: Dict[str, Any] = {} # Private with underscore
+
+self.active_inference_engine = ActiveInferenceEngine() # Public attributes
+
+def explore_territory(self, target_hex: H3Index) -> ExplorationResult:
+
+"""Methods use snake_case, are verb phrases."""
+
+belief_update = self._calculate_belief_update(target_hex)
+
+return self._execute_exploration(belief_update)
+
+def _calculate_belief_update(self, hex_position: H3Index) -> BeliefUpdate:
+
+"""Private methods start with underscore."""
+
+pass
+
+TypeScript/React Code
+
+// web/src/components/agent-creator/AgentCreator.tsx
+
+interface AgentCreatorProps {
+
+onAgentCreate: (agent: Agent) => void;
+
+availableTypes: AgentType[];
+
 }
-```
-
-### GNN Model Format
-```markdown
-## Model: AgentName_cognitive_model
-## Description: Natural language model specification
-
-## State Space
-- position: H3Cell[resolution=7] "Current hex location"
-- energy: Real[0, 100] "Available action energy"
-- beliefs: Distribution[WorldState] "Current world beliefs"
-- observations: List[Observation] "Sensory history"
-
-## Connections
-- A_obs: position -> observation "How location generates observations"
-- B_trans: (position, action) -> position' "Movement dynamics"
-- C_pref: observation -> Real[0, 1] "What agent desires"
-
-## Parameterization
-- exploration_weight: 0.8
-- resource_weight: 0.2
-- social_weight: 0.5
-
-## Update Equations
-- belief_update: "Variational free energy minimization"
-- action_selection: "Softmax over expected free energy"
-```
-
-### Coalition Model
-```json
-{
-  "id": "coalition_uuid",
-  "name": "Business Name",
-  "type": "resource_optimizer|market_maker|info_broker",
-  "members": ["agent_uuid_1", "agent_uuid_2"],
-  "shared_goal": {
-    "description": "Optimize water resource distribution",
-    "value_model": "subscription|transaction|hybrid",
-    "target_market": "resource_gathering_agents"
-  },
-  "metrics": {
-    "value_generated": 0.0,
-    "efficiency": 0.0,
-    "customer_satisfaction": 0.0
-  },
-  "deployment_ready": false
-}
-```
-
-### Knowledge Graph Entry
-```json
-{
-  "node_id": "experience_uuid",
-  "agent_id": "agent_uuid",
-  "timestamp": "ISO-8601",
-  "type": "observation|action|outcome|pattern",
-  "data": {
-    "location": "h3_cell_id",
-    "content": {},
-    "confidence": 0.0-1.0
-  },
-  "edges": [
-    {
-      "target": "node_id",
-      "relation": "causes|similar_to|follows",
-      "weight": 0.0-1.0
-    }
-  ]
-}
-```
-
-## APIs and Integrations
-
-### 1. **GNN Processing API**
-   - Parse .gnn.md files to Active Inference parameters
-   - Validate GNN syntax and semantics
-   - Generate GNN from agent personalities
-   - Support model evolution and versioning
-
-### 2. **LLM Integration Layer**
-   - LangChain for conversation management
-   - OpenAI/Anthropic API for cloud operation
-   - Ollama for edge deployment
-   - Prompt template management
-   - Context window optimization
-
-### 3. **Spatial Computing API**
-   - H3 hexagonal grid operations
-   - Neighbor calculation and pathfinding
-   - Resource distribution algorithms
-   - Visibility and observation modeling
-
-### 4. **Analytics API**
-   - DuckDB for embedded analytics
-   - Real-time metric collection
-   - Pattern recognition queries
-   - Performance benchmarking
-
-### 5. **Deployment API**
-   - Docker container management
-   - Hardware capability detection
-   - State serialization/deserialization
-   - Update distribution system
-
-## Infrastructure Requirements
-
-### 1. **Development Environment**
-   - Docker Compose for service orchestration
-   - Python 3.11+ with FastAPI backend
-   - Node.js 18+ with Next.js frontend
-   - PostgreSQL for persistent storage
-   - Redis for caching and pub/sub
-
-### 2. **Cleanup Toolchain**
-   - Python: vulture, black, mypy, pytest
-   - TypeScript: ts-prune, eslint, prettier
-   - Dependency management: pip-check-reqs, depcheck
-   - Pre-commit hooks for automatic cleanup
-   - CI/CD integration for quality gates
-
-### 3. **Multi-Environment Setup**
-   - Development: Full debugging, hot reload
-   - Demo: Seeded data, predictable outcomes
-   - Staging: Production mirror, synthetic load
-   - Testing: Isolated, ephemeral instances
-   - Production: Cloud + edge hybrid
-
-### 4. **Edge Deployment Requirements**
-   - Raspberry Pi 4B (8GB RAM minimum)
-   - 32GB storage for models and data
-   - Local LLM: llama2-7b quantized
-   - Python runtime: 3.11 minimal
-   - Network: Optional (offline capable)
-
-# Development Roadmap
-
-## Sprint 1: Foundation & GNN Integration (Days 1-14)
-
-### Development Phase (Days 1-8)
-1. **Environment Setup**
-   - Docker Compose configuration
-   - Multi-environment scaffolding
-   - IDE templates and Git hooks
-   - Cleanup tool integration
-
-2. **GNN Processor Implementation**
-   - Fork GeneralizedNotationNotation repo
-   - Python bindings for parser
-   - GNN validation layer
-   - Model generation from personality
-
-3. **Active Inference Bridge**
-   - pymdp integration wrapper
-   - GNN to parameter mapping
-   - Free energy calculations
-   - Belief update pipeline
-
-4. **Basic Agent System**
-   - Agent data model
-   - State management
-   - Simple movement mechanics
-   - Test harness
-
-### Cleanup Gate 1 (Day 9)
-5. **Code Quality Enforcement**
-   - Run vulture for dead code
-   - Apply black formatting
-   - Type checking with mypy
-   - Remove unused imports
-
-### Test Gate 1 (Day 10)
-6. **Comprehensive Testing**
-   - Unit tests (95% coverage target)
-   - Integration tests
-   - Performance benchmarks
-   - Bug documentation
-
-### Cleanup Gate 2 (Day 11)
-7. **Post-Test Refinement**
-   - Fix all test failures
-   - Remove debug artifacts
-   - Optimize slow paths
-   - Update documentation
-
-### Test Gate 2 (Day 12)
-8. **Final Validation**
-   - All tests must pass
-   - No performance regressions
-   - Clean dependency tree
-   - Security scan pass
-
-### Sprint Review (Days 13-14)
-9. **Demo and Planning**
-   - GNN processing demonstration
-   - Architecture review
-   - Sprint 2 planning
-   - Retrospective
-
-## Sprint 2: Multi-Agent Collaboration (Days 15-28)
-
-### Development Phase (Days 1-8)
-10. **Agent Communication**
-    - Message passing system
-    - Belief sharing protocols
-    - LangChain integration
-    - Conversation history
-
-11. **Business Discovery**
-    - Opportunity detection algorithms
-    - Value estimation models
-    - Coalition formation rules
-    - CrewAI adaptation
-
-12. **Demo Scenarios**
-    - Resource Optimizer scenario
-    - Market Maker scenario
-    - Information Broker scenario
-    - Scenario management system
-
-13. **Knowledge Graphs**
-    - NetworkX implementation
-    - Experience storage
-    - Pattern extraction
-    - Graph visualization
-
-14. **Analytics Foundation**
-    - DuckDB integration
-    - Metric collection
-    - Dashboard creation
-    - Query optimization
-
-### Cleanup Gates (Days 9 & 11)
-- Remove experimental code
-- Consolidate modules
-- Optimize imports
-- Clean test data
-
-### Test Gates (Days 10 & 12)
-- Multi-agent interaction tests
-- Coalition formation validation
-- Knowledge graph integrity
-- Performance under load
-
-## Sprint 3: Edge Deployment (Days 29-42)
-
-### Development Phase (Days 1-8)
-15. **Hardware Abstraction**
-    - Device capability detection
-    - Resource constraints
-    - Offline operation
-    - State synchronization
-
-16. **Local LLM Integration**
-    - Ollama wrapper
-    - Model quantization
-    - Fallback strategies
-    - Memory optimization
-
-17. **Coalition Packaging**
-    - State serialization
-    - Knowledge compression
-    - Deployment configs
-    - Installation scripts
-
-18. **Edge Runtime**
-    - Minimal Python environment
-    - Service configuration
-    - Monitoring setup
-    - Update mechanisms
-
-### Cleanup Focus
-- Remove cloud dependencies
-- Minimize container size
-- Strip debug symbols
-- Optimize for ARM
-
-### Testing Focus
-- Hardware simulation
-- Resource limits
-- Offline operation
-- 24-hour stability
-
-## Sprint 4: Production Readiness (Days 43-56)
-
-### Development Phase (Days 1-8)
-19. **Multi-Environment Pipeline**
-    - CI/CD configuration
-    - Automated provisioning
-    - Deployment orchestration
-    - Rollback procedures
-
-20. **Monitoring & Security**
-    - Metrics collection
-    - Log aggregation
-    - Authentication system
-    - Data encryption
-
-21. **Demo Polish**
-    - Investor flow optimization
-    - Failure recovery
-    - Mobile responsiveness
-    - Performance showcases
-
-22. **Documentation Suite**
-    - API documentation
-    - Architecture guides
-    - Video tutorials
-    - Troubleshooting guides
-
-### Final Cleanup (Days 9 & 11)
-- Remove all debug code
-- Production error messages
-- API contract finalization
-- License headers
-
-### Production Testing (Days 10 & 12)
-- End-to-end test suite
-- Security penetration testing
-- Load testing (100+ agents)
-- Investor demo validation
-
-# Logical Dependency Chain
-
-## Foundation Layer
-1. **GNN Parser Implementation**
-   - Everything depends on this core component
-   - Enables natural language model specification
-   - Must be thoroughly tested before proceeding
-
-2. **Active Inference Integration**
-   - Depends on GNN parser
-   - Provides decision-making capabilities
-   - Required for agent behavior
-
-3. **Basic Agent System**
-   - Depends on GNN and Active Inference
-   - Minimal viable agent implementation
-   - Foundation for all advanced features
-
-## Collaboration Layer
-4. **Agent Communication**
-   - Depends on basic agent system
-   - Enables multi-agent scenarios
-   - Required for coalition formation
-
-5. **Knowledge Graph System**
-   - Depends on agent system
-   - Provides memory and learning
-   - Enables pattern recognition
-
-6. **Business Discovery**
-   - Depends on communication and knowledge
-   - Core value proposition
-   - Enables autonomous business creation
-
-## Deployment Layer
-7. **Hardware Abstraction**
-   - Can begin after basic agent system
-   - Required for edge deployment
-   - Enables offline operation
-
-8. **Local LLM Integration**
-   - Depends on hardware abstraction
-   - Enables true autonomy
-   - Critical for edge operation
-
-9. **Coalition Packaging**
-   - Depends on all previous components
-   - Enables business deployment
-   - Final step before hardware
-
-## Production Layer
-10. **Multi-Environment Support**
-    - Builds on all previous work
-    - Enables safe deployment
-    - Required for investor demo
-
-11. **Monitoring and Security**
-    - Final layer of infrastructure
-    - Ensures production readiness
-    - Required for real deployments
-
-# Risks and Mitigations
-
-## Technical Challenges
-
-### GNN Parsing Complexity
-**Risk**: Natural language to mathematics mapping may be ambiguous or error-prone
-**Mitigation**:
-- Start with constrained GNN subset
-- Extensive validation and error messages
-- Fallback to template-based models
-- Continuous model syntax evolution
-
-### Active Inference Performance
-**Risk**: Free energy calculations may be too slow for real-time operation
-**Mitigation**:
-- Pre-calculate common patterns
-- Cache belief updates
-- Use approximations where appropriate
-- GPU acceleration for edge devices
-
-### Multi-Agent Coordination
-**Risk**: Coalition formation may not converge or produce suboptimal groups
-**Mitigation**:
-- Start with simple coordination rules
-- Use proven CrewAI patterns
-- Add human oversight options
-- Implement timeout mechanisms
-
-### Edge Hardware Limitations
-**Risk**: Hardware may not support full agent capabilities
-**Mitigation**:
-- Modular feature deployment
-- Graceful degradation
-- Efficient model quantization
-- Offload options to cloud
-
-## MVP Definition
-
-### Core Features (Must Have)
-- GNN-based agent specification
-- Basic Active Inference decision-making
-- Simple multi-agent interaction
-- Knowledge graph creation
-- Hardware deployment capability
-
-### Enhanced Features (Nice to Have)
-- Complex coalition formation
-- Advanced pattern recognition
-- Natural language explanations
-- Real-time analytics dashboards
-
-### Future Features (Post-MVP)
-- Cross-platform edge support
-- Federated learning
-- Agent marketplace
-- Enterprise integration
-
-## Cleanup Requirements
-
-### Sprint Cleanup Gates
-**Every Sprint Must**:
-- Remove all dead code
-- Pass all linting checks
-- Achieve 95% test coverage
-- Update all documentation
-- Zero security vulnerabilities
-
-### Code Quality Metrics
-- Cyclomatic complexity < 10
-- Function length < 50 lines
-- File length < 500 lines
-- Clear module boundaries
-- No circular dependencies
-
-# Appendix
-
-## GNN Model Templates
-
-### Basic Agent Template
-```markdown
-## Model: {agent_name}_cognitive_model
-## Description: Auto-generated from personality profile
-
-## State Space
-- position: H3Cell[resolution=7] "Current location"
-- energy: Real[0, 100] "Available energy"
-- observations: List[Observation] "Sensory input"
-- beliefs: Distribution[State] "World model"
-
-## Connections
-- A_obs: position -> observation
-- B_trans: (position, action) -> position'
-- C_pref: observation -> Real[0, 1]
-
-## Parameterization
-- exploration: {exploration_weight}
-- cooperation: {cooperation_weight}
-- efficiency: {efficiency_weight}
-```
-
-### Business Coalition Template
-```markdown
-## Model: {coalition_name}_business_model
-## Description: Collaborative business entity
-
-## Shared State Space
-- market_opportunities: List[Opportunity]
-- member_capabilities: Set[Skill]
-- value_created: Real[0, inf]
-- customer_base: List[Agent]
-
-## Shared Preferences
-- profit_maximization: 0.7
-- customer_satisfaction: 0.8
-- sustainability: 0.6
-```
-
-## Cleanup Checklist
-
-### Pre-Sprint Checklist
-- [ ] All dependencies updated
-- [ ] Docker environment working
-- [ ] Previous sprint artifacts archived
-- [ ] Team briefed on cleanup requirements
-
-### Mid-Sprint Checklist (Day 9)
-- [ ] No unused imports remain
-- [ ] All functions documented
-- [ ] No console.log/print statements
-- [ ] Directory structure organized
-- [ ] Dead code removed
-
-### End-Sprint Checklist (Day 12)
-- [ ] 95% test coverage achieved
-- [ ] All tests passing
-- [ ] Performance benchmarks met
-- [ ] Documentation updated
-- [ ] Demo prepared and tested
-
-## Command Structure
-
-### Agent Management
-```bash
-# Create new agent
-cogniticnet agent create --name "Explorer1" --class explorer --personality exploration:90,cooperation:50
-
-# View agent status
-cogniticnet agent status --id agent_uuid
-
-# Deploy coalition
-cogniticnet coalition deploy --id coalition_uuid --hardware raspberry_pi
-```
-
-### Development Commands
-```bash
-# Run cleanup
-cogniticnet cleanup --level full --fix
-
-# Run tests
-cogniticnet test --coverage --benchmarks
-
-# Start demo
-cogniticnet demo --scenario resource_optimizer --seed 42
-```
-
-## Environment Configuration
-
-### Development (.env.development)
-```env
-DATABASE_URL=postgresql://localhost/cogniticnet_dev
-REDIS_URL=redis://localhost:6379
-ANTHROPIC_API_KEY=your_key
-DEBUG=true
-HOT_RELOAD=true
-```
-
-### Demo (.env.demo)
-```env
-DATABASE_URL=postgresql://localhost/cogniticnet_demo
-DEMO_MODE=true
-RANDOM_SEED=42
-MAX_AGENTS=10
-SCENARIO=resource_optimizer
-```
-
-### Production (.env.production)
-```env
-DATABASE_URL=postgresql://prod/cogniticnet
-REDIS_URL=redis://prod:6379
-LOG_LEVEL=info
-ENABLE_MONITORING=true
-EDGE_DEPLOYMENT=true
-```
-</PRD>
+
+
+export const AgentCreator: React.FC<AgentCreatorProps> = ({
+
+onAgentCreate,
+
+availableTypes,
+
+}) => {
+
+const [isCreating, setIsCreating] = useState(false);
+
+const { agents, createAgent } = useAgentStore();
+
+const handleCreateAgent = async (config: AgentConfig) => {
+
+// Event handlers start with 'handle'
+
+setIsCreating(true);
+
+const agent = await createAgent(config);
+
+onAgentCreate(agent);
+
+};
+
+return (
+
+<div className="agent-creator">
+
+{/* JSX content */}
+
+</div>
+
+);
+
+};
+
+File Naming
+
+Python files: kebab-case.py - belief-update.py
+
+TypeScript files: PascalCase.tsx for components, camelCase.ts for utilities
+
+Config files: kebab-case.yml - development.yml
+
+Documentation: kebab-case.md - getting-started.md
+
+Scripts: kebab-case.sh - run-tests.sh
+
+API Endpoints
+
+GET /api/v1/agents # List agents
+
+POST /api/v1/agents # Create agent
+
+GET /api/v1/agents/:id # Get specific agent
+
+PUT /api/v1/agents/:id # Update agent
+
+DELETE /api/v1/agents/:id # Delete agent
+
+POST /api/v1/coalitions # Form coalition
+
+GET /api/v1/coalitions/:id/status # Coalition status
+
+FINAL DELIVERABLES:
+
+
+Refactored Repository: Clean, professional, investor-ready
+
+Documentation Suite: Complete guides, API docs, architecture
+
+Demo Package: Video, slides, live demo script
+
+Benchmarks: Performance data showing scalability
+
+Roadmap: Clear path from MVP to full platform
+
+This transformation positions FreeAgentics as a professional, scalable platform ready for seed investment, with clear architecture, excellent developer experience, and a compelling vision for autonomous agent coalitions.

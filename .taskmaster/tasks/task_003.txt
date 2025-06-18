@@ -1,0 +1,58 @@
+# Task ID: 3
+# Title: Active Inference Engine Integration
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Integrate the Active Inference engine using PyMDP and implement the core logic for belief updates and policy selection using generalized notation notation (GNN) https://github.com/ActiveInferenceInstitute/GeneralizedNotationNotation/tree/main for the agents to sepcify the active inference models.
+# Details:
+1. Set up the inference/engine directory with active-inference.py, belief-update.py, and policy-selection.py.
+2. Integrate PyMDP library (version 1.0+) for Active Inference computations.
+3. Implement belief state management in belief-update.py.
+4. Create policy selection logic in policy-selection.py.
+5. Connect the Active Inference engine to the agent classes.
+
+Use the following:
+- PyMDP 1.0+
+- NumPy 1.20+
+- SciPy 1.6+
+
+Ensure the implementation is modular and allows for future extensions or replacements of the inference engine.
+
+# Test Strategy:
+1. Write unit tests for belief update mechanisms.
+2. Create tests for policy selection algorithms.
+3. Implement integration tests to verify correct interaction between agents and the inference engine.
+4. Benchmark performance of belief updates and policy selection for different agent counts.
+5. Verify mathematical correctness of the Active Inference implementations against known examples or papers.
+
+# Subtasks:
+## 1. Audit existing dependencies [pending]
+### Dependencies: None
+### Description: Conduct a comprehensive audit of all existing dependencies in the project to identify outdated, unused, or potentially vulnerable packages.
+### Details:
+Use automated tools to scan the project's dependency tree. Create a report listing all dependencies, their versions, and usage status. Identify any deprecated or vulnerable packages.
+
+## 2. Implement dependency security measures [pending]
+### Dependencies: 3.1
+### Description: Implement security measures to protect against vulnerabilities in dependencies and ensure the integrity of the project's dependency chain.
+### Details:
+Set up automated security scanning for dependencies. Configure dependency lockfiles to prevent unintended updates. Implement checksums for package verification. Document the security measures implemented.
+
+## 3. Create a dependency management system [pending]
+### Dependencies: 3.1, 3.2
+### Description: Develop a robust dependency management system to streamline the process of updating, adding, and removing dependencies.
+### Details:
+Define a clear process for adding new dependencies. Create guidelines for version pinning and updating. Implement automated dependency update checks. Document the dependency management workflow for the team.
+
+## 4. Clean up and organize dependencies [pending]
+### Dependencies: 3.1, 3.3
+### Description: Remove unused dependencies, update outdated ones, and organize the remaining dependencies for better maintainability.
+### Details:
+Remove all unused dependencies identified in the audit. Update outdated dependencies to their latest stable versions. Organize dependencies into logical groups or categories. Update all relevant documentation to reflect changes.
+
+## 5. Test dependency changes [pending]
+### Dependencies: 3.4
+### Description: Conduct thorough testing to ensure that all dependency changes and updates do not introduce new issues or break existing functionality.
+### Details:
+Create a comprehensive test suite covering all areas affected by dependency changes. Run integration tests to verify system stability. Perform regression testing to ensure no new bugs are introduced. Document test results and any necessary fixes.
+

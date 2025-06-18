@@ -1,0 +1,76 @@
+# Task ID: 8
+# Title: LLM Integration for Belief Updates
+# Status: pending
+# Dependencies: 2, 3
+# Priority: medium
+# Description: Integrate LLM capabilities for enhancing agent belief updates and decision-making processes.
+# Details:
+1. Set up the inference/llm directory with providers and prompts subdirectories.
+2. Implement abstract interfaces for LLM providers in providers/base.py.
+3. Create concrete implementations for specific LLM providers (e.g., OpenAI, Hugging Face).
+4. Develop prompt templates for agent belief updates in prompts/belief_update_template.py.
+5. Implement the belief-integration.py to connect LLM outputs with the Active Inference engine.
+
+Use the following:
+- OpenAI API (latest version) for GPT integration
+- Hugging Face Transformers 4.10+ for open-source LLM options
+- Jinja2 2.11+ for prompt templating
+
+Ensure the LLM integration is modular and allows for easy switching between different providers.
+
+# Test Strategy:
+1. Write unit tests for LLM provider interfaces and implementations.
+2. Create tests for prompt template rendering.
+3. Implement integration tests for LLM-based belief updates.
+4. Benchmark performance and token usage of LLM calls.
+5. Verify the coherence and relevance of LLM-generated belief updates.
+
+# Subtasks:
+## 1. Fix PyMDP imports and dependencies [pending]
+### Dependencies: None
+### Description: Resolve import issues and ensure all necessary PyMDP dependencies are correctly installed and imported.
+### Details:
+Identify and correct any broken imports related to PyMDP. Update requirements.txt with correct versions. Ensure compatibility with the existing codebase.
+
+## 2. Refactor belief update pipeline [pending]
+### Dependencies: 8.1
+### Description: Reorganize and streamline the belief update pipeline for better structure and efficiency.
+### Details:
+Analyze the current belief update process. Refactor the code to improve modularity and readability. Ensure mathematical correctness in the implementation.
+
+## 3. Document mathematical considerations [pending]
+### Dependencies: 8.2
+### Description: Create comprehensive documentation for the mathematical aspects of the belief update pipeline.
+### Details:
+Write detailed explanations of the mathematical principles used in the belief update process. Include formulas, derivations, and their implementation details.
+
+## 4. Implement unit tests for belief update functions [pending]
+### Dependencies: 8.2, 8.3
+### Description: Develop a suite of unit tests to ensure the correctness of belief update functions.
+### Details:
+Create test cases covering various scenarios of belief updates. Include edge cases and verify mathematical accuracy of the results.
+
+## 5. Secure data handling in belief update process [pending]
+### Dependencies: 8.2
+### Description: Review and enhance the security measures for data handling within the belief update pipeline.
+### Details:
+Identify potential vulnerabilities in data processing. Implement proper data sanitization and validation. Ensure secure storage and transmission of belief-related data.
+
+## 6. Optimize performance of belief update calculations [pending]
+### Dependencies: 8.2, 8.4
+### Description: Analyze and improve the performance of mathematical calculations in the belief update process.
+### Details:
+Profile the existing code to identify performance bottlenecks. Optimize algorithms and data structures used in calculations. Consider parallelization where applicable.
+
+## 7. Create integration tests for PyMDP and belief update pipeline [pending]
+### Dependencies: 8.1, 8.2, 8.4
+### Description: Develop integration tests to ensure smooth interaction between PyMDP and the belief update pipeline.
+### Details:
+Design test scenarios that cover the entire flow from PyMDP integration to belief updates. Verify correct data flow and consistency across different components.
+
+## 8. Update project documentation for PyMDP integration [pending]
+### Dependencies: 8.1, 8.2, 8.3, 8.5, 8.6
+### Description: Revise and expand project documentation to reflect the PyMDP integration and belief update pipeline changes.
+### Details:
+Update README.md with new setup instructions. Create or update API documentation for new/modified functions. Include examples of usage and best practices for the integrated system.
+
