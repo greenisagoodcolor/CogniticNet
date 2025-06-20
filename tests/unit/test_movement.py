@@ -1,17 +1,12 @@
 """
 Unit tests for Agent Movement System
 """
-
 import unittest
 import numpy as np
 import math
-from agents.base.data_model import Agent, Position, AgentStatus
-from agents.base.state_manager import AgentStateManager
-from agents.base.movement import (
-    MovementController, MovementConstraints, MovementState, MovementMode,
-    CollisionSystem, PathfindingGrid, SteeringBehaviors, TerrainType
-)
-
+from .......agents.base.data-model import Agent, Position, AgentStatus
+from .......agents.base.state-manager import AgentStateManager
+from .......agents.base.movement import MovementController, MovementConstraints, MovementState, MovementMode, CollisionSystem, PathfindingGrid, SteeringBehaviors, TerrainType
 
 class TestMovementConstraints(unittest.TestCase):
     """Test movement constraints"""
@@ -19,12 +14,9 @@ class TestMovementConstraints(unittest.TestCase):
     def test_default_constraints(self):
         """Test default movement constraints"""
         constraints = MovementConstraints()
-
         self.assertEqual(constraints.max_speed, 5.0)
         self.assertEqual(constraints.max_acceleration, 2.0)
         self.assertEqual(constraints.collision_radius, 0.5)
-
-        # Check mode speeds
         self.assertEqual(constraints.mode_speeds[MovementMode.WALKING], 1.0)
         self.assertEqual(constraints.mode_speeds[MovementMode.RUNNING], 2.0)
         self.assertEqual(constraints.mode_speeds[MovementMode.SNEAKING], 0.5)
@@ -32,11 +24,9 @@ class TestMovementConstraints(unittest.TestCase):
     def test_terrain_speeds(self):
         """Test terrain speed modifiers"""
         constraints = MovementConstraints()
-
         self.assertEqual(constraints.terrain_speeds[TerrainType.GROUND], 1.0)
         self.assertEqual(constraints.terrain_speeds[TerrainType.WATER], 0.3)
         self.assertEqual(constraints.terrain_speeds[TerrainType.IMPASSABLE], 0.0)
-
 
 class TestCollisionSystem(unittest.TestCase):
     """Test collision detection system"""
@@ -47,47 +37,28 @@ class TestCollisionSystem(unittest.TestCase):
 
     def test_static_obstacle_collision(self):
         """Test collision with static obstacles"""
-        # Add static obstacle
         obstacle_pos = Position(5.0, 5.0, 0.0)
         self.collision_system.add_static_obstacle(obstacle_pos, 1.0)
-
-        # Test collision detection
-        # Should collide (distance = 0.5 < 0.5 + 1.0)
         test_pos1 = Position(5.5, 5.0, 0.0)
         self.assertTrue(self.collision_system.check_collision(test_pos1, 0.5))
-
-        # Should not collide (distance = 2.0 > 0.5 + 1.0)
         test_pos2 = Position(7.0, 5.0, 0.0)
         self.assertFalse(self.collision_system.check_collision(test_pos2, 0.5))
 
     def test_dynamic_obstacle_collision(self):
         """Test collision with dynamic obstacles"""
-        # Add dynamic obstacle
-        self.collision_system.update_dynamic_obstacle("agent1", Position(3.0, 3.0, 0.0))
-
-        # Test collision with another agent
+        self.collision_system.update_dynamic_obstacle('agent1', Position(3.0, 3.0, 0.0))
         test_pos = Position(3.5, 3.0, 0.0)
         self.assertTrue(self.collision_system.check_collision(test_pos, 0.5))
-
-        # Test exclusion of self
-        self.assertFalse(self.collision_system.check_collision(
-            test_pos, 0.5, exclude_id="agent1"
-        ))
+        self.assertFalse(self.collision_system.check_collision(test_pos, 0.5, exclude_id='agent1'))
 
     def test_collision_normal(self):
         """Test collision normal calculation"""
-        # Add obstacle at origin
         self.collision_system.add_static_obstacle(Position(0.0, 0.0, 0.0), 1.0)
-
-        # Test position to the right of obstacle
         test_pos = Position(1.5, 0.0, 0.0)
         normal = self.collision_system.get_collision_normal(test_pos, 0.5)
-
         self.assertIsNotNone(normal)
-        # Normal should point to the right (away from obstacle)
         self.assertAlmostEqual(normal[0], 1.0)
         self.assertAlmostEqual(normal[1], 0.0)
-
 
 class TestPathfindingGrid(unittest.TestCase):
     """Test grid-based pathfinding"""
@@ -98,36 +69,27 @@ class TestPathfindingGrid(unittest.TestCase):
 
     def test_coordinate_conversion(self):
         """Test world to grid coordinate conversion"""
-        # Test world to grid
         world_pos = Position(2.5, 3.5, 0.0)
         grid_pos = self.grid.world_to_grid(world_pos)
         self.assertEqual(grid_pos, (2, 3))
-
-        # Test grid to world (centers of cells)
         world_pos2 = self.grid.grid_to_world((2, 3))
         self.assertAlmostEqual(world_pos2.x, 2.5)
         self.assertAlmostEqual(world_pos2.y, 3.5)
 
     def test_neighbor_finding(self):
         """Test finding neighboring cells"""
-        # Test center cell
         neighbors = self.grid.get_neighbors((5, 5))
-        self.assertEqual(len(neighbors), 8)  # 8 neighbors for center cell
-
-        # Test corner cell
+        self.assertEqual(len(neighbors), 8)
         corner_neighbors = self.grid.get_neighbors((0, 0))
-        self.assertEqual(len(corner_neighbors), 3)  # Only 3 neighbors for corner
+        self.assertEqual(len(corner_neighbors), 3)
 
     def test_pathfinding_simple(self):
         """Test simple pathfinding without obstacles"""
         start = Position(1.5, 1.5, 0.0)
         goal = Position(8.5, 8.5, 0.0)
-
         path = self.grid.find_path(start, goal)
-
         self.assertIsNotNone(path)
         self.assertGreater(len(path), 0)
-        # Check start and end points
         self.assertEqual(path[0].x, start.x)
         self.assertEqual(path[0].y, start.y)
         self.assertAlmostEqual(path[-1].x, goal.x, delta=1.0)
@@ -135,37 +97,27 @@ class TestPathfindingGrid(unittest.TestCase):
 
     def test_pathfinding_with_obstacles(self):
         """Test pathfinding around obstacles"""
-        # Add vertical wall of obstacles
         for y in range(3, 8):
             self.grid.set_obstacle((5, y))
-
         start = Position(2.5, 5.5, 0.0)
         goal = Position(7.5, 5.5, 0.0)
-
         path = self.grid.find_path(start, goal)
-
         self.assertIsNotNone(path)
-        # Path should go around the wall
-        # Check that no path point is on an obstacle
         for point in path:
             grid_pos = self.grid.world_to_grid(point)
             self.assertNotIn(grid_pos, self.grid.obstacles)
 
     def test_no_path_exists(self):
         """Test when no path exists"""
-        # Surround the goal with obstacles
         goal_grid = (8, 8)
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
                 if dx != 0 or dy != 0:
                     self.grid.set_obstacle((goal_grid[0] + dx, goal_grid[1] + dy))
-
         start = Position(1.5, 1.5, 0.0)
         goal = Position(8.5, 8.5, 0.0)
-
         path = self.grid.find_path(start, goal)
         self.assertIsNone(path)
-
 
 class TestMovementController(unittest.TestCase):
     """Test the main movement controller"""
@@ -175,120 +127,75 @@ class TestMovementController(unittest.TestCase):
         self.state_manager = AgentStateManager()
         self.collision_system = CollisionSystem()
         self.pathfinding_grid = PathfindingGrid(20, 20)
-        self.movement_controller = MovementController(
-            self.state_manager,
-            self.collision_system,
-            self.pathfinding_grid
-        )
-
-        # Create test agent
-        self.agent = Agent(name="TestAgent", position=Position(5.0, 5.0, 0.0))
+        self.movement_controller = MovementController(self.state_manager, self.collision_system, self.pathfinding_grid)
+        self.agent = Agent(name='TestAgent', position=Position(5.0, 5.0, 0.0))
         self.state_manager.register_agent(self.agent)
         self.movement_controller.register_agent(self.agent)
 
     def test_agent_registration(self):
         """Test agent registration with movement controller"""
-        # Check movement state was created
         self.assertIn(self.agent.agent_id, self.movement_controller.movement_states)
-
-        # Check constraints were set
         self.assertIn(self.agent.agent_id, self.movement_controller.movement_constraints)
-
-        # Check collision system was updated
         self.assertIn(self.agent.agent_id, self.collision_system.dynamic_obstacles)
 
     def test_set_destination(self):
         """Test setting movement destination"""
         destination = Position(10.0, 10.0, 0.0)
-        success = self.movement_controller.set_destination(
-            self.agent.agent_id, destination
-        )
-
+        success = self.movement_controller.set_destination(self.agent.agent_id, destination)
         self.assertTrue(success)
-
-        # Check movement state
         state = self.movement_controller.movement_states[self.agent.agent_id]
         self.assertIsNotNone(state.path)
         self.assertEqual(state.destination, destination)
-
-        # Check agent status changed to moving
         agent = self.state_manager.get_agent(self.agent.agent_id)
         self.assertEqual(agent.status, AgentStatus.MOVING)
 
     def test_movement_update(self):
         """Test movement update along path"""
-        # Set destination
         destination = Position(7.0, 5.0, 0.0)
         self.movement_controller.set_destination(self.agent.agent_id, destination)
-
-        # Store initial position
         initial_pos = Position(self.agent.position.x, self.agent.position.y, self.agent.position.z)
-
-        # Update movement
-        self.movement_controller.update(0.1)  # 0.1 second
-
-        # Check agent has moved
+        self.movement_controller.update(0.1)
         agent = self.state_manager.get_agent(self.agent.agent_id)
         self.assertNotEqual(agent.position.x, initial_pos.x)
-
-        # Check movement is in correct direction
         dx = agent.position.x - initial_pos.x
-        self.assertGreater(dx, 0)  # Should move right towards destination
+        self.assertGreater(dx, 0)
 
     def test_movement_modes(self):
         """Test different movement modes"""
-        # Set to running mode
-        self.movement_controller.set_movement_mode(
-            self.agent.agent_id, MovementMode.RUNNING
-        )
-
+        self.movement_controller.set_movement_mode(self.agent.agent_id, MovementMode.RUNNING)
         state = self.movement_controller.movement_states[self.agent.agent_id]
         self.assertEqual(state.mode, MovementMode.RUNNING)
 
     def test_apply_force(self):
         """Test applying external force"""
-        # Apply rightward force
         force = np.array([5.0, 0.0, 0.0])
         self.movement_controller.apply_force(self.agent.agent_id, force)
-
-        # Check velocity was updated
         state = self.movement_controller.movement_states[self.agent.agent_id]
         self.assertGreater(state.velocity[0], 0)
-
-        # Check agent status
         agent = self.state_manager.get_agent(self.agent.agent_id)
         self.assertEqual(agent.status, AgentStatus.MOVING)
 
     def test_jump(self):
         """Test jumping mechanics"""
-        # Ensure agent is grounded
         state = self.movement_controller.movement_states[self.agent.agent_id]
         state.is_grounded = True
-
-        # Perform jump
         success = self.movement_controller.jump(self.agent.agent_id)
         self.assertTrue(success)
-
-        # Check state
         self.assertFalse(state.is_grounded)
         self.assertGreater(state.velocity[2], 0)
         self.assertEqual(state.mode, MovementMode.JUMPING)
-
-        # Test can't jump while in air
         success2 = self.movement_controller.jump(self.agent.agent_id)
         self.assertFalse(success2)
 
     def test_movement_info(self):
         """Test getting movement information"""
         info = self.movement_controller.get_movement_info(self.agent.agent_id)
-
         self.assertIsNotNone(info)
-        self.assertIn("position", info)
-        self.assertIn("velocity", info)
-        self.assertIn("speed", info)
-        self.assertIn("mode", info)
-        self.assertIn("is_grounded", info)
-
+        self.assertIn('position', info)
+        self.assertIn('velocity', info)
+        self.assertIn('speed', info)
+        self.assertIn('mode', info)
+        self.assertIn('is_grounded', info)
 
 class TestSteeringBehaviors(unittest.TestCase):
     """Test steering behaviors"""
@@ -298,10 +205,7 @@ class TestSteeringBehaviors(unittest.TestCase):
         position = np.array([0.0, 0.0, 0.0])
         target = np.array([10.0, 0.0, 0.0])
         max_speed = 5.0
-
         steering = SteeringBehaviors.seek(position, target, max_speed)
-
-        # Should move towards target
         self.assertAlmostEqual(steering[0], max_speed)
         self.assertAlmostEqual(steering[1], 0.0)
 
@@ -310,11 +214,8 @@ class TestSteeringBehaviors(unittest.TestCase):
         position = np.array([5.0, 5.0, 0.0])
         threat = np.array([10.0, 5.0, 0.0])
         max_speed = 5.0
-
         steering = SteeringBehaviors.flee(position, threat, max_speed)
-
-        # Should move away from threat
-        self.assertLess(steering[0], 0)  # Move left, away from threat
+        self.assertLess(steering[0], 0)
         self.assertAlmostEqual(steering[1], 0.0)
 
     def test_arrive_behavior(self):
@@ -323,11 +224,7 @@ class TestSteeringBehaviors(unittest.TestCase):
         target = np.array([10.0, 0.0, 0.0])
         max_speed = 5.0
         slowing_radius = 5.0
-
         steering = SteeringBehaviors.arrive(position, target, max_speed, slowing_radius)
-
-        # Should slow down when close to target
-        # Distance is 2.0, which is < slowing_radius
         expected_speed = max_speed * (2.0 / slowing_radius)
         self.assertAlmostEqual(np.linalg.norm(steering), expected_speed)
 
@@ -337,33 +234,17 @@ class TestSteeringBehaviors(unittest.TestCase):
         wander_angle = 0.0
         wander_rate = 0.5
         max_speed = 5.0
-
-        steering, new_angle = SteeringBehaviors.wander(
-            velocity, wander_angle, wander_rate, max_speed
-        )
-
-        # Should produce movement
+        steering, new_angle = SteeringBehaviors.wander(velocity, wander_angle, wander_rate, max_speed)
         self.assertAlmostEqual(np.linalg.norm(steering), max_speed)
-        # Angle should have changed
         self.assertNotEqual(new_angle, wander_angle)
 
     def test_separate_behavior(self):
         """Test separation steering behavior"""
         position = np.array([5.0, 5.0, 0.0])
-        neighbors = [
-            np.array([4.0, 5.0, 0.0]),  # Left neighbor
-            np.array([6.0, 5.0, 0.0]),  # Right neighbor
-        ]
+        neighbors = [np.array([4.0, 5.0, 0.0]), np.array([6.0, 5.0, 0.0])]
         separation_radius = 2.0
         max_speed = 5.0
-
-        steering = SteeringBehaviors.separate(
-            position, neighbors, separation_radius, max_speed
-        )
-
-        # With neighbors on both sides, should have minimal steering
+        steering = SteeringBehaviors.separate(position, neighbors, separation_radius, max_speed)
         self.assertLess(np.linalg.norm(steering), 1.0)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

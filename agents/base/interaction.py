@@ -4,7 +4,6 @@ Agent Interaction System
 This module provides mechanisms for agents to interact with other agents and the environment,
 including communication protocols, resource exchange, and conflict resolution.
 """
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional, Set, Tuple, Any, Callable
@@ -13,54 +12,48 @@ import threading
 import queue
 import uuid
 import logging
-
-from agents.base.data_model import Agent, AgentStatus, Position, AgentResources
-from agents.base.perception import Percept, StimulusType
-
+from .data-model import Agent, AgentStatus, Position, AgentResources
+from .perception import Percept, StimulusType
 logger = logging.getLogger(__name__)
-
 
 class InteractionType(Enum):
     """Types of agent interactions"""
-    COMMUNICATION = "communication"
-    RESOURCE_EXCHANGE = "resource_exchange"
-    INFORMATION_SHARING = "information_sharing"
-    CONFLICT = "conflict"
-    COOPERATION = "cooperation"
-    COMPETITION = "competition"
-    NEGOTIATION = "negotiation"
-    SOCIAL = "social"
-
+    COMMUNICATION = 'communication'
+    RESOURCE_EXCHANGE = 'resource_exchange'
+    INFORMATION_SHARING = 'information_sharing'
+    CONFLICT = 'conflict'
+    COOPERATION = 'cooperation'
+    COMPETITION = 'competition'
+    NEGOTIATION = 'negotiation'
+    SOCIAL = 'social'
 
 class MessageType(Enum):
     """Types of messages agents can send"""
-    GREETING = "greeting"
-    REQUEST = "request"
-    OFFER = "offer"
-    ACCEPT = "accept"
-    REJECT = "reject"
-    INFORM = "inform"
-    QUERY = "query"
-    COMMAND = "command"
-    WARNING = "warning"
-    ACKNOWLEDGMENT = "acknowledgment"
-
+    GREETING = 'greeting'
+    REQUEST = 'request'
+    OFFER = 'offer'
+    ACCEPT = 'accept'
+    REJECT = 'reject'
+    INFORM = 'inform'
+    QUERY = 'query'
+    COMMAND = 'command'
+    WARNING = 'warning'
+    ACKNOWLEDGMENT = 'acknowledgment'
 
 class ResourceType(Enum):
     """Types of resources that can be exchanged"""
-    ENERGY = "energy"
-    INFORMATION = "information"
-    MATERIAL = "material"
-    TERRITORY = "territory"
-    SOCIAL_CAPITAL = "social_capital"
-
+    ENERGY = 'energy'
+    INFORMATION = 'information'
+    MATERIAL = 'material'
+    TERRITORY = 'territory'
+    SOCIAL_CAPITAL = 'social_capital'
 
 @dataclass
 class Message:
     """Represents a message between agents"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    sender_id: str = ""
-    receiver_id: Optional[str] = None  # None for broadcast
+    sender_id: str = ''
+    receiver_id: Optional[str] = None
     message_type: MessageType = MessageType.INFORM
     content: Dict[str, Any] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.now)
@@ -71,39 +64,36 @@ class Message:
         """Check if this is a broadcast message"""
         return self.receiver_id is None
 
-
 @dataclass
 class InteractionRequest:
     """Request to initiate an interaction"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    initiator_id: str = ""
-    target_id: str = ""
+    initiator_id: str = ''
+    target_id: str = ''
     interaction_type: InteractionType = InteractionType.COMMUNICATION
     parameters: Dict[str, Any] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.now)
-    timeout: float = 30.0  # seconds
+    timeout: float = 30.0
 
     def is_expired(self) -> bool:
         """Check if the request has timed out"""
         return (datetime.now() - self.timestamp).total_seconds() > self.timeout
 
-
 @dataclass
 class InteractionResult:
     """Result of an interaction"""
-    request_id: str = ""
+    request_id: str = ''
     success: bool = False
     outcome: Dict[str, Any] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.now)
     error_message: Optional[str] = None
 
-
 @dataclass
 class ResourceExchange:
     """Represents a resource exchange between agents"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    from_agent_id: str = ""
-    to_agent_id: str = ""
+    from_agent_id: str = ''
+    to_agent_id: str = ''
     resource_type: ResourceType = ResourceType.ENERGY
     amount: float = 0.0
     timestamp: datetime = field(default_factory=datetime.now)
@@ -119,7 +109,6 @@ class ResourceExchange:
                 return True
         return False
 
-
 class CommunicationProtocol:
     """Manages communication between agents"""
 
@@ -133,27 +122,21 @@ class CommunicationProtocol:
         """Send a message to another agent or broadcast"""
         with self._lock:
             self.message_queue.put(message)
-
-            # Track conversation history
             if not message.is_broadcast():
                 key = tuple(sorted([message.sender_id, message.receiver_id]))
                 if key not in self.conversation_history:
                     self.conversation_history[key] = []
                 self.conversation_history[key].append(message)
-
-            # Track messages requiring responses
             if message.requires_response:
                 self.pending_responses[message.id] = message
-
             logger.debug(f"Message sent: {message.sender_id} -> {message.receiver_id or 'ALL'}")
             return True
 
-    def receive_messages(self, agent_id: str, max_messages: int = 10) -> List[Message]:
+    def receive_messages(self, agent_id: str, max_messages: int=10) -> List[Message]:
         """Receive messages for a specific agent"""
         messages = []
         with self._lock:
             temp_queue = queue.Queue()
-
             while not self.message_queue.empty() and len(messages) < max_messages:
                 try:
                     msg = self.message_queue.get_nowait()
@@ -163,11 +146,8 @@ class CommunicationProtocol:
                         temp_queue.put(msg)
                 except queue.Empty:
                     break
-
-            # Put back messages not for this agent
             while not temp_queue.empty():
                 self.message_queue.put(temp_queue.get())
-
         return messages
 
     def get_conversation_history(self, agent1_id: str, agent2_id: str) -> List[Message]:
@@ -186,7 +166,6 @@ class CommunicationProtocol:
                     del self.pending_responses[msg_id]
             return timed_out
 
-
 class ResourceManager:
     """Manages resource exchanges between agents"""
 
@@ -199,7 +178,7 @@ class ResourceManager:
         """Propose a resource exchange"""
         with self._lock:
             self.pending_exchanges[exchange.id] = exchange
-            logger.debug(f"Exchange proposed: {exchange.from_agent_id} -> {exchange.to_agent_id}")
+            logger.debug(f'Exchange proposed: {exchange.from_agent_id} -> {exchange.to_agent_id}')
             return exchange.id
 
     def execute_exchange(self, exchange_id: str, from_agent: Agent, to_agent: Agent) -> bool:
@@ -207,15 +186,12 @@ class ResourceManager:
         with self._lock:
             if exchange_id not in self.pending_exchanges:
                 return False
-
             exchange = self.pending_exchanges[exchange_id]
             success = exchange.execute(from_agent, to_agent)
-
             if success:
                 self.exchange_history.append(exchange)
                 del self.pending_exchanges[exchange_id]
-                logger.info(f"Exchange completed: {exchange.id}")
-
+                logger.info(f'Exchange completed: {exchange.id}')
             return success
 
     def cancel_exchange(self, exchange_id: str) -> bool:
@@ -223,16 +199,14 @@ class ResourceManager:
         with self._lock:
             if exchange_id in self.pending_exchanges:
                 del self.pending_exchanges[exchange_id]
-                logger.debug(f"Exchange cancelled: {exchange_id}")
+                logger.debug(f'Exchange cancelled: {exchange_id}')
                 return True
             return False
 
     def get_exchange_history(self, agent_id: str) -> List[ResourceExchange]:
         """Get exchange history for an agent"""
         with self._lock:
-            return [ex for ex in self.exchange_history
-                    if ex.from_agent_id == agent_id or ex.to_agent_id == agent_id]
-
+            return [ex for ex in self.exchange_history if ex.from_agent_id == agent_id or ex.to_agent_id == agent_id]
 
 class ConflictResolver:
     """Resolves conflicts between agents"""
@@ -247,89 +221,45 @@ class ConflictResolver:
         with self._lock:
             self.conflict_handlers[conflict_type] = handler
 
-    def resolve_resource_conflict(self, agent1: Agent, agent2: Agent,
-                                  resource_type: ResourceType,
-                                  disputed_amount: float) -> Dict[str, float]:
+    def resolve_resource_conflict(self, agent1: Agent, agent2: Agent, resource_type: ResourceType, disputed_amount: float) -> Dict[str, float]:
         """Resolve a resource conflict between two agents"""
-        # Simple resolution based on agent priorities and current resources
         total_priority = agent1.priority + agent2.priority
-
         if total_priority == 0:
-            # Equal split if no priority difference
             share1 = disputed_amount / 2
             share2 = disputed_amount / 2
         else:
-            # Proportional split based on priority
             share1 = disputed_amount * (agent1.priority / total_priority)
             share2 = disputed_amount * (agent2.priority / total_priority)
-
-        # Adjust based on current resource levels
         if resource_type == ResourceType.ENERGY:
             energy_ratio = agent1.resources.energy / (agent1.resources.energy + agent2.resources.energy + 0.001)
-            # Give more to the agent with less energy
             share1 = share1 * (1 - energy_ratio)
             share2 = share2 * energy_ratio
-
-        result = {
-            agent1.id: share1,
-            agent2.id: share2
-        }
-
+        result = {agent1.id: share1, agent2.id: share2}
         with self._lock:
-            self.conflict_history.append({
-                'type': 'resource_conflict',
-                'agents': [agent1.id, agent2.id],
-                'resource_type': resource_type,
-                'disputed_amount': disputed_amount,
-                'resolution': result,
-                'timestamp': datetime.now()
-            })
-
+            self.conflict_history.append({'type': 'resource_conflict', 'agents': [agent1.id, agent2.id], 'resource_type': resource_type, 'disputed_amount': disputed_amount, 'resolution': result, 'timestamp': datetime.now()})
         return result
 
-    def resolve_spatial_conflict(self, agent1: Agent, agent2: Agent,
-                                 disputed_position: Position) -> str:
+    def resolve_spatial_conflict(self, agent1: Agent, agent2: Agent, disputed_position: Position) -> str:
         """Resolve a spatial conflict (who gets to occupy a position)"""
-        # Resolution based on various factors
-        factors = {
-            agent1.id: 0,
-            agent2.id: 0
-        }
-
-        # Factor 1: Who is closer
+        factors = {agent1.id: 0, agent2.id: 0}
         dist1 = agent1.position.distance_to(disputed_position)
         dist2 = agent2.position.distance_to(disputed_position)
         if dist1 < dist2:
             factors[agent1.id] += 1
         else:
             factors[agent2.id] += 1
-
-        # Factor 2: Who has higher priority
         if agent1.priority > agent2.priority:
             factors[agent1.id] += 1
         elif agent2.priority > agent1.priority:
             factors[agent2.id] += 1
-
-        # Factor 3: Who has more energy (can defend the position)
         if agent1.resources.energy > agent2.resources.energy:
             factors[agent1.id] += 1
         else:
             factors[agent2.id] += 1
-
         winner_id = max(factors.items(), key=lambda x: x[1])[0]
-
         with self._lock:
-            self.conflict_history.append({
-                'type': 'spatial_conflict',
-                'agents': [agent1.id, agent2.id],
-                'disputed_position': disputed_position,
-                'winner': winner_id,
-                'factors': factors,
-                'timestamp': datetime.now()
-            })
-
+            self.conflict_history.append({'type': 'spatial_conflict', 'agents': [agent1.id, agent2.id], 'disputed_position': disputed_position, 'winner': winner_id, 'factors': factors, 'timestamp': datetime.now()})
         return winner_id
-
 
 class InteractionSystem:
     """Main system for managing all agent interactions"""
@@ -342,27 +272,22 @@ class InteractionSystem:
         self.interaction_history: List[InteractionResult] = []
         self.registered_agents: Dict[str, Agent] = {}
         self._lock = threading.Lock()
-
-        # Interaction callbacks
-        self.interaction_callbacks: Dict[InteractionType, List[Callable]] = {
-            interaction_type: [] for interaction_type in InteractionType
-        }
+        self.interaction_callbacks: Dict[InteractionType, List[Callable]] = {interaction_type: [] for interaction_type in InteractionType}
 
     def register_agent(self, agent: Agent) -> None:
         """Register an agent with the interaction system"""
         with self._lock:
             self.registered_agents[agent.id] = agent
-            logger.info(f"Agent registered: {agent.id}")
+            logger.info(f'Agent registered: {agent.id}')
 
     def unregister_agent(self, agent_id: str) -> None:
         """Unregister an agent from the interaction system"""
         with self._lock:
             if agent_id in self.registered_agents:
                 del self.registered_agents[agent_id]
-                logger.info(f"Agent unregistered: {agent_id}")
+                logger.info(f'Agent unregistered: {agent_id}')
 
-    def register_interaction_callback(self, interaction_type: InteractionType,
-                                      callback: Callable) -> None:
+    def register_interaction_callback(self, interaction_type: InteractionType, callback: Callable) -> None:
         """Register a callback for specific interaction types"""
         with self._lock:
             self.interaction_callbacks[interaction_type].append(callback)
@@ -371,153 +296,68 @@ class InteractionSystem:
         """Initiate an interaction between agents"""
         with self._lock:
             self.active_interactions[request.id] = request
-
-            # Notify callbacks
             for callback in self.interaction_callbacks[request.interaction_type]:
                 try:
                     callback(request)
                 except Exception as e:
-                    logger.error(f"Callback error: {e}")
-
-            logger.debug(f"Interaction initiated: {request.id}")
+                    logger.error(f'Callback error: {e}')
+            logger.debug(f'Interaction initiated: {request.id}')
             return request.id
 
     def process_interaction(self, interaction_id: str) -> InteractionResult:
         """Process an active interaction"""
         with self._lock:
             if interaction_id not in self.active_interactions:
-                return InteractionResult(
-                    request_id=interaction_id,
-                    success=False,
-                    error_message="Interaction not found"
-                )
-
+                return InteractionResult(request_id=interaction_id, success=False, error_message='Interaction not found')
             request = self.active_interactions[interaction_id]
-
-            # Check if expired
             if request.is_expired():
                 del self.active_interactions[interaction_id]
-                return InteractionResult(
-                    request_id=interaction_id,
-                    success=False,
-                    error_message="Interaction timed out"
-                )
-
-            # Process based on interaction type
+                return InteractionResult(request_id=interaction_id, success=False, error_message='Interaction timed out')
             result = self._process_interaction_type(request)
-
-            # Record in history
             self.interaction_history.append(result)
-
-            # Clean up
             del self.active_interactions[interaction_id]
-
             return result
 
     def _process_interaction_type(self, request: InteractionRequest) -> InteractionResult:
         """Process specific interaction types"""
         if request.interaction_type == InteractionType.COMMUNICATION:
-            # Handle communication interaction
-            message = Message(
-                sender_id=request.initiator_id,
-                receiver_id=request.target_id,
-                message_type=request.parameters.get('message_type', MessageType.INFORM),
-                content=request.parameters.get('content', {}),
-                requires_response=request.parameters.get('requires_response', False)
-            )
+            message = Message(sender_id=request.initiator_id, receiver_id=request.target_id, message_type=request.parameters.get('message_type', MessageType.INFORM), content=request.parameters.get('content', {}), requires_response=request.parameters.get('requires_response', False))
             success = self.communication.send_message(message)
-            return InteractionResult(
-                request_id=request.id,
-                success=success,
-                outcome={'message_id': message.id}
-            )
-
+            return InteractionResult(request_id=request.id, success=success, outcome={'message_id': message.id})
         elif request.interaction_type == InteractionType.RESOURCE_EXCHANGE:
-            # Handle resource exchange
-            exchange = ResourceExchange(
-                from_agent_id=request.initiator_id,
-                to_agent_id=request.target_id,
-                resource_type=request.parameters.get('resource_type', ResourceType.ENERGY),
-                amount=request.parameters.get('amount', 0.0)
-            )
+            exchange = ResourceExchange(from_agent_id=request.initiator_id, to_agent_id=request.target_id, resource_type=request.parameters.get('resource_type', ResourceType.ENERGY), amount=request.parameters.get('amount', 0.0))
             exchange_id = self.resource_manager.propose_exchange(exchange)
-            return InteractionResult(
-                request_id=request.id,
-                success=True,
-                outcome={'exchange_id': exchange_id}
-            )
-
+            return InteractionResult(request_id=request.id, success=True, outcome={'exchange_id': exchange_id})
         elif request.interaction_type == InteractionType.CONFLICT:
-            # Handle conflict resolution
             if request.initiator_id not in self.registered_agents:
-                return InteractionResult(
-                    request_id=request.id,
-                    success=False,
-                    error_message="Initiator not registered"
-                )
-
+                return InteractionResult(request_id=request.id, success=False, error_message='Initiator not registered')
             if request.target_id not in self.registered_agents:
-                return InteractionResult(
-                    request_id=request.id,
-                    success=False,
-                    error_message="Target not registered"
-                )
-
+                return InteractionResult(request_id=request.id, success=False, error_message='Target not registered')
             agent1 = self.registered_agents[request.initiator_id]
             agent2 = self.registered_agents[request.target_id]
-
             conflict_type = request.parameters.get('conflict_type', 'resource')
-
             if conflict_type == 'resource':
-                resolution = self.conflict_resolver.resolve_resource_conflict(
-                    agent1, agent2,
-                    request.parameters.get('resource_type', ResourceType.ENERGY),
-                    request.parameters.get('disputed_amount', 0.0)
-                )
+                resolution = self.conflict_resolver.resolve_resource_conflict(agent1, agent2, request.parameters.get('resource_type', ResourceType.ENERGY), request.parameters.get('disputed_amount', 0.0))
             elif conflict_type == 'spatial':
-                winner = self.conflict_resolver.resolve_spatial_conflict(
-                    agent1, agent2,
-                    request.parameters.get('disputed_position', agent1.position)
-                )
+                winner = self.conflict_resolver.resolve_spatial_conflict(agent1, agent2, request.parameters.get('disputed_position', agent1.position))
                 resolution = {'winner': winner}
             else:
                 resolution = {}
-
-            return InteractionResult(
-                request_id=request.id,
-                success=True,
-                outcome=resolution
-            )
-
+            return InteractionResult(request_id=request.id, success=True, outcome=resolution)
         else:
-            # Default handling for other interaction types
-            return InteractionResult(
-                request_id=request.id,
-                success=True,
-                outcome={'interaction_type': request.interaction_type.value}
-            )
+            return InteractionResult(request_id=request.id, success=True, outcome={'interaction_type': request.interaction_type.value})
 
     def get_interaction_history(self, agent_id: str) -> List[InteractionResult]:
         """Get interaction history for an agent"""
         with self._lock:
-            return [result for result in self.interaction_history
-                    if any(req.initiator_id == agent_id or req.target_id == agent_id
-                           for req in self.active_interactions.values()
-                           if req.id == result.request_id)]
+            return [result for result in self.interaction_history if any((req.initiator_id == agent_id or req.target_id == agent_id for req in self.active_interactions.values() if req.id == result.request_id))]
 
     def cleanup_expired_interactions(self) -> int:
         """Clean up expired interactions"""
         with self._lock:
-            expired = [req_id for req_id, req in self.active_interactions.items()
-                       if req.is_expired()]
-
+            expired = [req_id for req_id, req in self.active_interactions.items() if req.is_expired()]
             for req_id in expired:
-                result = InteractionResult(
-                    request_id=req_id,
-                    success=False,
-                    error_message="Interaction expired"
-                )
+                result = InteractionResult(request_id=req_id, success=False, error_message='Interaction expired')
                 self.interaction_history.append(result)
                 del self.active_interactions[req_id]
-
             return len(expired)

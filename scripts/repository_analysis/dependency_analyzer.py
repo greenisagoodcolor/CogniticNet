@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Dependency Graph Analyzer Module
 
@@ -11,7 +10,6 @@ Key principles:
 - Performance: Efficient algorithms for large codebases
 - Visualization: Export capabilities for graph analysis
 """
-
 import ast
 import re
 import logging
@@ -21,23 +19,20 @@ from dataclasses import dataclass, field
 from enum import Enum
 import json
 import networkx as nx
-
 try:
     from .traversal import FileInfo
-    from .metadata_extractor import ExtendedMetadata
+    from .metadata-extractor import ExtendedMetadata
 except ImportError:
     from traversal import FileInfo
     from metadata_extractor import ExtendedMetadata
 
-
 class DependencyType(Enum):
     """Types of dependencies that can be detected"""
-    IMPORT = "import"           # Direct import statements
-    RELATIVE = "relative"       # Relative imports
-    EXTERNAL = "external"       # External package dependencies
-    INTERNAL = "internal"       # Internal project dependencies
-    CIRCULAR = "circular"       # Circular dependency detected
-
+    IMPORT = 'import'
+    RELATIVE = 'relative'
+    EXTERNAL = 'external'
+    INTERNAL = 'internal'
+    CIRCULAR = 'circular'
 
 @dataclass
 class Dependency:
@@ -58,9 +53,8 @@ class Dependency:
 
     def __post_init__(self):
         """Validate dependency after initialization"""
-        if not (0.0 <= self.confidence <= 1.0):
-            raise ValueError("Confidence must be between 0.0 and 1.0")
-
+        if not 0.0 <= self.confidence <= 1.0:
+            raise ValueError('Confidence must be between 0.0 and 1.0')
 
 @dataclass
 class DependencyGraph:
@@ -81,7 +75,6 @@ class DependencyGraph:
         self.nodes.add(str(dependency.source_file))
         self.nodes.add(dependency.target_module)
         self.edges.append(dependency)
-
         if dependency.dependency_type == DependencyType.EXTERNAL:
             self.external_dependencies.add(dependency.target_module)
 
@@ -98,43 +91,15 @@ class DependencyGraph:
     def to_networkx(self) -> nx.DiGraph:
         """Convert to NetworkX graph for advanced analysis"""
         G = nx.DiGraph()
-
         for node in self.nodes:
             G.add_node(node)
-
         for edge in self.edges:
-            G.add_edge(
-                str(edge.source_file),
-                edge.target_module,
-                dependency_type=edge.dependency_type.value,
-                line_number=edge.line_number,
-                confidence=edge.confidence
-            )
-
+            G.add_edge(str(edge.source_file), edge.target_module, dependency_type=edge.dependency_type.value, line_number=edge.line_number, confidence=edge.confidence)
         return G
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
-        return {
-            "nodes": list(self.nodes),
-            "edges": [
-                {
-                    "source": str(edge.source_file),
-                    "target": edge.target_module,
-                    "type": edge.dependency_type.value,
-                    "line": edge.line_number,
-                    "statement": edge.import_statement,
-                    "conditional": edge.is_conditional,
-                    "dynamic": edge.is_dynamic,
-                    "confidence": edge.confidence
-                }
-                for edge in self.edges
-            ],
-            "circular_dependencies": self.circular_dependencies,
-            "external_dependencies": list(self.external_dependencies),
-            "entry_points": list(self.entry_points)
-        }
-
+        return {'nodes': list(self.nodes), 'edges': [{'source': str(edge.source_file), 'target': edge.target_module, 'type': edge.dependency_type.value, 'line': edge.line_number, 'statement': edge.import_statement, 'conditional': edge.is_conditional, 'dynamic': edge.is_dynamic, 'confidence': edge.confidence} for edge in self.edges], 'circular_dependencies': self.circular_dependencies, 'external_dependencies': list(self.external_dependencies), 'entry_points': list(self.entry_points)}
 
 class DependencyAnalyzer:
     """
@@ -148,35 +113,10 @@ class DependencyAnalyzer:
     - Open/Closed: Extensible for new languages
     - Dependency Inversion: Uses abstractions for parsing
     """
+    PYTHON_BUILTINS = {'os', 'sys', 'json', 'csv', 'math', 'random', 'datetime', 'time', 'collections', 'itertools', 'functools', 'operator', 'pathlib', 'urllib', 'http', 'logging', 'unittest', 'pytest', 'typing', 're', 'string', 'io', 'pickle', 'sqlite3', 'subprocess', 'threading', 'multiprocessing', 'asyncio', 'concurrent', 'queue', 'socket', 'email', 'html', 'xml', 'hashlib', 'hmac', 'secrets', 'ssl', 'base64', 'binascii', 'struct', 'codecs', 'locale', 'platform'}
+    JS_BUILTINS = {'fs', 'path', 'os', 'crypto', 'util', 'events', 'stream', 'buffer', 'child_process', 'cluster', 'dgram', 'dns', 'domain', 'http', 'https', 'net', 'punycode', 'querystring', 'readline', 'repl', 'string_decoder', 'tls', 'tty', 'url', 'v8', 'vm', 'worker_threads', 'zlib', 'assert', 'console', 'process', 'global', 'Buffer', 'setTimeout', 'setInterval', 'require'}
 
-    # Python built-in modules (partial list)
-    PYTHON_BUILTINS = {
-        'os', 'sys', 'json', 'csv', 'math', 'random', 'datetime', 'time',
-        'collections', 'itertools', 'functools', 'operator', 'pathlib',
-        'urllib', 'http', 'logging', 'unittest', 'pytest', 'typing',
-        're', 'string', 'io', 'pickle', 'sqlite3', 'subprocess', 'threading',
-        'multiprocessing', 'asyncio', 'concurrent', 'queue', 'socket',
-        'email', 'html', 'xml', 'hashlib', 'hmac', 'secrets', 'ssl',
-        'base64', 'binascii', 'struct', 'codecs', 'locale', 'platform'
-    }
-
-    # Common JavaScript/Node.js built-ins and globals
-    JS_BUILTINS = {
-        'fs', 'path', 'os', 'crypto', 'util', 'events', 'stream',
-        'buffer', 'child_process', 'cluster', 'dgram', 'dns', 'domain',
-        'http', 'https', 'net', 'punycode', 'querystring', 'readline',
-        'repl', 'string_decoder', 'tls', 'tty', 'url', 'v8', 'vm',
-        'worker_threads', 'zlib', 'assert', 'console', 'process',
-        'global', 'Buffer', 'setTimeout', 'setInterval', 'require'
-    }
-
-    def __init__(
-        self,
-        project_root: Path,
-        include_external: bool = True,
-        include_builtins: bool = False,
-        confidence_threshold: float = 0.7
-    ):
+    def __init__(self, project_root: Path, include_external: bool=True, include_builtins: bool=False, confidence_threshold: float=0.7):
         """
         Initialize dependency analyzer.
 
@@ -191,8 +131,6 @@ class DependencyAnalyzer:
         self.include_builtins = include_builtins
         self.confidence_threshold = confidence_threshold
         self.logger = logging.getLogger(__name__)
-
-        # Cache for resolved module paths
         self._module_cache: Dict[str, Optional[Path]] = {}
 
     def analyze_dependencies(self, metadata_list: List[ExtendedMetadata]) -> DependencyGraph:
@@ -206,10 +144,7 @@ class DependencyAnalyzer:
             DependencyGraph: Complete dependency graph
         """
         graph = DependencyGraph()
-
-        self.logger.info(f"Analyzing dependencies for {len(metadata_list)} files")
-
-        # Process each file
+        self.logger.info(f'Analyzing dependencies for {len(metadata_list)} files')
         for i, metadata in enumerate(metadata_list):
             try:
                 if metadata.language == 'Python':
@@ -217,26 +152,16 @@ class DependencyAnalyzer:
                 elif metadata.language in ['JavaScript', 'TypeScript']:
                     deps = self._analyze_js_file(metadata)
                 else:
-                    continue  # Skip unsupported languages
-
-                # Add dependencies to graph
+                    continue
                 for dep in deps:
                     if dep.confidence >= self.confidence_threshold:
                         graph.add_dependency(dep)
-
-                # Log progress
-                if (i + 1) % 50 == 0 or (i + 1) == len(metadata_list):
-                    self.logger.info(f"Processed {i + 1}/{len(metadata_list)} files")
-
+                if (i + 1) % 50 == 0 or i + 1 == len(metadata_list):
+                    self.logger.info(f'Processed {i + 1}/{len(metadata_list)} files')
             except Exception as e:
-                self.logger.error(f"Error analyzing dependencies for {metadata.file_path}: {e}")
-
-        # Detect circular dependencies
+                self.logger.error(f'Error analyzing dependencies for {metadata.file_path}: {e}')
         self._detect_circular_dependencies(graph)
-
-        # Identify entry points
         self._identify_entry_points(graph, metadata_list)
-
         return graph
 
     def _analyze_python_file(self, metadata: ExtendedMetadata) -> List[Dependency]:
@@ -250,60 +175,31 @@ class DependencyAnalyzer:
             List[Dependency]: Dependencies found in the file
         """
         dependencies = []
-
         try:
             if metadata.is_binary or metadata.size_bytes > 10 * 1024 * 1024:
                 return dependencies
-
             content = metadata.file_path.read_text(encoding='utf-8', errors='ignore')
             tree = ast.parse(content)
-
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for alias in node.names:
-                        dep = self._create_python_dependency(
-                            metadata.file_path,
-                            alias.name,
-                            node.lineno,
-                            f"import {alias.name}",
-                            is_relative=False
-                        )
+                        dep = self._create_python_dependency(metadata.file_path, alias.name, node.lineno, f'import {alias.name}', is_relative=False)
                         if dep:
                             dependencies.append(dep)
-
                 elif isinstance(node, ast.ImportFrom):
                     if node.module:
-                        dep = self._create_python_dependency(
-                            metadata.file_path,
-                            node.module,
-                            node.lineno,
-                            f"from {node.module} import ...",
-                            is_relative=node.level > 0
-                        )
+                        dep = self._create_python_dependency(metadata.file_path, node.module, node.lineno, f'from {node.module} import ...', is_relative=node.level > 0)
                         if dep:
                             dependencies.append(dep)
-
-                # Check for dynamic imports
                 elif isinstance(node, ast.Call):
-                    if (isinstance(node.func, ast.Name) and
-                        node.func.id == '__import__' and
-                        node.args):
+                    if isinstance(node.func, ast.Name) and node.func.id == '__import__' and node.args:
                         if isinstance(node.args[0], ast.Constant):
-                            dep = self._create_python_dependency(
-                                metadata.file_path,
-                                node.args[0].value,
-                                node.lineno,
-                                f"__import__('{node.args[0].value}')",
-                                is_dynamic=True
-                            )
+                            dep = self._create_python_dependency(metadata.file_path, node.args[0].value, node.lineno, f"__import__('{node.args[0].value}')", is_dynamic=True)
                             if dep:
                                 dependencies.append(dep)
-
         except Exception as e:
-            self.logger.warning(f"Error parsing Python file {metadata.file_path}: {e}")
-            # Fallback to regex-based parsing
+            self.logger.warning(f'Error parsing Python file {metadata.file_path}: {e}')
             dependencies.extend(self._analyze_python_file_regex(metadata))
-
         return dependencies
 
     def _analyze_python_file_regex(self, metadata: ExtendedMetadata) -> List[Dependency]:
@@ -317,36 +213,20 @@ class DependencyAnalyzer:
             List[Dependency]: Dependencies found via regex
         """
         dependencies = []
-
         try:
             content = metadata.file_path.read_text(encoding='utf-8', errors='ignore')
             lines = content.splitlines()
-
-            import_patterns = [
-                (r'^\s*import\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)', False),
-                (r'^\s*from\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s+import', False),
-                (r'^\s*from\s+(\.+[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s+import', True),
-            ]
-
+            import_patterns = [('^\\s*import\\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*)', False), ('^\\s*from\\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*)\\s+import', False), ('^\\s*from\\s+(\\.+[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*)\\s+import', True)]
             for line_num, line in enumerate(lines, 1):
                 for pattern, is_relative in import_patterns:
                     match = re.match(pattern, line.strip())
                     if match:
                         module_name = match.group(1)
-                        dep = self._create_python_dependency(
-                            metadata.file_path,
-                            module_name,
-                            line_num,
-                            line.strip(),
-                            is_relative=is_relative,
-                            confidence=0.8  # Lower confidence for regex parsing
-                        )
+                        dep = self._create_python_dependency(metadata.file_path, module_name, line_num, line.strip(), is_relative=is_relative, confidence=0.8)
                         if dep:
                             dependencies.append(dep)
-
         except Exception as e:
-            self.logger.warning(f"Error in regex analysis for {metadata.file_path}: {e}")
-
+            self.logger.warning(f'Error in regex analysis for {metadata.file_path}: {e}')
         return dependencies
 
     def _analyze_js_file(self, metadata: ExtendedMetadata) -> List[Dependency]:
@@ -360,61 +240,28 @@ class DependencyAnalyzer:
             List[Dependency]: Dependencies found in the file
         """
         dependencies = []
-
         try:
             if metadata.is_binary or metadata.size_bytes > 10 * 1024 * 1024:
                 return dependencies
-
             content = metadata.file_path.read_text(encoding='utf-8', errors='ignore')
             lines = content.splitlines()
-
-            # ES6/TypeScript import patterns
-            import_patterns = [
-                r'import\s+.*?\s+from\s+[\'"]([^\'"]+)[\'"]',
-                r'import\s+[\'"]([^\'"]+)[\'"]',
-                r'import\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)',  # Dynamic imports
-                r'require\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)',  # CommonJS
-                r'export\s+.*?\s+from\s+[\'"]([^\'"]+)[\'"]',  # Re-exports
-            ]
-
+            import_patterns = ['import\\s+.*?\\s+from\\s+[\\\'"]([^\\\'"]+)[\\\'"]', 'import\\s+[\\\'"]([^\\\'"]+)[\\\'"]', 'import\\s*\\(\\s*[\\\'"]([^\\\'"]+)[\\\'"]\\s*\\)', 'require\\s*\\(\\s*[\\\'"]([^\\\'"]+)[\\\'"]\\s*\\)', 'export\\s+.*?\\s+from\\s+[\\\'"]([^\\\'"]+)[\\\'"]']
             for line_num, line in enumerate(lines, 1):
                 line_stripped = line.strip()
-
-                # Skip comments
                 if line_stripped.startswith('//') or line_stripped.startswith('/*'):
                     continue
-
                 for pattern in import_patterns:
                     matches = re.findall(pattern, line)
                     for module_name in matches:
-                        # Determine if it's a dynamic import
                         is_dynamic = 'import(' in line or 'require(' in line
-
-                        dep = self._create_js_dependency(
-                            metadata.file_path,
-                            module_name,
-                            line_num,
-                            line_stripped,
-                            is_dynamic=is_dynamic
-                        )
+                        dep = self._create_js_dependency(metadata.file_path, module_name, line_num, line_stripped, is_dynamic=is_dynamic)
                         if dep:
                             dependencies.append(dep)
-
         except Exception as e:
-            self.logger.warning(f"Error analyzing JS/TS file {metadata.file_path}: {e}")
-
+            self.logger.warning(f'Error analyzing JS/TS file {metadata.file_path}: {e}')
         return dependencies
 
-    def _create_python_dependency(
-        self,
-        source_file: Path,
-        module_name: str,
-        line_number: int,
-        import_statement: str,
-        is_relative: bool = False,
-        is_dynamic: bool = False,
-        confidence: float = 1.0
-    ) -> Optional[Dependency]:
+    def _create_python_dependency(self, source_file: Path, module_name: str, line_number: int, import_statement: str, is_relative: bool=False, is_dynamic: bool=False, confidence: float=1.0) -> Optional[Dependency]:
         """
         Create a Python dependency object with proper classification.
 
@@ -430,7 +277,6 @@ class DependencyAnalyzer:
         Returns:
             Optional[Dependency]: Created dependency or None if filtered
         """
-        # Determine dependency type
         if is_relative:
             dep_type = DependencyType.RELATIVE
         elif module_name.split('.')[0] in self.PYTHON_BUILTINS:
@@ -443,26 +289,9 @@ class DependencyAnalyzer:
             if not self.include_external:
                 return None
             dep_type = DependencyType.EXTERNAL
+        return Dependency(source_file=source_file, target_module=module_name, dependency_type=dep_type, line_number=line_number, import_statement=import_statement, is_dynamic=is_dynamic, confidence=confidence)
 
-        return Dependency(
-            source_file=source_file,
-            target_module=module_name,
-            dependency_type=dep_type,
-            line_number=line_number,
-            import_statement=import_statement,
-            is_dynamic=is_dynamic,
-            confidence=confidence
-        )
-
-    def _create_js_dependency(
-        self,
-        source_file: Path,
-        module_name: str,
-        line_number: int,
-        import_statement: str,
-        is_dynamic: bool = False,
-        confidence: float = 1.0
-    ) -> Optional[Dependency]:
+    def _create_js_dependency(self, source_file: Path, module_name: str, line_number: int, import_statement: str, is_dynamic: bool=False, confidence: float=1.0) -> Optional[Dependency]:
         """
         Create a JavaScript/TypeScript dependency object with proper classification.
 
@@ -477,7 +306,6 @@ class DependencyAnalyzer:
         Returns:
             Optional[Dependency]: Created dependency or None if filtered
         """
-        # Determine dependency type
         if module_name.startswith('.'):
             dep_type = DependencyType.RELATIVE
         elif module_name in self.JS_BUILTINS:
@@ -490,16 +318,7 @@ class DependencyAnalyzer:
             if not self.include_external:
                 return None
             dep_type = DependencyType.EXTERNAL
-
-        return Dependency(
-            source_file=source_file,
-            target_module=module_name,
-            dependency_type=dep_type,
-            line_number=line_number,
-            import_statement=import_statement,
-            is_dynamic=is_dynamic,
-            confidence=confidence
-        )
+        return Dependency(source_file=source_file, target_module=module_name, dependency_type=dep_type, line_number=line_number, import_statement=import_statement, is_dynamic=is_dynamic, confidence=confidence)
 
     def _is_internal_python_module(self, module_name: str, source_file: Path) -> bool:
         """
@@ -512,15 +331,11 @@ class DependencyAnalyzer:
         Returns:
             bool: True if module is internal to the project
         """
-        # Cache lookup
-        cache_key = f"py:{module_name}:{source_file.parent}"
+        cache_key = f'py:{module_name}:{source_file.parent}'
         if cache_key in self._module_cache:
             return self._module_cache[cache_key] is not None
-
-        # Try to resolve the module path
         module_path = self._resolve_python_module(module_name, source_file)
         self._module_cache[cache_key] = module_path
-
         return module_path is not None
 
     def _is_internal_js_module(self, module_name: str, source_file: Path) -> bool:
@@ -534,19 +349,13 @@ class DependencyAnalyzer:
         Returns:
             bool: True if module is internal to the project
         """
-        # Relative imports are always internal
         if module_name.startswith('.'):
             return True
-
-        # Cache lookup
-        cache_key = f"js:{module_name}:{source_file.parent}"
+        cache_key = f'js:{module_name}:{source_file.parent}'
         if cache_key in self._module_cache:
             return self._module_cache[cache_key] is not None
-
-        # Try to resolve the module path
         module_path = self._resolve_js_module(module_name, source_file)
         self._module_cache[cache_key] = module_path
-
         return module_path is not None
 
     def _resolve_python_module(self, module_name: str, source_file: Path) -> Optional[Path]:
@@ -560,26 +369,15 @@ class DependencyAnalyzer:
         Returns:
             Optional[Path]: Resolved file path or None if not found
         """
-        # Convert module name to potential file paths
         module_parts = module_name.split('.')
-
-        # Try different search paths
-        search_paths = [
-            self.project_root,
-            source_file.parent,
-        ]
-
+        search_paths = [self.project_root, source_file.parent]
         for search_path in search_paths:
-            # Try as a file
-            file_path = search_path / '/'.join(module_parts[:-1]) / f"{module_parts[-1]}.py"
+            file_path = search_path / '/'.join(module_parts[:-1]) / f'{module_parts[-1]}.py'
             if file_path.exists() and file_path.is_relative_to(self.project_root):
                 return file_path
-
-            # Try as a package
-            package_path = search_path / '/'.join(module_parts) / "__init__.py"
+            package_path = search_path / '/'.join(module_parts) / '__init__.py'
             if package_path.exists() and package_path.is_relative_to(self.project_root):
                 return package_path
-
         return None
 
     def _resolve_js_module(self, module_name: str, source_file: Path) -> Optional[Path]:
@@ -593,31 +391,23 @@ class DependencyAnalyzer:
         Returns:
             Optional[Path]: Resolved file path or None if not found
         """
-        # Handle relative imports
         if module_name.startswith('.'):
             base_path = source_file.parent
             relative_path = Path(module_name)
             resolved_path = (base_path / relative_path).resolve()
-
-            # Try different extensions
             for ext in ['.js', '.ts', '.jsx', '.tsx', '.json']:
                 file_path = resolved_path.with_suffix(ext)
                 if file_path.exists() and file_path.is_relative_to(self.project_root):
                     return file_path
-
-            # Try as directory with index file
             for ext in ['.js', '.ts', '.jsx', '.tsx']:
-                index_path = resolved_path / f"index{ext}"
+                index_path = resolved_path / f'index{ext}'
                 if index_path.exists() and index_path.is_relative_to(self.project_root):
                     return index_path
-
-        # For absolute imports, check if they exist in the project
         module_path = self.project_root / module_name
         for ext in ['.js', '.ts', '.jsx', '.tsx', '.json']:
             file_path = module_path.with_suffix(ext)
             if file_path.exists():
                 return file_path
-
         return None
 
     def _detect_circular_dependencies(self, graph: DependencyGraph) -> None:
@@ -629,24 +419,17 @@ class DependencyAnalyzer:
         """
         try:
             nx_graph = graph.to_networkx()
-
-            # Find strongly connected components
             sccs = list(nx.strongly_connected_components(nx_graph))
-
-            # Identify cycles (SCCs with more than one node or self-loops)
             for scc in sccs:
                 if len(scc) > 1:
-                    # Multi-node cycle
                     cycle = list(scc)
                     graph.circular_dependencies.append(cycle)
                 elif len(scc) == 1:
-                    # Check for self-loop
                     node = next(iter(scc))
                     if nx_graph.has_edge(node, node):
                         graph.circular_dependencies.append([node])
-
         except Exception as e:
-            self.logger.warning(f"Error detecting circular dependencies: {e}")
+            self.logger.warning(f'Error detecting circular dependencies: {e}')
 
     def _identify_entry_points(self, graph: DependencyGraph, metadata_list: List[ExtendedMetadata]) -> None:
         """
@@ -656,14 +439,10 @@ class DependencyAnalyzer:
             graph: Dependency graph to analyze
             metadata_list: List of file metadata
         """
-        # Get all files that are targets of dependencies
         dependency_targets = {dep.target_module for dep in graph.edges}
-
-        # Entry points are files that exist but are not dependency targets
         for metadata in metadata_list:
             file_str = str(metadata.file_path)
             if file_str in graph.nodes and file_str not in dependency_targets:
-                # Additional checks for entry points
                 if self._is_likely_entry_point(metadata):
                     graph.entry_points.add(file_str)
 
@@ -678,26 +457,16 @@ class DependencyAnalyzer:
             bool: True if file is likely an entry point
         """
         filename = metadata.file_path.name.lower()
-
-        # Common entry point patterns
-        entry_patterns = [
-            'main.py', 'app.py', '__main__.py', 'manage.py', 'run.py',
-            'index.js', 'main.js', 'app.js', 'server.js', 'index.ts',
-            'main.ts', 'app.ts', 'server.ts'
-        ]
-
+        entry_patterns = ['main.py', 'app.py', '__main__.py', 'manage.py', 'run.py', 'index.js', 'main.js', 'app.js', 'server.js', 'index.ts', 'main.ts', 'app.ts', 'server.ts']
         if filename in entry_patterns:
             return True
-
-        # Check for __main__ guard in Python files
-        if metadata.language == 'Python' and not metadata.is_binary:
+        if metadata.language == 'Python' and (not metadata.is_binary):
             try:
                 content = metadata.file_path.read_text(encoding='utf-8', errors='ignore')
                 if '__name__ == "__main__"' in content:
                     return True
             except Exception:
                 pass
-
         return False
 
     def get_statistics(self, graph: DependencyGraph) -> Dict[str, Any]:
@@ -710,35 +479,14 @@ class DependencyAnalyzer:
         Returns:
             Dict: Statistics about the dependencies
         """
-        # Count by dependency type
         type_counts = {}
         for dep in graph.edges:
             dep_type = dep.dependency_type.value
             type_counts[dep_type] = type_counts.get(dep_type, 0) + 1
-
-        # Calculate graph metrics
         nx_graph = graph.to_networkx()
+        return {'total_nodes': len(graph.nodes), 'total_edges': len(graph.edges), 'dependency_types': type_counts, 'circular_dependencies': len(graph.circular_dependencies), 'external_dependencies': len(graph.external_dependencies), 'entry_points': len(graph.entry_points), 'average_dependencies_per_file': len(graph.edges) / max(len(graph.nodes), 1), 'is_dag': nx.is_directed_acyclic_graph(nx_graph), 'density': nx.density(nx_graph), 'number_of_components': nx.number_weakly_connected_components(nx_graph)}
 
-        return {
-            "total_nodes": len(graph.nodes),
-            "total_edges": len(graph.edges),
-            "dependency_types": type_counts,
-            "circular_dependencies": len(graph.circular_dependencies),
-            "external_dependencies": len(graph.external_dependencies),
-            "entry_points": len(graph.entry_points),
-            "average_dependencies_per_file": len(graph.edges) / max(len(graph.nodes), 1),
-            "is_dag": nx.is_directed_acyclic_graph(nx_graph),
-            "density": nx.density(nx_graph),
-            "number_of_components": nx.number_weakly_connected_components(nx_graph)
-        }
-
-
-def create_analyzer(
-    project_root: str,
-    include_external: bool = True,
-    include_builtins: bool = False,
-    **kwargs: Any
-) -> DependencyAnalyzer:
+def create_analyzer(project_root: str, include_external: bool=True, include_builtins: bool=False, **kwargs: Any) -> DependencyAnalyzer:
     """
     Factory function to create a dependency analyzer.
 
@@ -751,52 +499,25 @@ def create_analyzer(
     Returns:
         DependencyAnalyzer: Configured analyzer instance
     """
-    return DependencyAnalyzer(
-        project_root=Path(project_root),
-        include_external=include_external,
-        include_builtins=include_builtins,
-        **kwargs
-    )
-
-
-if __name__ == "__main__":
-    # Example usage and testing
+    return DependencyAnalyzer(project_root=Path(project_root), include_external=include_external, include_builtins=include_builtins, **kwargs)
+if __name__ == '__main__':
     import sys
-
     if len(sys.argv) != 2:
-        print("Usage: python dependency_analyzer.py <project_root>")
+        print('Usage: python dependency_analyzer.py <project_root>')
         sys.exit(1)
-
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-
-    # Import required modules
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     from .traversal import create_traverser
-    from .metadata_extractor import create_extractor
-
+    from .metadata-extractor import create_extractor
     project_root = Path(sys.argv[1])
-
-    print(f"Analyzing dependencies for project: {project_root}")
-
-    # Get file metadata
+    print(f'Analyzing dependencies for project: {project_root}')
     traverser = create_traverser(str(project_root))
     files = list(traverser.traverse())
-
     extractor = create_extractor()
     metadata_list = extractor.extract_batch_metadata(files)
-
-    # Analyze dependencies
     analyzer = create_analyzer(str(project_root))
     graph = analyzer.analyze_dependencies(metadata_list)
-
-    # Generate statistics
     stats = analyzer.get_statistics(graph)
-
-    # Print results
-    print(f"\nDependency Analysis Complete:")
+    print(f'\nDependency Analysis Complete:')
     print(f"  Total nodes: {stats['total_nodes']}")
     print(f"  Total edges: {stats['total_edges']}")
     print(f"  Dependency types: {stats['dependency_types']}")
@@ -804,12 +525,10 @@ if __name__ == "__main__":
     print(f"  External dependencies: {stats['external_dependencies']}")
     print(f"  Entry points: {stats['entry_points']}")
     print(f"  Is DAG: {stats['is_dag']}")
-
     if graph.circular_dependencies:
-        print(f"\nCircular dependencies found:")
+        print(f'\nCircular dependencies found:')
         for i, cycle in enumerate(graph.circular_dependencies):
-            print(f"  Cycle {i+1}: {' -> '.join(cycle)}")
-
-    print(f"\nEntry points:")
+            print(f"  Cycle {i + 1}: {' -> '.join(cycle)}")
+    print(f'\nEntry points:')
     for entry_point in graph.entry_points:
-        print(f"  - {entry_point}")
+        print(f'  - {entry_point}')

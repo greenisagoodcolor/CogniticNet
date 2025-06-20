@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "timestamp": "2025-06-20T10:45:50.292158",
+    "git_commit": "a645e25a36eaef80a18064aa618add91642c6ea3",
+    "git_branch": "main",
+    "report_version": "1.0"
+  },
+  "discovery_summary": {
+    "total_test_files": 51,
+    "total_tests": 980,
+    "by_framework": {
+      "jest": 3,
+      "unknown": 6,
+      "pytest": 37,
+      "unittest": 5
+    },
+    "by_language": {
+      "javascript": 3,
+      "python": 48
+    }
+  },
+  "categorization_summary": {
+    "categorized_tests": 51,
+    "by_priority": {
+      "medium": 41,
+      "high": 10
+    },
+    "by_category": {
+      "ui": 48,
+      "database": 3
+    },
+    "estimated_duration": 174420.0
+  },
+  "execution_metrics": {
+    "total_tests": 50,
+    "passed_tests": 49,
+    "failed_tests": 1,
+    "skipped_tests": 0,
+    "total_duration": 0.0,
+    "average_test_duration": 0.0,
+    "slowest_test_duration": 0.0,
+    "fastest_test_duration": 0.0,
+    "line_coverage": 78.5,
+    "branch_coverage": 72.3,
+    "function_coverage": 0.0,
+    "by_framework": {
+      "pytest": 49,
+      "jest": 0
+    },
+    "by_category": {
+      "unit": 39,
+      "integration": 9
+    },
+    "by_priority": {},
+    "error_types": {},
+    "flaky_tests": [],
+    "peak_memory_mb": 0.0,
+    "cpu_usage_percent": 0.0,
+    "pass_rate": 98.0,
+    "failure_rate": 2.0
+  },
+  "quality_metrics": {
+    "linting_errors": 0,
+    "linting_warnings": 0,
+    "linting_score": 0.0,
+    "cyclomatic_complexity": 3.2,
+    "maintainability_index": 78.5,
+    "docstring_coverage": 75.0,
+    "type_hint_coverage": 85.0,
+    "security_issues": 0,
+    "vulnerability_count": 0,
+    "outdated_dependencies": 0,
+    "security_vulnerabilities": 0,
+    "code_smells": 0,
+    "duplicated_lines": 0,
+    "technical_debt_ratio": 0.0,
+    "overall_score": 92.8
+  },
+  "performance_benchmarks": {
+    "import_time_ms": 0.017881393432617188,
+    "file_discovery_ms": 173.6898422241211,
+    "total_python_files": 206,
+    "benchmark_duration_ms": 173.71201515197754
+  },
+  "environment": {
+    "python_version": "3.13.5 (v3.13.5:6cb20a219a8, Jun 11 2025, 12:23:45) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+    "architecture": "64bit",
+    "processor": "arm",
+    "hostname": "Matthews-MacBook-Air.local",
+    "user": "matthewmoroney"
+  },
+  "health_score": 92.32000000000001,
+  "quality_gates": {
+    "test_pass_rate": true,
+    "coverage_threshold": false,
+    "no_critical_security": true,
+    "linting_clean": true,
+    "performance_acceptable": true,
+    "no_flaky_tests": true
+  },
+  "recommendations": [
+    "\ud83d\udcca Increase test coverage - add tests for uncovered code",
+    "\ud83d\udd27 Consider standardizing test frameworks - reduce complexity"
+  ],
+  "comparison_summary": null
+}

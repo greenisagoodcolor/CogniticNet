@@ -1,0 +1,435 @@
+name: 🔒 Security Scanning
+
+on:
+  push:
+    branches: [ main, develop, FreeAgentics* ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run security scans daily at 3 AM UTC
+    - cron: '0 3 * * *'
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20'
+
+jobs:
+  # Job 1: Dependency Security Scanning
+  dependency-security:
+    name: 🛡️ Dependency Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: 🟨 Set up Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: 📦 Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install safety pip-audit
+
+    - name: 🔍 Python Dependency Security Scan (Safety)
+      run: |
+        safety check --json --output safety-report.json || true
+        safety check --short-report || echo "Python security vulnerabilities found"
+
+    - name: 🔍 Python Dependency Security Scan (pip-audit)
+      run: |
+        pip-audit --format=json --output=pip-audit-report.json || true
+        pip-audit || echo "pip-audit found vulnerabilities"
+
+    - name: 🔍 Node.js Dependency Security Scan
+      if: hashFiles('package.json') != ''
+      run: |
+        npm ci || echo "npm install failed"
+        npm audit --audit-level=moderate --json > npm-audit-report.json || true
+        npm audit --audit-level=moderate || echo "npm audit found vulnerabilities"
+
+    - name: 📋 Upload Security Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: dependency-security-reports
+        path: |
+          safety-report.json
+          pip-audit-report.json
+          npm-audit-report.json
+        retention-days: 30
+
+  # Job 2: Code Security Analysis
+  code-security:
+    name: 🔒 Code Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: 📦 Install Security Tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit semgrep
+
+    - name: 🔍 Python Security Analysis (Bandit)
+      run: |
+        bandit -r . -f json -o bandit-report.json || true
+        bandit -r . -ll || echo "Bandit found security issues"
+
+    - name: 🔍 Multi-language Security Analysis (Semgrep)
+      run: |
+        python -m semgrep --config=auto --json --output=semgrep-report.json . || true
+        python -m semgrep --config=auto . || echo "Semgrep found security issues"
+
+    - name: 📋 Upload Code Security Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: code-security-reports
+        path: |
+          bandit-report.json
+          semgrep-report.json
+        retention-days: 30
+
+  # Job 3: Secrets Detection
+  secrets-detection:
+    name: 🕵️ Secrets Detection
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for secret detection
+
+    - name: 🔍 Run TruffleHog for Secret Detection
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+  # Job 4: Container Security Scanning
+  container-security:
+    name: 🐳 Container Security Scan
+    runs-on: ubuntu-latest
+    if: hashFiles('Dockerfile*') != ''
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 🏗️ Build Docker Image for Scanning
+      run: |
+        if [ -f "Dockerfile" ]; then
+          docker build -t freeagentics-security-scan:latest .
+        else
+          echo "No Dockerfile found, skipping container scan"
+          exit 0
+        fi
+
+    - name: 🔍 Run Trivy Container Scan
+      uses: aquasecurity/trivy-action@master
+      if: hashFiles('Dockerfile') != ''
+      with:
+        image-ref: 'freeagentics-security-scan:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: 📋 Upload Trivy Scan Results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always() && hashFiles('trivy-results.sarif') != ''
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # Job 5: License Compliance Check
+  license-compliance:
+    name: ⚖️ License Compliance Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: 🟨 Set up Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: 📦 Install License Checking Tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install pip-licenses
+        npm install -g license-checker
+
+    - name: 🔍 Check Python License Compliance
+      run: |
+        pip-licenses --format=json --output-file=python-licenses.json || true
+        pip-licenses --summary || echo "Python license check completed"
+
+    - name: 🔍 Check Node.js License Compliance
+      if: hashFiles('package.json') != ''
+      run: |
+        npm ci || echo "npm install failed"
+        license-checker --json --out nodejs-licenses.json || true
+        license-checker --summary || echo "Node.js license check completed"
+
+    - name: 📋 Upload License Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: license-reports
+        path: |
+          python-licenses.json
+          nodejs-licenses.json
+        retention-days: 30
+
+  # Job 6: Security Report Aggregation
+  security-report:
+    name: 📊 Security Report Aggregation
+    runs-on: ubuntu-latest
+    needs: [dependency-security, code-security, license-compliance]
+    if: always()
+
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install jinja2
+
+    - name: 📥 Download All Security Reports
+      uses: actions/download-artifact@v3
+
+    - name: 📊 Generate Security Summary Report
+      run: |
+        python3 -c "
+        import json
+        import os
+        from datetime import datetime
+        from pathlib import Path
+
+        # Aggregate security findings
+        security_summary = {
+            'timestamp': datetime.now().isoformat(),
+            'repository': '${{ github.repository }}',
+            'commit': '${{ github.sha }}',
+            'branch': '${{ github.ref_name }}',
+            'findings': {
+                'dependency_vulnerabilities': 0,
+                'code_security_issues': 0,
+                'license_issues': 0,
+                'total_issues': 0
+            },
+            'reports': []
+        }
+
+        # Process dependency security reports
+        if os.path.exists('dependency-security-reports/safety-report.json'):
+            try:
+                with open('dependency-security-reports/safety-report.json', 'r') as f:
+                    safety_data = json.load(f)
+                    if isinstance(safety_data, list):
+                        security_summary['findings']['dependency_vulnerabilities'] += len(safety_data)
+                    security_summary['reports'].append('safety-report.json')
+            except Exception as e:
+                print(f'Error processing safety report: {e}')
+
+        # Process code security reports
+        if os.path.exists('code-security-reports/bandit-report.json'):
+            try:
+                with open('code-security-reports/bandit-report.json', 'r') as f:
+                    bandit_data = json.load(f)
+                    if 'results' in bandit_data:
+                        security_summary['findings']['code_security_issues'] += len(bandit_data['results'])
+                    security_summary['reports'].append('bandit-report.json')
+            except Exception as e:
+                print(f'Error processing bandit report: {e}')
+
+        # Calculate total issues
+        security_summary['findings']['total_issues'] = (
+            security_summary['findings']['dependency_vulnerabilities'] +
+            security_summary['findings']['code_security_issues'] +
+            security_summary['findings']['license_issues']
+        )
+
+        # Generate markdown report
+        markdown_report = f'''# 🔒 FreeAgentics Security Report
+
+**Generated:** {security_summary['timestamp']}
+**Repository:** {security_summary['repository']}
+**Commit:** {security_summary['commit'][:8]}
+**Branch:** {security_summary['branch']}
+
+## 📊 Security Summary
+
+| Category | Count | Status |
+|----------|-------|--------|
+| Dependency Vulnerabilities | {security_summary['findings']['dependency_vulnerabilities']} | {'✅' if security_summary['findings']['dependency_vulnerabilities'] == 0 else '⚠️'} |
+| Code Security Issues | {security_summary['findings']['code_security_issues']} | {'✅' if security_summary['findings']['code_security_issues'] == 0 else '⚠️'} |
+| License Issues | {security_summary['findings']['license_issues']} | {'✅' if security_summary['findings']['license_issues'] == 0 else '⚠️'} |
+| **Total Issues** | **{security_summary['findings']['total_issues']}** | **{'✅ SECURE' if security_summary['findings']['total_issues'] == 0 else '⚠️ NEEDS ATTENTION'}** |
+
+## 📋 Reports Generated
+
+'''
+
+        for report in security_summary['reports']:
+            markdown_report += f'- {report}\\n'
+
+        if security_summary['findings']['total_issues'] == 0:
+            markdown_report += '''
+## 🎉 Congratulations!
+
+No security issues detected in this scan. The repository meets security standards.
+'''
+        else:
+            markdown_report += f'''
+## ⚠️ Action Required
+
+{security_summary['findings']['total_issues']} security issues detected. Please review the detailed reports and address the findings.
+
+### Priority Actions:
+1. Review dependency vulnerabilities and update packages
+2. Address code security issues identified by static analysis
+3. Ensure license compliance for all dependencies
+'''
+
+        # Save reports
+        with open('security-summary.json', 'w') as f:
+            json.dump(security_summary, f, indent=2)
+
+        with open('security-summary.md', 'w') as f:
+            f.write(markdown_report)
+
+        print(f'📊 Security Summary:')
+        print(f'  Total Issues: {security_summary['findings']['total_issues']}')
+        print(f'  Dependency Vulnerabilities: {security_summary['findings']['dependency_vulnerabilities']}')
+        print(f'  Code Security Issues: {security_summary['findings']['code_security_issues']}')
+        print(f'  License Issues: {security_summary['findings']['license_issues']}')
+        "
+
+    - name: 📋 Upload Security Summary
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-summary
+        path: |
+          security-summary.json
+          security-summary.md
+        retention-days: 90
+
+    - name: 📝 Comment PR with Security Summary
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+
+          if (fs.existsSync('security-summary.md')) {
+            const securityReport = fs.readFileSync('security-summary.md', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: securityReport
+            });
+          }
+
+  # Job 7: Security Quality Gates
+  security-gates:
+    name: 🎯 Security Quality Gates
+    runs-on: ubuntu-latest
+    needs: [dependency-security, code-security, security-report]
+    if: always()
+
+    steps:
+    - name: 📥 Download Security Summary
+      uses: actions/download-artifact@v3
+      with:
+        name: security-summary
+
+    - name: 🎯 Validate Security Gates
+      run: |
+        echo "🎯 Validating Security Quality Gates..."
+
+        # Read security summary
+        if [ -f "security-summary.json" ]; then
+          TOTAL_ISSUES=$(python3 -c "
+          import json
+          with open('security-summary.json', 'r') as f:
+              data = json.load(f)
+              print(data['findings']['total_issues'])
+          ")
+
+          echo "Total security issues found: $TOTAL_ISSUES"
+
+          # Security gate: No critical security issues allowed
+          if [ "$TOTAL_ISSUES" -eq 0 ]; then
+            echo "✅ Security gate PASSED: No security issues found"
+            echo "security_gate_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Security gate FAILED: $TOTAL_ISSUES security issues found"
+            echo "security_gate_passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+        else
+          echo "❌ Security summary not found"
+          exit 1
+        fi
+
+    - name: 📊 Set Security Status Check
+      uses: actions/github-script@v6
+      if: always()
+      with:
+        script: |
+          const state = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+          const description = state === 'success' ?
+            '✅ Security gates passed' :
+            '❌ Security issues detected';
+
+          github.rest.repos.createCommitStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            sha: context.sha,
+            state: state,
+            target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            description: description,
+            context: 'FreeAgentics Security Gates'
+          });

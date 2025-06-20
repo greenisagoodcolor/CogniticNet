@@ -4,7 +4,6 @@ Metrics Collection System for GNN Processing
 This module provides comprehensive metrics collection and aggregation
 for GNN processing operations.
 """
-
 import time
 import json
 import sqlite3
@@ -15,12 +14,8 @@ from collections import defaultdict
 import threading
 from pathlib import Path
 import numpy as np
-
 from .monitoring import PerformanceMetrics, get_logger
-
-# Configure logger
 logger = get_logger().logger
-
 
 @dataclass
 class GraphMetrics:
@@ -37,7 +32,6 @@ class GraphMetrics:
     error_message: Optional[str] = None
     additional_metrics: Dict[str, Any] = field(default_factory=dict)
 
-
 @dataclass
 class ModelMetrics:
     """Metrics for model performance"""
@@ -49,7 +43,6 @@ class ModelMetrics:
     accuracy: Optional[float] = None
     loss: Optional[float] = None
     throughput_graphs_per_sec: Optional[float] = None
-
 
 @dataclass
 class SystemMetrics:
@@ -69,7 +62,6 @@ class SystemMetrics:
     gpu_usage_percent: Optional[float] = None
     gpu_memory_mb: Optional[float] = None
 
-
 class MetricsDatabase:
     """
     SQLite-based metrics storage for persistent tracking.
@@ -77,7 +69,7 @@ class MetricsDatabase:
     Provides efficient storage and querying of metrics data.
     """
 
-    def __init__(self, db_path: str = "gnn_metrics.db"):
+    def __init__(self, db_path: str='gnn_metrics.db'):
         """
         Initialize metrics database.
 
@@ -92,81 +84,13 @@ class MetricsDatabase:
         """Initialize database schema"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-
-            # Graph metrics table
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS graph_metrics (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    graph_id TEXT NOT NULL,
-                    num_nodes INTEGER NOT NULL,
-                    num_edges INTEGER NOT NULL,
-                    avg_degree REAL NOT NULL,
-                    density REAL NOT NULL,
-                    processing_time REAL NOT NULL,
-                    model_architecture TEXT NOT NULL,
-                    task_type TEXT NOT NULL,
-                    success BOOLEAN NOT NULL,
-                    error_message TEXT,
-                    additional_metrics TEXT
-                )
-            """)
-
-            # Model metrics table
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS model_metrics (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    model_id TEXT NOT NULL,
-                    architecture TEXT NOT NULL,
-                    parameters INTEGER NOT NULL,
-                    inference_time REAL NOT NULL,
-                    memory_usage_mb REAL NOT NULL,
-                    accuracy REAL,
-                    loss REAL,
-                    throughput_graphs_per_sec REAL
-                )
-            """)
-
-            # System metrics table
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS system_metrics (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    timestamp DATETIME NOT NULL,
-                    active_jobs INTEGER NOT NULL,
-                    queued_jobs INTEGER NOT NULL,
-                    completed_jobs INTEGER NOT NULL,
-                    failed_jobs INTEGER NOT NULL,
-                    avg_queue_time REAL NOT NULL,
-                    avg_processing_time REAL NOT NULL,
-                    total_graphs_processed INTEGER NOT NULL,
-                    total_nodes_processed INTEGER NOT NULL,
-                    total_edges_processed INTEGER NOT NULL,
-                    cpu_usage_percent REAL NOT NULL,
-                    memory_usage_mb REAL NOT NULL,
-                    gpu_usage_percent REAL,
-                    gpu_memory_mb REAL
-                )
-            """)
-
-            # Create indices
-            cursor.execute("""
-                CREATE INDEX IF NOT EXISTS idx_graph_metrics_timestamp
-                ON graph_metrics(timestamp)
-            """)
-            cursor.execute("""
-                CREATE INDEX IF NOT EXISTS idx_graph_metrics_graph_id
-                ON graph_metrics(graph_id)
-            """)
-            cursor.execute("""
-                CREATE INDEX IF NOT EXISTS idx_model_metrics_timestamp
-                ON model_metrics(timestamp)
-            """)
-            cursor.execute("""
-                CREATE INDEX IF NOT EXISTS idx_system_metrics_timestamp
-                ON system_metrics(timestamp)
-            """)
-
+            cursor.execute('\n                CREATE TABLE IF NOT EXISTS graph_metrics (\n                    id INTEGER PRIMARY KEY AUTOINCREMENT,\n                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,\n                    graph_id TEXT NOT NULL,\n                    num_nodes INTEGER NOT NULL,\n                    num_edges INTEGER NOT NULL,\n                    avg_degree REAL NOT NULL,\n                    density REAL NOT NULL,\n                    processing_time REAL NOT NULL,\n                    model_architecture TEXT NOT NULL,\n                    task_type TEXT NOT NULL,\n                    success BOOLEAN NOT NULL,\n                    error_message TEXT,\n                    additional_metrics TEXT\n                )\n            ')
+            cursor.execute('\n                CREATE TABLE IF NOT EXISTS model_metrics (\n                    id INTEGER PRIMARY KEY AUTOINCREMENT,\n                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,\n                    model_id TEXT NOT NULL,\n                    architecture TEXT NOT NULL,\n                    parameters INTEGER NOT NULL,\n                    inference_time REAL NOT NULL,\n                    memory_usage_mb REAL NOT NULL,\n                    accuracy REAL,\n                    loss REAL,\n                    throughput_graphs_per_sec REAL\n                )\n            ')
+            cursor.execute('\n                CREATE TABLE IF NOT EXISTS system_metrics (\n                    id INTEGER PRIMARY KEY AUTOINCREMENT,\n                    timestamp DATETIME NOT NULL,\n                    active_jobs INTEGER NOT NULL,\n                    queued_jobs INTEGER NOT NULL,\n                    completed_jobs INTEGER NOT NULL,\n                    failed_jobs INTEGER NOT NULL,\n                    avg_queue_time REAL NOT NULL,\n                    avg_processing_time REAL NOT NULL,\n                    total_graphs_processed INTEGER NOT NULL,\n                    total_nodes_processed INTEGER NOT NULL,\n                    total_edges_processed INTEGER NOT NULL,\n                    cpu_usage_percent REAL NOT NULL,\n                    memory_usage_mb REAL NOT NULL,\n                    gpu_usage_percent REAL,\n                    gpu_memory_mb REAL\n                )\n            ')
+            cursor.execute('\n                CREATE INDEX IF NOT EXISTS idx_graph_metrics_timestamp\n                ON graph_metrics(timestamp)\n            ')
+            cursor.execute('\n                CREATE INDEX IF NOT EXISTS idx_graph_metrics_graph_id\n                ON graph_metrics(graph_id)\n            ')
+            cursor.execute('\n                CREATE INDEX IF NOT EXISTS idx_model_metrics_timestamp\n                ON model_metrics(timestamp)\n            ')
+            cursor.execute('\n                CREATE INDEX IF NOT EXISTS idx_system_metrics_timestamp\n                ON system_metrics(timestamp)\n            ')
             conn.commit()
 
     def insert_graph_metrics(self, metrics: GraphMetrics):
@@ -174,27 +98,7 @@ class MetricsDatabase:
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-
-                cursor.execute("""
-                    INSERT INTO graph_metrics (
-                        graph_id, num_nodes, num_edges, avg_degree, density,
-                        processing_time, model_architecture, task_type,
-                        success, error_message, additional_metrics
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    metrics.graph_id,
-                    metrics.num_nodes,
-                    metrics.num_edges,
-                    metrics.avg_degree,
-                    metrics.density,
-                    metrics.processing_time,
-                    metrics.model_architecture,
-                    metrics.task_type,
-                    metrics.success,
-                    metrics.error_message,
-                    json.dumps(metrics.additional_metrics)
-                ))
-
+                cursor.execute('\n                    INSERT INTO graph_metrics (\n                        graph_id, num_nodes, num_edges, avg_degree, density,\n                        processing_time, model_architecture, task_type,\n                        success, error_message, additional_metrics\n                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n                ', (metrics.graph_id, metrics.num_nodes, metrics.num_edges, metrics.avg_degree, metrics.density, metrics.processing_time, metrics.model_architecture, metrics.task_type, metrics.success, metrics.error_message, json.dumps(metrics.additional_metrics)))
                 conn.commit()
 
     def insert_model_metrics(self, metrics: ModelMetrics):
@@ -202,23 +106,7 @@ class MetricsDatabase:
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-
-                cursor.execute("""
-                    INSERT INTO model_metrics (
-                        model_id, architecture, parameters, inference_time,
-                        memory_usage_mb, accuracy, loss, throughput_graphs_per_sec
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    metrics.model_id,
-                    metrics.architecture,
-                    metrics.parameters,
-                    metrics.inference_time,
-                    metrics.memory_usage_mb,
-                    metrics.accuracy,
-                    metrics.loss,
-                    metrics.throughput_graphs_per_sec
-                ))
-
+                cursor.execute('\n                    INSERT INTO model_metrics (\n                        model_id, architecture, parameters, inference_time,\n                        memory_usage_mb, accuracy, loss, throughput_graphs_per_sec\n                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)\n                ', (metrics.model_id, metrics.architecture, metrics.parameters, metrics.inference_time, metrics.memory_usage_mb, metrics.accuracy, metrics.loss, metrics.throughput_graphs_per_sec))
                 conn.commit()
 
     def insert_system_metrics(self, metrics: SystemMetrics):
@@ -226,132 +114,61 @@ class MetricsDatabase:
         with self._lock:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-
-                cursor.execute("""
-                    INSERT INTO system_metrics (
-                        timestamp, active_jobs, queued_jobs, completed_jobs,
-                        failed_jobs, avg_queue_time, avg_processing_time,
-                        total_graphs_processed, total_nodes_processed,
-                        total_edges_processed, cpu_usage_percent,
-                        memory_usage_mb, gpu_usage_percent, gpu_memory_mb
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    metrics.timestamp,
-                    metrics.active_jobs,
-                    metrics.queued_jobs,
-                    metrics.completed_jobs,
-                    metrics.failed_jobs,
-                    metrics.avg_queue_time,
-                    metrics.avg_processing_time,
-                    metrics.total_graphs_processed,
-                    metrics.total_nodes_processed,
-                    metrics.total_edges_processed,
-                    metrics.cpu_usage_percent,
-                    metrics.memory_usage_mb,
-                    metrics.gpu_usage_percent,
-                    metrics.gpu_memory_mb
-                ))
-
+                cursor.execute('\n                    INSERT INTO system_metrics (\n                        timestamp, active_jobs, queued_jobs, completed_jobs,\n                        failed_jobs, avg_queue_time, avg_processing_time,\n                        total_graphs_processed, total_nodes_processed,\n                        total_edges_processed, cpu_usage_percent,\n                        memory_usage_mb, gpu_usage_percent, gpu_memory_mb\n                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n                ', (metrics.timestamp, metrics.active_jobs, metrics.queued_jobs, metrics.completed_jobs, metrics.failed_jobs, metrics.avg_queue_time, metrics.avg_processing_time, metrics.total_graphs_processed, metrics.total_nodes_processed, metrics.total_edges_processed, metrics.cpu_usage_percent, metrics.memory_usage_mb, metrics.gpu_usage_percent, metrics.gpu_memory_mb))
                 conn.commit()
 
-    def query_graph_metrics(
-        self,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None,
-        graph_id: Optional[str] = None,
-        model_architecture: Optional[str] = None,
-        limit: int = 1000
-    ) -> List[Dict[str, Any]]:
+    def query_graph_metrics(self, start_time: Optional[datetime]=None, end_time: Optional[datetime]=None, graph_id: Optional[str]=None, model_architecture: Optional[str]=None, limit: int=1000) -> List[Dict[str, Any]]:
         """Query graph metrics with filters"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-
-            query = "SELECT * FROM graph_metrics WHERE 1=1"
+            query = 'SELECT * FROM graph_metrics WHERE 1=1'
             params = []
-
             if start_time:
-                query += " AND timestamp >= ?"
+                query += ' AND timestamp >= ?'
                 params.append(start_time)
-
             if end_time:
-                query += " AND timestamp <= ?"
+                query += ' AND timestamp <= ?'
                 params.append(end_time)
-
             if graph_id:
-                query += " AND graph_id = ?"
+                query += ' AND graph_id = ?'
                 params.append(graph_id)
-
             if model_architecture:
-                query += " AND model_architecture = ?"
+                query += ' AND model_architecture = ?'
                 params.append(model_architecture)
-
-            query += " ORDER BY timestamp DESC LIMIT ?"
+            query += ' ORDER BY timestamp DESC LIMIT ?'
             params.append(limit)
-
             cursor.execute(query, params)
-
             results = []
             for row in cursor.fetchall():
                 result = dict(row)
-                # Parse JSON fields
                 if result['additional_metrics']:
                     result['additional_metrics'] = json.loads(result['additional_metrics'])
                 results.append(result)
-
             return results
 
-    def get_aggregated_stats(
-        self,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None,
-        group_by: str = 'hour'
-    ) -> List[Dict[str, Any]]:
+    def get_aggregated_stats(self, start_time: Optional[datetime]=None, end_time: Optional[datetime]=None, group_by: str='hour') -> List[Dict[str, Any]]:
         """Get aggregated statistics"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-
-            # Determine grouping
             if group_by == 'hour':
                 date_format = '%Y-%m-%d %H:00:00'
             elif group_by == 'day':
                 date_format = '%Y-%m-%d'
             else:
                 date_format = '%Y-%m-%d %H:00:00'
-
-            query = f"""
-                SELECT
-                    strftime('{date_format}', timestamp) as period,
-                    COUNT(*) as total_operations,
-                    SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful_operations,
-                    SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) as failed_operations,
-                    AVG(processing_time) as avg_processing_time,
-                    MIN(processing_time) as min_processing_time,
-                    MAX(processing_time) as max_processing_time,
-                    SUM(num_nodes) as total_nodes,
-                    SUM(num_edges) as total_edges,
-                    AVG(density) as avg_density
-                FROM graph_metrics
-                WHERE 1=1
-            """
-
+            query = f"\n                SELECT\n                    strftime('{date_format}', timestamp) as period,\n                    COUNT(*) as total_operations,\n                    SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful_operations,\n                    SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) as failed_operations,\n                    AVG(processing_time) as avg_processing_time,\n                    MIN(processing_time) as min_processing_time,\n                    MAX(processing_time) as max_processing_time,\n                    SUM(num_nodes) as total_nodes,\n                    SUM(num_edges) as total_edges,\n                    AVG(density) as avg_density\n                FROM graph_metrics\n                WHERE 1=1\n            "
             params = []
-
             if start_time:
-                query += " AND timestamp >= ?"
+                query += ' AND timestamp >= ?'
                 params.append(start_time)
-
             if end_time:
-                query += " AND timestamp <= ?"
+                query += ' AND timestamp <= ?'
                 params.append(end_time)
-
-            query += " GROUP BY period ORDER BY period DESC"
-
+            query += ' GROUP BY period ORDER BY period DESC'
             cursor.execute(query, params)
-
             return [dict(row) for row in cursor.fetchall()]
-
 
 class MetricsCollector:
     """
@@ -360,12 +177,7 @@ class MetricsCollector:
     Collects, aggregates, and stores metrics from all GNN processing operations.
     """
 
-    def __init__(
-        self,
-        db_path: str = "gnn_metrics.db",
-        buffer_size: int = 100,
-        flush_interval: int = 60
-    ):
+    def __init__(self, db_path: str='gnn_metrics.db', buffer_size: int=100, flush_interval: int=60):
         """
         Initialize metrics collector.
 
@@ -377,20 +189,14 @@ class MetricsCollector:
         self.db = MetricsDatabase(db_path)
         self.buffer_size = buffer_size
         self.flush_interval = flush_interval
-
-        # Metrics buffers
         self._graph_metrics_buffer = []
         self._model_metrics_buffer = []
         self._system_metrics_buffer = []
         self._lock = threading.Lock()
-
-        # Start flush thread
         self._running = True
         self._flush_thread = threading.Thread(target=self._flush_loop)
         self._flush_thread.daemon = True
         self._flush_thread.start()
-
-        # Real-time counters
         self.counters = defaultdict(int)
         self.timers = defaultdict(list)
 
@@ -398,21 +204,14 @@ class MetricsCollector:
         """Collect graph processing metrics"""
         with self._lock:
             self._graph_metrics_buffer.append(metrics)
-
-            # Update counters
             self.counters['total_graphs'] += 1
             self.counters['total_nodes'] += metrics.num_nodes
             self.counters['total_edges'] += metrics.num_edges
-
             if metrics.success:
                 self.counters['successful_operations'] += 1
             else:
                 self.counters['failed_operations'] += 1
-
-            # Update timers
             self.timers['processing_times'].append(metrics.processing_time)
-
-            # Flush if buffer is full
             if len(self._graph_metrics_buffer) >= self.buffer_size:
                 self._flush_graph_metrics()
 
@@ -420,11 +219,7 @@ class MetricsCollector:
         """Collect model performance metrics"""
         with self._lock:
             self._model_metrics_buffer.append(metrics)
-
-            # Update timers
             self.timers['inference_times'].append(metrics.inference_time)
-
-            # Flush if buffer is full
             if len(self._model_metrics_buffer) >= self.buffer_size:
                 self._flush_model_metrics()
 
@@ -432,8 +227,6 @@ class MetricsCollector:
         """Collect system-wide metrics"""
         with self._lock:
             self._system_metrics_buffer.append(metrics)
-
-            # Flush if buffer is full
             if len(self._system_metrics_buffer) >= self.buffer_size:
                 self._flush_system_metrics()
 
@@ -441,52 +234,42 @@ class MetricsCollector:
         """Flush graph metrics buffer to database"""
         if not self._graph_metrics_buffer:
             return
-
         try:
             for metrics in self._graph_metrics_buffer:
                 self.db.insert_graph_metrics(metrics)
-
-            logger.info(f"Flushed {len(self._graph_metrics_buffer)} graph metrics")
+            logger.info(f'Flushed {len(self._graph_metrics_buffer)} graph metrics')
             self._graph_metrics_buffer.clear()
-
         except Exception as e:
-            logger.error(f"Error flushing graph metrics: {e}")
+            logger.error(f'Error flushing graph metrics: {e}')
 
     def _flush_model_metrics(self):
         """Flush model metrics buffer to database"""
         if not self._model_metrics_buffer:
             return
-
         try:
             for metrics in self._model_metrics_buffer:
                 self.db.insert_model_metrics(metrics)
-
-            logger.info(f"Flushed {len(self._model_metrics_buffer)} model metrics")
+            logger.info(f'Flushed {len(self._model_metrics_buffer)} model metrics')
             self._model_metrics_buffer.clear()
-
         except Exception as e:
-            logger.error(f"Error flushing model metrics: {e}")
+            logger.error(f'Error flushing model metrics: {e}')
 
     def _flush_system_metrics(self):
         """Flush system metrics buffer to database"""
         if not self._system_metrics_buffer:
             return
-
         try:
             for metrics in self._system_metrics_buffer:
                 self.db.insert_system_metrics(metrics)
-
-            logger.info(f"Flushed {len(self._system_metrics_buffer)} system metrics")
+            logger.info(f'Flushed {len(self._system_metrics_buffer)} system metrics')
             self._system_metrics_buffer.clear()
-
         except Exception as e:
-            logger.error(f"Error flushing system metrics: {e}")
+            logger.error(f'Error flushing system metrics: {e}')
 
     def _flush_loop(self):
         """Background thread to periodically flush metrics"""
         while self._running:
             time.sleep(self.flush_interval)
-
             with self._lock:
                 self._flush_graph_metrics()
                 self._flush_model_metrics()
@@ -495,141 +278,51 @@ class MetricsCollector:
     def get_real_time_stats(self) -> Dict[str, Any]:
         """Get real-time statistics"""
         with self._lock:
-            stats = {
-                'counters': dict(self.counters),
-                'timers': {}
-            }
-
-            # Calculate timer statistics
+            stats = {'counters': dict(self.counters), 'timers': {}}
             for name, values in self.timers.items():
                 if values:
-                    stats['timers'][name] = {
-                        'count': len(values),
-                        'mean': np.mean(values),
-                        'std': np.std(values),
-                        'min': np.min(values),
-                        'max': np.max(values),
-                        'percentiles': {
-                            '50': np.percentile(values, 50),
-                            '90': np.percentile(values, 90),
-                            '99': np.percentile(values, 99)
-                        }
-                    }
-
+                    stats['timers'][name] = {'count': len(values), 'mean': np.mean(values), 'std': np.std(values), 'min': np.min(values), 'max': np.max(values), 'percentiles': {'50': np.percentile(values, 50), '90': np.percentile(values, 90), '99': np.percentile(values, 99)}}
             return stats
 
-    def generate_report(
-        self,
-        output_path: str,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None
-    ):
+    def generate_report(self, output_path: str, start_time: Optional[datetime]=None, end_time: Optional[datetime]=None):
         """Generate comprehensive metrics report"""
-        report = {
-            'generated_at': datetime.utcnow().isoformat(),
-            'period': {
-                'start': start_time.isoformat() if start_time else 'all_time',
-                'end': end_time.isoformat() if end_time else 'now'
-            }
-        }
-
-        # Get aggregated statistics
-        daily_stats = self.db.get_aggregated_stats(
-            start_time, end_time, 'day'
-        )
-        hourly_stats = self.db.get_aggregated_stats(
-            start_time, end_time, 'hour'
-        )
-
+        report = {'generated_at': datetime.utcnow().isoformat(), 'period': {'start': start_time.isoformat() if start_time else 'all_time', 'end': end_time.isoformat() if end_time else 'now'}}
+        daily_stats = self.db.get_aggregated_stats(start_time, end_time, 'day')
+        hourly_stats = self.db.get_aggregated_stats(start_time, end_time, 'hour')
         report['daily_statistics'] = daily_stats
         report['hourly_statistics'] = hourly_stats
-
-        # Get real-time stats
         report['real_time_stats'] = self.get_real_time_stats()
-
-        # Get recent failures
-        failures = self.db.query_graph_metrics(
-            start_time=start_time,
-            end_time=end_time,
-            limit=100
-        )
+        failures = self.db.query_graph_metrics(start_time=start_time, end_time=end_time, limit=100)
         failures = [f for f in failures if not f['success']]
-        report['recent_failures'] = failures[:10]  # Top 10 recent failures
-
-        # Save report
+        report['recent_failures'] = failures[:10]
         with open(output_path, 'w') as f:
             json.dump(report, f, indent=2)
-
-        logger.info(f"Metrics report saved to: {output_path}")
+        logger.info(f'Metrics report saved to: {output_path}')
 
     def stop(self):
         """Stop the metrics collector"""
         self._running = False
-
-        # Final flush
         with self._lock:
             self._flush_graph_metrics()
             self._flush_model_metrics()
             self._flush_system_metrics()
-
         if self._flush_thread.is_alive():
             self._flush_thread.join(timeout=5)
-
-
-# Global metrics collector instance
 _collector = None
 
-
-def get_metrics_collector(
-    db_path: str = "gnn_metrics.db"
-) -> MetricsCollector:
+def get_metrics_collector(db_path: str='gnn_metrics.db') -> MetricsCollector:
     """Get or create metrics collector instance"""
     global _collector
-
     if _collector is None:
         _collector = MetricsCollector(db_path)
-
     return _collector
-
-
-# Example usage
-if __name__ == "__main__":
-    # Initialize collector
+if __name__ == '__main__':
     collector = get_metrics_collector()
-
-    # Example graph metrics
-    graph_metrics = GraphMetrics(
-        graph_id="graph_001",
-        num_nodes=100,
-        num_edges=250,
-        avg_degree=5.0,
-        density=0.05,
-        processing_time=1.23,
-        model_architecture="GCN",
-        task_type="node_classification",
-        success=True
-    )
-
+    graph_metrics = GraphMetrics(graph_id='graph_001', num_nodes=100, num_edges=250, avg_degree=5.0, density=0.05, processing_time=1.23, model_architecture='GCN', task_type='node_classification', success=True)
     collector.collect_graph_metrics(graph_metrics)
-
-    # Example model metrics
-    model_metrics = ModelMetrics(
-        model_id="model_gcn_v1",
-        architecture="GCN",
-        parameters=50000,
-        inference_time=0.05,
-        memory_usage_mb=256.5,
-        accuracy=0.92
-    )
-
+    model_metrics = ModelMetrics(model_id='model_gcn_v1', architecture='GCN', parameters=50000, inference_time=0.05, memory_usage_mb=256.5, accuracy=0.92)
     collector.collect_model_metrics(model_metrics)
-
-    # Get real-time stats
     stats = collector.get_real_time_stats()
-    print("Real-time stats:", json.dumps(stats, indent=2))
-
-    # Generate report
-    collector.generate_report("metrics_report.json")
-
-    # Stop collector
+    print('Real-time stats:', json.dumps(stats, indent=2))
+    collector.generate_report('metrics_report.json')
     collector.stop()
