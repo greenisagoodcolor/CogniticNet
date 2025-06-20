@@ -16,8 +16,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.exc import SQLAlchemyError
 import logging
-from .data-model import Agent, Position, Orientation, AgentStatus, AgentCapability, AgentPersonality, AgentResources, SocialRelationship, AgentGoal, ResourceAgent, SocialAgent
-from .......data.connection import get_db_session
+from .data_model import Agent, Position, Orientation, AgentStatus, AgentCapability, AgentPersonality, AgentResources, SocialRelationship, AgentGoal, ResourceAgent, SocialAgent
+from data.connection import get_db_session
 logger = logging.getLogger(__name__)
 AGENT_SCHEMA_VERSION = '1.0.0'
 
