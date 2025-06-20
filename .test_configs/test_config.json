@@ -1,0 +1,81 @@
+{
+  "test_runners": [
+    {
+      "runner_type": "jest",
+      "command": "npx jest",
+      "config_file": "jest.config.js",
+      "parallel": true,
+      "max_workers": 4,
+      "timeout": 300,
+      "coverage_enabled": true,
+      "coverage_threshold": 80.0,
+      "coverage_report_format": "xml",
+      "output_format": "junit",
+      "output_file": null,
+      "verbose": false,
+      "environment_vars": {},
+      "working_directory": null,
+      "extra_args": [
+        "--passWithNoTests",
+        "--maxWorkers=4",
+        "--coverage",
+        "--coverageReporters=lcov"
+      ],
+      "plugins": []
+    },
+    {
+      "runner_type": "pytest",
+      "command": "python -m pytest",
+      "config_file": "pytest.ini",
+      "parallel": true,
+      "max_workers": 3,
+      "timeout": 300,
+      "coverage_enabled": true,
+      "coverage_threshold": 80.0,
+      "coverage_report_format": "xml",
+      "output_format": "junit",
+      "output_file": null,
+      "verbose": false,
+      "environment_vars": {},
+      "working_directory": null,
+      "extra_args": [
+        "--tb=short",
+        "--strict-markers",
+        "-n",
+        "3",
+        "--cov=.",
+        "--cov-report=xml"
+      ],
+      "plugins": [
+        "pytest-cov",
+        "pytest-xdist",
+        "pytest-html"
+      ]
+    },
+    {
+      "runner_type": "unittest",
+      "command": "python -m unittest",
+      "config_file": null,
+      "parallel": true,
+      "max_workers": 4,
+      "timeout": 300,
+      "coverage_enabled": true,
+      "coverage_threshold": 80.0,
+      "coverage_report_format": "xml",
+      "output_format": "junit",
+      "output_file": null,
+      "verbose": false,
+      "environment_vars": {},
+      "working_directory": null,
+      "extra_args": [
+        "discover",
+        "-v"
+      ],
+      "plugins": []
+    }
+  ],
+  "project_root": "/Users/matthewmoroney/builds/CogniticNet",
+  "output_directory": "/Users/matthewmoroney/builds/CogniticNet/.test_configs",
+  "ci_mode": false,
+  "created_at": "2025-06-20T08:30:00Z"
+}
