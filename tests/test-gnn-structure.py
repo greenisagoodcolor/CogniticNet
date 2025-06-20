@@ -157,13 +157,13 @@ class TestPipelineIntegration(unittest.TestCase):
     def test_pipeline_can_be_imported(self):
         """Test that the pipeline can be imported."""
         try:
-            from src.main import FreeAgenticsPipeline
+            from scripts.pipeline.main import FreeAgenticsPipeline
         except ImportError as e:
             self.fail(f'Failed to import pipeline: {e}')
 
     def test_pipeline_has_all_stages(self):
         """Test that pipeline has all required stages."""
-        from src.main import FreeAgenticsPipeline
+        from scripts.pipeline.main import FreeAgenticsPipeline
         pipeline = FreeAgenticsPipeline()
         required_stages = ['initialize', 'parse_gnn', 'create_agents', 'initialize_world', 'run_simulation', 'extract_knowledge', 'share_knowledge', 'evaluate_readiness', 'export']
         for stage in required_stages:

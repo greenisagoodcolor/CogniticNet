@@ -110,9 +110,9 @@ def check_imports():
         "from agents.core.basic_agent",
         "import agents.core.basic_agent",
         "from agents.core.active_inference",
-        "from src.gnn",
-        "from src.world",
-        "from src.tests",
+        "from inference.gnn",
+        "from world",
+        "from tests",
     ]
 
     for root, dirs, files in os.walk("."):
