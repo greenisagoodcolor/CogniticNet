@@ -17,7 +17,7 @@ interface INetworkNode {
   color: string;
 }
 
-interface NetworkLink {
+interface INetworkLink {
   source: string;
   target: string;
   strength: number;
@@ -29,8 +29,8 @@ export default function AgentRelationshipNetwork({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Generate mock relationship data
-  const generateRelationships = (): NetworkLink[] => {
-    const links: NetworkLink[] = [];
+  const generateRelationships = (): INetworkLink[] => {
+    const links: INetworkLink[] = [];
 
     // Create some random relationships between agents
     agents.forEach((agent, i) => {

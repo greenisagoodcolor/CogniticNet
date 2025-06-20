@@ -1,0 +1,368 @@
+{
+  "summary": {
+    "total_files_scanned": 748,
+    "total_violations": 428,
+    "violation_categories": 9
+  },
+  "violations_by_category": {
+    "prohibited_terms": {
+      "count": 14,
+      "violations": [
+        {
+          "file": "./docs/examples/agent-creation-examples.py",
+          "issue": "Found prohibited term 'CogniticNet' (2 occurrences)",
+          "replacement": "FreeAgentics",
+          "reason": "Old project name"
+        },
+        {
+          "file": "./scripts/check-prohibited-terms.py",
+          "issue": "Found prohibited term 'PlayerAgent' (1 occurrences)",
+          "replacement": "ExplorerAgent",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/check-prohibited-terms.py",
+          "issue": "Found prohibited term 'NPCAgent' (1 occurrences)",
+          "replacement": "AutonomousAgent",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/check-prohibited-terms.py",
+          "issue": "Found prohibited term 'EnemyAgent' (1 occurrences)",
+          "replacement": "CompetitiveAgent",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/check-prohibited-terms.py",
+          "issue": "Found prohibited term 'GameWorld' (1 occurrences)",
+          "replacement": "Environment",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/fix-naming.py",
+          "issue": "Found prohibited term 'PlayerAgent' (1 occurrences)",
+          "replacement": "ExplorerAgent",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/fix-naming.py",
+          "issue": "Found prohibited term 'NPCAgent' (1 occurrences)",
+          "replacement": "AutonomousAgent",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/fix-naming.py",
+          "issue": "Found prohibited term 'EnemyAgent' (1 occurrences)",
+          "replacement": "CompetitiveAgent",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/fix-naming.py",
+          "issue": "Found prohibited term 'GameWorld' (1 occurrences)",
+          "replacement": "Environment",
+          "reason": "Gaming terminology"
+        },
+        {
+          "file": "./scripts/fix-naming.py",
+          "issue": "Found prohibited term 'cogniticnet' (1 occurrences)",
+          "replacement": "freeagentics",
+          "reason": "Old project name"
+        }
+      ],
+      "total": 14
+    },
+    "syntax_errors": {
+      "count": 59,
+      "violations": [
+        {
+          "file": "./tests/test-gnn-structure.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-batch-processor.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-model-mapper.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-decision-making.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-perception.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-agent-data-model.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-parameter-learning.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-state-manager.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-hierarchical-inference.py",
+          "issue": "Python syntax error - cannot parse"
+        },
+        {
+          "file": "./tests/unit/test-agent-test-framework.py",
+          "issue": "Python syntax error - cannot parse"
+        }
+      ],
+      "total": 59
+    },
+    "typescript_components": {
+      "count": 71,
+      "violations": [
+        {
+          "file": "./web/components/gridworld.tsx",
+          "issue": "Component 'gridworld.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/memoryviewer.tsx",
+          "issue": "Component 'memoryviewer.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/navbar.tsx",
+          "issue": "Component 'navbar.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/agentcard.tsx",
+          "issue": "Component 'agentcard.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/agent-list.tsx",
+          "issue": "Component 'agent-list.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/about-button.tsx",
+          "issue": "Component 'about-button.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/knowledge-graph.tsx",
+          "issue": "Component 'knowledge-graph.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/agentdashboard.tsx",
+          "issue": "Component 'agentdashboard.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/aboutmodal.tsx",
+          "issue": "Component 'aboutmodal.tsx' doesn't match PascalCase pattern"
+        },
+        {
+          "file": "./web/components/agentbeliefvisualizer.tsx",
+          "issue": "Component 'agentbeliefvisualizer.tsx' doesn't match PascalCase pattern"
+        }
+      ],
+      "total": 71
+    },
+    "python_files": {
+      "count": 53,
+      "violations": [
+        {
+          "file": "./tests/test_readiness_evaluator.py",
+          "issue": "File 'test_readiness_evaluator.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./world/--init--.py",
+          "issue": "File '--init--.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./world/spatial/--init--.py",
+          "issue": "File '--init--.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/core/movement_perception.py",
+          "issue": "File 'movement_perception.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/core/active_inference.py",
+          "issue": "File 'active_inference.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/explorer/explorer.test.py",
+          "issue": "File 'explorer.test.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/testing/agent_test_framework.py",
+          "issue": "File 'agent_test_framework.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/guardian/guardian.test.py",
+          "issue": "File 'guardian.test.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/scholar/scholar.test.py",
+          "issue": "File 'scholar.test.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        },
+        {
+          "file": "./agents/base/--init--.py",
+          "issue": "File '--init--.py' doesn't match kebab-case pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*\\.py$"
+        }
+      ],
+      "total": 53
+    },
+    "python_methods": {
+      "count": 4,
+      "violations": [
+        {
+          "file": "./inference/engine/generative_model.py",
+          "issue": "Function '_initialize_A' doesn't match snake_case pattern",
+          "line": 113
+        },
+        {
+          "file": "./inference/engine/generative_model.py",
+          "issue": "Function '_initialize_B' doesn't match snake_case pattern",
+          "line": 138
+        },
+        {
+          "file": "./inference/engine/generative_model.py",
+          "issue": "Function '_initialize_C' doesn't match snake_case pattern",
+          "line": 161
+        },
+        {
+          "file": "./inference/engine/generative_model.py",
+          "issue": "Function '_initialize_D' doesn't match snake_case pattern",
+          "line": 169
+        }
+      ]
+    },
+    "config_files": {
+      "count": 149,
+      "violations": [
+        {
+          "file": "./.repository_analysis/complete_inventory.json",
+          "issue": "Config file 'complete_inventory.json' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.repository_analysis/inventory_summary.json",
+          "issue": "Config file 'inventory_summary.json' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.test_reports/baseline_report_20250620_103624.json",
+          "issue": "Config file 'baseline_report_20250620_103624.json' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./tests/jest.setup.js",
+          "issue": "Config file 'jest.setup.js' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./tests/jest.config.js",
+          "issue": "Config file 'jest.config.js' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.claude/settings.local.json",
+          "issue": "Config file 'settings.local.json' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.test_configs/test_config.json",
+          "issue": "Config file 'test_config.json' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.test_configs/jest.config.js",
+          "issue": "Config file 'jest.config.js' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.mypy_cache/3.13/datetime.data.json",
+          "issue": "Config file 'datetime.data.json' doesn't match kebab-case pattern"
+        },
+        {
+          "file": "./.mypy_cache/3.13/builtins.meta.json",
+          "issue": "Config file 'builtins.meta.json' doesn't match kebab-case pattern"
+        }
+      ],
+      "total": 149
+    },
+    "typescript_hooks": {
+      "count": 4,
+      "violations": [
+        {
+          "file": "./web/components/ui/use-toast.ts",
+          "issue": "Hook 'use-toast.ts' doesn't match useXxx pattern"
+        },
+        {
+          "file": "./web/hooks/use-conversation-orchestrator.ts",
+          "issue": "Hook 'use-conversation-orchestrator.ts' doesn't match useXxx pattern"
+        },
+        {
+          "file": "./web/hooks/use-toast.ts",
+          "issue": "Hook 'use-toast.ts' doesn't match useXxx pattern"
+        },
+        {
+          "file": "./web/hooks/use-autonomous-conversations.ts",
+          "issue": "Hook 'use-autonomous-conversations.ts' doesn't match useXxx pattern"
+        }
+      ]
+    },
+    "typescript_interfaces": {
+      "count": 71,
+      "violations": [
+        {
+          "file": "./web/components/memoryviewer.tsx",
+          "issue": "Interface 'to' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/knowledge-graph.tsx",
+          "issue": "Interface 'Link' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/agent-relationship-network.tsx",
+          "issue": "Interface 'NetworkLink' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/readiness-panel.tsx",
+          "issue": "Interface 'HardwareTarget' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/global-knowledge-graph.tsx",
+          "issue": "Interface 'Node' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/global-knowledge-graph.tsx",
+          "issue": "Interface 'Link' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/global-knowledge-graph.tsx",
+          "issue": "Interface 'PhysicsNode' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/global-knowledge-graph.tsx",
+          "issue": "Interface 'PhysicsLink' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/errorboundary.tsx",
+          "issue": "Interface 'State' should start with 'I' prefix"
+        },
+        {
+          "file": "./web/components/ui/use-toast.ts",
+          "issue": "Interface 'State' should start with 'I' prefix"
+        }
+      ],
+      "total": 71
+    },
+    "typescript_handlers": {
+      "count": 3,
+      "violations": [
+        {
+          "file": "./web/components/ui/carousel.tsx",
+          "issue": "Event handler 'onSelect' should start with 'handle' not 'on'"
+        },
+        {
+          "file": "./web/hooks/use-mobile.tsx",
+          "issue": "Event handler 'onChange' should start with 'handle' not 'on'"
+        },
+        {
+          "file": "./web/hooks/use-conversation-orchestrator.ts",
+          "issue": "Event handler 'onSendMessageRef' should start with 'handle' not 'on'"
+        }
+      ]
+    }
+  }
+}

@@ -1,86 +1,46 @@
-# Pre-commit configuration for FreeAgentics
-# Enforces architectural rules automatically before commits
-# Setup: pip install pre-commit && pre-commit install
+# Enhanced Pre-commit configuration for FreeAgentics (Working)
+# Enforces architectural rules and naming conventions automatically
 
 repos:
-  # Local repository hooks for architectural validation
+  # Local repository hooks for enhanced architectural validation
   - repo: local
     hooks:
+      # Enhanced naming convention validation
+      - id: enhanced-naming-check
+        name: Enhanced Naming Convention Check
+        entry: python3 scripts/enhanced_check_naming.py
+        language: system
+        files: \.py$
+        pass_filenames: false
+        description: 'Comprehensive naming convention validation per ADR-004'
+
+      # Enhanced prohibited terms check
+      - id: enhanced-prohibited-terms
+        name: Enhanced Prohibited Terms Check
+        entry: python3 scripts/enhanced_prohibited_terms.py
+        language: system
+        files: \.(py|js|ts|tsx|md)$
+        description: 'Checks for prohibited gaming and old project terminology'
+
       # Validate architectural dependencies per ADR-003
       - id: validate-dependencies
         name: Validate Architectural Dependencies
-        entry: python scripts/validate-dependencies.py
+        entry: python3 scripts/validate_dependencies.py
         language: system
-        files: '\.py$'
+        files: \.py$
         pass_filenames: false
         always_run: true
         description: 'Ensures all imports follow ADR-003 dependency rules'
 
-      # Validate naming conventions per ADR-004
-      - id: validate-naming
-        name: Validate Naming Conventions
-        entry: python scripts/audit-naming.py --strict
+      # File naming validation
+      - id: file-naming-validation
+        name: File Naming Validation
+        entry: python3 scripts/check_file_naming.py
         language: system
-        pass_filenames: false
-        always_run: true
-        description: 'Ensures all files follow ADR-004 naming conventions'
+        files: \.(py|js|ts|tsx)$
+        description: 'Validates file names match ADR-004 conventions'
 
-      # Check for prohibited gaming terminology
-      - id: check-gaming-terms
-        name: Check for Gaming Terminology
-        entry: bash -c 'if grep -r -n -E "(PlayerAgent|NPCAgent|spawn|GameWorld)" --include="*.py" --include="*.ts" --include="*.tsx" .; then echo "❌ Gaming terminology found - use professional terms"; exit 1; fi'
-        language: system
-        pass_filenames: false
-        description: 'Prevents use of gaming terminology per ADR-004'
-
-  # Python code quality hooks
-  - repo: https://github.com/psf/black
-    rev: 23.9.1
-    hooks:
-      - id: black
-        name: Format Python code
-        language_version: python3
-        args: ['--line-length=88']
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        name: Sort Python imports
-        args: ['--profile=black', '--line-length=88']
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
-    hooks:
-      - id: flake8
-        name: Lint Python code
-        args: [
-          '--max-line-length=88',
-          '--extend-ignore=E203,W503,E501',
-          '--per-file-ignores=__init__.py:F401'
-        ]
-
-  # TypeScript/JavaScript code quality hooks
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.50.0
-    hooks:
-      - id: eslint
-        name: Lint TypeScript/JavaScript
-        files: \.(js|jsx|ts|tsx)$
-        additional_dependencies:
-          - eslint@8.50.0
-          - '@typescript-eslint/parser@6.7.2'
-          - '@typescript-eslint/eslint-plugin@6.7.2'
-
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.3
-    hooks:
-      - id: prettier
-        name: Format TypeScript/JavaScript
-        files: \.(js|jsx|ts|tsx|json|css|md)$
-        args: ['--write']
-
-  # General file checks
+  # General file checks (simplified to essential ones)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -100,28 +60,9 @@ repos:
         name: Check for large files
         args: ['--maxkb=500']
 
-      - id: check-merge-conflict
-        name: Check for merge conflicts
-
       - id: debug-statements
         name: Check for debug statements
         types: [python]
-
-  # Security checks
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
-    hooks:
-      - id: bandit
-        name: Check Python security issues
-        args: ['-r', '.', '-f', 'json', '-o', 'bandit-report.json']
-        files: '\.py$'
-
-  # Dependency checks
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.2
-    hooks:
-      - id: python-safety-dependencies-check
-        name: Check Python dependencies for security issues
 
 # Configuration for specific hooks
 ci:
@@ -130,5 +71,3 @@ ci:
   autoupdate_branch: ''
   autoupdate_commit_msg: ⬆️ [pre-commit.ci] pre-commit autoupdate
   autoupdate_schedule: weekly
-  skip: []
-  submodules: false

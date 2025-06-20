@@ -68,7 +68,7 @@ const Carousel = React.forwardRef<
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-    const onSelect = React.useCallback((api: CarouselApi) => {
+    const handleSelect = React.useCallback((api: CarouselApi) => {
       if (!api) {
         return;
       }
@@ -111,14 +111,14 @@ const Carousel = React.forwardRef<
         return;
       }
 
-      onSelect(api);
-      api.on("reInit", onSelect);
-      api.on("select", onSelect);
+      handleSelect(api);
+      api.on("reInit", handleSelect);
+      api.on("select", handleSelect);
 
       return () => {
-        api?.off("select", onSelect);
+        api?.off("select", handleSelect);
       };
-    }, [api, onSelect]);
+    }, [api, handleSelect]);
 
     return (
       <CarouselContext.Provider
@@ -136,7 +136,7 @@ const Carousel = React.forwardRef<
       >
         <div
           ref={ref}
-          onKeyDownCapture={handleKeyDown}
+          handleKeyDownCapture={handleKeyDown}
           className={cn("relative", className)}
           role="region"
           aria-roledescription="carousel"
@@ -213,7 +213,7 @@ const CarouselPrevious = React.forwardRef<
         className,
       )}
       disabled={!canScrollPrev}
-      onClick={scrollPrev}
+      handleClick={scrollPrev}
       {...props}
     >
       <ArrowLeft className="h-4 w-4" />
@@ -242,7 +242,7 @@ const CarouselNext = React.forwardRef<
         className,
       )}
       disabled={!canScrollNext}
-      onClick={scrollNext}
+      handleClick={scrollNext}
       {...props}
     >
       <ArrowRight className="h-4 w-4" />

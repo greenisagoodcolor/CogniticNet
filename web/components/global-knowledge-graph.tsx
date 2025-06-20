@@ -15,7 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import type { Agent, KnowledgeEntry } from "@/lib/types";
-import AboutButton from "./about-button";
+import AboutButton from "./AboutButton";
 
 interface GlobalKnowledgeGraphProps {
   agents: Agent[];
@@ -47,7 +47,7 @@ interface Link {
   color: string;
 }
 
-interface PhysicsNode extends Node {
+interface IPhysicsNode extends Node {
   vx: number;
   vy: number;
   fx: number | null;
@@ -55,9 +55,9 @@ interface PhysicsNode extends Node {
   isPinned?: boolean;
 }
 
-interface PhysicsLink {
-  source: PhysicsNode;
-  target: PhysicsNode;
+interface IPhysicsLink {
+  source: IPhysicsNode;
+  target: IPhysicsNode;
   strength: number;
   color: string;
 }
@@ -86,8 +86,8 @@ export default function GlobalKnowledgeGraph({
 
   // Store simulation state in refs to avoid re-renders
   const simulationRef = useRef<{
-    nodes: PhysicsNode[];
-    links: PhysicsLink[];
+    nodes: IPhysicsNode[];
+    links: IPhysicsLink[];
   } | null>(null);
 
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
@@ -101,7 +101,7 @@ export default function GlobalKnowledgeGraph({
   });
   const [lastClickTime, setLastClickTime] = useState(0);
   const [lastClickedNode, setLastClickedNode] = useState<string | null>(null);
-  const [draggedNode, setDraggedNode] = useState<PhysicsNode | null>(null);
+  const [draggedNode, setDraggedNode] = useState<IPhysicsNode | null>(null);
   const [showSettings, setShowSettings] = useState(false);
 
   // Store these values in refs to avoid re-renders
@@ -884,7 +884,7 @@ export default function GlobalKnowledgeGraph({
     setLinks(resetLinks);
 
     // Reset the simulation with fresh physics nodes
-    const physicsNodes: PhysicsNode[] = resetNodes.map((node: Node) => ({
+    const physicsNodes: IPhysicsNode[] = resetNodes.map((node: Node) => ({
       ...node,
       vx: 0,
       vy: 0,
@@ -897,10 +897,10 @@ export default function GlobalKnowledgeGraph({
     const physicsLinks = resetLinks
       .map((link: Link) => {
         const source = physicsNodes.find(
-          (n: PhysicsNode) => n.id === link.source,
+          (n: IPhysicsNode) => n.id === link.source,
         );
         const target = physicsNodes.find(
-          (n: PhysicsNode) => n.id === link.target,
+          (n: IPhysicsNode) => n.id === link.target,
         );
 
         if (!source || !target) {
@@ -1370,9 +1370,9 @@ export default function GlobalKnowledgeGraph({
           unique), {uniqueTags.size} tags
           {isSimulationRunning && " • Simulation running"}
           {simulationRef.current?.nodes &&
-            simulationRef.current.nodes.filter((n: PhysicsNode) => n.isPinned)
+            simulationRef.current.nodes.filter((n: IPhysicsNode) => n.isPinned)
               .length > 0 &&
-            ` • ${simulationRef.current.nodes.filter((n: PhysicsNode) => n.isPinned).length} pinned nodes`}
+            ` • ${simulationRef.current.nodes.filter((n: IPhysicsNode) => n.isPinned).length} pinned nodes`}
         </div>
       </CardHeader>
 

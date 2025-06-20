@@ -14,16 +14,16 @@ Expert Committee Guidance:
 Following Clean Code and SOLID principles with optimized execution strategies.
 """
 
-import logging
 import json
+import logging
+import shutil
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union, Tuple
-import shutil
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-from test_discovery import TestDiscoveryResult, TestFramework
 from test_categorization import TestCategorizationResult
+from test_discovery import TestDiscoveryResult, TestFramework
 
 
 class RunnerType(Enum):
@@ -848,8 +848,9 @@ def create_test_runner_setup(project_root: str, **kwargs: Any) -> TestRunnerSetu
 def main():
     """Main function for command-line usage."""
     import argparse
-    from test_discovery import create_test_discovery
+
     from test_categorization import create_test_categorizer
+    from test_discovery import create_test_discovery
 
     parser = argparse.ArgumentParser(description="Setup and configure test runners")
     parser.add_argument("project_root", help="Project root directory")

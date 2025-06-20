@@ -1,0 +1,43 @@
+[flake8]
+# Enhanced flake8 configuration for FreeAgentics naming conventions
+
+# Basic configuration
+max-line-length = 88
+max-complexity = 10
+
+# Error codes to ignore
+extend-ignore = E203,W503,E501,D100,D101,D102,D103,D104,D105,E402
+
+# Per-file ignores
+per-file-ignores =
+    __init__.py:F401,F403,F405
+    test_*.py:D,S101,S106
+    **/test*.py:D,S101,S106
+    **/config/**:D
+    **/scripts/**:D
+
+# Naming conventions enforcement
+extend-select = N801,N802,N803,N806,N815,N816,C901,E999,F821
+
+# File patterns
+include = *.py
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    .mypy_cache,
+    .pytest_cache,
+    .ruff_cache,
+    node_modules,
+    build,
+    dist,
+    *.egg-info,
+    .next
+
+# Output formatting
+format = %(path)s:%(row)d:%(col)d: %(code)s %(text)s
+show-source = True
+statistics = True
+count = True
+jobs = auto

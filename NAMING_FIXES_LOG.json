@@ -1,0 +1,131 @@
+{
+  "dry_run": false,
+  "fixed_count": 29,
+  "error_count": 0,
+  "changes": [
+    {
+      "type": "prohibited_term",
+      "file": "./docs/examples/agent-creation-examples.py",
+      "old": "CogniticNet",
+      "new": "FreeAgentics"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "cogniticnet",
+      "new": "freeagentics"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "CogniticNet",
+      "new": "FreeAgentics"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "COGNITICNET",
+      "new": "FREEAGENTICS"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "PlayerAgent",
+      "new": "ExplorerAgent"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "NPCAgent",
+      "new": "AutonomousAgent"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "EnemyAgent",
+      "new": "CompetitiveAgent"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "GameWorld",
+      "new": "Environment"
+    },
+    {
+      "type": "prohibited_term",
+      "file": "./scripts/check-prohibited-terms.py",
+      "old": "spawn",
+      "new": "initialize"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./web/components/agent-list.tsx",
+      "new_path": "./web/components/AgentList.tsx"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./web/components/about-button.tsx",
+      "new_path": "./web/components/AboutButton.tsx"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./web/components/knowledge-graph.tsx",
+      "new_path": "./web/components/KnowledgeGraph.tsx"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./tests/test_readiness_evaluator.py",
+      "new_path": "./tests/test-readiness-evaluator.py"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./world/--init--.py",
+      "new_path": "./world/init.py"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./world/spatial/--init--.py",
+      "new_path": "./world/spatial/init.py"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./agents/core/movement_perception.py",
+      "new_path": "./agents/core/movement-perception.py"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./agents/core/active_inference.py",
+      "new_path": "./agents/core/active-inference.py"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./agents/testing/agent_test_framework.py",
+      "new_path": "./agents/testing/agent-test-framework.py"
+    },
+    {
+      "type": "file_rename",
+      "old_path": "./agents/base/--init--.py",
+      "new_path": "./agents/base/init.py"
+    },
+    {
+      "type": "hook_rename",
+      "old_path": "./web/components/ui/use-toast.ts",
+      "new_path": "./web/components/ui/useToast.ts"
+    },
+    {
+      "type": "hook_rename",
+      "old_path": "./web/hooks/use-conversation-orchestrator.ts",
+      "new_path": "./web/hooks/useConversationorchestrator.ts"
+    },
+    {
+      "type": "hook_rename",
+      "old_path": "./web/hooks/use-toast.ts",
+      "new_path": "./web/hooks/useToast.ts"
+    },
+    {
+      "type": "hook_rename",
+      "old_path": "./web/hooks/use-autonomous-conversations.ts",
+      "new_path": "./web/hooks/useAutonomousconversations.ts"
+    }
+  ]
+}

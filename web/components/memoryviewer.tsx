@@ -69,7 +69,7 @@ export type AgentToolPermissions = {
   conversationAnalysis: boolean;
 };
 
-// Update the MemoryViewerProps interface to include the toolPermissions update
+// Update the MemoryViewerProps interface Ito include the toolPermissions update
 interface MemoryViewerProps {
   selectedAgent: Agent | null;
   conversationHistory: Conversation[];

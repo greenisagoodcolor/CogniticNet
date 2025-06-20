@@ -82,7 +82,7 @@ interface IReadinessScore {
   recommendations: string[];
 }
 
-interface HardwareTarget {
+interface IHardwareTarget {
   id: string;
   name: string;
   platform: string;
@@ -97,7 +97,7 @@ interface ReadinessPanelProps {
   className?: string;
 }
 
-const HARDWARE_TARGETS: HardwareTarget[] = [
+const HARDWARE_TARGETS: IHardwareTarget[] = [
   {
     id: "raspberry_pi_4b",
     name: "Raspberry Pi 4B",

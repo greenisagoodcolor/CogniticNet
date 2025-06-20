@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { KnowledgeGraphViz } from "@/components/knowledge-graph-viz";
+import { KnowledgeGraphViz } from "@/components/KnowledgeGraph-viz";
 import {
   Card,
   CardContent,

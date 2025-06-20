@@ -1,0 +1,134 @@
+# Pre-commit configuration for FreeAgentics
+# Enforces architectural rules automatically before commits
+# Setup: pip install pre-commit && pre-commit install
+
+repos:
+  # Local repository hooks for architectural validation
+  - repo: local
+    hooks:
+      # Validate architectural dependencies per ADR-003
+      - id: validate-dependencies
+        name: Validate Architectural Dependencies
+        entry: python scripts/validate-dependencies.py
+        language: system
+        files: '\.py$'
+        pass_filenames: false
+        always_run: true
+        description: 'Ensures all imports follow ADR-003 dependency rules'
+
+      # Validate naming conventions per ADR-004
+      - id: validate-naming
+        name: Validate Naming Conventions
+        entry: python scripts/audit-naming.py --strict
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Ensures all files follow ADR-004 naming conventions'
+
+      # Check for prohibited gaming terminology
+      - id: check-gaming-terms
+        name: Check for Gaming Terminology
+        entry: bash -c 'if grep -r -n -E "(PlayerAgent|NPCAgent|spawn|GameWorld)" --include="*.py" --include="*.ts" --include="*.tsx" .; then echo "❌ Gaming terminology found - use professional terms"; exit 1; fi'
+        language: system
+        pass_filenames: false
+        description: 'Prevents use of gaming terminology per ADR-004'
+
+  # Python code quality hooks
+  - repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+        name: Format Python code
+        language_version: python3
+        args: ['--line-length=88']
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: Sort Python imports
+        args: ['--profile=black', '--line-length=88']
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        name: Lint Python code
+        args: [
+          '--max-line-length=88',
+          '--extend-ignore=E203,W503,E501',
+          '--per-file-ignores=__init__.py:F401'
+        ]
+
+  # TypeScript/JavaScript code quality hooks
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.50.0
+    hooks:
+      - id: eslint
+        name: Lint TypeScript/JavaScript
+        files: \.(js|jsx|ts|tsx)$
+        additional_dependencies:
+          - eslint@8.50.0
+          - '@typescript-eslint/parser@6.7.2'
+          - '@typescript-eslint/eslint-plugin@6.7.2'
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        name: Format TypeScript/JavaScript
+        files: \.(js|jsx|ts|tsx|json|css|md)$
+        args: ['--write']
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        name: Remove trailing whitespace
+
+      - id: end-of-file-fixer
+        name: Ensure files end with newline
+
+      - id: check-yaml
+        name: Validate YAML syntax
+
+      - id: check-json
+        name: Validate JSON syntax
+
+      - id: check-added-large-files
+        name: Check for large files
+        args: ['--maxkb=500']
+
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+
+      - id: debug-statements
+        name: Check for debug statements
+        types: [python]
+
+  # Security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        name: Check Python security issues
+        args: ['-r', '.', '-f', 'json', '-o', 'bandit-report.json']
+        files: '\.py$'
+
+  # Dependency checks
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+      - id: python-safety-dependencies-check
+        name: Check Python dependencies for security issues
+
+# Configuration for specific hooks
+ci:
+  autofix_commit_msg: 🔧 [pre-commit.ci] auto fixes from pre-commit hooks
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: ⬆️ [pre-commit.ci] pre-commit autoupdate
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

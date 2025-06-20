@@ -1,85 +1,64 @@
-module.exports = {
-  // Line width
-  printWidth: 100,
+// Prettier configuration for FreeAgentics
+// Enforces consistent TypeScript/JavaScript formatting per ADR-004
 
-  // Indentation
+module.exports = {
+  // Basic formatting
+  semi: true,
+  trailingComma: 'es5',
+  singleQuote: true,
+  printWidth: 100,
   tabWidth: 2,
   useTabs: false,
 
-  // Semicolons
-  semi: true,
-
-  // Quotes
-  singleQuote: true,
-  quoteProps: "as-needed",
-
-  // JSX quotes
-  jsxSingleQuote: false,
-
-  // Trailing commas
-  trailingComma: "es5",
-
-  // Brackets
+  // JavaScript/TypeScript specific
+  quoteProps: 'as-needed',
   bracketSpacing: true,
   bracketSameLine: false,
+  arrowParens: 'avoid',
 
-  // Arrow functions
-  arrowParens: "always",
+  // React/JSX specific
+  jsxSingleQuote: true,
+  jsxBracketSameLine: false,
 
-  // Line endings
-  endOfLine: "lf",
-
-  // HTML whitespace sensitivity
-  htmlWhitespaceSensitivity: "css",
-
-  // Vue files script and style tags indentation
-  vueIndentScriptAndStyle: false,
-
-  // Embedded language formatting
-  embeddedLanguageFormatting: "auto",
-
-  // Single attribute per line in HTML, Vue and JSX
-  singleAttributePerLine: false,
-
-  // Prose wrap
-  proseWrap: "preserve",
-
-  // Require pragma
-  requirePragma: false,
-  insertPragma: false,
-
-  // Override for specific file types
+  // File extensions to format
   overrides: [
     {
-      files: ["*.json", "*.jsonc"],
+      files: '*.{js,jsx,ts,tsx}',
       options: {
+        parser: 'typescript',
+      },
+    },
+    {
+      files: '*.json',
+      options: {
+        parser: 'json',
+        printWidth: 120,
+      },
+    },
+    {
+      files: '*.md',
+      options: {
+        parser: 'markdown',
         printWidth: 80,
-        trailingComma: "none",
+        proseWrap: 'always',
       },
     },
     {
-      files: "*.md",
+      files: '*.yml',
       options: {
-        proseWrap: "always",
-        printWidth: 80,
+        parser: 'yaml',
+        printWidth: 120,
       },
     },
     {
-      files: ["*.yml", "*.yaml"],
+      files: '*.yaml',
       options: {
-        singleQuote: false,
-      },
-    },
-    {
-      files: ["*.css", "*.scss", "*.less"],
-      options: {
-        singleQuote: false,
+        parser: 'yaml',
+        printWidth: 120,
       },
     },
   ],
 
-  // Tailwind CSS plugin configuration
-  plugins: ["prettier-plugin-tailwindcss"],
-  tailwindConfig: "./tailwind.config.ts",
-  tailwindFunctions: ["clsx", "cn", "twMerge"],
+  // Files to ignore
+  ignorePath: '.prettierignore',
 };
