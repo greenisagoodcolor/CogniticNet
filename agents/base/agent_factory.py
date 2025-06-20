@@ -15,6 +15,11 @@ from .data_model import Agent as AgentData, Position, AgentPersonality, AgentCap
 from .interfaces import IAgentFactory, IAgentRegistry, IAgentEventHandler
 from .agent import BaseAgent, create_agent
 
+# Import personality system (avoiding circular imports)
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .personality_system import PersonalityProfile
+
 
 class AgentFactory(IAgentFactory):
     """Factory for creating different types of agents"""
@@ -132,8 +137,37 @@ class AgentFactory(IAgentFactory):
         # Create the agent
         agent = self._agent_types[agent_type](**config)
         
+        # Create and attach personality profile
+        self._attach_personality_profile(agent, agent_type, config.get('personality_traits'))
+        
         self.logger.info(f"Created {agent_type} agent: {agent.agent_id}")
         return agent
+    
+    def _attach_personality_profile(self, agent: BaseAgent, agent_type: str, trait_values: Optional[Dict[str, float]] = None) -> None:
+        """Attach a personality profile to an agent"""
+        try:
+            # Import here to avoid circular imports
+            from .personality_system import create_personality_profile
+            
+            # Create personality profile for the agent
+            personality_profile = create_personality_profile(
+                agent_type=agent_type,
+                trait_values=trait_values
+            )
+            
+            # Store the personality profile in agent metadata
+            agent.data.metadata['personality_profile'] = personality_profile
+            
+            # Also update the legacy personality field for backward compatibility
+            big_five_traits = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism']
+            for trait_name in big_five_traits:
+                if hasattr(agent.data.personality, trait_name):
+                    setattr(agent.data.personality, trait_name, personality_profile.get_trait_value(trait_name))
+                    
+        except ImportError:
+            # Fallback if personality system is not available
+            self.logger.warning("Personality system not available, skipping personality profile creation")
+            pass
     
     def get_supported_types(self) -> List[str]:
         """Get list of supported agent types"""

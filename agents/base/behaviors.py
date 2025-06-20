@@ -15,6 +15,11 @@ import numpy as np
 from .data_model import Agent, Position, AgentStatus, AgentGoal, AgentCapability
 from .interfaces import IAgentBehavior, IBehaviorTree
 
+# Import personality system (will be available after this module loads)
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .personality_system import PersonalityProfile
+
 
 class BehaviorPriority(Enum):
     """Behavior priority levels"""
@@ -103,8 +108,25 @@ class BaseBehavior(IAgentBehavior):
 
         # Apply dynamic priority modifiers
         priority_modifier = self._get_priority_modifier(agent, context)
+        
+        # Apply personality-based modifier
+        personality_modifier = self._get_personality_modifier(agent)
 
-        return min(1.0, max(0.0, base_priority * priority_modifier))
+        final_priority = base_priority * priority_modifier * personality_modifier
+        return min(1.0, max(0.0, final_priority))
+    
+    def _get_personality_modifier(self, agent: Agent) -> float:
+        """Get personality-based modifier for this behavior"""
+        # Get personality profile from agent metadata
+        personality_profile = agent.metadata.get('personality_profile')
+        if personality_profile is None:
+            return 1.0  # No personality modification
+        
+        # Map behavior name to personality trait influence
+        behavior_type = self.name.lower().replace('_', '')
+        modifier = personality_profile.get_behavior_modifier(behavior_type)
+        
+        return modifier
 
     def get_energy_cost(self, agent: Agent, context: Dict[str, Any]) -> float:
         """Get the energy cost for executing this behavior"""
@@ -167,7 +189,7 @@ class WanderBehavior(BaseBehavior):
         if world_interface and not world_interface.can_move_to(agent, new_position):
             return {'success': False, 'reason': 'invalid_position'}
 
-        from .data_model import Action, ActionType
+        from .decision_making import Action, ActionType
         action = Action(
             action_type=ActionType.MOVE,
             target_position=new_position,
@@ -238,7 +260,7 @@ class GoalSeekingBehavior(BaseBehavior):
             # Update goal progress
             goal.progress = min(1.0, 1.0 - (distance - move_distance) / distance)
 
-            from .data_model import Action, ActionType
+            from .decision_making import Action, ActionType
             action = Action(
                 action_type=ActionType.MOVE,
                 target_position=new_position,
@@ -422,7 +444,7 @@ class ExplorationBehavior(BaseBehavior):
                 agent.position.z
             )
 
-        from .data_model import Action, ActionType
+        from .decision_making import Action, ActionType
         action = Action(
             action_type=ActionType.MOVE,
             target_position=new_position,

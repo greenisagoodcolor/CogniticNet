@@ -34,6 +34,10 @@ from .agent_factory import (
     AgentFactory, AgentRegistry, get_default_factory, get_default_registry,
     create_and_register_agent, quick_agent_setup
 )
+from .personality_system import (
+    PersonalitySystem, PersonalityProfile, TraitDefinition, PersonalityTrait,
+    TraitCategory, TraitInfluence, get_personality_system, create_personality_profile
+)
 
 __all__ = [
     # Data models
@@ -93,6 +97,10 @@ __all__ = [
 
     # Factory and Registry
     'AgentFactory', 'AgentRegistry', 'get_default_factory', 'get_default_registry',
-    'create_and_register_agent', 'quick_agent_setup'
+    'create_and_register_agent', 'quick_agent_setup',
+    
+    # Personality System
+    'PersonalitySystem', 'PersonalityProfile', 'TraitDefinition', 'PersonalityTrait',
+    'TraitCategory', 'TraitInfluence', 'get_personality_system', 'create_personality_profile'
 ]
 __version__ = '0.1.0'

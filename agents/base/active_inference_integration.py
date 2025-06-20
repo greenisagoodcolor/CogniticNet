@@ -10,16 +10,16 @@ from dataclasses import dataclass, field
 import numpy as np
 import logging
 from enum import Enum
-from .data-model import Agent, AgentStatus, AgentGoal, Position
-from .state-manager import AgentStateManager
+from .data_model import Agent, AgentStatus, AgentGoal, Position
+from .state_manager import AgentStateManager
 from .perception import PerceptionSystem, Percept, StimulusType
-from .decision-making import DecisionSystem, Action, ActionType
+from .decision_making import DecisionSystem, Action, ActionType
 from .movement import MovementController
 from .memory import MemorySystem, Memory
-from .......inference.engine.--init-- import GenerativeModel, InferenceAlgorithm, PolicySelector, TemporalPlanner, PrecisionOptimizer, BeliefUpdater, create_generative_model, create_inference_algorithm, create_policy_selector, create_temporal_planner, create_precision_optimizer, create_belief_updater
-from .......inference.engine.generative-model import ModelDimensions, ModelParameters
+from inference.engine import GenerativeModel, InferenceAlgorithm, PolicySelector, TemporalPlanner, PrecisionOptimizer, BeliefUpdater, create_generative_model, create_inference_algorithm, create_policy_selector, create_temporal_planner, create_precision_optimizer, create_belief_updater
+from inference.engine.generative_model import ModelDimensions, ModelParameters
 from inference.engine.inference import InferenceConfig
-from .......inference.engine.policy-selection import PolicyConfig, Policy
+from inference.engine.policy_selection import PolicyConfig, Policy
 from .......inference.engine.temporal-planning import PlanningConfig
 from .......inference.engine.precision import PrecisionConfig
 from inference.engine.belief_update import BeliefUpdateConfig

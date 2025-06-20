@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 
-from .data_model import Agent as AgentData, AgentStatus, Position, Action
+from .data_model import Agent as AgentData, AgentStatus, Position
 from .interfaces import (
     IAgentLifecycle, IAgentBehavior, IBehaviorTree, IWorldInterface,
     IActiveInferenceInterface, IAgentEventHandler, IAgentPlugin,
