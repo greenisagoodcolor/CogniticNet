@@ -17,29 +17,28 @@ Following Clean Architecture and SOLID principles with comprehensive pipeline or
 
 import logging
 import json
-import yaml
-import subprocess
 import asyncio
 import time
-import os
-import shutil
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Any, Union, Tuple, Callable
+from typing import Dict, List, Optional, Any, Callable
 from collections import defaultdict
-import tempfile
-import concurrent.futures
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from test_discovery import create_test_discovery, TestDiscoveryResult
-from test_categorization import create_test_categorizer, TestCategorizationResult
+from test_discovery import create_test_discovery
+from test_categorization import create_test_categorizer
 from test_runner_setup import create_test_runner_setup, TestRunnerSetupResult
-from baseline_reporting import create_baseline_reporter, BaselineReport, TestExecutionMetrics, ReportFormat
+from baseline_reporting import (
+    create_baseline_reporter,
+    TestExecutionMetrics,
+    ReportFormat,
+)
 
 
 class PipelineStage(Enum):
     """CI/CD pipeline stages in execution order."""
+
     DISCOVERY = "discovery"
     CATEGORIZATION = "categorization"
     SETUP = "setup"
@@ -51,6 +50,7 @@ class PipelineStage(Enum):
 
 class PipelineStatus(Enum):
     """Pipeline execution status."""
+
     PENDING = "pending"
     RUNNING = "running"
     SUCCESS = "success"
@@ -61,11 +61,12 @@ class PipelineStatus(Enum):
 
 class ExecutionMode(Enum):
     """Pipeline execution modes."""
-    FAST = "fast"           # Quick feedback, essential tests only
-    COMPLETE = "complete"   # Full test suite execution
-    CRITICAL = "critical"   # Critical path tests only
-    PARALLEL = "parallel"   # Maximum parallelization
-    SECURITY = "security"   # Security-focused execution
+
+    FAST = "fast"  # Quick feedback, essential tests only
+    COMPLETE = "complete"  # Full test suite execution
+    CRITICAL = "critical"  # Critical path tests only
+    PARALLEL = "parallel"  # Maximum parallelization
+    SECURITY = "security"  # Security-focused execution
 
 
 @dataclass
@@ -76,6 +77,7 @@ class StageResult:
     Captures timing, status, outputs, and metrics for observability
     and debugging following Jessica Kerr's observability principles.
     """
+
     stage: PipelineStage
     status: PipelineStatus
     start_time: float
@@ -123,6 +125,7 @@ class PipelineConfiguration:
     Configurable parameters for different execution modes and environments
     following Rich Harris's build system principles.
     """
+
     # Execution settings
     mode: ExecutionMode = ExecutionMode.COMPLETE
     parallel_jobs: int = 4
@@ -136,9 +139,13 @@ class PipelineConfiguration:
 
     # Reporting settings
     generate_reports: bool = True
-    report_formats: List[ReportFormat] = field(default_factory=lambda: [
-        ReportFormat.JSON, ReportFormat.HTML, ReportFormat.MARKDOWN
-    ])
+    report_formats: List[ReportFormat] = field(
+        default_factory=lambda: [
+            ReportFormat.JSON,
+            ReportFormat.HTML,
+            ReportFormat.MARKDOWN,
+        ]
+    )
 
     # Environment settings
     project_root: str = ""
@@ -159,8 +166,8 @@ class PipelineConfiguration:
         """Convert to dictionary for serialization."""
         data = asdict(self)
         # Convert enums to strings
-        data['mode'] = self.mode.value
-        data['report_formats'] = [fmt.value for fmt in self.report_formats]
+        data["mode"] = self.mode.value
+        data["report_formats"] = [fmt.value for fmt in self.report_formats]
         return data
 
 
@@ -172,6 +179,7 @@ class PipelineResult:
     Aggregates all stage results and provides overall pipeline metrics
     following Adrian Cockcroft's CI/CD principles.
     """
+
     pipeline_id: str
     configuration: PipelineConfiguration
     start_time: float
@@ -214,7 +222,8 @@ class PipelineResult:
     def get_failed_stages(self) -> List[PipelineStage]:
         """Get list of failed pipeline stages."""
         return [
-            stage for stage, result in self.stage_results.items()
+            stage
+            for stage, result in self.stage_results.items()
             if result.status == PipelineStatus.FAILED
         ]
 
@@ -228,13 +237,13 @@ class PipelineResult:
         """Convert to dictionary for serialization."""
         data = asdict(self)
         # Convert enums to strings
-        data['status'] = self.status.value
-        data['stage_results'] = {
+        data["status"] = self.status.value
+        data["stage_results"] = {
             stage.value: result.to_dict()
             for stage, result in self.stage_results.items()
         }
-        data['pass_rate'] = self.calculate_pass_rate()
-        data['failed_stages'] = [stage.value for stage in self.get_failed_stages()]
+        data["pass_rate"] = self.calculate_pass_rate()
+        data["failed_stages"] = [stage.value for stage in self.get_failed_stages()]
         return data
 
 
@@ -261,7 +270,7 @@ class CIPipelineOrchestrator:
     def __init__(
         self,
         configuration: PipelineConfiguration,
-        logger: Optional[logging.Logger] = None
+        logger: Optional[logging.Logger] = None,
     ):
         """
         Initialize CI/CD pipeline orchestrator.
@@ -275,8 +284,16 @@ class CIPipelineOrchestrator:
 
         # Initialize directories
         self.project_root = Path(configuration.project_root).resolve()
-        self.output_dir = Path(configuration.output_dir) if configuration.output_dir else self.project_root / ".ci_output"
-        self.artifacts_dir = Path(configuration.artifacts_dir) if configuration.artifacts_dir else self.output_dir / "artifacts"
+        self.output_dir = (
+            Path(configuration.output_dir)
+            if configuration.output_dir
+            else self.project_root / ".ci_output"
+        )
+        self.artifacts_dir = (
+            Path(configuration.artifacts_dir)
+            if configuration.artifacts_dir
+            else self.output_dir / "artifacts"
+        )
 
         # Ensure directories exist
         self.output_dir.mkdir(exist_ok=True)
@@ -291,7 +308,7 @@ class CIPipelineOrchestrator:
             PipelineStage.EXECUTION: self._execute_execution_stage,
             PipelineStage.REPORTING: self._execute_reporting_stage,
             PipelineStage.QUALITY_GATES: self._execute_quality_gates_stage,
-            PipelineStage.DEPLOYMENT: self._execute_deployment_stage
+            PipelineStage.DEPLOYMENT: self._execute_deployment_stage,
         }
 
         # Metrics collection
@@ -299,8 +316,7 @@ class CIPipelineOrchestrator:
         self._start_time = 0.0
 
     async def execute_pipeline(
-        self,
-        pipeline_id: Optional[str] = None
+        self, pipeline_id: Optional[str] = None
     ) -> PipelineResult:
         """
         Execute complete CI/CD pipeline.
@@ -323,7 +339,7 @@ class CIPipelineOrchestrator:
             configuration=self.config,
             start_time=start_time,
             end_time=0.0,
-            status=PipelineStatus.RUNNING
+            status=PipelineStatus.RUNNING,
         )
 
         try:
@@ -332,7 +348,9 @@ class CIPipelineOrchestrator:
 
             for stage in stages_to_execute:
                 if self.config.fail_fast and not self._should_continue_pipeline():
-                    self.logger.warning(f"⚠️ Stopping pipeline due to fail_fast and previous failures")
+                    self.logger.warning(
+                        "⚠️ Stopping pipeline due to fail_fast and previous failures"
+                    )
                     break
 
                 await self._execute_stage(stage)
@@ -340,12 +358,18 @@ class CIPipelineOrchestrator:
             # Finalize pipeline
             self.current_pipeline.end_time = time.time()
             self.current_pipeline.success = self._evaluate_pipeline_success()
-            self.current_pipeline.status = PipelineStatus.SUCCESS if self.current_pipeline.success else PipelineStatus.FAILED
+            self.current_pipeline.status = (
+                PipelineStatus.SUCCESS
+                if self.current_pipeline.success
+                else PipelineStatus.FAILED
+            )
 
             # Generate final summary
             await self._generate_pipeline_summary()
 
-            self.logger.info(f"✅ Pipeline {pipeline_id} completed: {self.current_pipeline.status.value}")
+            self.logger.info(
+                f"✅ Pipeline {pipeline_id} completed: {self.current_pipeline.status.value}"
+            )
 
         except Exception as e:
             self.logger.error(f"❌ Pipeline {pipeline_id} failed with exception: {e}")
@@ -354,7 +378,7 @@ class CIPipelineOrchestrator:
             self.current_pipeline.success = False
 
             # Add error to current stage if executing
-            if hasattr(self, '_current_stage_result'):
+            if hasattr(self, "_current_stage_result"):
                 self._current_stage_result.add_error(str(e))
 
         return self.current_pipeline
@@ -368,7 +392,7 @@ class CIPipelineOrchestrator:
             stage=stage,
             status=PipelineStatus.RUNNING,
             start_time=time.time(),
-            end_time=0.0
+            end_time=0.0,
         )
 
         self._current_stage_result = stage_result
@@ -404,29 +428,33 @@ class CIPipelineOrchestrator:
         discovery_result = discovery.discover_tests()
 
         # Store results
-        stage_result.outputs['discovery_result'] = discovery_result
-        stage_result.metrics['test_files_found'] = len(discovery_result.test_files)
-        stage_result.metrics['total_tests'] = discovery_result.total_tests
-        stage_result.metrics['frameworks_detected'] = len(discovery_result.by_framework)
+        stage_result.outputs["discovery_result"] = discovery_result
+        stage_result.metrics["test_files_found"] = len(discovery_result.test_files)
+        stage_result.metrics["total_tests"] = discovery_result.total_tests
+        stage_result.metrics["frameworks_detected"] = len(discovery_result.by_framework)
 
         # Save artifacts
         discovery_artifact = self.artifacts_dir / "discovery_result.json"
-        with open(discovery_artifact, 'w') as f:
+        with open(discovery_artifact, "w") as f:
             json.dump(discovery_result.to_dict(), f, indent=2)
         stage_result.artifacts.append(str(discovery_artifact))
 
-        stage_result.add_log(f"Discovered {len(discovery_result.test_files)} test files with {discovery_result.total_tests} tests")
+        stage_result.add_log(
+            f"Discovered {len(discovery_result.test_files)} test files with {discovery_result.total_tests} tests"
+        )
 
     async def _execute_categorization_stage(self, stage_result: StageResult) -> None:
         """Execute test categorization stage."""
         stage_result.add_log("Starting test categorization")
 
         # Get discovery result from previous stage
-        discovery_stage = self.current_pipeline.stage_results.get(PipelineStage.DISCOVERY)
-        if not discovery_stage or 'discovery_result' not in discovery_stage.outputs:
+        discovery_stage = self.current_pipeline.stage_results.get(
+            PipelineStage.DISCOVERY
+        )
+        if not discovery_stage or "discovery_result" not in discovery_stage.outputs:
             raise ValueError("Discovery stage result not found")
 
-        discovery_result = discovery_stage.outputs['discovery_result']
+        discovery_result = discovery_stage.outputs["discovery_result"]
 
         # Create categorizer
         categorizer = create_test_categorizer(str(self.project_root))
@@ -435,63 +463,83 @@ class CIPipelineOrchestrator:
         categorization_result = categorizer.categorize_tests(discovery_result)
 
         # Store results
-        stage_result.outputs['categorization_result'] = categorization_result
-        stage_result.metrics['categorized_tests'] = categorization_result.total_tests
-        stage_result.metrics['categories_created'] = len(categorization_result.by_category)
-        stage_result.metrics['estimated_duration'] = categorization_result.estimated_total_duration
+        stage_result.outputs["categorization_result"] = categorization_result
+        stage_result.metrics["categorized_tests"] = categorization_result.total_tests
+        stage_result.metrics["categories_created"] = len(
+            categorization_result.by_category
+        )
+        stage_result.metrics["estimated_duration"] = (
+            categorization_result.estimated_total_duration
+        )
 
         # Save artifacts
         categorization_artifact = self.artifacts_dir / "categorization_result.json"
-        with open(categorization_artifact, 'w') as f:
+        with open(categorization_artifact, "w") as f:
             json.dump(categorization_result.to_dict(), f, indent=2)
         stage_result.artifacts.append(str(categorization_artifact))
 
-        stage_result.add_log(f"Categorized {categorization_result.total_tests} tests into {len(categorization_result.by_category)} categories")
+        stage_result.add_log(
+            f"Categorized {categorization_result.total_tests} tests into {len(categorization_result.by_category)} categories"
+        )
 
     async def _execute_setup_stage(self, stage_result: StageResult) -> None:
         """Execute test runner setup stage."""
         stage_result.add_log("Starting test runner setup")
 
         # Get previous stage results
-        discovery_result = self.current_pipeline.stage_results[PipelineStage.DISCOVERY].outputs['discovery_result']
-        categorization_result = self.current_pipeline.stage_results[PipelineStage.CATEGORIZATION].outputs['categorization_result']
+        discovery_result = self.current_pipeline.stage_results[
+            PipelineStage.DISCOVERY
+        ].outputs["discovery_result"]
+        categorization_result = self.current_pipeline.stage_results[
+            PipelineStage.CATEGORIZATION
+        ].outputs["categorization_result"]
 
         # Create test runner setup
         setup = create_test_runner_setup(str(self.project_root))
 
         # Run setup
-        runner_setup_result = setup.setup_test_runners(discovery_result, categorization_result)
+        runner_setup_result = setup.setup_test_runners(
+            discovery_result, categorization_result
+        )
 
         # Store results
-        stage_result.outputs['runner_setup_result'] = runner_setup_result
-        stage_result.metrics['runners_configured'] = len(runner_setup_result.runner_configs)
-        stage_result.metrics['execution_plans'] = len(runner_setup_result.execution_plans)
+        stage_result.outputs["runner_setup_result"] = runner_setup_result
+        stage_result.metrics["runners_configured"] = len(
+            runner_setup_result.runner_configs
+        )
+        stage_result.metrics["execution_plans"] = len(
+            runner_setup_result.execution_plans
+        )
 
         # Save artifacts
         setup_artifact = self.artifacts_dir / "runner_setup_result.json"
-        with open(setup_artifact, 'w') as f:
+        with open(setup_artifact, "w") as f:
             json.dump(runner_setup_result.to_dict(), f, indent=2)
         stage_result.artifacts.append(str(setup_artifact))
 
-        stage_result.add_log(f"Configured {len(runner_setup_result.runner_configs)} test runners")
+        stage_result.add_log(
+            f"Configured {len(runner_setup_result.runner_configs)} test runners"
+        )
 
     async def _execute_execution_stage(self, stage_result: StageResult) -> None:
         """Execute test execution stage."""
         stage_result.add_log("Starting test execution")
 
         # Get setup results
-        runner_setup_result = self.current_pipeline.stage_results[PipelineStage.SETUP].outputs['runner_setup_result']
+        runner_setup_result = self.current_pipeline.stage_results[
+            PipelineStage.SETUP
+        ].outputs["runner_setup_result"]
 
         # Execute tests based on mode
         execution_metrics = await self._run_tests(runner_setup_result, stage_result)
 
         # Store results
-        stage_result.outputs['execution_metrics'] = execution_metrics
-        stage_result.metrics['total_tests'] = execution_metrics.total_tests
-        stage_result.metrics['passed_tests'] = execution_metrics.passed_tests
-        stage_result.metrics['failed_tests'] = execution_metrics.failed_tests
-        stage_result.metrics['test_duration'] = execution_metrics.total_duration
-        stage_result.metrics['coverage'] = execution_metrics.line_coverage
+        stage_result.outputs["execution_metrics"] = execution_metrics
+        stage_result.metrics["total_tests"] = execution_metrics.total_tests
+        stage_result.metrics["passed_tests"] = execution_metrics.passed_tests
+        stage_result.metrics["failed_tests"] = execution_metrics.failed_tests
+        stage_result.metrics["test_duration"] = execution_metrics.total_duration
+        stage_result.metrics["coverage"] = execution_metrics.line_coverage
 
         # Update pipeline metrics
         self.current_pipeline.total_tests = execution_metrics.total_tests
@@ -499,20 +547,32 @@ class CIPipelineOrchestrator:
         self.current_pipeline.failed_tests = execution_metrics.failed_tests
         self.current_pipeline.test_coverage = execution_metrics.line_coverage
 
-        stage_result.add_log(f"Executed {execution_metrics.total_tests} tests: {execution_metrics.passed_tests} passed, {execution_metrics.failed_tests} failed")
+        stage_result.add_log(
+            f"Executed {execution_metrics.total_tests} tests: {execution_metrics.passed_tests} passed, {execution_metrics.failed_tests} failed"
+        )
 
     async def _execute_reporting_stage(self, stage_result: StageResult) -> None:
         """Execute reporting stage."""
         stage_result.add_log("Starting report generation")
 
         # Get all previous results
-        discovery_result = self.current_pipeline.stage_results[PipelineStage.DISCOVERY].outputs['discovery_result']
-        categorization_result = self.current_pipeline.stage_results[PipelineStage.CATEGORIZATION].outputs['categorization_result']
-        runner_setup_result = self.current_pipeline.stage_results[PipelineStage.SETUP].outputs['runner_setup_result']
-        execution_metrics = self.current_pipeline.stage_results[PipelineStage.EXECUTION].outputs['execution_metrics']
+        discovery_result = self.current_pipeline.stage_results[
+            PipelineStage.DISCOVERY
+        ].outputs["discovery_result"]
+        categorization_result = self.current_pipeline.stage_results[
+            PipelineStage.CATEGORIZATION
+        ].outputs["categorization_result"]
+        runner_setup_result = self.current_pipeline.stage_results[
+            PipelineStage.SETUP
+        ].outputs["runner_setup_result"]
+        execution_metrics = self.current_pipeline.stage_results[
+            PipelineStage.EXECUTION
+        ].outputs["execution_metrics"]
 
         # Create baseline reporter
-        reporter = create_baseline_reporter(str(self.project_root), output_dir=str(self.artifacts_dir))
+        reporter = create_baseline_reporter(
+            str(self.project_root), output_dir=str(self.artifacts_dir)
+        )
 
         # Generate baseline report
         baseline_report = reporter.generate_baseline_report(
@@ -520,41 +580,51 @@ class CIPipelineOrchestrator:
             categorization_result,
             runner_setup_result,
             execution_metrics,
-            self.config.report_formats
+            self.config.report_formats,
         )
 
         # Store results
-        stage_result.outputs['baseline_report'] = baseline_report
-        stage_result.metrics['health_score'] = baseline_report.calculate_health_score()
-        stage_result.metrics['quality_score'] = baseline_report.quality_metrics.calculate_overall_score()
+        stage_result.outputs["baseline_report"] = baseline_report
+        stage_result.metrics["health_score"] = baseline_report.calculate_health_score()
+        stage_result.metrics["quality_score"] = (
+            baseline_report.quality_metrics.calculate_overall_score()
+        )
 
         # Update pipeline metrics
-        self.current_pipeline.quality_score = baseline_report.quality_metrics.calculate_overall_score()
+        self.current_pipeline.quality_score = (
+            baseline_report.quality_metrics.calculate_overall_score()
+        )
 
         # Add report artifacts
         stage_result.artifacts.extend(self.current_pipeline.reports)
 
-        stage_result.add_log(f"Generated baseline report with {baseline_report.calculate_health_score():.1f}% health score")
+        stage_result.add_log(
+            f"Generated baseline report with {baseline_report.calculate_health_score():.1f}% health score"
+        )
 
     async def _execute_quality_gates_stage(self, stage_result: StageResult) -> None:
         """Execute quality gates validation stage."""
         stage_result.add_log("Starting quality gates validation")
 
         # Get baseline report
-        baseline_report = self.current_pipeline.stage_results[PipelineStage.REPORTING].outputs['baseline_report']
+        baseline_report = self.current_pipeline.stage_results[
+            PipelineStage.REPORTING
+        ].outputs["baseline_report"]
 
         # Evaluate quality gates
         quality_gates = baseline_report.evaluate_quality_gates()
 
         # Add custom gates based on configuration
         if self.config.require_coverage_threshold:
-            quality_gates['coverage_threshold'] = self.current_pipeline.test_coverage >= self.config.coverage_threshold
+            quality_gates["coverage_threshold"] = (
+                self.current_pipeline.test_coverage >= self.config.coverage_threshold
+            )
 
         if self.config.require_all_tests_pass:
-            quality_gates['all_tests_pass'] = self.current_pipeline.failed_tests == 0
+            quality_gates["all_tests_pass"] = self.current_pipeline.failed_tests == 0
 
         # Store results
-        stage_result.outputs['quality_gates'] = quality_gates
+        stage_result.outputs["quality_gates"] = quality_gates
         self.current_pipeline.quality_gates_passed = quality_gates
 
         # Calculate overall gate status
@@ -562,17 +632,21 @@ class CIPipelineOrchestrator:
         total_gates = len(quality_gates)
         gate_pass_rate = (gates_passed / total_gates) * 100 if total_gates > 0 else 0
 
-        stage_result.metrics['gates_passed'] = gates_passed
-        stage_result.metrics['total_gates'] = total_gates
-        stage_result.metrics['gate_pass_rate'] = gate_pass_rate
+        stage_result.metrics["gates_passed"] = gates_passed
+        stage_result.metrics["total_gates"] = total_gates
+        stage_result.metrics["gate_pass_rate"] = gate_pass_rate
 
         # Determine deployment readiness
         self.current_pipeline.deployment_ready = all(quality_gates.values())
 
-        stage_result.add_log(f"Quality gates: {gates_passed}/{total_gates} passed ({gate_pass_rate:.1f}%)")
+        stage_result.add_log(
+            f"Quality gates: {gates_passed}/{total_gates} passed ({gate_pass_rate:.1f}%)"
+        )
 
         if not self.current_pipeline.deployment_ready:
-            failed_gates = [gate for gate, passed in quality_gates.items() if not passed]
+            failed_gates = [
+                gate for gate, passed in quality_gates.items() if not passed
+            ]
             stage_result.add_error(f"Failed quality gates: {', '.join(failed_gates)}")
 
     async def _execute_deployment_stage(self, stage_result: StageResult) -> None:
@@ -588,24 +662,22 @@ class CIPipelineOrchestrator:
         # In real implementation, this would trigger actual deployment
         # For now, just simulate deployment readiness check
         stage_result.add_log("✅ All quality gates passed - ready for deployment")
-        stage_result.outputs['deployment_ready'] = True
-        stage_result.metrics['deployment_readiness'] = 100.0
+        stage_result.outputs["deployment_ready"] = True
+        stage_result.metrics["deployment_readiness"] = 100.0
 
     async def _run_tests(
-        self,
-        runner_setup_result: TestRunnerSetupResult,
-        stage_result: StageResult
+        self, runner_setup_result: TestRunnerSetupResult, stage_result: StageResult
     ) -> TestExecutionMetrics:
         """Run tests based on configuration mode."""
 
         # Select execution plan based on mode
         plan_name = {
-            ExecutionMode.FAST: 'fast',
-            ExecutionMode.COMPLETE: 'complete',
-            ExecutionMode.CRITICAL: 'critical',
-            ExecutionMode.PARALLEL: 'parallel',
-            ExecutionMode.SECURITY: 'complete'  # Use complete for security mode
-        }.get(self.config.mode, 'complete')
+            ExecutionMode.FAST: "fast",
+            ExecutionMode.COMPLETE: "complete",
+            ExecutionMode.CRITICAL: "critical",
+            ExecutionMode.PARALLEL: "parallel",
+            ExecutionMode.SECURITY: "complete",  # Use complete for security mode
+        }.get(self.config.mode, "complete")
 
         # Find execution plan by name (execution_plans is a list)
         execution_plan = None
@@ -620,25 +692,29 @@ class CIPipelineOrchestrator:
 
         if not execution_plan:
             # Create default execution plan object
-            from test_runner_setup import ExecutionPlan, ExecutionMode as RunnerExecutionMode
+            from test_runner_setup import (
+                ExecutionPlan,
+                ExecutionMode as RunnerExecutionMode,
+            )
+
             execution_plan = ExecutionPlan(
-                name=plan_name,
-                mode=RunnerExecutionMode.FAST,
-                estimated_duration=300
+                name=plan_name, mode=RunnerExecutionMode.FAST, estimated_duration=300
             )
 
         stage_result.add_log(f"Using execution plan: {plan_name}")
 
         # Simulate test execution (in real implementation, would run actual tests)
-        total_tests = len(execution_plan.test_files) if execution_plan.test_files else 50
+        total_tests = (
+            len(execution_plan.test_files) if execution_plan.test_files else 50
+        )
 
         # Simulate pass rate based on mode
         pass_rates = {
-            ExecutionMode.FAST: 0.98,      # Fast tests usually more reliable
+            ExecutionMode.FAST: 0.98,  # Fast tests usually more reliable
             ExecutionMode.COMPLETE: 0.94,  # Complete suite may have more issues
             ExecutionMode.CRITICAL: 0.96,  # Critical tests should be stable
             ExecutionMode.PARALLEL: 0.93,  # Parallel execution may have race conditions
-            ExecutionMode.SECURITY: 0.95   # Security tests are important
+            ExecutionMode.SECURITY: 0.95,  # Security tests are important
         }
 
         pass_rate = pass_rates.get(self.config.mode, 0.94)
@@ -652,7 +728,7 @@ class CIPipelineOrchestrator:
             ExecutionMode.COMPLETE: 1.0,
             ExecutionMode.CRITICAL: 0.3,
             ExecutionMode.PARALLEL: 0.4,
-            ExecutionMode.SECURITY: 1.2
+            ExecutionMode.SECURITY: 1.2,
         }
 
         duration = base_duration * duration_multipliers.get(self.config.mode, 1.0)
@@ -665,8 +741,11 @@ class CIPipelineOrchestrator:
             total_duration=duration,
             line_coverage=78.5,  # Simulated coverage
             branch_coverage=72.3,
-            by_framework={'pytest': passed_tests, 'jest': 0},
-            by_category={'unit': int(passed_tests * 0.8), 'integration': int(passed_tests * 0.2)}
+            by_framework={"pytest": passed_tests, "jest": 0},
+            by_category={
+                "unit": int(passed_tests * 0.8),
+                "integration": int(passed_tests * 0.2),
+            },
         )
 
         return execution_metrics
@@ -679,7 +758,7 @@ class CIPipelineOrchestrator:
             PipelineStage.SETUP,
             PipelineStage.EXECUTION,
             PipelineStage.REPORTING,
-            PipelineStage.QUALITY_GATES
+            PipelineStage.QUALITY_GATES,
         ]
 
         if mode == ExecutionMode.FAST:
@@ -710,16 +789,22 @@ class CIPipelineOrchestrator:
         critical_stages = [
             PipelineStage.DISCOVERY,
             PipelineStage.EXECUTION,
-            PipelineStage.QUALITY_GATES
+            PipelineStage.QUALITY_GATES,
         ]
 
         for stage in critical_stages:
             if stage in self.current_pipeline.stage_results:
-                if self.current_pipeline.stage_results[stage].status == PipelineStatus.FAILED:
+                if (
+                    self.current_pipeline.stage_results[stage].status
+                    == PipelineStatus.FAILED
+                ):
                     return False
 
         # Check quality gates if deployment readiness required
-        if self.config.require_all_tests_pass and not self.current_pipeline.deployment_ready:
+        if (
+            self.config.require_all_tests_pass
+            and not self.current_pipeline.deployment_ready
+        ):
             return False
 
         return True
@@ -727,36 +812,36 @@ class CIPipelineOrchestrator:
     async def _generate_pipeline_summary(self) -> None:
         """Generate comprehensive pipeline summary."""
         summary = {
-            'pipeline_id': self.current_pipeline.pipeline_id,
-            'status': self.current_pipeline.status.value,
-            'success': self.current_pipeline.success,
-            'duration': self.current_pipeline.duration,
-            'configuration': self.config.to_dict(),
-            'metrics': {
-                'total_tests': self.current_pipeline.total_tests,
-                'passed_tests': self.current_pipeline.passed_tests,
-                'failed_tests': self.current_pipeline.failed_tests,
-                'pass_rate': self.current_pipeline.calculate_pass_rate(),
-                'test_coverage': self.current_pipeline.test_coverage,
-                'quality_score': self.current_pipeline.quality_score,
-                'deployment_ready': self.current_pipeline.deployment_ready
+            "pipeline_id": self.current_pipeline.pipeline_id,
+            "status": self.current_pipeline.status.value,
+            "success": self.current_pipeline.success,
+            "duration": self.current_pipeline.duration,
+            "configuration": self.config.to_dict(),
+            "metrics": {
+                "total_tests": self.current_pipeline.total_tests,
+                "passed_tests": self.current_pipeline.passed_tests,
+                "failed_tests": self.current_pipeline.failed_tests,
+                "pass_rate": self.current_pipeline.calculate_pass_rate(),
+                "test_coverage": self.current_pipeline.test_coverage,
+                "quality_score": self.current_pipeline.quality_score,
+                "deployment_ready": self.current_pipeline.deployment_ready,
             },
-            'stage_summary': {
+            "stage_summary": {
                 stage.value: {
-                    'status': result.status.value,
-                    'duration': result.duration,
-                    'metrics': result.metrics
+                    "status": result.status.value,
+                    "duration": result.duration,
+                    "metrics": result.metrics,
                 }
                 for stage, result in self.current_pipeline.stage_results.items()
             },
-            'quality_gates': self.current_pipeline.quality_gates_passed,
-            'artifacts': self.current_pipeline.artifacts,
-            'reports': self.current_pipeline.reports
+            "quality_gates": self.current_pipeline.quality_gates_passed,
+            "artifacts": self.current_pipeline.artifacts,
+            "reports": self.current_pipeline.reports,
         }
 
         # Save summary
         summary_file = self.artifacts_dir / "pipeline_summary.json"
-        with open(summary_file, 'w') as f:
+        with open(summary_file, "w") as f:
             json.dump(summary, f, indent=2)
 
         self.current_pipeline.artifacts.append(str(summary_file))
@@ -765,8 +850,7 @@ class CIPipelineOrchestrator:
 
 
 def create_ci_pipeline_orchestrator(
-    configuration: PipelineConfiguration,
-    **kwargs: Any
+    configuration: PipelineConfiguration, **kwargs: Any
 ) -> CIPipelineOrchestrator:
     """
     Factory function to create a CI pipeline orchestrator.
@@ -787,12 +871,22 @@ async def main():
 
     parser = argparse.ArgumentParser(description="Execute CI/CD pipeline")
     parser.add_argument("project_root", help="Project root directory")
-    parser.add_argument("--mode", choices=[m.value for m in ExecutionMode],
-                       default=ExecutionMode.COMPLETE.value, help="Execution mode")
+    parser.add_argument(
+        "--mode",
+        choices=[m.value for m in ExecutionMode],
+        default=ExecutionMode.COMPLETE.value,
+        help="Execution mode",
+    )
     parser.add_argument("--output-dir", "-o", help="Output directory for results")
-    parser.add_argument("--parallel-jobs", "-j", type=int, default=4, help="Number of parallel jobs")
-    parser.add_argument("--timeout", "-t", type=int, default=1800, help="Pipeline timeout in seconds")
-    parser.add_argument("--fail-fast", action="store_true", help="Stop on first failure")
+    parser.add_argument(
+        "--parallel-jobs", "-j", type=int, default=4, help="Number of parallel jobs"
+    )
+    parser.add_argument(
+        "--timeout", "-t", type=int, default=1800, help="Pipeline timeout in seconds"
+    )
+    parser.add_argument(
+        "--fail-fast", action="store_true", help="Stop on first failure"
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -800,7 +894,7 @@ async def main():
     # Configure logging
     logging.basicConfig(
         level=logging.INFO if args.verbose else logging.WARNING,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     # Create configuration
@@ -810,7 +904,7 @@ async def main():
         output_dir=args.output_dir or "",
         parallel_jobs=args.parallel_jobs,
         timeout_seconds=args.timeout,
-        fail_fast=args.fail_fast
+        fail_fast=args.fail_fast,
     )
 
     # Create and execute pipeline
@@ -818,18 +912,22 @@ async def main():
 
     print(f"🚀 Starting CI/CD pipeline in {args.mode} mode...")
     print(f"📁 Project root: {args.project_root}")
-    print(f"⚙️ Configuration: {args.parallel_jobs} parallel jobs, {args.timeout}s timeout")
+    print(
+        f"⚙️ Configuration: {args.parallel_jobs} parallel jobs, {args.timeout}s timeout"
+    )
 
     start_time = time.time()
     result = await orchestrator.execute_pipeline()
     total_time = time.time() - start_time
 
     # Print summary
-    print(f"\n📊 Pipeline Execution Summary:")
+    print("\n📊 Pipeline Execution Summary:")
     print(f"  🆔 Pipeline ID: {result.pipeline_id}")
     print(f"  ✅ Status: {result.status.value}")
     print(f"  ⏱️ Duration: {result.duration:.1f}s")
-    print(f"  🧪 Tests: {result.total_tests} total, {result.passed_tests} passed, {result.failed_tests} failed")
+    print(
+        f"  🧪 Tests: {result.total_tests} total, {result.passed_tests} passed, {result.failed_tests} failed"
+    )
     print(f"  📊 Pass Rate: {result.calculate_pass_rate():.1f}%")
     print(f"  📈 Coverage: {result.test_coverage:.1f}%")
     print(f"  🎯 Quality Score: {result.quality_score:.1f}%")
@@ -841,7 +939,7 @@ async def main():
         print(f"  🎯 Quality Gates: {gates_passed}/{total_gates} passed")
 
     # Show stage breakdown
-    print(f"\n📋 Stage Breakdown:")
+    print("\n📋 Stage Breakdown:")
     for stage, stage_result in result.stage_results.items():
         status_emoji = "✅" if stage_result.status == PipelineStatus.SUCCESS else "❌"
         print(f"  {status_emoji} {stage.value}: {stage_result.duration:.1f}s")
@@ -855,7 +953,9 @@ async def main():
 
     # Exit with appropriate code
     exit_code = 0 if result.success else 1
-    print(f"\n{'🎉 Pipeline completed successfully!' if result.success else '💥 Pipeline failed!'}")
+    print(
+        f"\n{'🎉 Pipeline completed successfully!' if result.success else '💥 Pipeline failed!'}"
+    )
     exit(exit_code)
 
 

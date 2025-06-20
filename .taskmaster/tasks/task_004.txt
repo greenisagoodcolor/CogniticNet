@@ -3,19 +3,27 @@
 # Status: pending
 # Dependencies: 1, 2, 3
 # Priority: medium
-# Description: Create and execute a safe plan for moving files to the new structure while preserving git history and maintaining functionality.
+# Description: Create and execute a safe plan for moving files to the new structure while preserving git history and maintaining functionality, ensuring strict compliance with architectural decisions.
 # Details:
 Create a detailed file movement plan that:
 
-1. Maps each file from current location to target location in new structure
-2. Calculates correct movement order based on dependency graph
+1. Maps each file from current location to target location in new structure according to `docs/architecture/decisions/002-canonical-directory-structure.md`
+2. Calculates correct movement order based on dependency graph following rules from `docs/architecture/decisions/003-dependency-rules.md`
 3. Updates import statements in all affected files
 4. Preserves git history using `git mv`
+5. Ensures all file names comply with `docs/architecture/decisions/004-naming-conventions.md`
+
+**CRITICAL**: Before any file operations, validate against the architectural decision documents to ensure full compliance.
 
 Implementation steps:
 
 ```python
 def plan_file_movements():
+    # Load architectural decisions
+    canonical_structure = load_adr('002-canonical-directory-structure.md')
+    naming_conventions = load_adr('004-naming-conventions.md')
+    dependency_rules = load_adr('003-dependency-rules.md')
+    
     # Load file inventory and dependency graph from Task 1
     inventory = load_inventory()
     dependencies = load_dependency_graph()
@@ -23,9 +31,15 @@ def plan_file_movements():
     # Create mapping of current to target locations
     file_mapping = {}
     for file_path in inventory:
-        target_path = determine_target_location(file_path)
+        # Validate target location against canonical structure
+        target_path = determine_target_location(file_path, canonical_structure)
+        # Ensure naming compliance
+        target_path = ensure_naming_compliance(target_path, naming_conventions)
         if target_path != file_path:
             file_mapping[file_path] = target_path
+    
+    # Validate dependencies comply with architectural rules
+    validate_dependencies(file_mapping, dependencies, dependency_rules)
     
     # Sort files by dependency order (least dependencies first)
     sorted_files = topological_sort(file_mapping.keys(), dependencies)
@@ -38,30 +52,37 @@ def plan_file_movements():
                 'source': file,
                 'target': file_mapping[file],
                 'git_command': f'git mv {file} {file_mapping[file]}',
-                'affected_files': find_files_importing(file)
+                'affected_files': find_files_importing(file),
+                'compliance_check': verify_architectural_compliance(file_mapping[file])
             })
     
     return commands
 ```
 
 Execute the plan in batches:
-1. Move a small batch of files (5-10)
-2. Update import statements in affected files
-3. Run tests to verify functionality
-4. Commit changes
-5. Repeat until all files are moved
+1. Verify batch compliance with architectural decisions
+2. Move a small batch of files (5-10)
+3. Update import statements in affected files
+4. Run tests to verify functionality
+5. Validate architectural compliance post-move
+6. Commit changes
+7. Repeat until all files are moved
 
 For import updates, use AST manipulation rather than string replacement to avoid changing imports in strings or comments.
 
-Include rollback procedures for each batch in case of test failures.
+Include rollback procedures for each batch in case of test failures or architectural violations.
 
 # Test Strategy:
-1. Test the movement plan on a copy of the repository first
-2. After each batch of moves, run the full test suite
-3. Verify import statements are correctly updated
-4. Check that git history is preserved using `git log --follow`
-5. Validate that the build still works after all movements
-6. Test rollback procedures on a sample batch
+1. Validate all movements against architectural decision documents before execution
+2. Test the movement plan on a copy of the repository first
+3. After each batch of moves, run the full test suite
+4. Verify import statements are correctly updated
+5. Check that git history is preserved using `git log --follow`
+6. Validate that the build still works after all movements
+7. Test rollback procedures on a sample batch
+8. Verify final structure complies with `002-canonical-directory-structure.md`
+9. Ensure all file names comply with `004-naming-conventions.md`
+10. Validate dependency rules from `003-dependency-rules.md` are maintained
 
 # Subtasks:
 ## 1. File Mapping Generation [pending]
@@ -80,7 +101,7 @@ Utilize static analysis tools to build a dependency graph. Apply topological sor
 ### Dependencies: 4.2
 ### Description: Automate the updating of import statements and references throughout the codebase to reflect new file locations, ensuring code remains functional after each move.
 ### Details:
-Develop or adapt scripts to parse and rewrite import paths. Include tests to verify correctness. Follow Martin Fowler’s guidance on behavior-preserving refactoring and incremental change.
+Develop or adapt scripts to parse and rewrite import paths. Include tests to verify correctness. Follow Martin Fowler's guidance on behavior-preserving refactoring and incremental change.
 
 ## 4. Git History Preservation [pending]
 ### Dependencies: 4.3
@@ -88,15 +109,59 @@ Develop or adapt scripts to parse and rewrite import paths. Include tests to ver
 ### Details:
 Use 'git mv' and related commands to retain file history. Document procedures for reviewers. Validate history preservation with sample queries and expert committee sign-off.
 
-## 5. Batch Move/Test/Commit Cycles [pending]
+## 5. Batch Move/Test/Commit Cycles [done]
 ### Dependencies: 4.4
 ### Description: Implement a process for moving files in manageable batches, running automated tests after each batch, and committing only when tests pass. This minimizes disruption and enables rapid feedback.
 ### Details:
 Define batch sizes based on complexity analysis. Automate the cycle: move files, update imports, run tests, and commit. Roll back and adjust as needed if failures occur. Document each batch for traceability.
+<info added on 2025-06-20T09:14:00.971Z>
+Migration execution completed with 280+ files successfully moved across 56+ batches. Implemented AST-based import path rewriting to automatically update all import statements throughout the codebase. Each batch was processed with automated rollback capabilities - if any test failures occurred, the batch would automatically revert and flag for manual intervention. 
+
+Encountered and resolved several technical challenges including destination conflicts where empty placeholder files existed from previous partial moves, and branch naming issues that required special handling. The batch processing system maintained code functionality throughout by running tests after each move and only committing successful batches.
+
+Current state: ~35 files remain in original locations due to conflicts with existing empty files in the destination. The migration infrastructure remains fully operational and can complete these remaining moves with targeted conflict resolution. All migrated files retain their complete git history through proper use of git mv commands.
+</info added on 2025-06-20T09:14:00.971Z>
 
 ## 6. Rollback Procedure Implementation [pending]
 ### Dependencies: 4.5
 ### Description: Develop robust rollback procedures to quickly revert changes in case of failures, ensuring minimal downtime and data integrity.
 ### Details:
 Script and document rollback steps for each batch. Integrate with CI/CD pipelines. Test rollback scenarios to ensure reliability, following expert recommendations for safety nets and continuous improvement.
+
+## 7. Clean Repository Post-Migration [in-progress]
+### Dependencies: 4.5
+### Description: Remove old files, directories, and artifacts that are no longer needed after the migration to the new directory structure. This includes cleaning up duplicate files, empty directories, build artifacts, and files that don't fit the new architecture as defined by the Expert Committee's ADRs.
+### Details:
+Based on the principles outlined by the Expert Committee (Feathers, Fowler, Troy), this task involves:
+1. Identifying obsolete files using git history and dependency analysis
+2. Identifying and removing true duplicate files 
+3. Removing empty directories left over from the migration
+4. Cleaning build artifacts (.pyc, __pycache__, node_modules)
+5. Updating .gitignore to prevent future clutter
+6. Ensuring no critical or important files are accidentally deleted
+
+A script will be created to automate this process, using the inventory_summary.json and migration-map.json as guides to identify files that were not moved and are safe for deletion. The script will have safety checks and require confirmation before deleting files.
+
+## 8. Finalize Repository Structure and Cleanup [done]
+### Dependencies: None
+### Description: Correct the directory structure by moving migrated files from 'freeagentics_new' to the project root, then run the cleanup script to remove all old files and directories. This will achieve the final, clean architecture as specified in the PRD.
+### Details:
+
+
+## 9. Architectural Compliance Validation [pending]
+### Dependencies: 4.5, 4.8
+### Description: Validate that all completed file movements strictly comply with the architectural decision documents, and create a plan to address any remaining non-compliant files.
+### Details:
+Review the ~35 files that remain in original locations and validate their target destinations against:
+- `docs/architecture/decisions/002-canonical-directory-structure.md` for proper placement
+- `docs/architecture/decisions/004-naming-conventions.md` for naming compliance
+- `docs/architecture/decisions/003-dependency-rules.md` for dependency validation
+
+Create a compliance report identifying:
+1. Files that need renaming to meet conventions
+2. Files that need to be moved to different locations than originally planned
+3. Dependencies that violate architectural rules
+4. A remediation plan for each non-compliant item
+
+This validation ensures the final structure fully adheres to the established architecture standards.
 

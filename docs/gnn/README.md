@@ -371,12 +371,12 @@ results = requests.get(
 
 ### Graph Size Recommendations
 
-| Graph Size | Recommended Architecture | Batch Size | Notes |
-|------------|-------------------------|------------|-------|
-| < 1K nodes | GCN, GAT | 64-128 | Fast processing |
-| 1K-10K nodes | GraphSAGE | 16-32 | Use sampling |
-| 10K-100K nodes | GraphSAGE with sampling | 4-8 | Increase sampling neighbors |
-| > 100K nodes | Custom sampling strategy | 1-4 | Consider distributed processing |
+| Graph Size     | Recommended Architecture | Batch Size | Notes                           |
+| -------------- | ------------------------ | ---------- | ------------------------------- |
+| < 1K nodes     | GCN, GAT                 | 64-128     | Fast processing                 |
+| 1K-10K nodes   | GraphSAGE                | 16-32      | Use sampling                    |
+| 10K-100K nodes | GraphSAGE with sampling  | 4-8        | Increase sampling neighbors     |
+| > 100K nodes   | Custom sampling strategy | 1-4        | Consider distributed processing |
 
 ### Memory Optimization
 

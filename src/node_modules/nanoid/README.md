@@ -26,7 +26,6 @@ model.id = nanoid() //=> "V1StGXR8_Z5jdHi6B-myT"
 
 Supports modern browsers, IE [with Babel], Node.js and React Native.
 
-[online tool]: https://gitpod.io/#https://github.com/ai/nanoid/
 [with Babel]:  https://developer.epages.com/blog/coding/how-to-transpile-node-modules-with-babel-and-webpack-in-a-monorepo/
 [Size Limit]:  https://github.com/ai/size-limit
 
@@ -36,4 +35,5 @@ Supports modern browsers, IE [with Babel], Node.js and React Native.
 </a>
 
 ## Docs
+
 Read full docs **[here](https://github.com/ai/nanoid#readme)**.

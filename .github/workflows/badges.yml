@@ -2,9 +2,9 @@ name: Status Badges
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   schedule:
-    - cron: '0 0 * * *'  # Daily at midnight
+    - cron: "0 0 * * *" # Daily at midnight
   workflow_dispatch:
 
 jobs:
@@ -13,51 +13,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Generate CI badge
-      uses: RubbaBoy/BYOB@v1.3.0
-      with:
-        NAME: ci-status
-        LABEL: 'CI'
-        STATUS: ${{ github.event.workflow_run.conclusion == 'success' && 'passing' || 'failing' }}
-        COLOR: ${{ github.event.workflow_run.conclusion == 'success' && 'green' || 'red' }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate CI badge
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          NAME: ci-status
+          LABEL: "CI"
+          STATUS: ${{ github.event.workflow_run.conclusion == 'success' && 'passing' || 'failing' }}
+          COLOR: ${{ github.event.workflow_run.conclusion == 'success' && 'green' || 'red' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Coverage Badge
-      uses: 5monkeys/cobertura-action@master
-      with:
-        path: coverage/cobertura-coverage.xml
-        minimum_coverage: 75
-        fail_below_threshold: false
-        show_line: true
-        show_branch: true
+      - name: Coverage Badge
+        uses: 5monkeys/cobertura-action@master
+        with:
+          path: coverage/cobertura-coverage.xml
+          minimum_coverage: 75
+          fail_below_threshold: false
+          show_line: true
+          show_branch: true
 
-    - name: Create badges directory
-      run: mkdir -p .github/badges
+      - name: Create badges directory
+        run: mkdir -p .github/badges
 
-    - name: Generate custom badges
-      run: |
-        # Dependencies badge
-        npm_deps=$(jq '.dependencies | length' package.json)
-        dev_deps=$(jq '.devDependencies | length' package.json)
-        total_deps=$((npm_deps + dev_deps))
+      - name: Generate custom badges
+        run: |
+          # Dependencies badge
+          npm_deps=$(jq '.dependencies | length' package.json)
+          dev_deps=$(jq '.devDependencies | length' package.json)
+          total_deps=$((npm_deps + dev_deps))
 
-        curl -s "https://img.shields.io/badge/dependencies-${total_deps}-blue" > .github/badges/dependencies.svg
+          curl -s "https://img.shields.io/badge/dependencies-${total_deps}-blue" > .github/badges/dependencies.svg
 
-        # Code quality badge
-        curl -s "https://img.shields.io/badge/code%20quality-A+-brightgreen" > .github/badges/quality.svg
+          # Code quality badge
+          curl -s "https://img.shields.io/badge/code%20quality-A+-brightgreen" > .github/badges/quality.svg
 
-        # Bundle size badge
-        if [ -f ".next/stats.json" ]; then
-          size=$(du -sh .next | cut -f1)
-          curl -s "https://img.shields.io/badge/bundle%20size-${size}-yellow" > .github/badges/bundle-size.svg
-        fi
+          # Bundle size badge
+          if [ -f ".next/stats.json" ]; then
+            size=$(du -sh .next | cut -f1)
+            curl -s "https://img.shields.io/badge/bundle%20size-${size}-yellow" > .github/badges/bundle-size.svg
+          fi
 
-    - name: Commit badge updates
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .github/badges/
-        git diff --quiet && git diff --staged --quiet || git commit -m "chore: update status badges"
-        git push
+      - name: Commit badge updates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .github/badges/
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: update status badges"
+          git push

@@ -3,17 +3,19 @@
 # Status: pending
 # Dependencies: 6
 # Priority: high
-# Description: Create a flexible, extensible agent architecture that supports different agent types, behaviors, and coalition formation.
+# Description: Create a flexible, extensible agent architecture that supports different agent types, behaviors, and coalition formation, strictly adhering to the project's canonical directory structure and architectural decisions.
 # Details:
-Design and implement a comprehensive agent system architecture:
+Design and implement a comprehensive agent system architecture following the canonical structure:
 
-1. Base Agent Framework:
+1. Base Agent Framework (in `agents/core/`):
    - Abstract BaseAgent class with core interfaces
    - Personality trait system affecting decision-making
    - Belief state management integrated with Active Inference
    - Action selection and execution pipeline
+   - Must follow dependency rules: core domain cannot depend on interface/infrastructure layers
 
 ```python
+# File: agents/core/base_agent.py
 class BaseAgent:
     """Foundation for all agent types in the system."""
     
@@ -22,8 +24,8 @@ class BaseAgent:
                 personality: Dict[str, float] = None):
         self.id = agent_id
         self.personality = personality or {}
-        self.beliefs = BeliefState()
-        self.active_inference = ActiveInferenceEngine()
+        self.beliefs = BeliefState()  # From agents/core/belief_state.py
+        self.active_inference = ActiveInferenceEngine()  # From agents/core/active_inference.py
         self.location = None  # H3 cell location
         self.energy = 100.0   # Resource management
     
@@ -47,19 +49,22 @@ class BaseAgent:
         raise NotImplementedError("Subclasses must implement")
 ```
 
-2. Specialized Agent Types:
+2. Specialized Agent Types (in `agents/types/`):
    - Explorer: Focuses on discovering resources and patterns
    - Developer: Optimizes and builds systems
    - Merchant: Trades and manages resources
    - Scholar: Analyzes and learns from data
+   - Each type in its own file following naming conventions
 
-3. Coalition Framework:
+3. Coalition Framework (in `coalitions/core/`):
    - Coalition formation based on mutual benefit
    - Resource sharing mechanisms
    - Collective decision making
    - Business model implementation
+   - Must not depend on interface or infrastructure layers
 
 ```python
+# File: coalitions/core/coalition.py
 class Coalition:
     """Represents a group of agents working together."""
     
@@ -68,7 +73,7 @@ class Coalition:
         self.name = name or f"Coalition-{coalition_id}"
         self.members = set()  # Agent IDs
         self.resources = {}    # Shared resources
-        self.business_model = None
+        self.business_model = None  # From coalitions/core/business_model.py
         self.contracts = {}    # Agreements between members
     
     def add_member(self, agent: BaseAgent) -> bool:
@@ -92,60 +97,68 @@ class Coalition:
         return self.business_model.execute(self)
 ```
 
-4. World Integration:
-   - H3 spatial grid system
-   - Resource distribution
-   - Agent interaction mechanics
-   - Time and event management
+4. World Integration (respecting canonical structure):
+   - H3 spatial grid system (in `world/spatial/`)
+   - Resource distribution (in `world/resources/`)
+   - Agent interaction mechanics (in `world/interactions/`)
+   - Time and event management (in `world/time/`)
+   - All world components must follow the canonical directory structure
 
 # Test Strategy:
-1. Unit tests for each agent type and behavior
-2. Integration tests for agent-world interaction
-3. Scenario tests for coalition formation
-4. Property tests for coalition stability
-5. Performance tests with many agents
+1. Unit tests for each agent type and behavior (in `tests/unit/agents/`)
+2. Integration tests for agent-world interaction (in `tests/integration/`)
+3. Scenario tests for coalition formation (in `tests/scenarios/`)
+4. Property tests for coalition stability (in `tests/property/`)
+5. Performance tests with many agents (in `tests/performance/`)
 6. Behavioral tests verifying agents act according to personality traits
+7. Architecture compliance tests ensuring all components follow canonical structure and dependency rules
 
 # Subtasks:
 ## 1. Design and Implement Base Agent Framework [pending]
 ### Dependencies: None
-### Description: Develop the foundational architecture for agents, including lifecycle management, messaging, and extensibility hooks. Ensure modularity and adherence to SOLID principles for maintainability and future expansion.
+### Description: Develop the foundational architecture for agents in `agents/core/`, including lifecycle management, messaging, and extensibility hooks. Ensure modularity, adherence to SOLID principles, and strict compliance with canonical directory structure and dependency rules.
 ### Details:
-Define agent interfaces, core behaviors, and event handling. Establish clear separation of concerns and document the framework for ease of understanding and modification.
+Define agent interfaces, core behaviors, and event handling in the appropriate subdirectories under `agents/`. Establish clear separation of concerns following the architectural decisions. Core domain components must not depend on interface or infrastructure layers.
 
 ## 2. Develop Personality and Trait System [pending]
 ### Dependencies: 7.1
-### Description: Create a flexible system for defining and assigning personality traits and behavioral modifiers to agents, supporting both static and dynamic trait changes.
+### Description: Create a flexible system for defining and assigning personality traits and behavioral modifiers to agents in `agents/core/traits/`, supporting both static and dynamic trait changes while following naming conventions.
 ### Details:
-Implement trait composition, inheritance, and runtime modification. Ensure traits can influence agent decision-making and interactions. Document trait APIs and provide examples.
+Implement trait composition, inheritance, and runtime modification following the canonical structure. Ensure traits can influence agent decision-making and interactions. Document trait APIs and provide examples. All files must follow the project's naming conventions.
 
 ## 3. Implement Specialized Agent Types [pending]
 ### Dependencies: 7.1, 7.2
-### Description: Extend the base agent framework to support specialized agent roles (e.g., merchant, leader, worker) with unique behaviors and capabilities.
+### Description: Extend the base agent framework to support specialized agent roles in `agents/types/` (e.g., merchant, leader, worker) with unique behaviors and capabilities, each in appropriately named files.
 ### Details:
-Define specialized agent subclasses or strategies. Integrate personality/trait system to allow for nuanced specialization. Ensure code remains modular and testable.
+Define specialized agent subclasses or strategies in separate files under `agents/types/`. Integrate personality/trait system to allow for nuanced specialization. Ensure code remains modular, testable, and follows the canonical structure.
 
 ## 4. Develop Coalition Framework [pending]
 ### Dependencies: 7.1, 7.2, 7.3
-### Description: Design and implement a system for agents to form, manage, and dissolve coalitions, supporting group behaviors, shared goals, and internal dynamics.
+### Description: Design and implement a system for agents to form, manage, and dissolve coalitions in `coalitions/core/`, supporting group behaviors, shared goals, and internal dynamics while respecting dependency rules.
 ### Details:
-Establish coalition membership rules, leadership structures, and communication protocols. Ensure coalitions can interact with the world and other coalitions.
+Establish coalition membership rules, leadership structures, and communication protocols in the appropriate subdirectories under `coalitions/`. Ensure coalitions can interact with the world and other coalitions without violating dependency rules.
 
 ## 5. Integrate Agents and Coalitions with World Model [pending]
 ### Dependencies: 7.1, 7.2, 7.3, 7.4
-### Description: Connect agents and coalitions to the broader world simulation, enabling environmental awareness, resource interaction, and event-driven behaviors.
+### Description: Connect agents and coalitions to the broader world simulation following the canonical structure, enabling environmental awareness, resource interaction, and event-driven behaviors through proper interfaces.
 ### Details:
-Define interfaces for world queries, event subscriptions, and state updates. Ensure agents and coalitions can perceive and affect the world consistently.
+Define interfaces for world queries, event subscriptions, and state updates in appropriate locations. Ensure agents and coalitions can perceive and affect the world consistently while respecting the dependency hierarchy. Integration code should be placed in appropriate interface layers.
 
 ## 6. Implement Resource and Business Model Mechanics [pending]
 ### Dependencies: 7.1, 7.2, 7.3, 7.4, 7.5
-### Description: Develop systems for resource management, economic transactions, and business logic, enabling agents and coalitions to participate in simulated economies.
+### Description: Develop systems for resource management in `world/resources/`, economic transactions, and business logic in `coalitions/business/`, enabling agents and coalitions to participate in simulated economies while following the canonical structure.
 ### Details:
-Design APIs for resource acquisition, consumption, trading, and business operations. Ensure extensibility for future economic features.
+Design APIs for resource acquisition, consumption, trading, and business operations in their appropriate directories. Ensure extensibility for future economic features while maintaining architectural compliance.
 
 ## 7. Testing and Validation of Agent System [pending]
 ### Dependencies: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
-### Description: Establish comprehensive testing and validation procedures, including unit, integration, and scenario-based tests, to ensure correctness, robustness, and maintainability.
+### Description: Establish comprehensive testing and validation procedures in the canonical test directories, including unit, integration, and scenario-based tests, to ensure correctness, robustness, maintainability, and architectural compliance.
 ### Details:
-Apply complexity metrics (e.g., cyclomatic complexity), conduct code reviews, and document test coverage. Validate agent behaviors, coalition dynamics, and world interactions against requirements.
+Apply complexity metrics (e.g., cyclomatic complexity), conduct code reviews, and document test coverage. Validate agent behaviors, coalition dynamics, and world interactions against requirements. Include specific tests to verify compliance with canonical structure and dependency rules.
+
+## 8. Verify Architectural Compliance [pending]
+### Dependencies: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
+### Description: Conduct a comprehensive review to ensure all agent system components strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architectural decision records.
+### Details:
+Review all created files and directories against `docs/architecture/decisions/002-canonical-directory-structure.md`, `004-naming-conventions.md`, and `003-dependency-rules.md`. Create automated checks to prevent future violations. Document any necessary adjustments to the architecture.
 

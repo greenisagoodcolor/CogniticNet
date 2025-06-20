@@ -30,8 +30,8 @@ root.render(<Counter />);
 
 ## Documentation
 
-See https://react.dev/
+See <https://react.dev/>
 
 ## API
 
-See https://react.dev/reference/react
+See <https://react.dev/reference/react>

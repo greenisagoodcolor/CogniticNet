@@ -31,23 +31,23 @@ const getStyles = ({ left, top, right, gap }, allowRelative, gapMode = 'margin',
     .filter(Boolean)
     .join('')}
   }
-  
+
   .${zeroRightClassName} {
     right: ${gap}px ${important};
   }
-  
+
   .${fullWidthClassName} {
     margin-right: ${gap}px ${important};
   }
-  
+
   .${zeroRightClassName} .${zeroRightClassName} {
     right: 0 ${important};
   }
-  
+
   .${fullWidthClassName} .${fullWidthClassName} {
     margin-right: 0 ${important};
   }
-  
+
   body[${lockAttribute}] {
     ${removedBarSizeVariable}: ${gap}px;
   }

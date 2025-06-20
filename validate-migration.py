@@ -10,6 +10,7 @@ import subprocess
 import json
 from collections import defaultdict
 
+
 def count_files_by_extension(directory):
     """Count files by extension in a directory"""
     counts = defaultdict(int)
@@ -17,7 +18,7 @@ def count_files_by_extension(directory):
 
     for root, dirs, files in os.walk(directory):
         # Skip .git and node_modules
-        if '.git' in root or 'node_modules' in root:
+        if ".git" in root or "node_modules" in root:
             continue
 
         for file in files:
@@ -25,7 +26,7 @@ def count_files_by_extension(directory):
             if ext:
                 counts[ext] += 1
             else:
-                counts['no_extension'] += 1
+                counts["no_extension"] += 1
 
             # Get file size
             file_path = os.path.join(root, file)
@@ -36,6 +37,7 @@ def count_files_by_extension(directory):
 
     return dict(counts), total_size
 
+
 def check_git_history():
     """Verify git history is preserved"""
     try:
@@ -43,15 +45,19 @@ def check_git_history():
         result = subprocess.run(
             ["git", "log", "--oneline", "-n", "5", "agents/base/data_model.py"],
             capture_output=True,
-            text=True
+            text=True,
         )
 
         if result.returncode == 0 and result.stdout:
-            return True, f"Git history preserved: {len(result.stdout.splitlines())} commits found"
+            return (
+                True,
+                f"Git history preserved: {len(result.stdout.splitlines())} commits found",
+            )
         else:
             return False, "Git history check failed"
     except Exception as e:
         return False, f"Git history check error: {e}"
+
 
 def check_critical_files():
     """Check that critical files exist in new locations"""
@@ -60,34 +66,27 @@ def check_critical_files():
         "agents/base/__init__.py",
         "agents/base/data_model.py",
         "agents/base/communication.py",
-
         # Active Inference
         "inference/engine/active-inference.py",
         "inference/engine/belief-update.py",
         "inference/gnn/__init__.py",
-
         # World
         "world/h3_world.py",
         "world/spatial/spatial_api.py",
-
         # API
         "api/rest/agents/route.ts",
-
         # Frontend
         "web/src/components/agent-dashboard.tsx",
         "web/src/lib/llm-client.ts",
-
         # Tests
         "tests/unit/test_agent_data_model.py",
         "tests/integration/test_active_inference_integration.py",
-
         # Documentation
         "docs/active-inference/README.md",
-
         # Config
         "package.json",
         "tsconfig.json",
-        "pyproject.toml"
+        "pyproject.toml",
     ]
 
     missing_files = []
@@ -101,6 +100,7 @@ def check_critical_files():
 
     return missing_files, found_files
 
+
 def check_imports():
     """Verify no broken imports remain"""
     broken_imports = []
@@ -112,18 +112,18 @@ def check_imports():
         "from src.agents.active_inference",
         "from src.gnn",
         "from src.world",
-        "from src.tests"
+        "from src.tests",
     ]
 
-    for root, dirs, files in os.walk('.'):
-        if '.git' in root or 'node_modules' in root:
+    for root, dirs, files in os.walk("."):
+        if ".git" in root or "node_modules" in root:
             continue
 
         for file in files:
-            if file.endswith('.py'):
+            if file.endswith(".py"):
                 file_path = os.path.join(root, file)
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         content = f.read()
 
                     for pattern in bad_patterns:
@@ -134,21 +134,24 @@ def check_imports():
 
     return broken_imports
 
+
 def check_old_references():
     """Check for any remaining FreeAgentics references"""
     old_references = []
 
     patterns = ["FreeAgentics", "freeagentics", "cogneticnet"]
 
-    for root, dirs, files in os.walk('.'):
-        if '.git' in root or 'node_modules' in root or '.taskmaster' in root:
+    for root, dirs, files in os.walk("."):
+        if ".git" in root or "node_modules" in root or ".taskmaster" in root:
             continue
 
         for file in files:
-            if file.endswith(('.py', '.ts', '.tsx', '.js', '.jsx', '.md', '.yml', '.yaml')):
+            if file.endswith(
+                (".py", ".ts", ".tsx", ".js", ".jsx", ".md", ".yml", ".yaml")
+            ):
                 file_path = os.path.join(root, file)
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         content = f.read()
 
                     for line_num, line in enumerate(content.splitlines(), 1):
@@ -161,18 +164,23 @@ def check_old_references():
 
     return old_references
 
+
 def main():
     """Run all validation checks"""
     print("🔍 Validating FreeAgentics Migration...\n")
 
     # 1. Count files
     print("1. File Count Analysis:")
-    file_counts, total_size = count_files_by_extension('.')
+    file_counts, total_size = count_files_by_extension(".")
     print(f"   Total files: {sum(file_counts.values())}")
     print(f"   Total size: {total_size / 1024 / 1024:.2f} MB")
     print(f"   Python files: {file_counts.get('.py', 0)}")
-    print(f"   TypeScript files: {file_counts.get('.ts', 0) + file_counts.get('.tsx', 0)}")
-    print(f"   JavaScript files: {file_counts.get('.js', 0) + file_counts.get('.jsx', 0)}")
+    print(
+        f"   TypeScript files: {file_counts.get('.ts', 0) + file_counts.get('.tsx', 0)}"
+    )
+    print(
+        f"   JavaScript files: {file_counts.get('.js', 0) + file_counts.get('.jsx', 0)}"
+    )
 
     # 2. Check git history
     print("\n2. Git History Check:")
@@ -213,7 +221,7 @@ def main():
         print("   ✅ No old references found")
 
     # Summary
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     issues = len(missing) + len(broken) + (0 if history_ok else 1)
 
     if issues == 0 and len(old_refs) == 0:
@@ -237,13 +245,14 @@ def main():
         "git_history_ok": history_ok,
         "missing_files": missing,
         "broken_imports": [{"file": f, "pattern": p} for f, p in broken],
-        "old_references_count": len(old_refs)
+        "old_references_count": len(old_refs),
     }
 
     with open("VALIDATION_REPORT.json", "w") as f:
         json.dump(report, f, indent=2)
 
-    print(f"\n📄 Detailed report saved to: VALIDATION_REPORT.json")
+    print("\n📄 Detailed report saved to: VALIDATION_REPORT.json")
+
 
 if __name__ == "__main__":
     main()

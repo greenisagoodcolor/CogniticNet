@@ -131,38 +131,38 @@ var JSXRole; (function (JSXRole) {
     this.nullishStartIndex = null;
   }
 
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
   // Initially false for all tokens, then may be computed in a follow-up step that does scope
   // analysis.
-  
+
   // Initially false for all tokens, but may be set during transform to mark it as containing an
   // await operation.
-  
-  
+
+
   // For assignments, the index of the RHS. For export tokens, the end of the export.
-  
+
   // For class tokens, records if the class is a class expression or a class statement.
-  
+
   // Number of times to insert a `nullishCoalesce(` snippet before this token.
-  
+
   // Number of times to insert a `)` snippet after this token.
-  
+
   // If true, insert an `optionalChain([` snippet before this token.
-  
+
   // If true, insert a `])` snippet after this token.
-  
+
   // Tag for `.`, `?.`, `[`, `?.[`, `(`, and `?.(` to denote the "root" token for this
   // subscript chain. This can be used to determine if this chain is an optional chain.
-  
+
   // Tag for `??` operators to denote the root token for this nullish coalescing call.
-  
+
 } exports.Token = Token;
 
 // ## Tokenizer
@@ -231,8 +231,8 @@ var JSXRole; (function (JSXRole) {
 } exports.lookaheadType = lookaheadType;
 
  class TypeAndKeyword {
-  
-  
+
+
   constructor(type, contextualKeyword) {
     this.type = type;
     this.contextualKeyword = contextualKeyword;

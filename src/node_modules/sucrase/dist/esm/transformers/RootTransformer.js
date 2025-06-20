@@ -27,13 +27,13 @@ import TypeScriptTransformer from "./TypeScriptTransformer";
 
 export default class RootTransformer {
    __init() {this.transformers = []}
-  
-  
+
+
    __init2() {this.generatedVariables = []}
-  
-  
-  
-  
+
+
+
+
 
   constructor(
     sucraseContext,

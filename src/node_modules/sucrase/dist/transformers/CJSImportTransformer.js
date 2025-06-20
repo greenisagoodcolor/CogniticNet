@@ -25,7 +25,7 @@ var _Transformer = require('./Transformer'); var _Transformer2 = _interopRequire
    __init() {this.hadExport = false}
    __init2() {this.hadNamedExport = false}
    __init3() {this.hadDefaultExport = false}
-  
+
 
   constructor(
      rootTransformer,
@@ -550,7 +550,7 @@ var _Transformer = require('./Transformer'); var _Transformer2 = _interopRequire
       this.tokens.appendCode(` exports.default = ${name};`);
       // After this point, this is a plain "export default E" statement.
     } else if (
-      _shouldElideDefaultExport2.default.call(void 0, 
+      _shouldElideDefaultExport2.default.call(void 0,
         this.isTypeScriptTransformEnabled,
         this.keepUnusedImports,
         this.tokens,

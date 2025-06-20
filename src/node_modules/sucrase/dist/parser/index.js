@@ -4,8 +4,8 @@ var _base = require('./traverser/base');
 var _index = require('./traverser/index');
 
  class File {
-  
-  
+
+
 
   constructor(tokens, scopes) {
     this.tokens = tokens;

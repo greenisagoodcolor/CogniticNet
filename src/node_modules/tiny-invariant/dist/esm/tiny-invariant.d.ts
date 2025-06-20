@@ -13,7 +13,7 @@
  * // type of `value`` has been narrowed to `Person`
  * ```
  */
-export default function invariant(condition: any, 
+export default function invariant(condition: any,
 /**
  * Can provide a string, or a function that returns a string for cases where
  * the message takes a fair amount of effort to compute

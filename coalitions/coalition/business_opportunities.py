@@ -6,18 +6,17 @@ for multi-agent business discovery.
 """
 
 import logging
-import numpy as np
 from typing import Dict, List, Optional, Any, Set, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-import json
 
 logger = logging.getLogger(__name__)
 
 
 class OpportunityType(Enum):
     """Types of business opportunities."""
+
     MARKET_GAP = "market_gap"
     RESOURCE_ARBITRAGE = "resource_arbitrage"
     CAPABILITY_SYNERGY = "capability_synergy"
@@ -29,6 +28,7 @@ class OpportunityType(Enum):
 
 class OpportunityStatus(Enum):
     """Status of a business opportunity."""
+
     DETECTED = "detected"
     VALIDATING = "validating"
     VALIDATED = "validated"
@@ -41,6 +41,7 @@ class OpportunityStatus(Enum):
 @dataclass
 class OpportunityMetrics:
     """Quantifiable metrics for evaluating opportunities."""
+
     potential_value: float  # Estimated monetary value
     success_probability: float  # 0-1 probability of success
     resource_requirements: Dict[str, float] = field(default_factory=dict)
@@ -75,13 +76,14 @@ class OpportunityMetrics:
             "competition_level": self.competition_level,
             "innovation_score": self.innovation_score,
             "expected_value": self.expected_value,
-            "roi_estimate": self.roi_estimate
+            "roi_estimate": self.roi_estimate,
         }
 
 
 @dataclass
 class BusinessOpportunity:
     """Represents a detected business opportunity."""
+
     id: str
     type: OpportunityType
     name: str
@@ -117,9 +119,9 @@ class BusinessOpportunity:
     def is_viable(self) -> bool:
         """Check if opportunity is still viable."""
         return (
-            self.status in [OpportunityStatus.VALIDATED, OpportunityStatus.IN_PROGRESS] and
-            not self.is_expired() and
-            self.metrics.success_probability > 0.3
+            self.status in [OpportunityStatus.VALIDATED, OpportunityStatus.IN_PROGRESS]
+            and not self.is_expired()
+            and self.metrics.success_probability > 0.3
         )
 
     def add_interested_agent(self, agent_id: str):
@@ -161,7 +163,7 @@ class BusinessOpportunity:
             "max_agents_allowed": self.max_agents_allowed,
             "ideal_coalition_size": self.ideal_coalition_size,
             "interested_agents": list(self.interested_agents),
-            "committed_agents": list(self.committed_agents)
+            "committed_agents": list(self.committed_agents),
         }
 
 
@@ -176,7 +178,7 @@ class OpportunityDetector:
             OpportunityType.MARKET_GAP: self._detect_market_gap,
             OpportunityType.RESOURCE_ARBITRAGE: self._detect_resource_arbitrage,
             OpportunityType.CAPABILITY_SYNERGY: self._detect_capability_synergy,
-            OpportunityType.EFFICIENCY_IMPROVEMENT: self._detect_efficiency_improvement
+            OpportunityType.EFFICIENCY_IMPROVEMENT: self._detect_efficiency_improvement,
         }
 
         # Thresholds for detection
@@ -186,10 +188,12 @@ class OpportunityDetector:
 
         logger.info("Initialized opportunity detector")
 
-    def detect_opportunities(self,
-                           market_data: Dict[str, Any],
-                           agent_profiles: List[Dict[str, Any]],
-                           resource_data: Dict[str, Any]) -> List[BusinessOpportunity]:
+    def detect_opportunities(
+        self,
+        market_data: Dict[str, Any],
+        agent_profiles: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> List[BusinessOpportunity]:
         """
         Detect business opportunities from available data.
 
@@ -217,10 +221,12 @@ class OpportunityDetector:
         logger.info(f"Detected {len(opportunities)} business opportunities")
         return opportunities
 
-    def _detect_market_gap(self,
-                          market_data: Dict[str, Any],
-                          agent_profiles: List[Dict[str, Any]],
-                          resource_data: Dict[str, Any]) -> List[BusinessOpportunity]:
+    def _detect_market_gap(
+        self,
+        market_data: Dict[str, Any],
+        agent_profiles: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> List[BusinessOpportunity]:
         """Detect market gap opportunities."""
         opportunities = []
 
@@ -242,12 +248,14 @@ class OpportunityDetector:
                     name=f"Market Gap: {product}",
                     description=f"Unmet demand for {product}: {gap_size} units",
                     target_market=product,
-                    value_proposition=f"Fill market gap of {gap_size} units"
+                    value_proposition=f"Fill market gap of {gap_size} units",
                 )
 
                 # Calculate metrics
-                opp.metrics.potential_value = gap_size * market_price * 0.8  # Conservative estimate
-                opp.metrics.success_probability = min(0.9, 1 - supply/demand)
+                opp.metrics.potential_value = (
+                    gap_size * market_price * 0.8
+                )  # Conservative estimate
+                opp.metrics.success_probability = min(0.9, 1 - supply / demand)
                 opp.metrics.market_size = demand * market_price
                 opp.metrics.competition_level = supply / demand if demand > 0 else 0
 
@@ -261,17 +269,19 @@ class OpportunityDetector:
                 unit_cost = market_data.get("production_costs", {}).get(product, 50)
                 opp.metrics.resource_requirements = {
                     "capital": gap_size * unit_cost * 0.3,  # Initial investment
-                    "materials": gap_size * unit_cost * 0.7
+                    "materials": gap_size * unit_cost * 0.7,
                 }
 
                 opportunities.append(opp)
 
         return opportunities
 
-    def _detect_resource_arbitrage(self,
-                                 market_data: Dict[str, Any],
-                                 agent_profiles: List[Dict[str, Any]],
-                                 resource_data: Dict[str, Any]) -> List[BusinessOpportunity]:
+    def _detect_resource_arbitrage(
+        self,
+        market_data: Dict[str, Any],
+        agent_profiles: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> List[BusinessOpportunity]:
         """Detect resource arbitrage opportunities."""
         opportunities = []
 
@@ -283,7 +293,7 @@ class OpportunityDetector:
             locations = list(price_by_location[resource].keys())
 
             for i, loc1 in enumerate(locations):
-                for loc2 in locations[i+1:]:
+                for loc2 in locations[i + 1 :]:
                     price1 = price_by_location[resource][loc1]
                     price2 = price_by_location[resource][loc2]
 
@@ -302,38 +312,50 @@ class OpportunityDetector:
                             type=OpportunityType.RESOURCE_ARBITRAGE,
                             name=f"Arbitrage: {resource}",
                             description=f"Buy {resource} at {buy_loc} for {min(price1, price2)}, "
-                                      f"sell at {sell_loc} for {max(price1, price2)}",
-                            value_proposition=f"Exploit price differential of {margin:.1%}"
+                            f"sell at {sell_loc} for {max(price1, price2)}",
+                            value_proposition=f"Exploit price differential of {margin:.1%}",
                         )
 
                         # Calculate metrics
-                        volume = resource_data.get("available_volume", {}).get(resource, 1000)
-                        opp.metrics.potential_value = volume * price_diff * 0.7  # Account for market impact
-                        opp.metrics.success_probability = 0.8 - margin  # Higher margins might indicate hidden costs
+                        volume = resource_data.get("available_volume", {}).get(
+                            resource, 1000
+                        )
+                        opp.metrics.potential_value = (
+                            volume * price_diff * 0.7
+                        )  # Account for market impact
+                        opp.metrics.success_probability = (
+                            0.8 - margin
+                        )  # Higher margins might indicate hidden costs
                         opp.metrics.risk_score = 0.3 + transport_cost / price_diff
-                        opp.metrics.time_to_realize = timedelta(days=7)  # Quick turnaround
+                        opp.metrics.time_to_realize = timedelta(
+                            days=7
+                        )  # Quick turnaround
 
                         # Requirements
-                        opp.required_capabilities.update(["transport", "trading", "market_access"])
+                        opp.required_capabilities.update(
+                            ["transport", "trading", "market_access"]
+                        )
                         opp.metrics.resource_requirements = {
                             "capital": volume * min(price1, price2),
-                            "transport": transport_cost * volume
+                            "transport": transport_cost * volume,
                         }
 
                         opportunities.append(opp)
 
         return opportunities
 
-    def _detect_capability_synergy(self,
-                                  market_data: Dict[str, Any],
-                                  agent_profiles: List[Dict[str, Any]],
-                                  resource_data: Dict[str, Any]) -> List[BusinessOpportunity]:
+    def _detect_capability_synergy(
+        self,
+        market_data: Dict[str, Any],
+        agent_profiles: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> List[BusinessOpportunity]:
         """Detect opportunities from synergistic agent capabilities."""
         opportunities = []
 
         # Analyze agent capability combinations
         for i, agent1 in enumerate(agent_profiles):
-            for agent2 in agent_profiles[i+1:]:
+            for agent2 in agent_profiles[i + 1 :]:
                 caps1 = set(agent1.get("capabilities", []))
                 caps2 = set(agent2.get("capabilities", []))
 
@@ -348,10 +370,11 @@ class OpportunityDetector:
                     required_set = set(required_caps)
 
                     # Can fulfill requirements together but not separately?
-                    if (required_set.issubset(combined_caps) and
-                        not required_set.issubset(caps1) and
-                        not required_set.issubset(caps2)):
-
+                    if (
+                        required_set.issubset(combined_caps)
+                        and not required_set.issubset(caps1)
+                        and not required_set.issubset(caps2)
+                    ):
                         synergy_score = len(unique_combination) / len(combined_caps)
 
                         if synergy_score > self.synergy_score_threshold:
@@ -360,12 +383,14 @@ class OpportunityDetector:
                                 type=OpportunityType.CAPABILITY_SYNERGY,
                                 name=f"Synergy: {opp_name}",
                                 description=f"Combine capabilities of {agent1['agent_id']} and "
-                                          f"{agent2['agent_id']} for {opp_name}",
-                                value_proposition="Unlock opportunity through capability combination"
+                                f"{agent2['agent_id']} for {opp_name}",
+                                value_proposition="Unlock opportunity through capability combination",
                             )
 
                             # Set metrics based on market data
-                            market_value = market_data.get("opportunity_values", {}).get(opp_name, 10000)
+                            market_value = market_data.get(
+                                "opportunity_values", {}
+                            ).get(opp_name, 10000)
                             opp.metrics.potential_value = market_value
                             opp.metrics.success_probability = 0.7 * synergy_score
                             opp.metrics.innovation_score = synergy_score
@@ -378,10 +403,12 @@ class OpportunityDetector:
 
         return opportunities
 
-    def _detect_efficiency_improvement(self,
-                                     market_data: Dict[str, Any],
-                                     agent_profiles: List[Dict[str, Any]],
-                                     resource_data: Dict[str, Any]) -> List[BusinessOpportunity]:
+    def _detect_efficiency_improvement(
+        self,
+        market_data: Dict[str, Any],
+        agent_profiles: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> List[BusinessOpportunity]:
         """Detect efficiency improvement opportunities."""
         opportunities = []
 
@@ -401,24 +428,31 @@ class OpportunityDetector:
                     type=OpportunityType.EFFICIENCY_IMPROVEMENT,
                     name=f"Optimize: {process}",
                     description=f"Reduce {process} cost from {current_cost} to {optimal_cost}",
-                    value_proposition=f"Save {savings:.2f} through process optimization"
+                    value_proposition=f"Save {savings:.2f} through process optimization",
                 )
 
                 # Calculate metrics
                 opp.metrics.potential_value = savings * 0.8  # Share savings
                 opp.metrics.success_probability = 0.6  # Moderate success rate
                 opp.metrics.risk_score = 0.3  # Low risk
-                opp.metrics.time_to_realize = timedelta(days=60)  # Longer implementation
+                opp.metrics.time_to_realize = timedelta(
+                    days=60
+                )  # Longer implementation
 
                 # Requirements from inefficiency data
                 opp.required_capabilities.update(
-                    inefficiency_data.get("required_capabilities", ["optimization", "analysis"])
+                    inefficiency_data.get(
+                        "required_capabilities", ["optimization", "analysis"]
+                    )
                 )
 
-                implementation_cost = inefficiency_data.get("implementation_cost", savings * 0.3)
+                implementation_cost = inefficiency_data.get(
+                    "implementation_cost", savings * 0.3
+                )
                 opp.metrics.resource_requirements = {
                     "capital": implementation_cost,
-                    "expertise": implementation_cost * 0.5  # Consulting/expertise costs
+                    "expertise": implementation_cost
+                    * 0.5,  # Consulting/expertise costs
                 }
 
                 opportunities.append(opp)
@@ -438,16 +472,18 @@ class OpportunityValidator:
             self._validate_resource_availability,
             self._validate_capability_match,
             self._validate_financial_viability,
-            self._validate_risk_assessment
+            self._validate_risk_assessment,
         ]
 
         logger.info("Initialized opportunity validator")
 
-    def validate_opportunity(self,
-                           opportunity: BusinessOpportunity,
-                           market_data: Dict[str, Any],
-                           available_agents: List[Dict[str, Any]],
-                           resource_data: Dict[str, Any]) -> Tuple[bool, Dict[str, Any]]:
+    def validate_opportunity(
+        self,
+        opportunity: BusinessOpportunity,
+        market_data: Dict[str, Any],
+        available_agents: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> Tuple[bool, Dict[str, Any]]:
         """
         Validate a business opportunity.
 
@@ -458,7 +494,7 @@ class OpportunityValidator:
             "timestamp": datetime.utcnow().isoformat(),
             "checks": {},
             "overall_score": 0.0,
-            "recommendations": []
+            "recommendations": [],
         }
 
         passed_checks = 0
@@ -476,7 +512,7 @@ class OpportunityValidator:
                 validation_results["checks"][check_name] = {
                     "passed": passed,
                     "score": score,
-                    "details": details
+                    "details": details,
                 }
 
                 if passed:
@@ -493,7 +529,7 @@ class OpportunityValidator:
                 validation_results["checks"][check_name] = {
                     "passed": False,
                     "score": 0.0,
-                    "details": {"error": str(e)}
+                    "details": {"error": str(e)},
                 }
 
         # Calculate overall validation
@@ -504,15 +540,19 @@ class OpportunityValidator:
 
         # Update opportunity
         opportunity.validation_results = validation_results
-        opportunity.status = OpportunityStatus.VALIDATED if is_valid else OpportunityStatus.REJECTED
+        opportunity.status = (
+            OpportunityStatus.VALIDATED if is_valid else OpportunityStatus.REJECTED
+        )
 
         return is_valid, validation_results
 
-    def _validate_market_demand(self,
-                              opportunity: BusinessOpportunity,
-                              market_data: Dict[str, Any],
-                              available_agents: List[Dict[str, Any]],
-                              resource_data: Dict[str, Any]) -> Tuple[bool, float, Dict[str, Any]]:
+    def _validate_market_demand(
+        self,
+        opportunity: BusinessOpportunity,
+        market_data: Dict[str, Any],
+        available_agents: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> Tuple[bool, float, Dict[str, Any]]:
         """Validate market demand exists."""
         details = {}
 
@@ -522,7 +562,9 @@ class OpportunityValidator:
             return False, 0.0, details
 
         # Check demand trends
-        demand_trend = market_data.get("demand_trends", {}).get(opportunity.target_market, 0)
+        demand_trend = market_data.get("demand_trends", {}).get(
+            opportunity.target_market, 0
+        )
         details["demand_trend"] = demand_trend
 
         if demand_trend < -0.2:  # Declining market
@@ -530,15 +572,19 @@ class OpportunityValidator:
             return False, 0.2, details
 
         # Score based on market attractiveness
-        score = min(1.0, (opportunity.metrics.market_size / 100000) * (1 + demand_trend))
+        score = min(
+            1.0, (opportunity.metrics.market_size / 100000) * (1 + demand_trend)
+        )
 
         return True, score, details
 
-    def _validate_resource_availability(self,
-                                      opportunity: BusinessOpportunity,
-                                      market_data: Dict[str, Any],
-                                      available_agents: List[Dict[str, Any]],
-                                      resource_data: Dict[str, Any]) -> Tuple[bool, float, Dict[str, Any]]:
+    def _validate_resource_availability(
+        self,
+        opportunity: BusinessOpportunity,
+        market_data: Dict[str, Any],
+        available_agents: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> Tuple[bool, float, Dict[str, Any]]:
         """Validate required resources are available."""
         details = {"missing_resources": []}
 
@@ -551,11 +597,13 @@ class OpportunityValidator:
             available_amount = available.get(resource, 0)
 
             if available_amount < amount:
-                details["missing_resources"].append({
-                    "resource": resource,
-                    "required": amount,
-                    "available": available_amount
-                })
+                details["missing_resources"].append(
+                    {
+                        "resource": resource,
+                        "required": amount,
+                        "available": available_amount,
+                    }
+                )
                 resource_score *= available_amount / amount
 
         if details["missing_resources"]:
@@ -564,11 +612,13 @@ class OpportunityValidator:
 
         return True, resource_score, details
 
-    def _validate_capability_match(self,
-                                 opportunity: BusinessOpportunity,
-                                 market_data: Dict[str, Any],
-                                 available_agents: List[Dict[str, Any]],
-                                 resource_data: Dict[str, Any]) -> Tuple[bool, float, Dict[str, Any]]:
+    def _validate_capability_match(
+        self,
+        opportunity: BusinessOpportunity,
+        market_data: Dict[str, Any],
+        available_agents: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> Tuple[bool, float, Dict[str, Any]]:
         """Validate agent capabilities match requirements."""
         details = {"missing_capabilities": []}
 
@@ -589,7 +639,8 @@ class OpportunityValidator:
 
         # Score based on capability coverage
         capability_redundancy = sum(
-            1 for agent in available_agents
+            1
+            for agent in available_agents
             if any(cap in agent.get("capabilities", []) for cap in required_caps)
         )
 
@@ -597,11 +648,13 @@ class OpportunityValidator:
 
         return True, score, details
 
-    def _validate_financial_viability(self,
-                                    opportunity: BusinessOpportunity,
-                                    market_data: Dict[str, Any],
-                                    available_agents: List[Dict[str, Any]],
-                                    resource_data: Dict[str, Any]) -> Tuple[bool, float, Dict[str, Any]]:
+    def _validate_financial_viability(
+        self,
+        opportunity: BusinessOpportunity,
+        market_data: Dict[str, Any],
+        available_agents: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> Tuple[bool, float, Dict[str, Any]]:
         """Validate financial viability."""
         details = {}
 
@@ -623,11 +676,13 @@ class OpportunityValidator:
 
         return True, score, details
 
-    def _validate_risk_assessment(self,
-                                opportunity: BusinessOpportunity,
-                                market_data: Dict[str, Any],
-                                available_agents: List[Dict[str, Any]],
-                                resource_data: Dict[str, Any]) -> Tuple[bool, float, Dict[str, Any]]:
+    def _validate_risk_assessment(
+        self,
+        opportunity: BusinessOpportunity,
+        market_data: Dict[str, Any],
+        available_agents: List[Dict[str, Any]],
+        resource_data: Dict[str, Any],
+    ) -> Tuple[bool, float, Dict[str, Any]]:
         """Validate risk levels are acceptable."""
         details = {}
 

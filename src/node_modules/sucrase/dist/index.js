@@ -50,7 +50,7 @@ var _getTSImportedNames = require('./util/getTSImportedNames'); var _getTSImport
       }
       result = {
         ...result,
-        sourceMap: _computeSourceMap2.default.call(void 0, 
+        sourceMap: _computeSourceMap2.default.call(void 0,
           transformerResult,
           options.filePath,
           options.sourceMapOptions,

@@ -19,6 +19,7 @@ F = E_q[log q(s) - log p(s,o)]
 ```
 
 Where:
+
 - `F` is the variational free energy
 - `q(s)` is the approximate posterior distribution over hidden states
 - `p(s,o)` is the joint distribution of states and observations
@@ -31,6 +32,7 @@ F = D_KL[q(s)||p(s|o)] - log p(o)
 ```
 
 Where:
+
 - `D_KL[·||·]` is the Kullback-Leibler divergence
 - `p(s|o)` is the true posterior
 - `p(o)` is the model evidence (marginal likelihood)
@@ -46,6 +48,7 @@ p(õ, s̃, π) = p(s_0) ∏_τ p(o_τ|s_τ) p(s_τ+1|s_τ, a_τ) p(a_τ|π)
 ```
 
 Where:
+
 - `õ` = {o_0, o_1, ..., o_T} are observations over time
 - `s̃` = {s_0, s_1, ..., s_T} are hidden states
 - `π` is a policy (sequence of actions)
@@ -84,6 +87,7 @@ G(π) = -E_q[D_KL[q(o|π)||p(o|C)]] - E_q[H[p(s|o,π)]]
 ```
 
 Where:
+
 - First term: pragmatic value (expected preference satisfaction)
 - Second term: epistemic value (expected information gain)
 - `C` encodes prior preferences over outcomes
@@ -97,6 +101,7 @@ The belief update equations can be expressed as precision-weighted prediction er
 ```
 
 Where:
+
 - `ε_μ = ∂log p(o,s)/∂μ` is the prediction error
 - `κ_μ = Σ` is the precision (inverse variance)
 
@@ -109,11 +114,13 @@ p(o, s^(1:L)) = p(o|s^(1)) ∏_{i=1}^{L-1} p(s^(i)|s^(i+1)) p(s^(L))
 ```
 
 Prediction errors flow up the hierarchy:
+
 ```
 ε^(i) = μ^(i) - f^(i)(μ^(i+1))
 ```
 
 While predictions flow down:
+
 ```
 μ̇^(i) = -κ^(i) · ε^(i) + κ^(i-1) · ∂f^(i-1)/∂μ^(i) · ε^(i-1)
 ```
@@ -126,7 +133,7 @@ Under mild conditions (Lipschitz continuous gradients), gradient descent on F co
 
 ### 2. Relationship to Other Frameworks
 
-- **Maximum Likelihood**: When q(s) = δ(s - s*), minimizing F reduces to maximum likelihood estimation
+- **Maximum Likelihood**: When q(s) = δ(s - s\*), minimizing F reduces to maximum likelihood estimation
 - **Variational Bayes**: F minimization implements variational Bayesian inference
 - **Predictive Coding**: Hierarchical models with Gaussian assumptions yield predictive coding
 - **Optimal Control**: Expected free energy minimization generalizes KL control
@@ -141,7 +148,7 @@ Under mild conditions (Lipschitz continuous gradients), gradient descent on F co
 
 ### 2. Approximations
 
-- **Laplace Approximation**: q(s) ≈ N(μ, Σ) with Σ^(-1) = -∂²F/∂s²|_{s=μ}
+- **Laplace Approximation**: q(s) ≈ N(μ, Σ) with Σ^(-1) = -∂²F/∂s²|\_{s=μ}
 - **Mean Field**: q(s) = ∏_i q_i(s_i) for factorized posteriors
 - **Sampling**: Use particle filters or MCMC for complex posteriors
 
@@ -165,22 +172,22 @@ Under mild conditions (Lipschitz continuous gradients), gradient descent on F co
 
 ## Mathematical Notation Summary
 
-| Symbol | Description |
-|--------|-------------|
-| F | Variational free energy |
-| G | Expected free energy |
-| q(s) | Approximate posterior (recognition density) |
-| p(s,o) | Generative model (joint distribution) |
-| p(o\|s) | Observation model (likelihood) |
-| p(s\|s,a) | Transition model |
-| π | Policy (action sequence) |
-| C | Prior preferences |
-| μ | Posterior mean |
-| Σ | Posterior covariance |
-| κ | Precision (inverse variance) |
-| ε | Prediction error |
-| D_KL | Kullback-Leibler divergence |
-| H | Entropy |
+| Symbol    | Description                                 |
+| --------- | ------------------------------------------- |
+| F         | Variational free energy                     |
+| G         | Expected free energy                        |
+| q(s)      | Approximate posterior (recognition density) |
+| p(s,o)    | Generative model (joint distribution)       |
+| p(o\|s)   | Observation model (likelihood)              |
+| p(s\|s,a) | Transition model                            |
+| π         | Policy (action sequence)                    |
+| C         | Prior preferences                           |
+| μ         | Posterior mean                              |
+| Σ         | Posterior covariance                        |
+| κ         | Precision (inverse variance)                |
+| ε         | Prediction error                            |
+| D_KL      | Kullback-Leibler divergence                 |
+| H         | Entropy                                     |
 
 ## Conclusion
 

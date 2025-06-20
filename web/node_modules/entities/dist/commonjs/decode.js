@@ -76,7 +76,7 @@ var DecodingMode;
 class EntityDecoder {
     constructor(
     /** The tree used to decode entities. */
-    decodeTree, 
+    decodeTree,
     /**
      * The function that is called when a codepoint is decoded.
      *
@@ -86,7 +86,7 @@ class EntityDecoder {
      * @param codepoint The decoded codepoint.
      * @param consumed The number of bytes consumed by the decoder.
      */
-    emitCodePoint, 
+    emitCodePoint,
     /** An object that is used to produce errors. */
     errors) {
         this.decodeTree = decodeTree;
@@ -400,7 +400,7 @@ function getDecoder(decodeTree) {
         while ((offset = input.indexOf("&", offset)) >= 0) {
             returnValue += input.slice(lastIndex, offset);
             decoder.startEntity(decodeMode);
-            const length = decoder.write(input, 
+            const length = decoder.write(input,
             // Skip the "&"
             offset + 1);
             if (length < 0) {

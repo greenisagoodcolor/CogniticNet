@@ -3,9 +3,9 @@ import {ContextualKeyword} from "./keywords";
 import { TokenType as tt} from "./types";
 
 export class Scope {
-  
-  
-  
+
+
+
 
   constructor(startTokenIndex, endTokenIndex, isFunctionScope) {
     this.startTokenIndex = startTokenIndex;

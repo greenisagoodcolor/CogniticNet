@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 class HardwareType(Enum):
     """Types of hardware components."""
+
     CPU = "cpu"
     GPU = "gpu"
     TPU = "tpu"
@@ -31,6 +32,7 @@ class HardwareType(Enum):
 
 class OperationStatus(Enum):
     """Status of hardware operations."""
+
     SUCCESS = "success"
     FAILED = "failed"
     TIMEOUT = "timeout"
@@ -42,6 +44,7 @@ class OperationStatus(Enum):
 @dataclass
 class DeviceCapabilities:
     """Represents the capabilities of a hardware device."""
+
     device_id: str
     device_type: HardwareType
     model_name: str
@@ -78,22 +81,23 @@ class DeviceCapabilities:
 @dataclass
 class ResourceConstraints:
     """Defines resource constraints for operations."""
+
     max_memory_mb: int
     max_compute_percent: float = 100.0
-    max_bandwidth_mbps: float = float('inf')
-    max_power_watts: float = float('inf')
+    max_bandwidth_mbps: float = float("inf")
+    max_power_watts: float = float("inf")
     timeout_seconds: float = 60.0
     priority: int = 5  # 1-10, higher is more important
 
     def is_within_limits(self, usage: Dict[str, float]) -> bool:
         """Check if resource usage is within constraints."""
-        if usage.get('memory_mb', 0) > self.max_memory_mb:
+        if usage.get("memory_mb", 0) > self.max_memory_mb:
             return False
-        if usage.get('compute_percent', 0) > self.max_compute_percent:
+        if usage.get("compute_percent", 0) > self.max_compute_percent:
             return False
-        if usage.get('bandwidth_mbps', 0) > self.max_bandwidth_mbps:
+        if usage.get("bandwidth_mbps", 0) > self.max_bandwidth_mbps:
             return False
-        if usage.get('power_watts', 0) > self.max_power_watts:
+        if usage.get("power_watts", 0) > self.max_power_watts:
             return False
         return True
 
@@ -110,9 +114,12 @@ class HardwareInterface(Protocol):
         """Shutdown the hardware device."""
         ...
 
-    def execute_operation(self, operation: str,
-                         data: Any,
-                         constraints: Optional[ResourceConstraints] = None) -> Tuple[OperationStatus, Any]:
+    def execute_operation(
+        self,
+        operation: str,
+        data: Any,
+        constraints: Optional[ResourceConstraints] = None,
+    ) -> Tuple[OperationStatus, Any]:
         """Execute an operation on the hardware."""
         ...
 
@@ -137,10 +144,10 @@ class BaseHardwareAdapter(abc.ABC):
         self._initialized = False
         self._lock = threading.Lock()
         self._resource_usage = {
-            'memory_mb': 0,
-            'compute_percent': 0,
-            'bandwidth_mbps': 0,
-            'power_watts': 0
+            "memory_mb": 0,
+            "compute_percent": 0,
+            "bandwidth_mbps": 0,
+            "power_watts": 0,
         }
 
     @abc.abstractmethod
@@ -154,9 +161,12 @@ class BaseHardwareAdapter(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def execute_operation(self, operation: str,
-                         data: Any,
-                         constraints: Optional[ResourceConstraints] = None) -> Tuple[OperationStatus, Any]:
+    def execute_operation(
+        self,
+        operation: str,
+        data: Any,
+        constraints: Optional[ResourceConstraints] = None,
+    ) -> Tuple[OperationStatus, Any]:
         """Execute an operation on the hardware."""
         pass
 
@@ -178,9 +188,12 @@ class BaseHardwareAdapter(abc.ABC):
         # Basic health check - can be overridden
         try:
             usage = self.get_resource_usage()
-            if usage.get('compute_percent', 0) > 95:
+            if usage.get("compute_percent", 0) > 95:
                 return False, "Device overloaded"
-            if usage.get('memory_mb', 0) > self.get_capabilities().memory_size_mb * 0.95:
+            if (
+                usage.get("memory_mb", 0)
+                > self.get_capabilities().memory_size_mb * 0.95
+            ):
                 return False, "Memory nearly exhausted"
             return True, "Healthy"
         except Exception as e:
@@ -210,17 +223,17 @@ class HardwareAbstractionLayer:
 
         # Operation routing
         self._operation_routes: Dict[str, List[HardwareType]] = {
-            'compute': [HardwareType.GPU, HardwareType.TPU, HardwareType.CPU],
-            'store': [HardwareType.STORAGE, HardwareType.MEMORY],
-            'network': [HardwareType.NETWORK],
-            'sense': [HardwareType.SENSOR]
+            "compute": [HardwareType.GPU, HardwareType.TPU, HardwareType.CPU],
+            "store": [HardwareType.STORAGE, HardwareType.MEMORY],
+            "network": [HardwareType.NETWORK],
+            "sense": [HardwareType.SENSOR],
         }
 
         logger.info("Hardware Abstraction Layer initialized")
 
-    def register_device(self, device_id: str,
-                       device: HardwareInterface,
-                       device_type: HardwareType) -> bool:
+    def register_device(
+        self, device_id: str, device: HardwareInterface, device_type: HardwareType
+    ) -> bool:
         """Register a hardware device with the HAL."""
         with self._lock:
             if device_id in self._devices:
@@ -275,10 +288,13 @@ class HardwareAbstractionLayer:
         device_ids = self._device_registry.get(device_type, [])
         return [self._devices[did] for did in device_ids if did in self._devices]
 
-    def execute_operation(self, operation: str,
-                         data: Any,
-                         device_id: Optional[str] = None,
-                         constraints: Optional[ResourceConstraints] = None) -> Tuple[OperationStatus, Any]:
+    def execute_operation(
+        self,
+        operation: str,
+        data: Any,
+        device_id: Optional[str] = None,
+        constraints: Optional[ResourceConstraints] = None,
+    ) -> Tuple[OperationStatus, Any]:
         """
         Execute an operation on hardware.
 
@@ -300,12 +316,15 @@ class HardwareAbstractionLayer:
 
         return self._execute_on_device(device, operation, data, constraints)
 
-    def _select_best_device(self, operation: str,
-                           constraints: Optional[ResourceConstraints]) -> Optional[HardwareInterface]:
+    def _select_best_device(
+        self, operation: str, constraints: Optional[ResourceConstraints]
+    ) -> Optional[HardwareInterface]:
         """Select the best device for an operation based on availability and constraints."""
         # Determine device types that can handle the operation
         operation_category = self._categorize_operation(operation)
-        candidate_types = self._operation_routes.get(operation_category, [HardwareType.CPU])
+        candidate_types = self._operation_routes.get(
+            operation_category, [HardwareType.CPU]
+        )
 
         best_device = None
         best_score = -1
@@ -339,9 +358,12 @@ class HardwareAbstractionLayer:
 
         return best_device
 
-    def _calculate_device_score(self, device: HardwareInterface,
-                               operation: str,
-                               constraints: Optional[ResourceConstraints]) -> float:
+    def _calculate_device_score(
+        self,
+        device: HardwareInterface,
+        operation: str,
+        constraints: Optional[ResourceConstraints],
+    ) -> float:
         """Calculate a score for how suitable a device is for an operation."""
         score = 100.0
 
@@ -349,12 +371,12 @@ class HardwareAbstractionLayer:
         usage = device.get_resource_usage()
 
         # Penalize based on current usage
-        score -= usage.get('compute_percent', 0) * 0.5
-        score -= (usage.get('memory_mb', 0) / caps.memory_size_mb * 100) * 0.3
+        score -= usage.get("compute_percent", 0) * 0.5
+        score -= (usage.get("memory_mb", 0) / caps.memory_size_mb * 100) * 0.3
 
         # Bonus for specialized hardware
         if caps.device_type in [HardwareType.GPU, HardwareType.TPU]:
-            if 'compute' in operation.lower():
+            if "compute" in operation.lower():
                 score += 20
 
         # Consider priority if constraints given
@@ -363,18 +385,18 @@ class HardwareAbstractionLayer:
 
         return max(0, score)
 
-    def _execute_on_device(self, device: HardwareInterface,
-                          operation: str,
-                          data: Any,
-                          constraints: Optional[ResourceConstraints]) -> Tuple[OperationStatus, Any]:
+    def _execute_on_device(
+        self,
+        device: HardwareInterface,
+        operation: str,
+        data: Any,
+        constraints: Optional[ResourceConstraints],
+    ) -> Tuple[OperationStatus, Any]:
         """Execute operation on a specific device."""
         try:
             # Submit to executor for async execution
             future = self._executor.submit(
-                device.execute_operation,
-                operation,
-                data,
-                constraints
+                device.execute_operation, operation, data, constraints
             )
 
             # Wait with timeout
@@ -394,27 +416,35 @@ class HardwareAbstractionLayer:
         """Categorize an operation for routing."""
         operation_lower = operation.lower()
 
-        if any(term in operation_lower for term in ['compute', 'calculate', 'process', 'infer']):
-            return 'compute'
-        elif any(term in operation_lower for term in ['store', 'save', 'write', 'cache']):
-            return 'store'
-        elif any(term in operation_lower for term in ['network', 'send', 'receive', 'transfer']):
-            return 'network'
-        elif any(term in operation_lower for term in ['sense', 'measure', 'detect']):
-            return 'sense'
+        if any(
+            term in operation_lower
+            for term in ["compute", "calculate", "process", "infer"]
+        ):
+            return "compute"
+        elif any(
+            term in operation_lower for term in ["store", "save", "write", "cache"]
+        ):
+            return "store"
+        elif any(
+            term in operation_lower
+            for term in ["network", "send", "receive", "transfer"]
+        ):
+            return "network"
+        elif any(term in operation_lower for term in ["sense", "measure", "detect"]):
+            return "sense"
         else:
-            return 'compute'  # Default to compute
+            return "compute"  # Default to compute
 
     def get_system_status(self) -> Dict[str, Any]:
         """Get overall system status including all devices."""
         status = {
-            'timestamp': datetime.now().isoformat(),
-            'devices': {},
-            'summary': {
-                'total_devices': len(self._devices),
-                'healthy_devices': 0,
-                'by_type': {}
-            }
+            "timestamp": datetime.now().isoformat(),
+            "devices": {},
+            "summary": {
+                "total_devices": len(self._devices),
+                "healthy_devices": 0,
+                "by_type": {},
+            },
         }
 
         for device_id, device in self._devices.items():
@@ -422,27 +452,27 @@ class HardwareAbstractionLayer:
             healthy, health_msg = device.health_check()
             usage = device.get_resource_usage()
 
-            status['devices'][device_id] = {
-                'type': caps.device_type.value,
-                'model': caps.model_name,
-                'healthy': healthy,
-                'health_message': health_msg,
-                'usage': usage,
-                'capabilities': {
-                    'compute_units': caps.compute_units,
-                    'memory_mb': caps.memory_size_mb,
-                    'features': caps.features
-                }
+            status["devices"][device_id] = {
+                "type": caps.device_type.value,
+                "model": caps.model_name,
+                "healthy": healthy,
+                "health_message": health_msg,
+                "usage": usage,
+                "capabilities": {
+                    "compute_units": caps.compute_units,
+                    "memory_mb": caps.memory_size_mb,
+                    "features": caps.features,
+                },
             }
 
             if healthy:
-                status['summary']['healthy_devices'] += 1
+                status["summary"]["healthy_devices"] += 1
 
             # Count by type
             device_type = caps.device_type.value
-            if device_type not in status['summary']['by_type']:
-                status['summary']['by_type'][device_type] = 0
-            status['summary']['by_type'][device_type] += 1
+            if device_type not in status["summary"]["by_type"]:
+                status["summary"]["by_type"][device_type] = 0
+            status["summary"]["by_type"][device_type] += 1
 
         return status
 

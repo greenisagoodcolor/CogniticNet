@@ -57,9 +57,9 @@ const defaultParserOptions = {
 };
 //Parser
 export class Parser {
-    constructor(options, document, 
+    constructor(options, document,
     /** @internal */
-    fragmentContext = null, 
+    fragmentContext = null,
     /** @internal */
     scriptHandler = null) {
         this.fragmentContext = fragmentContext;
@@ -380,7 +380,7 @@ export class Parser {
         if (this.treeAdapter.getNodeSourceCodeLocation(element) && closingToken.location) {
             const ctLoc = closingToken.location;
             const tn = this.treeAdapter.getTagName(element);
-            const endLoc = 
+            const endLoc =
             // NOTE: For cases like <p> <p> </p> - First 'p' closes without a closing
             // tag and for cases like <td> <p> </td> - 'p' closes without a closing tag.
             closingToken.type === TokenType.END_TAG && tn === closingToken.tagName

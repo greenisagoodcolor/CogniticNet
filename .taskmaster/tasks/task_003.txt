@@ -1,6 +1,6 @@
 # Task ID: 3
 # Title: Design New Directory Structure
-# Status: pending
+# Status: in-progress
 # Dependencies: 1
 # Priority: high
 # Description: Create a domain-driven directory structure that properly separates concerns and follows clean architecture principles.
@@ -104,4 +104,16 @@ Establish clear dependency management guidelines (e.g., allowed dependencies, la
 ### Description: Facilitate a collaborative review process for all documentation, ensuring completeness, clarity, and consensus. Incorporate feedback and finalize deliverables.
 ### Details:
 Organize focused, time-bound review sessions. Gather and address feedback from all relevant team members and stakeholders. Resolve comments, document decisions, and achieve consensus. Finalize and publish the documentation in the central repository.
+
+## 6. Draft and Finalize Canonical Architecture ADR from PRD [done]
+### Dependencies: None
+### Description: Review the PRD's 'FINAL ARCHITECTURE'. Create a new, comprehensive ADR named '002-canonical-directory-structure.md' that meticulously documents the entire directory structure alphabetically, including the purpose of each component and the dependency rules between them. This ADR will serve as the single source of truth for all development. Also, update the existing '001-structure.md' to act as a historical record of the migration, linking to the new canonical ADR.
+### Details:
+
+
+## 7. Propagate Architectural Constraints to All Pending Tasks [in-progress]
+### Dependencies: None
+### Description: Systematically iterate through all 'pending' tasks in tasks.json. For each task, prepend a critical directive to its 'details' field, mandating that all file creation and code placement must strictly adhere to the project's canonical structure defined in 'docs/architecture/decisions/002-canonical-directory-structure.md'. This ensures the architectural standard is a non-negotiable requirement for all future work.
+### Details:
+
 

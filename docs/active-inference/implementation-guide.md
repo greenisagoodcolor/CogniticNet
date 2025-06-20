@@ -27,12 +27,14 @@ Observation → Inference → Planning → Action → Environment
 ### 1. Choose State-Space Type
 
 **Discrete State-Space** (Recommended for starting):
+
 - Finite number of states and actions
 - Exact inference possible
 - Matrix/tensor operations
 - Examples: Grid worlds, decision trees, finite state machines
 
 **Continuous State-Space**:
+
 - Infinite possible states
 - Approximate inference required
 - Gradient-based optimization
@@ -519,14 +521,14 @@ class ActiveInferenceDebugger:
 
 ## Common Pitfalls and Solutions
 
-| Problem | Solution |
-|---------|----------|
-| Beliefs don't converge | Check observation model (A matrix) conditioning |
-| Agent doesn't explore | Increase epistemic value weight or temperature |
-| Poor goal-seeking | Verify C matrix encodes preferences correctly |
-| Numerical instability | Switch to log-space computations |
-| Slow planning | Reduce policy samples or horizon length |
-| Memory issues | Use sparse representations for large state spaces |
+| Problem                | Solution                                          |
+| ---------------------- | ------------------------------------------------- |
+| Beliefs don't converge | Check observation model (A matrix) conditioning   |
+| Agent doesn't explore  | Increase epistemic value weight or temperature    |
+| Poor goal-seeking      | Verify C matrix encodes preferences correctly     |
+| Numerical instability  | Switch to log-space computations                  |
+| Slow planning          | Reduce policy samples or horizon length           |
+| Memory issues          | Use sparse representations for large state spaces |
 
 ## Conclusion
 

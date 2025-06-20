@@ -99,7 +99,7 @@
         "dependencies": [
           1
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -147,7 +147,7 @@
               4
             ],
             "details": "Configure CI triggers, environment provisioning, and artifact management. Ensure pipeline supports parallelism, fail-fast strategies, and clear feedback to developers. Validate pipeline stability and performance with real-world scenarios.",
-            "status": "in-progress"
+            "status": "done"
           },
           {
             "id": 6,
@@ -157,7 +157,7 @@
               5
             ],
             "details": "Configure hooks for local and remote environments, ensuring minimal developer friction. Design and deploy a dashboard that surfaces key metrics, failures, and trends, supporting rapid feedback and continuous improvement.",
-            "status": "pending"
+            "status": "done"
           }
         ]
       },
@@ -171,7 +171,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -220,22 +220,40 @@
             ],
             "details": "Organize focused, time-bound review sessions. Gather and address feedback from all relevant team members and stakeholders. Resolve comments, document decisions, and achieve consensus. Finalize and publish the documentation in the central repository.",
             "status": "pending"
+          },
+          {
+            "id": 6,
+            "title": "Draft and Finalize Canonical Architecture ADR from PRD",
+            "description": "Review the PRD's 'FINAL ARCHITECTURE'. Create a new, comprehensive ADR named '002-canonical-directory-structure.md' that meticulously documents the entire directory structure alphabetically, including the purpose of each component and the dependency rules between them. This ADR will serve as the single source of truth for all development. Also, update the existing '001-structure.md' to act as a historical record of the migration, linking to the new canonical ADR.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 3
+          },
+          {
+            "id": 7,
+            "title": "Propagate Architectural Constraints to All Pending Tasks",
+            "description": "Systematically iterate through all 'pending' tasks in tasks.json. For each task, prepend a critical directive to its 'details' field, mandating that all file creation and code placement must strictly adhere to the project's canonical structure defined in 'docs/architecture/decisions/002-canonical-directory-structure.md'. This ensures the architectural standard is a non-negotiable requirement for all future work.",
+            "details": "",
+            "status": "in-progress",
+            "dependencies": [],
+            "parentTaskId": 3
           }
         ]
       },
       {
         "id": 4,
         "title": "Implement File Movement Plan",
-        "description": "Create and execute a safe plan for moving files to the new structure while preserving git history and maintaining functionality.",
-        "details": "Create a detailed file movement plan that:\n\n1. Maps each file from current location to target location in new structure\n2. Calculates correct movement order based on dependency graph\n3. Updates import statements in all affected files\n4. Preserves git history using `git mv`\n\nImplementation steps:\n\n```python\ndef plan_file_movements():\n    # Load file inventory and dependency graph from Task 1\n    inventory = load_inventory()\n    dependencies = load_dependency_graph()\n    \n    # Create mapping of current to target locations\n    file_mapping = {}\n    for file_path in inventory:\n        target_path = determine_target_location(file_path)\n        if target_path != file_path:\n            file_mapping[file_path] = target_path\n    \n    # Sort files by dependency order (least dependencies first)\n    sorted_files = topological_sort(file_mapping.keys(), dependencies)\n    \n    # Generate movement commands\n    commands = []\n    for file in sorted_files:\n        if file in file_mapping:\n            commands.append({\n                'source': file,\n                'target': file_mapping[file],\n                'git_command': f'git mv {file} {file_mapping[file]}',\n                'affected_files': find_files_importing(file)\n            })\n    \n    return commands\n```\n\nExecute the plan in batches:\n1. Move a small batch of files (5-10)\n2. Update import statements in affected files\n3. Run tests to verify functionality\n4. Commit changes\n5. Repeat until all files are moved\n\nFor import updates, use AST manipulation rather than string replacement to avoid changing imports in strings or comments.\n\nInclude rollback procedures for each batch in case of test failures.",
-        "testStrategy": "1. Test the movement plan on a copy of the repository first\n2. After each batch of moves, run the full test suite\n3. Verify import statements are correctly updated\n4. Check that git history is preserved using `git log --follow`\n5. Validate that the build still works after all movements\n6. Test rollback procedures on a sample batch",
-        "priority": "medium",
+        "description": "Create and execute a safe plan for moving files to the new structure while preserving git history and maintaining functionality, ensuring strict compliance with architectural decisions.",
+        "status": "pending",
         "dependencies": [
           1,
           2,
           3
         ],
-        "status": "pending",
+        "priority": "medium",
+        "details": "Create a detailed file movement plan that:\n\n1. Maps each file from current location to target location in new structure according to `docs/architecture/decisions/002-canonical-directory-structure.md`\n2. Calculates correct movement order based on dependency graph following rules from `docs/architecture/decisions/003-dependency-rules.md`\n3. Updates import statements in all affected files\n4. Preserves git history using `git mv`\n5. Ensures all file names comply with `docs/architecture/decisions/004-naming-conventions.md`\n\n**CRITICAL**: Before any file operations, validate against the architectural decision documents to ensure full compliance.\n\nImplementation steps:\n\n```python\ndef plan_file_movements():\n    # Load architectural decisions\n    canonical_structure = load_adr('002-canonical-directory-structure.md')\n    naming_conventions = load_adr('004-naming-conventions.md')\n    dependency_rules = load_adr('003-dependency-rules.md')\n    \n    # Load file inventory and dependency graph from Task 1\n    inventory = load_inventory()\n    dependencies = load_dependency_graph()\n    \n    # Create mapping of current to target locations\n    file_mapping = {}\n    for file_path in inventory:\n        # Validate target location against canonical structure\n        target_path = determine_target_location(file_path, canonical_structure)\n        # Ensure naming compliance\n        target_path = ensure_naming_compliance(target_path, naming_conventions)\n        if target_path != file_path:\n            file_mapping[file_path] = target_path\n    \n    # Validate dependencies comply with architectural rules\n    validate_dependencies(file_mapping, dependencies, dependency_rules)\n    \n    # Sort files by dependency order (least dependencies first)\n    sorted_files = topological_sort(file_mapping.keys(), dependencies)\n    \n    # Generate movement commands\n    commands = []\n    for file in sorted_files:\n        if file in file_mapping:\n            commands.append({\n                'source': file,\n                'target': file_mapping[file],\n                'git_command': f'git mv {file} {file_mapping[file]}',\n                'affected_files': find_files_importing(file),\n                'compliance_check': verify_architectural_compliance(file_mapping[file])\n            })\n    \n    return commands\n```\n\nExecute the plan in batches:\n1. Verify batch compliance with architectural decisions\n2. Move a small batch of files (5-10)\n3. Update import statements in affected files\n4. Run tests to verify functionality\n5. Validate architectural compliance post-move\n6. Commit changes\n7. Repeat until all files are moved\n\nFor import updates, use AST manipulation rather than string replacement to avoid changing imports in strings or comments.\n\nInclude rollback procedures for each batch in case of test failures or architectural violations.",
+        "testStrategy": "1. Validate all movements against architectural decision documents before execution\n2. Test the movement plan on a copy of the repository first\n3. After each batch of moves, run the full test suite\n4. Verify import statements are correctly updated\n5. Check that git history is preserved using `git log --follow`\n6. Validate that the build still works after all movements\n7. Test rollback procedures on a sample batch\n8. Verify final structure complies with `002-canonical-directory-structure.md`\n9. Ensure all file names comply with `004-naming-conventions.md`\n10. Validate dependency rules from `003-dependency-rules.md` are maintained",
         "subtasks": [
           {
             "id": 1,
@@ -262,7 +280,7 @@
             "dependencies": [
               2
             ],
-            "details": "Develop or adapt scripts to parse and rewrite import paths. Include tests to verify correctness. Follow Martin Fowler’s guidance on behavior-preserving refactoring and incremental change.",
+            "details": "Develop or adapt scripts to parse and rewrite import paths. Include tests to verify correctness. Follow Martin Fowler's guidance on behavior-preserving refactoring and incremental change.",
             "status": "pending"
           },
           {
@@ -282,8 +300,8 @@
             "dependencies": [
               4
             ],
-            "details": "Define batch sizes based on complexity analysis. Automate the cycle: move files, update imports, run tests, and commit. Roll back and adjust as needed if failures occur. Document each batch for traceability.",
-            "status": "pending"
+            "details": "Define batch sizes based on complexity analysis. Automate the cycle: move files, update imports, run tests, and commit. Roll back and adjust as needed if failures occur. Document each batch for traceability.\n<info added on 2025-06-20T09:14:00.971Z>\nMigration execution completed with 280+ files successfully moved across 56+ batches. Implemented AST-based import path rewriting to automatically update all import statements throughout the codebase. Each batch was processed with automated rollback capabilities - if any test failures occurred, the batch would automatically revert and flag for manual intervention. \n\nEncountered and resolved several technical challenges including destination conflicts where empty placeholder files existed from previous partial moves, and branch naming issues that required special handling. The batch processing system maintained code functionality throughout by running tests after each move and only committing successful batches.\n\nCurrent state: ~35 files remain in original locations due to conflicts with existing empty files in the destination. The migration infrastructure remains fully operational and can complete these remaining moves with targeted conflict resolution. All migrated files retain their complete git history through proper use of git mv commands.\n</info added on 2025-06-20T09:14:00.971Z>",
+            "status": "done"
           },
           {
             "id": 6,
@@ -294,27 +312,68 @@
             ],
             "details": "Script and document rollback steps for each batch. Integrate with CI/CD pipelines. Test rollback scenarios to ensure reliability, following expert recommendations for safety nets and continuous improvement.",
             "status": "pending"
+          },
+          {
+            "id": 7,
+            "title": "Clean Repository Post-Migration",
+            "description": "Remove old files, directories, and artifacts that are no longer needed after the migration to the new directory structure. This includes cleaning up duplicate files, empty directories, build artifacts, and files that don't fit the new architecture as defined by the Expert Committee's ADRs.",
+            "details": "Based on the principles outlined by the Expert Committee (Feathers, Fowler, Troy), this task involves:\n1. Identifying obsolete files using git history and dependency analysis\n2. Identifying and removing true duplicate files \n3. Removing empty directories left over from the migration\n4. Cleaning build artifacts (.pyc, __pycache__, node_modules)\n5. Updating .gitignore to prevent future clutter\n6. Ensuring no critical or important files are accidentally deleted\n\nA script will be created to automate this process, using the inventory_summary.json and migration-map.json as guides to identify files that were not moved and are safe for deletion. The script will have safety checks and require confirmation before deleting files.",
+            "status": "in-progress",
+            "dependencies": [
+              5
+            ],
+            "parentTaskId": 4
+          },
+          {
+            "id": 8,
+            "title": "Finalize Repository Structure and Cleanup",
+            "description": "Correct the directory structure by moving migrated files from 'freeagentics_new' to the project root, then run the cleanup script to remove all old files and directories. This will achieve the final, clean architecture as specified in the PRD.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          },
+          {
+            "id": 9,
+            "title": "Architectural Compliance Validation",
+            "description": "Validate that all completed file movements strictly comply with the architectural decision documents, and create a plan to address any remaining non-compliant files.",
+            "dependencies": [
+              5,
+              8
+            ],
+            "details": "Review the ~35 files that remain in original locations and validate their target destinations against:\n- `docs/architecture/decisions/002-canonical-directory-structure.md` for proper placement\n- `docs/architecture/decisions/004-naming-conventions.md` for naming compliance\n- `docs/architecture/decisions/003-dependency-rules.md` for dependency validation\n\nCreate a compliance report identifying:\n1. Files that need renaming to meet conventions\n2. Files that need to be moved to different locations than originally planned\n3. Dependencies that violate architectural rules\n4. A remediation plan for each non-compliant item\n\nThis validation ensures the final structure fully adheres to the established architecture standards.",
+            "status": "pending"
           }
         ]
       },
       {
         "id": 5,
         "title": "Implement Naming Consistency",
-        "description": "Establish and enforce consistent naming conventions throughout the codebase for files, variables, classes, and functions.",
-        "details": "Implement comprehensive naming consistency across the repository:\n\n1. Project name: Use 'FreeAgentics' for product name, 'freeagentics' for package/module names\n\n2. File naming conventions:\n   - Python files: kebab-case.py (e.g., belief-update.py)\n   - TypeScript/JavaScript files: \n     - Components: PascalCase.tsx (e.g., AgentCreator.tsx)\n     - Utilities: camelCase.ts (e.g., beliefUtils.ts)\n   - Configuration files: kebab-case.yml (e.g., development.yml)\n   - Documentation: kebab-case.md (e.g., getting-started.md)\n\n3. Code naming conventions:\n   - Python:\n     - Classes: PascalCase (e.g., ExplorerAgent)\n     - Functions/methods: snake_case (e.g., calculate_free_energy)\n     - Variables: snake_case (e.g., belief_state)\n     - Constants: UPPER_SNAKE_CASE (e.g., MAX_AGENTS)\n     - Private attributes: leading underscore (e.g., _internal_state)\n\n   - TypeScript/JavaScript:\n     - Classes/Components: PascalCase (e.g., AgentCreator)\n     - Functions/methods: camelCase (e.g., calculateFreeEnergy)\n     - Variables: camelCase (e.g., beliefState)\n     - Constants: UPPER_SNAKE_CASE (e.g., MAX_AGENTS)\n     - Private attributes: leading underscore (e.g., _internalState)\n\n4. API endpoint naming:\n   - RESTful endpoints: kebab-case (e.g., /api/v1/agent-types)\n   - GraphQL queries: camelCase (e.g., getAgentById)\n\nImplementation steps:\n1. Create linting rules for each language (flake8, eslint)\n2. Write a custom script to rename files according to conventions\n3. Use AST manipulation to update variable/function names\n4. Add pre-commit hooks to enforce naming conventions\n5. Update documentation to reflect naming standards",
-        "testStrategy": "1. Create test cases for each naming convention rule\n2. Verify linting catches naming violations\n3. Test file renaming script on sample directories\n4. Validate that imports are correctly updated after renaming\n5. Check that pre-commit hooks properly reject non-compliant names",
-        "priority": "medium",
+        "description": "Establish and enforce consistent naming conventions throughout the codebase for files, variables, classes, and functions, ensuring strict compliance with architectural decision records.",
+        "status": "pending",
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "priority": "medium",
+        "details": "Implement comprehensive naming consistency across the repository in strict accordance with architectural standards:\n\n**CRITICAL COMPLIANCE REQUIREMENT:** All naming changes must adhere to:\n- Canonical directory structure (docs/architecture/decisions/002-canonical-directory-structure.md)\n- Naming conventions (docs/architecture/decisions/004-naming-conventions.md)\n- Dependency rules (docs/architecture/decisions/003-dependency-rules.md)\n\n1. Project name: Use 'FreeAgentics' for product name, 'freeagentics' for package/module names\n\n2. File naming conventions (per ADR-004):\n   - Python files: kebab-case.py (e.g., belief-update.py)\n   - TypeScript/JavaScript files: \n     - Components: PascalCase.tsx (e.g., AgentCreator.tsx)\n     - Utilities: camelCase.ts (e.g., beliefUtils.ts)\n   - Configuration files: kebab-case.yml (e.g., development.yml)\n   - Documentation: kebab-case.md (e.g., getting-started.md)\n\n3. Code naming conventions:\n   - Python:\n     - Classes: PascalCase (e.g., ExplorerAgent)\n     - Functions/methods: snake_case (e.g., calculate_free_energy)\n     - Variables: snake_case (e.g., belief_state)\n     - Constants: UPPER_SNAKE_CASE (e.g., MAX_AGENTS)\n     - Private attributes: leading underscore (e.g., _internal_state)\n\n   - TypeScript/JavaScript:\n     - Classes/Components: PascalCase (e.g., AgentCreator)\n     - Functions/methods: camelCase (e.g., calculateFreeEnergy)\n     - Variables: camelCase (e.g., beliefState)\n     - Constants: UPPER_SNAKE_CASE (e.g., MAX_AGENTS)\n     - Private attributes: leading underscore (e.g., _internalState)\n\n4. API endpoint naming:\n   - RESTful endpoints: kebab-case (e.g., /api/v1/agent-types)\n   - GraphQL queries: camelCase (e.g., getAgentById)\n\nImplementation steps:\n1. Review and validate against ADR documents before any changes\n2. Create linting rules for each language (flake8, eslint) that enforce ADR compliance\n3. Write a custom script to rename files according to conventions while respecting canonical structure\n4. Use AST manipulation to update variable/function names\n5. Add pre-commit hooks to enforce naming conventions and ADR compliance\n6. Update documentation to reflect naming standards and ADR requirements",
+        "testStrategy": "1. Validate all naming changes against ADR-004 specifications\n2. Verify file placement adheres to ADR-002 canonical structure\n3. Ensure dependency rules from ADR-003 are not violated by renaming\n4. Create test cases for each naming convention rule\n5. Verify linting catches naming violations and ADR non-compliance\n6. Test file renaming script on sample directories with canonical structure validation\n7. Validate that imports are correctly updated after renaming\n8. Check that pre-commit hooks properly reject non-compliant names and ADR violations",
         "subtasks": [
+          {
+            "id": 0,
+            "title": "Review and Document ADR Compliance Requirements",
+            "description": "Thoroughly review the architectural decision records (ADRs) for canonical directory structure, naming conventions, and dependency rules. Create a compliance checklist and validation criteria for all naming changes.",
+            "dependencies": [],
+            "details": "Study docs/architecture/decisions/002-canonical-directory-structure.md, 004-naming-conventions.md, and 003-dependency-rules.md. Extract all naming-related requirements and create a comprehensive compliance matrix. Document any conflicts between existing conventions and ADR requirements.",
+            "status": "pending"
+          },
           {
             "id": 1,
             "title": "Define Naming Convention Policy",
             "description": "Establish a comprehensive naming convention policy for the codebase, drawing on best practices from Kent Beck, Robert Martin, Martin Fowler, and other expert committee members. Ensure the policy covers variables, functions, classes, files, and directories, and is tailored for multi-language environments.",
-            "dependencies": [],
-            "details": "Incorporate principles such as intention-revealing, descriptive, and consistent naming. Reference Clean Code and Implementation Patterns for guidance on clarity and maintainability. Document the rationale and provide examples for each rule.",
+            "dependencies": [
+              0
+            ],
+            "details": "Incorporate principles such as intention-revealing, descriptive, and consistent naming. Reference Clean Code and Implementation Patterns for guidance on clarity and maintainability. Document the rationale and provide examples for each rule. Ensure full alignment with ADR-004 specifications.",
             "status": "pending"
           },
           {
@@ -324,7 +383,7 @@
             "dependencies": [
               1
             ],
-            "details": "Select appropriate linters (e.g., ESLint, Pylint, etc.), configure naming rules, and test enforcement on representative code samples. Ensure rules are strict enough to enforce policy but flexible for edge cases.",
+            "details": "Select appropriate linters (e.g., ESLint, Pylint, etc.), configure naming rules, and test enforcement on representative code samples. Ensure rules are strict enough to enforce policy but flexible for edge cases. Include custom rules to validate ADR compliance for file placement and naming.",
             "status": "pending"
           },
           {
@@ -335,7 +394,7 @@
               1,
               2
             ],
-            "details": "Scripts should support batch processing, handle multi-language code, and provide dry-run and rollback options. Ensure scripts are well-documented and tested on sample repositories.",
+            "details": "Scripts should support batch processing, handle multi-language code, and provide dry-run and rollback options. Ensure scripts are well-documented and tested on sample repositories. Include validation against canonical directory structure (ADR-002) to prevent misplaced files.",
             "status": "pending"
           },
           {
@@ -345,7 +404,7 @@
             "dependencies": [
               3
             ],
-            "details": "Select AST tooling for each language, implement transformations, and validate changes with automated tests. Address edge cases such as dynamic references and code generation.",
+            "details": "Select AST tooling for each language, implement transformations, and validate changes with automated tests. Address edge cases such as dynamic references and code generation. Ensure import updates respect dependency rules from ADR-003.",
             "status": "pending"
           },
           {
@@ -357,7 +416,18 @@
               3,
               4
             ],
-            "details": "Configure pre-commit tools to run linting and naming checks. Revise onboarding guides, code review checklists, and internal wikis to ensure all contributors understand and follow the updated standards.",
+            "details": "Configure pre-commit tools to run linting and naming checks. Revise onboarding guides, code review checklists, and internal wikis to ensure all contributors understand and follow the updated standards. Include references to relevant ADRs and compliance requirements.",
+            "status": "pending"
+          },
+          {
+            "id": 6,
+            "title": "Create ADR Compliance Validation Tool",
+            "description": "Develop a validation tool that checks all naming changes against the architectural decision records to ensure ongoing compliance with project standards.",
+            "dependencies": [
+              0,
+              3
+            ],
+            "details": "Build a tool that can be run manually or integrated into CI/CD pipelines to validate file names, locations, and code naming against ADR specifications. Include reporting features to identify non-compliant elements and suggest corrections.",
             "status": "pending"
           }
         ]
@@ -365,73 +435,73 @@
       {
         "id": 6,
         "title": "Implement Active Inference Core",
-        "description": "Develop a clean, efficient implementation of Active Inference that serves as the cognitive engine for agents.",
-        "details": "Implement a high-performance Active Inference engine that serves as the cognitive core for all agents:\n\n1. Core components:\n   - BeliefState class for representing agent beliefs\n   - FreeEnergyCalculator for policy evaluation\n   - BeliefUpdater for Bayesian belief updates\n   - PolicySelector for action selection\n\n2. Key mathematical implementations:\n   - Expected Free Energy calculation: F = -log P(o|s) + KL[Q(s)||P(s)]\n   - Belief updates using Bayes rule\n   - Precision-weighted policy selection\n\n3. Performance optimizations:\n   - Vectorized operations with NumPy\n   - JIT compilation with Numba for hot paths\n   - Caching for repeated calculations\n   - Batch processing for multiple agents\n\n4. Integration points:\n   - LLM-informed belief updates\n   - GNN (Generalized Notation Notation) integration\n   - H3 spatial awareness\n\nExample implementation:\n\n```python\nclass ActiveInferenceEngine:\n    \"\"\"Core implementation of Active Inference for agent cognition.\"\"\"\n    \n    def __init__(self, precision: float = 1.0):\n        self.precision = precision  # Controls exploration vs. exploitation\n        self._belief_updater = BeliefUpdater()\n        self._free_energy_calculator = FreeEnergyCalculator()\n    \n    def update_beliefs(self, \n                      agent: Agent, \n                      observations: Observations) -> None:\n        \"\"\"Update agent beliefs based on new observations.\"\"\"\n        prior_beliefs = agent.beliefs\n        likelihood = self._compute_likelihood(observations)\n        \n        # Bayesian belief update\n        posterior_beliefs = self._belief_updater.update(\n            prior_beliefs, \n            likelihood, \n            observations\n        )\n        \n        # Update agent's belief state\n        agent.beliefs = posterior_beliefs\n    \n    def select_policy(self, \n                     agent: Agent, \n                     available_policies: List[Policy]) -> Policy:\n        \"\"\"Select policy that minimizes expected free energy.\"\"\"\n        free_energies = []\n        \n        for policy in available_policies:\n            # Calculate expected free energy for this policy\n            ef = self._free_energy_calculator.calculate(\n                agent.beliefs, \n                policy, \n                self.precision\n            )\n            free_energies.append((policy, ef))\n        \n        # Select policy with minimum free energy\n        selected_policy = min(free_energies, key=lambda x: x[1])[0]\n        return selected_policy\n```\n\nEnsure comprehensive documentation of the mathematical principles and implementation details.",
-        "testStrategy": "1. Unit tests for each component (BeliefUpdater, FreeEnergyCalculator, etc.)\n2. Property-based tests to verify mathematical invariants\n3. Performance benchmarks comparing optimized vs. naive implementations\n4. Integration tests with agent behaviors\n5. Validation against published Active Inference papers\n6. Edge case testing with extreme belief states",
-        "priority": "high",
+        "description": "Develop a clean, efficient implementation of Active Inference that serves as the cognitive engine for agents, strictly following the project's canonical architecture and naming conventions.",
+        "status": "pending",
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Implement a high-performance Active Inference engine that serves as the cognitive core for all agents, adhering to the canonical directory structure and architectural decisions:\n\n1. Core components (to be placed in `inference/` directory):\n   - BeliefState class for representing agent beliefs\n   - FreeEnergyCalculator for policy evaluation\n   - BeliefUpdater for Bayesian belief updates\n   - PolicySelector for action selection\n\n2. Key mathematical implementations:\n   - Expected Free Energy calculation: F = -log P(o|s) + KL[Q(s)||P(s)]\n   - Belief updates using Bayes rule\n   - Precision-weighted policy selection\n\n3. Performance optimizations:\n   - Vectorized operations with NumPy\n   - JIT compilation with Numba for hot paths\n   - Caching for repeated calculations\n   - Batch processing for multiple agents\n\n4. Integration points (following dependency inversion principle):\n   - LLM-informed belief updates (via interfaces)\n   - GNN (Generalized Notation Notation) integration (via interfaces)\n   - H3 spatial awareness (via interfaces)\n\n**ARCHITECTURAL COMPLIANCE:**\n- All core inference components must be placed in the `inference/` directory\n- Follow naming conventions from `docs/architecture/decisions/004-naming-conventions.md`\n- Core domain components cannot depend on interface or infrastructure layers\n- Use dependency injection and interfaces for external integrations\n\nExample implementation structure:\n\n```python\n# File: inference/active_inference_engine.py\nclass ActiveInferenceEngine:\n    \"\"\"Core implementation of Active Inference for agent cognition.\"\"\"\n    \n    def __init__(self, precision: float = 1.0):\n        self.precision = precision  # Controls exploration vs. exploitation\n        self._belief_updater = BeliefUpdater()\n        self._free_energy_calculator = FreeEnergyCalculator()\n    \n    def update_beliefs(self, \n                      agent: Agent, \n                      observations: Observations) -> None:\n        \"\"\"Update agent beliefs based on new observations.\"\"\"\n        prior_beliefs = agent.beliefs\n        likelihood = self._compute_likelihood(observations)\n        \n        # Bayesian belief update\n        posterior_beliefs = self._belief_updater.update(\n            prior_beliefs, \n            likelihood, \n            observations\n        )\n        \n        # Update agent's belief state\n        agent.beliefs = posterior_beliefs\n    \n    def select_policy(self, \n                     agent: Agent, \n                     available_policies: List[Policy]) -> Policy:\n        \"\"\"Select policy that minimizes expected free energy.\"\"\"\n        free_energies = []\n        \n        for policy in available_policies:\n            # Calculate expected free energy for this policy\n            ef = self._free_energy_calculator.calculate(\n                agent.beliefs, \n                policy, \n                self.precision\n            )\n            free_energies.append((policy, ef))\n        \n        # Select policy with minimum free energy\n        selected_policy = min(free_energies, key=lambda x: x[1])[0]\n        return selected_policy\n```\n\nEnsure comprehensive documentation of the mathematical principles, implementation details, and architectural compliance.",
+        "testStrategy": "1. Unit tests for each component (BeliefUpdater, FreeEnergyCalculator, etc.) in `tests/inference/`\n2. Property-based tests to verify mathematical invariants\n3. Performance benchmarks comparing optimized vs. naive implementations\n4. Integration tests with agent behaviors (using test doubles for external dependencies)\n5. Validation against published Active Inference papers\n6. Edge case testing with extreme belief states\n7. Architectural compliance tests to ensure proper file placement and dependency rules",
         "subtasks": [
           {
             "id": 1,
             "title": "BeliefState Implementation",
-            "description": "Design and implement the BeliefState component, ensuring it encapsulates all necessary probabilistic state representations and supports efficient access and mutation. Follow Single Responsibility Principle and ensure clear data abstractions.",
+            "description": "Design and implement the BeliefState component in `inference/belief_state.py`, ensuring it encapsulates all necessary probabilistic state representations and supports efficient access and mutation. Follow Single Responsibility Principle, naming conventions, and ensure clear data abstractions.",
             "dependencies": [],
-            "details": "Define interfaces and data structures for BeliefState. Ensure encapsulation, immutability where possible, and compliance with clean code practices. Include unit tests for all public methods.",
+            "details": "Define interfaces and data structures for BeliefState in the `inference/` directory. Ensure encapsulation, immutability where possible, and compliance with clean code practices and project naming conventions. Include unit tests in `tests/inference/test_belief_state.py`.",
             "status": "pending"
           },
           {
             "id": 2,
             "title": "FreeEnergyCalculator Development",
-            "description": "Develop the FreeEnergyCalculator module to compute variational free energy given a BeliefState. Ensure mathematical correctness and optimize for computational efficiency.",
+            "description": "Develop the FreeEnergyCalculator module in `inference/free_energy_calculator.py` to compute variational free energy given a BeliefState. Ensure mathematical correctness, optimize for computational efficiency, and follow architectural guidelines.",
             "dependencies": [
               1
             ],
-            "details": "Implement core algorithms for free energy calculation. Validate with mathematical test cases. Profile for performance bottlenecks and document assumptions.",
+            "details": "Implement core algorithms for free energy calculation in the canonical location. Validate with mathematical test cases in `tests/inference/test_free_energy_calculator.py`. Profile for performance bottlenecks and document assumptions. Ensure no dependencies on infrastructure or interface layers.",
             "status": "pending"
           },
           {
             "id": 3,
             "title": "BeliefUpdater Implementation",
-            "description": "Create the BeliefUpdater component to update BeliefState based on new observations and actions, using outputs from FreeEnergyCalculator.",
+            "description": "Create the BeliefUpdater component in `inference/belief_updater.py` to update BeliefState based on new observations and actions, using outputs from FreeEnergyCalculator.",
             "dependencies": [
               1,
               2
             ],
-            "details": "Design update algorithms that are modular and testable. Ensure updates are atomic and side-effect free. Provide comprehensive unit tests.",
+            "details": "Design update algorithms that are modular and testable, placed in the proper canonical location. Ensure updates are atomic and side-effect free. Provide comprehensive unit tests in `tests/inference/test_belief_updater.py`. Follow dependency rules - no direct dependencies on external systems.",
             "status": "pending"
           },
           {
             "id": 4,
             "title": "PolicySelector Module",
-            "description": "Implement the PolicySelector to choose optimal actions based on current BeliefState and free energy estimates.",
+            "description": "Implement the PolicySelector in `inference/policy_selector.py` to choose optimal actions based on current BeliefState and free energy estimates, following architectural guidelines.",
             "dependencies": [
               1,
               2,
               3
             ],
-            "details": "Develop selection strategies (e.g., softmax, argmax) and ensure extensibility for future policy types. Include tests for edge cases and integration with BeliefState.",
+            "details": "Develop selection strategies (e.g., softmax, argmax) in the canonical location and ensure extensibility for future policy types. Include tests for edge cases and integration with BeliefState in `tests/inference/test_policy_selector.py`. Respect dependency inversion for any external policy sources.",
             "status": "pending"
           },
           {
             "id": 5,
             "title": "Performance Optimization",
-            "description": "Profile and optimize all core modules (BeliefState, FreeEnergyCalculator, BeliefUpdater, PolicySelector) for speed and memory usage, following expert recommendations for clean, efficient code.",
+            "description": "Profile and optimize all core modules (BeliefState, FreeEnergyCalculator, BeliefUpdater, PolicySelector) for speed and memory usage, following expert recommendations for clean, efficient code while maintaining architectural compliance.",
             "dependencies": [
               1,
               2,
               3,
               4
             ],
-            "details": "Use profiling tools to identify bottlenecks. Refactor code for efficiency without sacrificing readability or testability. Document all optimizations and their impact.",
+            "details": "Use profiling tools to identify bottlenecks. Refactor code for efficiency without sacrificing readability, testability, or architectural principles. Document all optimizations and their impact. Ensure optimizations don't introduce improper dependencies.",
             "status": "pending"
           },
           {
             "id": 6,
             "title": "Integration Points: LLM, GNN, H3",
-            "description": "Define and implement integration interfaces for connecting the core modules with external systems: LLM, GNN, and H3. Ensure boundaries are well-defined and dependencies are abstracted.",
+            "description": "Define and implement integration interfaces in `inference/interfaces/` for connecting the core modules with external systems: LLM, GNN, and H3. Ensure boundaries are well-defined and dependencies are properly inverted.",
             "dependencies": [
               1,
               2,
@@ -439,13 +509,13 @@
               4,
               5
             ],
-            "details": "Design adapters or facades for each integration point. Mock external systems for testing. Ensure integration code is isolated and testable.",
+            "details": "Design abstract interfaces in `inference/interfaces/` that core components can depend on. Concrete implementations should be in appropriate infrastructure directories. Mock external systems for testing. Ensure integration code follows dependency inversion principle - core inference components depend only on interfaces, not concrete implementations.",
             "status": "pending"
           },
           {
             "id": 7,
             "title": "Documentation and Testing",
-            "description": "Produce comprehensive documentation and automated tests for all modules and integration points, following best practices from Clean Code and Agile methodologies.",
+            "description": "Produce comprehensive documentation and automated tests for all modules and integration points, following best practices from Clean Code and Agile methodologies, with proper placement in the canonical structure.",
             "dependencies": [
               1,
               2,
@@ -454,7 +524,17 @@
               5,
               6
             ],
-            "details": "Write API docs, usage guides, and architectural overviews. Ensure all code is covered by unit and integration tests. Validate against PRD acceptance criteria.",
+            "details": "Write API docs in `docs/api/inference/`, usage guides, and architectural overviews. Ensure all code is covered by unit and integration tests in `tests/inference/`. Validate against PRD acceptance criteria and architectural compliance. Document how the implementation adheres to the canonical structure and dependency rules.",
+            "status": "pending"
+          },
+          {
+            "id": 8,
+            "title": "Architectural Compliance Validation",
+            "description": "Create automated checks to ensure all Active Inference components comply with the canonical directory structure, naming conventions, and dependency rules.",
+            "dependencies": [
+              7
+            ],
+            "details": "Implement validation scripts that verify: 1) All inference code is properly placed in `inference/` directory, 2) Naming conventions from ADR-004 are followed, 3) Dependency rules from ADR-003 are respected (no core->infrastructure dependencies), 4) Integration points use proper dependency inversion. Add these checks to CI/CD pipeline.",
             "status": "pending"
           }
         ]
@@ -462,73 +542,73 @@
       {
         "id": 7,
         "title": "Develop Agent System Architecture",
-        "description": "Create a flexible, extensible agent architecture that supports different agent types, behaviors, and coalition formation.",
-        "details": "Design and implement a comprehensive agent system architecture:\n\n1. Base Agent Framework:\n   - Abstract BaseAgent class with core interfaces\n   - Personality trait system affecting decision-making\n   - Belief state management integrated with Active Inference\n   - Action selection and execution pipeline\n\n```python\nclass BaseAgent:\n    \"\"\"Foundation for all agent types in the system.\"\"\"\n    \n    def __init__(self, \n                agent_id: str, \n                personality: Dict[str, float] = None):\n        self.id = agent_id\n        self.personality = personality or {}\n        self.beliefs = BeliefState()\n        self.active_inference = ActiveInferenceEngine()\n        self.location = None  # H3 cell location\n        self.energy = 100.0   # Resource management\n    \n    def perceive(self, observations: Observations) -> None:\n        \"\"\"Process observations and update beliefs.\"\"\"\n        self.active_inference.update_beliefs(self, observations)\n    \n    def decide(self) -> Policy:\n        \"\"\"Select best policy using Active Inference.\"\"\"\n        available_policies = self._get_available_policies()\n        return self.active_inference.select_policy(self, available_policies)\n    \n    def act(self, world: World) -> ActionResult:\n        \"\"\"Execute selected policy in the world.\"\"\"\n        policy = self.decide()\n        action = policy.get_next_action(self.beliefs)\n        return world.execute_action(self, action)\n    \n    def _get_available_policies(self) -> List[Policy]:\n        \"\"\"Get policies available to this agent type.\"\"\"\n        raise NotImplementedError(\"Subclasses must implement\")\n```\n\n2. Specialized Agent Types:\n   - Explorer: Focuses on discovering resources and patterns\n   - Developer: Optimizes and builds systems\n   - Merchant: Trades and manages resources\n   - Scholar: Analyzes and learns from data\n\n3. Coalition Framework:\n   - Coalition formation based on mutual benefit\n   - Resource sharing mechanisms\n   - Collective decision making\n   - Business model implementation\n\n```python\nclass Coalition:\n    \"\"\"Represents a group of agents working together.\"\"\"\n    \n    def __init__(self, coalition_id: str, name: str = None):\n        self.id = coalition_id\n        self.name = name or f\"Coalition-{coalition_id}\"\n        self.members = set()  # Agent IDs\n        self.resources = {}    # Shared resources\n        self.business_model = None\n        self.contracts = {}    # Agreements between members\n    \n    def add_member(self, agent: BaseAgent) -> bool:\n        \"\"\"Add agent to coalition if mutually beneficial.\"\"\"\n        # Calculate expected value for agent joining\n        agent_benefit = self._calculate_agent_benefit(agent)\n        coalition_benefit = self._calculate_coalition_benefit(agent)\n        \n        # Only add if Pareto improvement (both benefit)\n        if agent_benefit > 0 and coalition_benefit > 0:\n            self.members.add(agent.id)\n            self._create_contract(agent)\n            return True\n        return False\n    \n    def operate(self) -> BusinessResults:\n        \"\"\"Run coalition business operations.\"\"\"\n        if not self.business_model:\n            raise ValueError(\"No business model defined\")\n        \n        return self.business_model.execute(self)\n```\n\n4. World Integration:\n   - H3 spatial grid system\n   - Resource distribution\n   - Agent interaction mechanics\n   - Time and event management",
-        "testStrategy": "1. Unit tests for each agent type and behavior\n2. Integration tests for agent-world interaction\n3. Scenario tests for coalition formation\n4. Property tests for coalition stability\n5. Performance tests with many agents\n6. Behavioral tests verifying agents act according to personality traits",
-        "priority": "high",
+        "description": "Create a flexible, extensible agent architecture that supports different agent types, behaviors, and coalition formation, strictly adhering to the project's canonical directory structure and architectural decisions.",
+        "status": "pending",
         "dependencies": [
           6
         ],
-        "status": "pending",
+        "priority": "high",
+        "details": "Design and implement a comprehensive agent system architecture following the canonical structure:\n\n1. Base Agent Framework (in `agents/core/`):\n   - Abstract BaseAgent class with core interfaces\n   - Personality trait system affecting decision-making\n   - Belief state management integrated with Active Inference\n   - Action selection and execution pipeline\n   - Must follow dependency rules: core domain cannot depend on interface/infrastructure layers\n\n```python\n# File: agents/core/base_agent.py\nclass BaseAgent:\n    \"\"\"Foundation for all agent types in the system.\"\"\"\n    \n    def __init__(self, \n                agent_id: str, \n                personality: Dict[str, float] = None):\n        self.id = agent_id\n        self.personality = personality or {}\n        self.beliefs = BeliefState()  # From agents/core/belief_state.py\n        self.active_inference = ActiveInferenceEngine()  # From agents/core/active_inference.py\n        self.location = None  # H3 cell location\n        self.energy = 100.0   # Resource management\n    \n    def perceive(self, observations: Observations) -> None:\n        \"\"\"Process observations and update beliefs.\"\"\"\n        self.active_inference.update_beliefs(self, observations)\n    \n    def decide(self) -> Policy:\n        \"\"\"Select best policy using Active Inference.\"\"\"\n        available_policies = self._get_available_policies()\n        return self.active_inference.select_policy(self, available_policies)\n    \n    def act(self, world: World) -> ActionResult:\n        \"\"\"Execute selected policy in the world.\"\"\"\n        policy = self.decide()\n        action = policy.get_next_action(self.beliefs)\n        return world.execute_action(self, action)\n    \n    def _get_available_policies(self) -> List[Policy]:\n        \"\"\"Get policies available to this agent type.\"\"\"\n        raise NotImplementedError(\"Subclasses must implement\")\n```\n\n2. Specialized Agent Types (in `agents/types/`):\n   - Explorer: Focuses on discovering resources and patterns\n   - Developer: Optimizes and builds systems\n   - Merchant: Trades and manages resources\n   - Scholar: Analyzes and learns from data\n   - Each type in its own file following naming conventions\n\n3. Coalition Framework (in `coalitions/core/`):\n   - Coalition formation based on mutual benefit\n   - Resource sharing mechanisms\n   - Collective decision making\n   - Business model implementation\n   - Must not depend on interface or infrastructure layers\n\n```python\n# File: coalitions/core/coalition.py\nclass Coalition:\n    \"\"\"Represents a group of agents working together.\"\"\"\n    \n    def __init__(self, coalition_id: str, name: str = None):\n        self.id = coalition_id\n        self.name = name or f\"Coalition-{coalition_id}\"\n        self.members = set()  # Agent IDs\n        self.resources = {}    # Shared resources\n        self.business_model = None  # From coalitions/core/business_model.py\n        self.contracts = {}    # Agreements between members\n    \n    def add_member(self, agent: BaseAgent) -> bool:\n        \"\"\"Add agent to coalition if mutually beneficial.\"\"\"\n        # Calculate expected value for agent joining\n        agent_benefit = self._calculate_agent_benefit(agent)\n        coalition_benefit = self._calculate_coalition_benefit(agent)\n        \n        # Only add if Pareto improvement (both benefit)\n        if agent_benefit > 0 and coalition_benefit > 0:\n            self.members.add(agent.id)\n            self._create_contract(agent)\n            return True\n        return False\n    \n    def operate(self) -> BusinessResults:\n        \"\"\"Run coalition business operations.\"\"\"\n        if not self.business_model:\n            raise ValueError(\"No business model defined\")\n        \n        return self.business_model.execute(self)\n```\n\n4. World Integration (respecting canonical structure):\n   - H3 spatial grid system (in `world/spatial/`)\n   - Resource distribution (in `world/resources/`)\n   - Agent interaction mechanics (in `world/interactions/`)\n   - Time and event management (in `world/time/`)\n   - All world components must follow the canonical directory structure",
+        "testStrategy": "1. Unit tests for each agent type and behavior (in `tests/unit/agents/`)\n2. Integration tests for agent-world interaction (in `tests/integration/`)\n3. Scenario tests for coalition formation (in `tests/scenarios/`)\n4. Property tests for coalition stability (in `tests/property/`)\n5. Performance tests with many agents (in `tests/performance/`)\n6. Behavioral tests verifying agents act according to personality traits\n7. Architecture compliance tests ensuring all components follow canonical structure and dependency rules",
         "subtasks": [
           {
             "id": 1,
             "title": "Design and Implement Base Agent Framework",
-            "description": "Develop the foundational architecture for agents, including lifecycle management, messaging, and extensibility hooks. Ensure modularity and adherence to SOLID principles for maintainability and future expansion.",
+            "description": "Develop the foundational architecture for agents in `agents/core/`, including lifecycle management, messaging, and extensibility hooks. Ensure modularity, adherence to SOLID principles, and strict compliance with canonical directory structure and dependency rules.",
             "dependencies": [],
-            "details": "Define agent interfaces, core behaviors, and event handling. Establish clear separation of concerns and document the framework for ease of understanding and modification.",
+            "details": "Define agent interfaces, core behaviors, and event handling in the appropriate subdirectories under `agents/`. Establish clear separation of concerns following the architectural decisions. Core domain components must not depend on interface or infrastructure layers.",
             "status": "pending"
           },
           {
             "id": 2,
             "title": "Develop Personality and Trait System",
-            "description": "Create a flexible system for defining and assigning personality traits and behavioral modifiers to agents, supporting both static and dynamic trait changes.",
+            "description": "Create a flexible system for defining and assigning personality traits and behavioral modifiers to agents in `agents/core/traits/`, supporting both static and dynamic trait changes while following naming conventions.",
             "dependencies": [
               1
             ],
-            "details": "Implement trait composition, inheritance, and runtime modification. Ensure traits can influence agent decision-making and interactions. Document trait APIs and provide examples.",
+            "details": "Implement trait composition, inheritance, and runtime modification following the canonical structure. Ensure traits can influence agent decision-making and interactions. Document trait APIs and provide examples. All files must follow the project's naming conventions.",
             "status": "pending"
           },
           {
             "id": 3,
             "title": "Implement Specialized Agent Types",
-            "description": "Extend the base agent framework to support specialized agent roles (e.g., merchant, leader, worker) with unique behaviors and capabilities.",
+            "description": "Extend the base agent framework to support specialized agent roles in `agents/types/` (e.g., merchant, leader, worker) with unique behaviors and capabilities, each in appropriately named files.",
             "dependencies": [
               1,
               2
             ],
-            "details": "Define specialized agent subclasses or strategies. Integrate personality/trait system to allow for nuanced specialization. Ensure code remains modular and testable.",
+            "details": "Define specialized agent subclasses or strategies in separate files under `agents/types/`. Integrate personality/trait system to allow for nuanced specialization. Ensure code remains modular, testable, and follows the canonical structure.",
             "status": "pending"
           },
           {
             "id": 4,
             "title": "Develop Coalition Framework",
-            "description": "Design and implement a system for agents to form, manage, and dissolve coalitions, supporting group behaviors, shared goals, and internal dynamics.",
+            "description": "Design and implement a system for agents to form, manage, and dissolve coalitions in `coalitions/core/`, supporting group behaviors, shared goals, and internal dynamics while respecting dependency rules.",
             "dependencies": [
               1,
               2,
               3
             ],
-            "details": "Establish coalition membership rules, leadership structures, and communication protocols. Ensure coalitions can interact with the world and other coalitions.",
+            "details": "Establish coalition membership rules, leadership structures, and communication protocols in the appropriate subdirectories under `coalitions/`. Ensure coalitions can interact with the world and other coalitions without violating dependency rules.",
             "status": "pending"
           },
           {
             "id": 5,
             "title": "Integrate Agents and Coalitions with World Model",
-            "description": "Connect agents and coalitions to the broader world simulation, enabling environmental awareness, resource interaction, and event-driven behaviors.",
+            "description": "Connect agents and coalitions to the broader world simulation following the canonical structure, enabling environmental awareness, resource interaction, and event-driven behaviors through proper interfaces.",
             "dependencies": [
               1,
               2,
               3,
               4
             ],
-            "details": "Define interfaces for world queries, event subscriptions, and state updates. Ensure agents and coalitions can perceive and affect the world consistently.",
+            "details": "Define interfaces for world queries, event subscriptions, and state updates in appropriate locations. Ensure agents and coalitions can perceive and affect the world consistently while respecting the dependency hierarchy. Integration code should be placed in appropriate interface layers.",
             "status": "pending"
           },
           {
             "id": 6,
             "title": "Implement Resource and Business Model Mechanics",
-            "description": "Develop systems for resource management, economic transactions, and business logic, enabling agents and coalitions to participate in simulated economies.",
+            "description": "Develop systems for resource management in `world/resources/`, economic transactions, and business logic in `coalitions/business/`, enabling agents and coalitions to participate in simulated economies while following the canonical structure.",
             "dependencies": [
               1,
               2,
@@ -536,13 +616,13 @@
               4,
               5
             ],
-            "details": "Design APIs for resource acquisition, consumption, trading, and business operations. Ensure extensibility for future economic features.",
+            "details": "Design APIs for resource acquisition, consumption, trading, and business operations in their appropriate directories. Ensure extensibility for future economic features while maintaining architectural compliance.",
             "status": "pending"
           },
           {
             "id": 7,
             "title": "Testing and Validation of Agent System",
-            "description": "Establish comprehensive testing and validation procedures, including unit, integration, and scenario-based tests, to ensure correctness, robustness, and maintainability.",
+            "description": "Establish comprehensive testing and validation procedures in the canonical test directories, including unit, integration, and scenario-based tests, to ensure correctness, robustness, maintainability, and architectural compliance.",
             "dependencies": [
               1,
               2,
@@ -551,7 +631,22 @@
               5,
               6
             ],
-            "details": "Apply complexity metrics (e.g., cyclomatic complexity), conduct code reviews, and document test coverage. Validate agent behaviors, coalition dynamics, and world interactions against requirements.",
+            "details": "Apply complexity metrics (e.g., cyclomatic complexity), conduct code reviews, and document test coverage. Validate agent behaviors, coalition dynamics, and world interactions against requirements. Include specific tests to verify compliance with canonical structure and dependency rules.",
+            "status": "pending"
+          },
+          {
+            "id": 8,
+            "title": "Verify Architectural Compliance",
+            "description": "Conduct a comprehensive review to ensure all agent system components strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architectural decision records.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "details": "Review all created files and directories against `docs/architecture/decisions/002-canonical-directory-structure.md`, `004-naming-conventions.md`, and `003-dependency-rules.md`. Create automated checks to prevent future violations. Document any necessary adjustments to the architecture.",
             "status": "pending"
           }
         ]
@@ -559,72 +654,72 @@
       {
         "id": 8,
         "title": "Implement API and Interface Layer",
-        "description": "Create a clean, well-documented API for interacting with the agent system, including REST endpoints, WebSocket for real-time updates, and optional GraphQL.",
-        "details": "Design and implement a comprehensive API layer for the agent system:\n\n1. RESTful API using FastAPI:\n   - Agent management endpoints\n   - Coalition operations\n   - Simulation control\n   - World state queries\n\n```python\nfrom fastapi import FastAPI, HTTPException, Depends\nfrom pydantic import BaseModel\n\napp = FastAPI(title=\"FreeAgentics API\")\n\nclass AgentCreate(BaseModel):\n    name: str\n    agent_type: str\n    personality: dict = {}\n    location: Optional[str] = None\n\nclass AgentResponse(BaseModel):\n    id: str\n    name: str\n    agent_type: str\n    personality: dict\n    location: Optional[str]\n    energy: float\n    status: str\n\n@app.post(\"/api/v1/agents\", response_model=AgentResponse)\nasync def create_agent(agent_data: AgentCreate):\n    \"\"\"Create a new agent in the system.\"\"\"\n    try:\n        agent = agent_service.create_agent(\n            name=agent_data.name,\n            agent_type=agent_data.agent_type,\n            personality=agent_data.personality,\n            location=agent_data.location\n        )\n        return agent.to_dict()\n    except ValueError as e:\n        raise HTTPException(status_code=400, detail=str(e))\n\n@app.get(\"/api/v1/agents/{agent_id}\", response_model=AgentResponse)\nasync def get_agent(agent_id: str):\n    \"\"\"Get agent details by ID.\"\"\"\n    agent = agent_service.get_agent(agent_id)\n    if not agent:\n        raise HTTPException(status_code=404, detail=\"Agent not found\")\n    return agent.to_dict()\n```\n\n2. WebSocket for real-time updates:\n   - Agent state changes\n   - Coalition events\n   - World updates\n\n```python\n@app.websocket(\"/ws/world-updates\")\nasync def world_updates_websocket(websocket: WebSocket):\n    await websocket.accept()\n    try:\n        # Subscribe to world events\n        subscription_id = event_bus.subscribe(\"world_updates\")\n        \n        while True:\n            # Get updates from event bus\n            updates = await event_bus.get_updates(subscription_id)\n            \n            # Send to client\n            if updates:\n                await websocket.send_json(updates)\n            \n            # Small delay to prevent CPU spinning\n            await asyncio.sleep(0.1)\n    except WebSocketDisconnect:\n        # Clean up subscription\n        event_bus.unsubscribe(subscription_id)\n```\n\n3. GraphQL API (optional):\n   - Schema for agents, coalitions, world\n   - Queries for complex data retrieval\n   - Mutations for system operations\n   - Subscriptions for real-time updates\n\n4. API Documentation:\n   - OpenAPI specification\n   - Interactive Swagger UI\n   - Example requests and responses\n   - Authentication documentation\n\n5. Client SDKs:\n   - Python client library\n   - TypeScript/JavaScript client\n   - Code generation for other languages\n\n6. Security Features:\n   - API key authentication\n   - Rate limiting\n   - Input validation\n   - CORS configuration",
-        "testStrategy": "1. Unit tests for each endpoint\n2. Integration tests for API flows\n3. Load testing for performance under concurrent requests\n4. Security testing (authentication, input validation)\n5. WebSocket connection testing\n6. API contract testing with consumer-driven contracts\n7. Documentation testing (ensure examples work)",
-        "priority": "medium",
+        "description": "Create a clean, well-documented API for interacting with the agent system, including REST endpoints, WebSocket for real-time updates, and optional GraphQL. All implementations must strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architecture decision records.",
+        "status": "pending",
         "dependencies": [
           7
         ],
-        "status": "pending",
+        "priority": "medium",
+        "details": "Design and implement a comprehensive API layer for the agent system following strict architectural compliance:\n\n**CRITICAL: All implementations must adhere to:**\n- Canonical directory structure (docs/architecture/decisions/002-canonical-directory-structure.md)\n- Naming conventions (docs/architecture/decisions/004-naming-conventions.md)\n- Dependency rules (docs/architecture/decisions/003-dependency-rules.md)\n\n**Directory Structure Requirements:**\n- All API components must be placed in `api/` directory (interface layer)\n- Web components must be placed in `web/` directory\n- Follow dependency inversion: interface layers can depend on core domain, but core domain cannot depend on interface layers\n\n1. RESTful API using FastAPI (in `api/rest/`):\n   - Agent management endpoints\n   - Coalition operations\n   - Simulation control\n   - World state queries\n\n```python\n# File: api/rest/endpoints/agents.py\nfrom fastapi import FastAPI, HTTPException, Depends\nfrom pydantic import BaseModel\nfrom core.agents.services import AgentService  # Interface layer depends on core\n\napp = FastAPI(title=\"FreeAgentics API\")\n\nclass AgentCreate(BaseModel):\n    name: str\n    agent_type: str\n    personality: dict = {}\n    location: Optional[str] = None\n\nclass AgentResponse(BaseModel):\n    id: str\n    name: str\n    agent_type: str\n    personality: dict\n    location: Optional[str]\n    energy: float\n    status: str\n\n@app.post(\"/api/v1/agents\", response_model=AgentResponse)\nasync def create_agent(agent_data: AgentCreate):\n    \"\"\"Create a new agent in the system.\"\"\"\n    try:\n        agent = agent_service.create_agent(\n            name=agent_data.name,\n            agent_type=agent_data.agent_type,\n            personality=agent_data.personality,\n            location=agent_data.location\n        )\n        return agent.to_dict()\n    except ValueError as e:\n        raise HTTPException(status_code=400, detail=str(e))\n\n@app.get(\"/api/v1/agents/{agent_id}\", response_model=AgentResponse)\nasync def get_agent(agent_id: str):\n    \"\"\"Get agent details by ID.\"\"\"\n    agent = agent_service.get_agent(agent_id)\n    if not agent:\n        raise HTTPException(status_code=404, detail=\"Agent not found\")\n    return agent.to_dict()\n```\n\n2. WebSocket for real-time updates (in `api/websocket/`):\n   - Agent state changes\n   - Coalition events\n   - World updates\n\n```python\n# File: api/websocket/handlers/world_updates.py\n@app.websocket(\"/ws/world-updates\")\nasync def world_updates_websocket(websocket: WebSocket):\n    await websocket.accept()\n    try:\n        # Subscribe to world events\n        subscription_id = event_bus.subscribe(\"world_updates\")\n        \n        while True:\n            # Get updates from event bus\n            updates = await event_bus.get_updates(subscription_id)\n            \n            # Send to client\n            if updates:\n                await websocket.send_json(updates)\n            \n            # Small delay to prevent CPU spinning\n            await asyncio.sleep(0.1)\n    except WebSocketDisconnect:\n        # Clean up subscription\n        event_bus.unsubscribe(subscription_id)\n```\n\n3. GraphQL API (optional, in `api/graphql/`):\n   - Schema for agents, coalitions, world\n   - Queries for complex data retrieval\n   - Mutations for system operations\n   - Subscriptions for real-time updates\n\n4. API Documentation (in `api/docs/`):\n   - OpenAPI specification\n   - Interactive Swagger UI\n   - Example requests and responses\n   - Authentication documentation\n\n5. Client SDKs (in `api/clients/`):\n   - Python client library\n   - TypeScript/JavaScript client\n   - Code generation for other languages\n\n6. Security Features (in `api/security/`):\n   - API key authentication\n   - Rate limiting\n   - Input validation\n   - CORS configuration",
+        "testStrategy": "1. Unit tests for each endpoint (following test naming conventions)\n2. Integration tests for API flows (ensuring architectural compliance)\n3. Load testing for performance under concurrent requests\n4. Security testing (authentication, input validation)\n5. WebSocket connection testing\n6. API contract testing with consumer-driven contracts\n7. Documentation testing (ensure examples work)\n8. Architectural compliance testing (verify correct directory placement and dependency rules)",
         "subtasks": [
           {
             "id": 1,
             "title": "REST API Implementation",
-            "description": "Design and implement a robust REST API following best practices for endpoint naming, HTTP method usage, resource-based architecture, stateless communication, and proper versioning. Ensure endpoints are intuitive, scalable, and maintainable, with clear separation of concerns and adherence to semantic versioning.",
+            "description": "Design and implement a robust REST API following best practices for endpoint naming, HTTP method usage, resource-based architecture, stateless communication, and proper versioning. Ensure endpoints are intuitive, scalable, and maintainable, with clear separation of concerns and adherence to semantic versioning. All REST API components must be placed in the `api/rest/` directory following the canonical structure.",
             "dependencies": [],
-            "details": "Follow expert recommendations from Kent Beck, Robert Martin, and Martin Fowler. Use plural nouns for resources, implement GET/POST/PUT/DELETE as appropriate, and ensure statelessness. Plan for future extensibility and maintainability.",
+            "details": "Follow expert recommendations from Kent Beck, Robert Martin, and Martin Fowler. Use plural nouns for resources, implement GET/POST/PUT/DELETE as appropriate, and ensure statelessness. Plan for future extensibility and maintainability. Strictly adhere to the project's architectural decisions: place all REST endpoints in `api/rest/endpoints/`, models in `api/rest/models/`, and ensure the API layer only depends on core domain interfaces, never the other way around.",
             "status": "pending"
           },
           {
             "id": 2,
             "title": "WebSocket Integration",
-            "description": "Integrate WebSocket support for real-time, bidirectional communication where required by the PRD. Ensure seamless coexistence with the REST API and proper handling of connection lifecycle, message routing, and error management.",
+            "description": "Integrate WebSocket support for real-time, bidirectional communication where required by the PRD. Ensure seamless coexistence with the REST API and proper handling of connection lifecycle, message routing, and error management. All WebSocket components must be placed in the `api/websocket/` directory.",
             "dependencies": [
               1
             ],
-            "details": "Design WebSocket endpoints and message schemas that complement the REST API. Ensure robust connection management, authentication, and graceful degradation to REST where WebSockets are unavailable.",
+            "details": "Design WebSocket endpoints and message schemas that complement the REST API. Ensure robust connection management, authentication, and graceful degradation to REST where WebSockets are unavailable. Place handlers in `api/websocket/handlers/`, connection managers in `api/websocket/managers/`, and follow the naming conventions specified in the architecture decisions.",
             "status": "pending"
           },
           {
             "id": 3,
             "title": "GraphQL Schema Design (Optional)",
-            "description": "Design and implement a GraphQL schema to provide flexible, client-driven data querying as an optional API layer. Ensure schema clarity, type safety, and alignment with the underlying data models.",
+            "description": "Design and implement a GraphQL schema to provide flexible, client-driven data querying as an optional API layer. Ensure schema clarity, type safety, and alignment with the underlying data models. All GraphQL components must be placed in the `api/graphql/` directory.",
             "dependencies": [
               1
             ],
-            "details": "Define queries, mutations, and subscriptions as needed. Ensure the schema is well-documented and supports efficient data fetching while preventing over-fetching and under-fetching.",
+            "details": "Define queries, mutations, and subscriptions as needed. Ensure the schema is well-documented and supports efficient data fetching while preventing over-fetching and under-fetching. Place schema definitions in `api/graphql/schema/`, resolvers in `api/graphql/resolvers/`, and maintain strict dependency rules.",
             "status": "pending"
           },
           {
             "id": 4,
             "title": "API Documentation",
-            "description": "Produce comprehensive, interactive API documentation covering REST, WebSocket, and GraphQL endpoints. Ensure documentation is clear, up-to-date, and accessible to both internal and external developers.",
+            "description": "Produce comprehensive, interactive API documentation covering REST, WebSocket, and GraphQL endpoints. Ensure documentation is clear, up-to-date, and accessible to both internal and external developers. All documentation must be placed in the `api/docs/` directory.",
             "dependencies": [
               1,
               2,
               3
             ],
-            "details": "Use OpenAPI/Swagger for REST, and appropriate tools for WebSocket and GraphQL docs. Include example requests/responses, authentication flows, error codes, and versioning information.",
+            "details": "Use OpenAPI/Swagger for REST, and appropriate tools for WebSocket and GraphQL docs. Include example requests/responses, authentication flows, error codes, and versioning information. Follow the documentation structure and naming conventions defined in the architecture decisions.",
             "status": "pending"
           },
           {
             "id": 5,
             "title": "Client SDKs",
-            "description": "Develop and maintain client SDKs for major platforms (e.g., JavaScript, Python, Java) to facilitate easy integration with the API. Ensure SDKs are idiomatic, well-tested, and documented.",
+            "description": "Develop and maintain client SDKs for major platforms (e.g., JavaScript, Python, Java) to facilitate easy integration with the API. Ensure SDKs are idiomatic, well-tested, and documented. All client SDKs must be placed in the `api/clients/` directory.",
             "dependencies": [
               1,
               2,
               3,
               4
             ],
-            "details": "Automate SDK generation where possible. Include authentication helpers, error handling, and support for all major API features. Provide usage examples and versioning.",
+            "details": "Automate SDK generation where possible. Include authentication helpers, error handling, and support for all major API features. Provide usage examples and versioning. Organize SDKs by language: `api/clients/python/`, `api/clients/javascript/`, etc., following the naming conventions.",
             "status": "pending"
           },
           {
             "id": 6,
             "title": "Security Features",
-            "description": "Implement robust security measures across all API layers, including authentication (OAuth 2.0/JWT), authorization, input validation, HTTPS enforcement, CORS, rate limiting, and monitoring.",
+            "description": "Implement robust security measures across all API layers, including authentication (OAuth 2.0/JWT), authorization, input validation, HTTPS enforcement, CORS, rate limiting, and monitoring. All security components must be placed in the `api/security/` directory.",
             "dependencies": [
               1,
               2,
@@ -632,7 +727,22 @@
               4,
               5
             ],
-            "details": "Follow security best practices from industry experts. Conduct thorough security testing, monitor for vulnerabilities, and ensure compliance with relevant standards.",
+            "details": "Follow security best practices from industry experts. Conduct thorough security testing, monitor for vulnerabilities, and ensure compliance with relevant standards. Organize security components: authentication in `api/security/auth/`, middleware in `api/security/middleware/`, and utilities in `api/security/utils/`.",
+            "status": "pending"
+          },
+          {
+            "id": 7,
+            "title": "Architectural Compliance Verification",
+            "description": "Implement automated checks and manual review processes to ensure all API and interface layer implementations strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architecture decision records.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "details": "Create automated linting rules and CI/CD checks that verify: 1) All API files are in the correct directories, 2) Naming conventions are followed, 3) No core domain modules import from interface layers, 4) All interface layer imports from core domain use proper abstractions. Include documentation on how to maintain architectural compliance.",
             "status": "pending"
           }
         ]
@@ -640,17 +750,17 @@
       {
         "id": 9,
         "title": "Create Comprehensive Documentation",
-        "description": "Develop high-quality documentation including README, API docs, architecture diagrams, tutorials, and examples.",
-        "details": "Create a comprehensive documentation suite for FreeAgentics:\n\n1. Project README:\n   - Compelling hero section with animated demo GIF\n   - Clear value proposition in 3 bullet points\n   - Quick start guide in under 5 commands\n   - Code example showing core functionality\n   - Performance metrics and benchmarks\n   - Links to detailed documentation\n\n2. Architecture Documentation:\n   - System overview with C4 model diagrams\n   - Domain model explanation\n   - Active Inference mathematical foundations\n   - Coalition formation mechanics\n   - Data flow diagrams\n\n3. API Documentation:\n   - OpenAPI/Swagger for REST API\n   - GraphQL schema documentation\n   - WebSocket protocol documentation\n   - Authentication and security details\n\n4. Tutorials and Guides:\n   - Getting started tutorial\n   - Creating custom agents\n   - Implementing business models\n   - Deploying to edge devices\n   - Advanced Active Inference usage\n\n5. Code Examples:\n   - Basic agent creation\n   - Coalition formation\n   - Custom behavior implementation\n   - Integration with external systems\n   - Visualization examples\n\n6. Interactive Documentation:\n   - Jupyter notebooks for tutorials\n   - Live API playground\n   - Interactive architecture explorer\n\n7. Development Documentation:\n   - Contributing guidelines\n   - Development environment setup\n   - Testing procedures\n   - Release process\n   - Code style guide\n\nAll documentation should include:\n- Clear, concise language\n- Syntax-highlighted code examples\n- Diagrams where appropriate\n- Links to related documentation\n- Version information\n\nImplementation details:\n- Use MkDocs with Material theme for documentation site\n- Generate API docs from OpenAPI specification\n- Create architecture diagrams with Mermaid or C4 PlantUML\n- Host interactive notebooks with Binder\n- Include runnable examples in documentation",
-        "testStrategy": "1. Verify all links work correctly\n2. Test code examples to ensure they run without errors\n3. Review documentation for clarity and completeness\n4. Test interactive components\n5. Validate API documentation against actual implementation\n6. Check documentation rendering on different devices\n7. Verify version consistency across all documentation",
-        "priority": "medium",
+        "description": "Develop high-quality documentation including README, API docs, architecture diagrams, tutorials, and examples, ensuring strict compliance with canonical project structure and architectural decisions.",
+        "status": "pending",
         "dependencies": [
           3,
           6,
           7,
           8
         ],
-        "status": "pending",
+        "priority": "medium",
+        "details": "Create a comprehensive documentation suite for FreeAgentics that strictly adheres to the project's architectural decisions:\n\n1. Project README:\n   - Compelling hero section with animated demo GIF\n   - Clear value proposition in 3 bullet points\n   - Quick start guide in under 5 commands\n   - Code example showing core functionality\n   - Performance metrics and benchmarks\n   - Links to detailed documentation\n   - Must reference canonical structure (ADR-002), naming conventions (ADR-004), and dependency rules (ADR-003)\n\n2. Architecture Documentation:\n   - System overview with C4 model diagrams\n   - Domain model explanation\n   - Active Inference mathematical foundations\n   - Coalition formation mechanics\n   - Data flow diagrams\n   - Clear documentation of layer separation (core domain, interface, infrastructure)\n   - Dependency inversion principle examples\n\n3. API Documentation:\n   - OpenAPI/Swagger for REST API\n   - GraphQL schema documentation\n   - WebSocket protocol documentation\n   - Authentication and security details\n   - Clear indication of which layer each API belongs to\n\n4. Tutorials and Guides:\n   - Getting started tutorial\n   - Creating custom agents\n   - Implementing business models\n   - Deploying to edge devices\n   - Advanced Active Inference usage\n   - Guide on proper file placement according to canonical structure\n   - Examples of correct dependency usage\n\n5. Code Examples:\n   - Basic agent creation\n   - Coalition formation\n   - Custom behavior implementation\n   - Integration with external systems\n   - Visualization examples\n   - All examples must demonstrate proper layer separation\n   - Web interface examples must be in `web/` directory\n   - Deployment examples must be in `deployment/` directory\n\n6. Interactive Documentation:\n   - Jupyter notebooks for tutorials\n   - Live API playground\n   - Interactive architecture explorer\n   - Examples must follow canonical structure\n\n7. Development Documentation:\n   - Contributing guidelines with emphasis on architectural compliance\n   - Development environment setup\n   - Testing procedures\n   - Release process\n   - Code style guide\n   - Mandatory reading of ADR-002, ADR-003, and ADR-004\n   - Checklist for verifying architectural compliance\n\nAll documentation must include:\n- Clear, concise language\n- Syntax-highlighted code examples\n- Diagrams where appropriate\n- Links to related documentation\n- Version information\n- References to relevant ADRs\n- Examples of correct file placement\n\nImplementation details:\n- Use MkDocs with Material theme for documentation site\n- Generate API docs from OpenAPI specification\n- Create architecture diagrams with Mermaid or C4 PlantUML\n- Host interactive notebooks with Binder\n- Include runnable examples in documentation\n- All documentation must be placed in `docs/` directory following canonical structure",
+        "testStrategy": "1. Verify all links work correctly\n2. Test code examples to ensure they run without errors\n3. Review documentation for clarity and completeness\n4. Test interactive components\n5. Validate API documentation against actual implementation\n6. Check documentation rendering on different devices\n7. Verify version consistency across all documentation\n8. Validate all code examples follow canonical structure (ADR-002)\n9. Ensure all examples respect dependency rules (ADR-003)\n10. Verify naming conventions compliance (ADR-004)\n11. Check that web components are documented as belonging to `web/` directory\n12. Verify deployment components are documented as belonging to `deployment/` directory",
         "subtasks": [
           {
             "id": 1,
@@ -709,16 +819,35 @@
             ],
             "details": "Follow software documentation standards for completeness and clarity. Reference complexity management practices and rationale for technical decisions.",
             "status": "pending"
+          },
+          {
+            "id": 7,
+            "title": "Add Architectural Compliance Documentation",
+            "description": "Create comprehensive documentation explaining the canonical directory structure (ADR-002), dependency rules (ADR-003), and naming conventions (ADR-004). Include practical examples and common pitfalls to avoid.",
+            "dependencies": [
+              2
+            ],
+            "details": "Document the three-layer architecture (core domain, interface, infrastructure), provide clear examples of proper file placement, explain dependency inversion principle implementation, and create a quick reference guide for developers. Include specific examples showing where web components (`web/` directory) and deployment components (`deployment/` directory) should be placed.",
+            "status": "pending"
+          },
+          {
+            "id": 8,
+            "title": "Update All Examples for Architectural Compliance",
+            "description": "Review and update all code examples in documentation to ensure they follow the canonical structure, respect dependency rules, and use correct naming conventions.",
+            "dependencies": [
+              5,
+              7
+            ],
+            "details": "Audit existing examples for compliance with ADR-002, ADR-003, and ADR-004. Update file paths to match canonical structure. Ensure web interface examples are shown in `web/` directory and deployment examples in `deployment/` directory. Add comments explaining architectural decisions in examples.",
+            "status": "pending"
           }
         ]
       },
       {
         "id": 10,
         "title": "Implement Developer Experience Improvements",
-        "description": "Enhance the developer experience with intuitive APIs, development tools, debugging capabilities, and comprehensive examples.",
-        "details": "Implement a suite of developer experience improvements:\n\n1. Intuitive API Design:\n   - Fluent interface patterns for agent creation\n   - Builder patterns for complex objects\n   - Sensible defaults with override options\n   - Support for both sync and async usage\n\n```python\n# Example of fluent interface for agent creation\nfrom freeagentics import Agent, World\n\n# Simple case with sensible defaults\nexplorer = Agent.create(\"Explorer\")\n\n# Advanced case with fluent interface\ndeveloper = (Agent.create(\"Developer\")\n    .with_personality(analytical=0.9, efficiency=0.8)\n    .with_skills([\"optimization\", \"pattern_recognition\"])\n    .at_location(\"8928308280fffff\")  # H3 cell\n    .with_energy(100)\n)\n\n# Coalition creation with builder pattern\ncoalition = (Coalition.builder()\n    .add_agent(explorer)\n    .add_agent(developer)\n    .with_business_model(\"ResourceOptimization\")\n    .with_initial_capital(1000)\n    .build()\n)\n\n# Async operation with context manager\nasync with coalition.operate() as business:\n    await business.run_until_profitable()\n    metrics = business.get_metrics()\n    print(f\"Revenue: ${metrics.revenue:,.2f}\")\n```\n\n2. Development Tools:\n   - CLI for common operations\n   - Development dashboard\n   - Test data generators\n   - Local development server\n\n```bash\n# CLI example\n$ freeagentics agent create --name Alice --class Explorer --personality curious:0.9\n\n✨ Created Explorer agent 'Alice' with ID: agent_7f3a9c\n📊 Personality: ████████░░ curious (0.9) | ███████░░░ cooperative (0.8)\n\n$ freeagentics world simulate --agents Alice,Bob --steps 1000 --visualize\n\n🌍 Starting world simulation...\n⏱️  Step 0/1000: Agents exploring...\n🤝 Step 142: Alice and Bob discovered mutual benefit!\n💼 Step 156: Coalition 'ResourceMapper Inc' formed!\n```\n\n3. Debugging and Observability:\n   - OpenTelemetry integration\n   - Debug mode with detailed logging\n   - Belief state visualizer\n   - Performance profiler\n\n```python\n# Debugging example\nfrom freeagentics import Agent, enable_tracing\nfrom freeagentics.debug import BeliefVisualizer\n\n# Enable distributed tracing\nenable_tracing(endpoint=\"http://localhost:14268/api/traces\")\n\n# Create agent with debug mode\nagent = Agent.create(\"Explorer\", debug=True)\n\n# Visualize belief updates in real-time\nvisualizer = BeliefVisualizer(agent)\nvisualizer.start()  # Opens browser with live visualization\n\n# Detailed logging of Active Inference calculations\nwith agent.verbose_logging():\n    action = agent.select_action()\n```\n\n4. Comprehensive Examples:\n   - Basic examples for getting started\n   - Advanced examples showing complex scenarios\n   - Interactive examples with visualization\n   - Deployment examples for edge devices\n\n5. Development Environment:\n   - Docker development container\n   - VS Code configuration\n   - Pre-commit hooks\n   - Makefile for common tasks\n\n6. Performance Optimization Tools:\n   - Profiling utilities\n   - Benchmark suite\n   - Memory usage analyzer\n   - Scaling test framework",
-        "testStrategy": "1. User testing with developers new to the project\n2. Measure time to complete common tasks\n3. Test CLI commands for correctness and usability\n4. Verify debugging tools provide useful information\n5. Test examples to ensure they work as documented\n6. Validate development environment setup on different platforms\n7. Benchmark performance tools for accuracy",
-        "priority": "medium",
+        "description": "Enhance the developer experience with intuitive APIs, development tools, debugging capabilities, and comprehensive examples, while ensuring strict compliance with the project's canonical architecture and naming conventions.",
+        "status": "pending",
         "dependencies": [
           5,
           6,
@@ -726,66 +855,68 @@
           8,
           9
         ],
-        "status": "pending",
+        "priority": "medium",
+        "details": "Implement a suite of developer experience improvements that strictly adhere to the canonical directory structure, naming conventions, and dependency rules:\n\n1. Intuitive API Design (Following Canonical Structure):\n   - Fluent interface patterns for agent creation (in `src/domain/agents/`)\n   - Builder patterns for complex objects (in appropriate domain modules)\n   - Sensible defaults with override options\n   - Support for both sync and async usage\n   - All interfaces must follow dependency inversion principle\n\n```python\n# Example of fluent interface for agent creation\n# Located in: src/domain/agents/agent_factory.py\nfrom freeagentics import Agent, World\n\n# Simple case with sensible defaults\nexplorer = Agent.create(\"Explorer\")\n\n# Advanced case with fluent interface\ndeveloper = (Agent.create(\"Developer\")\n    .with_personality(analytical=0.9, efficiency=0.8)\n    .with_skills([\"optimization\", \"pattern_recognition\"])\n    .at_location(\"8928308280fffff\")  # H3 cell\n    .with_energy(100)\n)\n\n# Coalition creation with builder pattern\n# Located in: src/domain/coalitions/coalition_builder.py\ncoalition = (Coalition.builder()\n    .add_agent(explorer)\n    .add_agent(developer)\n    .with_business_model(\"ResourceOptimization\")\n    .with_initial_capital(1000)\n    .build()\n)\n\n# Async operation with context manager\nasync with coalition.operate() as business:\n    await business.run_until_profitable()\n    metrics = business.get_metrics()\n    print(f\"Revenue: ${metrics.revenue:,.2f}\")\n```\n\n2. Development Tools (Infrastructure Layer):\n   - CLI for common operations (in `deployment/cli/`)\n   - Development dashboard (in `deployment/dashboard/`)\n   - Test data generators (in `tests/fixtures/`)\n   - Local development server (in `deployment/dev-server/`)\n\n```bash\n# CLI example - located in deployment/cli/\n$ freeagentics agent create --name Alice --class Explorer --personality curious:0.9\n\n✨ Created Explorer agent 'Alice' with ID: agent_7f3a9c\n📊 Personality: ████████░░ curious (0.9) | ███████░░░ cooperative (0.8)\n\n$ freeagentics world simulate --agents Alice,Bob --steps 1000 --visualize\n\n🌍 Starting world simulation...\n⏱️  Step 0/1000: Agents exploring...\n🤝 Step 142: Alice and Bob discovered mutual benefit!\n💼 Step 156: Coalition 'ResourceMapper Inc' formed!\n```\n\n3. Debugging and Observability (Monitoring Layer):\n   - OpenTelemetry integration (in `monitoring/telemetry/`)\n   - Debug mode with detailed logging (configuration in `config/debug/`)\n   - Belief state visualizer (in `monitoring/visualizers/`)\n   - Performance profiler (in `monitoring/profiling/`)\n\n```python\n# Debugging example - interfaces in src/interfaces/debug/\n# Implementation in monitoring/debug/\nfrom freeagentics import Agent, enable_tracing\nfrom freeagentics.debug import BeliefVisualizer\n\n# Enable distributed tracing\nenable_tracing(endpoint=\"http://localhost:14268/api/traces\")\n\n# Create agent with debug mode\nagent = Agent.create(\"Explorer\", debug=True)\n\n# Visualize belief updates in real-time\nvisualizer = BeliefVisualizer(agent)\nvisualizer.start()  # Opens browser with live visualization\n\n# Detailed logging of Active Inference calculations\nwith agent.verbose_logging():\n    action = agent.select_action()\n```\n\n4. Comprehensive Examples (Following Structure):\n   - Basic examples (in `examples/basic/`)\n   - Advanced examples (in `examples/advanced/`)\n   - Interactive examples (in `examples/interactive/`)\n   - Deployment examples (in `deployment/examples/`)\n\n5. Development Environment (Infrastructure):\n   - Docker development container (in `deployment/docker/dev/`)\n   - VS Code configuration (in `.vscode/`)\n   - Pre-commit hooks (in `.pre-commit-config.yaml`)\n   - Makefile for common tasks (in project root)\n\n6. Performance Optimization Tools (Monitoring):\n   - Profiling utilities (in `monitoring/profiling/`)\n   - Benchmark suite (in `tests/benchmarks/`)\n   - Memory usage analyzer (in `monitoring/memory/`)\n   - Scaling test framework (in `tests/scaling/`)\n\nAll components must follow:\n- Canonical directory structure from `docs/architecture/decisions/002-canonical-directory-structure.md`\n- Naming conventions from `docs/architecture/decisions/004-naming-conventions.md`\n- Dependency rules from `docs/architecture/decisions/003-dependency-rules.md`",
+        "testStrategy": "1. User testing with developers new to the project\n2. Measure time to complete common tasks\n3. Test CLI commands for correctness and usability\n4. Verify debugging tools provide useful information\n5. Test examples to ensure they work as documented\n6. Validate development environment setup on different platforms\n7. Benchmark performance tools for accuracy\n8. Verify all components follow canonical structure and naming conventions\n9. Validate dependency rules are not violated (core domain doesn't depend on infrastructure)",
         "subtasks": [
           {
             "id": 1,
             "title": "API Design Improvements",
-            "description": "Refactor and enhance the API following best practices for resource-based architecture, stateless communication, clear URI design, semantic versioning, and robust security.",
+            "description": "Refactor and enhance the API following best practices for resource-based architecture, stateless communication, clear URI design, semantic versioning, and robust security, while adhering to canonical structure.",
             "dependencies": [],
-            "details": "Apply recommendations from Kent Beck, Robert Martin, and Martin Fowler. Ensure APIs use plural nouns for resources, proper HTTP methods, OAuth 2.0/JWT authentication, semantic versioning, and provide OpenAPI/Swagger documentation. Optimize for performance with caching and compression.",
+            "details": "Apply recommendations from Kent Beck, Robert Martin, and Martin Fowler. Ensure APIs use plural nouns for resources, proper HTTP methods, OAuth 2.0/JWT authentication, semantic versioning, and provide OpenAPI/Swagger documentation. Optimize for performance with caching and compression. All API interfaces must be defined in `src/interfaces/` with implementations following dependency inversion principle.",
             "status": "pending"
           },
           {
             "id": 2,
             "title": "CLI/Tooling Enhancements",
-            "description": "Develop and improve command-line tools and developer utilities to streamline API consumption, testing, and automation.",
+            "description": "Develop and improve command-line tools and developer utilities to streamline API consumption, testing, and automation, placing all CLI components in the deployment/cli/ directory.",
             "dependencies": [
               1
             ],
-            "details": "Design CLI tools that align with the improved API, supporting common developer workflows such as scaffolding, testing, and deployment. Ensure tools are intuitive and provide helpful error messages and documentation.",
+            "details": "Design CLI tools that align with the improved API, supporting common developer workflows such as scaffolding, testing, and deployment. Ensure tools are intuitive and provide helpful error messages and documentation. CLI must be placed in `deployment/cli/` as it's infrastructure layer, with interfaces defined in `src/interfaces/cli/` if needed.",
             "status": "pending"
           },
           {
             "id": 3,
             "title": "Debugging and Observability",
-            "description": "Implement comprehensive debugging and observability features to aid developers in identifying and resolving issues efficiently.",
+            "description": "Implement comprehensive debugging and observability features in the monitoring/ directory to aid developers in identifying and resolving issues efficiently.",
             "dependencies": [
               1,
               2
             ],
-            "details": "Integrate structured logging, distributed tracing, and real-time monitoring. Provide clear error reporting, correlation IDs, and metrics dashboards. Ensure observability tools are accessible via both API and CLI.",
+            "details": "Integrate structured logging, distributed tracing, and real-time monitoring. Provide clear error reporting, correlation IDs, and metrics dashboards. Place all monitoring components in `monitoring/` directory with appropriate subdirectories for telemetry, profiling, and visualizers. Configuration files go in `config/debug/`.",
             "status": "pending"
           },
           {
             "id": 4,
             "title": "Example Suite Development",
-            "description": "Create a robust suite of example projects and code snippets demonstrating best practices and common use cases.",
+            "description": "Create a robust suite of example projects and code snippets demonstrating best practices and common use cases, organized according to canonical structure.",
             "dependencies": [
               1,
               2,
               3
             ],
-            "details": "Develop examples covering authentication, CRUD operations, error handling, and performance optimization. Ensure examples are well-documented, tested, and kept up-to-date with API changes.",
+            "details": "Develop examples covering authentication, CRUD operations, error handling, and performance optimization. Place basic examples in `examples/basic/`, advanced in `examples/advanced/`, interactive in `examples/interactive/`, and deployment-specific examples in `deployment/examples/`. Ensure all examples follow naming conventions.",
             "status": "pending"
           },
           {
             "id": 5,
             "title": "Development Environment Setup",
-            "description": "Standardize and automate the setup of local development environments for contributors and users.",
+            "description": "Standardize and automate the setup of local development environments for contributors and users, with all infrastructure components in deployment/ directory.",
             "dependencies": [
               1,
               2,
               3,
               4
             ],
-            "details": "Provide scripts and configuration files for environment provisioning, dependency management, and consistent tooling. Document setup steps and troubleshooting tips.",
+            "details": "Provide scripts and configuration files for environment provisioning, dependency management, and consistent tooling. Docker configurations go in `deployment/docker/dev/`, development server in `deployment/dev-server/`. Document setup steps and troubleshooting tips.",
             "status": "pending"
           },
           {
             "id": 6,
             "title": "Performance Tools Integration",
-            "description": "Integrate and document performance profiling and benchmarking tools to help developers optimize their workflows.",
+            "description": "Integrate and document performance profiling and benchmarking tools in the monitoring/ directory to help developers optimize their workflows.",
             "dependencies": [
               1,
               2,
@@ -793,7 +924,7 @@
               4,
               5
             ],
-            "details": "Include tools for load testing, latency measurement, and resource usage analysis. Offer guidance on interpreting results and tuning performance.",
+            "details": "Include tools for load testing, latency measurement, and resource usage analysis. Place profiling utilities in `monitoring/profiling/`, memory analyzers in `monitoring/memory/`, benchmarks in `tests/benchmarks/`, and scaling tests in `tests/scaling/`. Offer guidance on interpreting results and tuning performance.",
             "status": "pending"
           },
           {
@@ -810,13 +941,96 @@
             ],
             "details": "Conduct usability studies, surveys, and interviews. Implement feedback mechanisms in CLI and documentation. Regularly review and act on user insights to refine the developer experience.",
             "status": "pending"
+          },
+          {
+            "id": 8,
+            "title": "Architecture Compliance Validation",
+            "description": "Implement automated checks to ensure all developer experience improvements comply with canonical structure, naming conventions, and dependency rules.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "details": "Create pre-commit hooks and CI/CD checks that validate file placement according to `docs/architecture/decisions/002-canonical-directory-structure.md`, naming according to `docs/architecture/decisions/004-naming-conventions.md`, and dependency rules from `docs/architecture/decisions/003-dependency-rules.md`. Ensure no core domain modules depend on infrastructure layers.",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Integrate Legacy src/ Directory into Canonical Structure",
+        "description": "Analyze and migrate all existing code from the legacy src/ directory into the canonical directory structure defined in ADR-002, ensuring proper domain separation, preserving git history, and updating all references throughout the codebase.",
+        "details": "Execute a systematic migration of the legacy src/ directory to the canonical structure with full architectural compliance:\n\n**CRITICAL COMPLIANCE REQUIREMENTS:**\n- Strict adherence to canonical directory structure (docs/architecture/decisions/002-canonical-directory-structure.md)\n- Follow naming conventions (docs/architecture/decisions/004-naming-conventions.md)\n- Respect dependency rules (docs/architecture/decisions/003-dependency-rules.md)\n\n**Phase 1: Analysis and Mapping (Day 1-2)**\n1. Create comprehensive inventory of src/ contents:\n   ```bash\n   # Generate detailed file listing with sizes and types\n   find src/ -type f -exec file {} \\; > src_inventory.txt\n   \n   # Extract all Python imports to understand dependencies\n   grep -r \"^import\\|^from\" src/ > src_imports.txt\n   ```\n\n2. Domain classification for each component:\n   - `src/agents/` → `agents/` (core domain)\n   - `src/models/` → `inference/models/` (core domain)\n   - `src/simulation/` → `world/simulation/` (core domain)\n   - `src/database/` → `infrastructure/persistence/` (infrastructure layer)\n   - `src/deployment/` → `infrastructure/deployment/` (infrastructure layer)\n   - `src/monitoring/` → `infrastructure/monitoring/` (infrastructure layer)\n   - `src/pipeline/` → `supporting/pipeline/` (supporting domain)\n   - `src/validation/` → `supporting/validation/` (supporting domain)\n   - `src/readiness/` → `supporting/readiness/` (supporting domain)\n   - `src/knowledge/` → Analyze further - may split between `world/knowledge/` and `supporting/knowledge/`\n   - `src/hardware/` → `infrastructure/hardware/` (infrastructure layer)\n   - `src/learning/` → `inference/learning/` (core domain)\n   - `src/export/` → `interface/export/` (interface layer)\n\n**Phase 2: Pre-Migration Preparation (Day 2-3)**\n1. Create migration script with git history preservation:\n   ```python\n   # migration_script.py\n   import os\n   import subprocess\n   from pathlib import Path\n   \n   MIGRATIONS = {\n       'src/agents': 'agents',\n       'src/models': 'inference/models',\n       'src/database': 'infrastructure/persistence',\n       # ... complete mapping\n   }\n   \n   def migrate_with_history(src_path, dest_path):\n       \"\"\"Move files preserving git history using git mv\"\"\"\n       # Ensure destination directory exists\n       Path(dest_path).parent.mkdir(parents=True, exist_ok=True)\n       \n       # Use git mv to preserve history\n       subprocess.run(['git', 'mv', src_path, dest_path], check=True)\n   ```\n\n2. Create import update script:\n   ```python\n   # update_imports.py\n   import re\n   from pathlib import Path\n   \n   IMPORT_MAPPINGS = {\n       'from src.agents': 'from agents',\n       'import src.agents': 'import agents',\n       'from src.database': 'from infrastructure.persistence',\n       # ... complete mappings\n   }\n   \n   def update_file_imports(filepath):\n       \"\"\"Update all imports in a file\"\"\"\n       content = Path(filepath).read_text()\n       for old, new in IMPORT_MAPPINGS.items():\n           content = re.sub(rf'^{old}', new, content, flags=re.MULTILINE)\n       Path(filepath).write_text(content)\n   ```\n\n**Phase 3: Migration Execution (Day 3-4)**\n1. Create backup branch:\n   ```bash\n   git checkout -b legacy-src-backup\n   git checkout main\n   git checkout -b integrate-legacy-src\n   ```\n\n2. Execute migrations in dependency order:\n   - First: Infrastructure components (no dependencies on other src/ modules)\n   - Second: Core domain components (may depend on infrastructure)\n   - Third: Supporting domain components\n   - Last: Interface layer components\n\n3. For each migration:\n   ```bash\n   # Example for agents module\n   git mv src/agents agents/\n   \n   # Update imports in moved files\n   find agents/ -name \"*.py\" -exec python update_imports.py {} \\;\n   \n   # Update imports in rest of codebase\n   find . -name \"*.py\" -not -path \"./src/*\" -exec python update_imports.py {} \\;\n   \n   # Run tests to verify\n   pytest tests/agents/\n   ```\n\n**Phase 4: Validation and Cleanup (Day 4-5)**\n1. Verify no broken imports:\n   ```python\n   # verify_imports.py\n   import ast\n   import sys\n   from pathlib import Path\n   \n   def check_imports(filepath):\n       \"\"\"Verify all imports in a Python file are valid\"\"\"\n       try:\n           tree = ast.parse(Path(filepath).read_text())\n           # Extract and validate imports\n       except Exception as e:\n           print(f\"Error in {filepath}: {e}\")\n   ```\n\n2. Check architectural compliance:\n   - Ensure no core domain imports from interface/infrastructure\n   - Verify all files are in correct locations per ADR-002\n   - Validate naming conventions per ADR-004\n\n3. Update configuration files:\n   - `pyproject.toml` paths\n   - `.github/workflows/` references\n   - Docker configurations\n   - Documentation references\n\n4. Remove empty src/ directory:\n   ```bash\n   # Verify src/ is empty\n   find src/ -type f | wc -l  # Should be 0\n   \n   # Remove directory\n   git rm -r src/\n   git commit -m \"Remove empty src/ directory after migration to canonical structure\"\n   ```\n\n**Phase 5: Documentation Updates (Day 5)**\n1. Update all documentation references:\n   - README.md paths\n   - API documentation\n   - Architecture diagrams\n   - Developer guides\n\n2. Create migration report:\n   ```markdown\n   # Legacy src/ Migration Report\n   \n   ## Summary\n   - Files migrated: X\n   - Import statements updated: Y\n   - Git history preserved: ✓\n   \n   ## Mapping Details\n   | Original Path | New Path | Domain Classification |\n   |--------------|----------|---------------------|\n   | src/agents/ | agents/ | Core Domain |\n   ...\n   ```\n\n**Special Considerations:**\n1. Handle circular dependencies by refactoring before migration\n2. Preserve __init__.py files and update their imports\n3. Update any hardcoded paths in configuration files\n4. Ensure CI/CD pipelines continue to work\n5. Update any absolute imports to relative where appropriate",
+        "testStrategy": "Comprehensive testing strategy to ensure successful migration without breaking functionality:\n\n**1. Pre-Migration Baseline (Before any changes)**\n- Run full test suite and record results: `pytest --json-report --json-report-file=baseline.json`\n- Generate coverage report: `pytest --cov=src --cov-report=html`\n- Document all test failures (if any) as known issues\n- Create dependency graph: `pydeps src --max-bacon=2 --pylib=False -o deps_before.svg`\n\n**2. Import Verification Testing**\n- Create automated import checker:\n  ```python\n  # test_imports.py\n  def test_all_imports_valid():\n      \"\"\"Verify no broken imports after migration\"\"\"\n      for py_file in Path('.').rglob('*.py'):\n          if 'src/' not in str(py_file):\n              exec(f\"import {py_file.stem}\")\n  ```\n- Run mypy for static type checking: `mypy . --ignore-missing-imports`\n- Use pylint to detect import errors: `pylint **/*.py --errors-only`\n\n**3. Functionality Testing Per Module**\nFor each migrated module:\n- Run module-specific tests: `pytest tests/[module_name]/`\n- Verify API endpoints if applicable\n- Test CLI commands that use the module\n- Check integration points with other modules\n\n**4. Git History Verification**\n- Verify history preservation: `git log --follow agents/base_agent.py`\n- Check blame information: `git blame agents/base_agent.py`\n- Ensure commit count matches: Compare `git log --oneline src/agents | wc -l` with new location\n\n**5. Architectural Compliance Testing**\n- Run dependency checker script:\n  ```python\n  # test_architecture.py\n  def test_no_circular_dependencies():\n      \"\"\"Ensure no circular imports exist\"\"\"\n      # Implementation\n  \n  def test_layer_dependencies():\n      \"\"\"Verify core domain doesn't import from infrastructure\"\"\"\n      # Check that agents/ doesn't import from infrastructure/\n  ```\n- Validate directory structure matches ADR-002\n- Check naming conventions compliance with ADR-004\n\n**6. Integration Testing**\n- Run full application in development mode\n- Execute end-to-end scenarios:\n  - Agent creation and initialization\n  - Coalition formation\n  - Simulation execution\n  - Data persistence\n  - Monitoring and logging\n\n**7. Performance Testing**\n- Compare import times before and after migration\n- Measure application startup time\n- Run performance benchmarks: `pytest tests/performance/ --benchmark-only`\n\n**8. Configuration and Build Testing**\n- Verify Docker builds successfully: `docker build -t freeagentics:test .`\n- Check CI/CD pipeline: Push to feature branch and monitor GitHub Actions\n- Test package installation: `pip install -e .`\n- Verify documentation builds: `mkdocs build --strict`\n\n**9. Rollback Testing**\n- Create rollback plan and test it:\n  ```bash\n  git checkout legacy-src-backup\n  git checkout -b test-rollback\n  git cherry-pick [migration commits]\n  git revert [migration commits]\n  ```\n\n**10. User Acceptance Testing**\n- Have team members pull the branch and test their workflows\n- Verify development environment setup works for new contributors\n- Test common development tasks (running tests, debugging, etc.)\n\n**Success Criteria:**\n- All tests that passed before migration still pass (or are intentionally updated)\n- No broken imports anywhere in the codebase\n- Git history is preserved for all moved files\n- No violations of architectural rules (ADR-002, ADR-003, ADR-004)\n- Performance metrics remain within 5% of baseline\n- All documentation accurately reflects new structure\n- CI/CD pipeline passes all checks\n- No references to src/ directory remain (except in migration documentation)",
+        "status": "in-progress",
+        "dependencies": [
+          3,
+          5
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze and Map src/ Directory Components",
+            "description": "Conduct comprehensive analysis of all directories and files in src/ to understand their purpose, dependencies, and domain classification. Map each component to the appropriate location in the canonical structure (core domain, interface, infrastructure, supporting).",
+            "details": "Create detailed inventory of src/ contents including: agents/, database/, deployment/, knowledge/, models/, readiness/, simulation/, validation/, pipeline/, monitoring/, hardware/, learning/, export/. For each directory, analyze the code to determine: 1) Its architectural layer (core domain, interface, infrastructure, supporting), 2) Dependencies on other modules, 3) Appropriate destination in canonical structure, 4) Any refactoring needed to comply with dependency rules. Document findings in a migration mapping file.\n<info added on 2025-06-20T10:12:15.863Z>\n✅ **SUBTASK 11.1 ANALYSIS COMPLETE**\n\nSuccessfully created comprehensive analysis of src/ directory components with detailed mapping to canonical structure.\n\n## Key Findings:\n\n**Migration Order by Priority:**\n1. **Infrastructure Layer (Priority 1)**: 4 components\n   - src/database → infrastructure/database/\n   - src/hardware → infrastructure/hardware/\n   - src/deployment → infrastructure/deployment/\n   - src/export → infrastructure/export/\n\n2. **Core Layer (Priority 2)**: 1 component  \n   - src/agents → agents/ ⚠️ **35 CONFLICTS DETECTED**\n\n3. **Supporting Layer (Priority 3)**: 7 components\n   - src/learning → learning/\n   - src/simulation → simulation/\n   - src/models → models/\n   - src/knowledge → knowledge/\n   - src/readiness → readiness/\n   - src/monitoring → monitoring/\n   - src/validation → validation/\n\n4. **Interface Layer (Priority 4)**: 1 component\n   - src/pipeline → scripts/pipeline/\n\n## Critical Issue: agents/ Directory Conflicts\n\nThe major challenge is that src/agents contains different agent implementations than the existing agents/ directory:\n- **Existing agents/**: Contains base/, explorer/, guardian/, merchant/, scholar/ with specific agent types\n- **src/agents/**: Contains active_inference.py, movement_perception.py, and testing framework\n\n## Resolution Strategy:\n1. **Merge Strategy**: Integrate src/agents content into existing agents/ structure\n2. **Namespace Separation**: Move src/agents to agents/core/ or agents/src_legacy/\n3. **Component Analysis**: Determine if src/agents provides complementary or conflicting functionality\n\n## Analysis Artifacts Created:\n- **scripts/migration/src_migration_analysis.json**: Complete component analysis\n- **scripts/migration/analyze_src_directory.py**: Reusable analysis tool\n\nNext: Create migration scripts with conflict resolution strategy.\n</info added on 2025-06-20T10:12:15.863Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11
+          },
+          {
+            "id": 2,
+            "title": "Create Migration Scripts and Tools",
+            "description": "Develop automated scripts to safely migrate files from src/ to their canonical locations while preserving git history, updating import statements, and validating architectural compliance.",
+            "details": "Create Python scripts for: 1) File migration with git history preservation using 'git mv', 2) Import statement updates throughout the codebase, 3) Dependency validation to ensure no architectural violations, 4) Rollback capability in case of issues. Scripts must handle edge cases like circular imports, __init__.py files, and configuration file updates. Include comprehensive logging and validation checks.\n<info added on 2025-06-20T10:17:33.215Z>\nMigration scripts successfully created and validated through comprehensive dry-run testing. The migration orchestrator (scripts/migration/migrate_src_directory.py) implements full git history preservation, layer-based migration ordering, and intelligent conflict resolution for the agents/ directory that moves src/agents/*.py to agents/core/ while merging src/agents/testing/ with the existing agents/testing/ structure. The import updater (scripts/migration/update_imports.py) uses AST-based analysis for precise line-by-line updates with comprehensive import mappings from src.* to canonical locations. Dry-run validation confirmed 13 components ready for migration with successful conflict resolution and 214 Python files scanned with 1 import update identified. Migration strategy follows infrastructure-first approach: database/hardware/deployment/export → agents with conflict resolution → learning/simulation/models/utilities → pipeline interface scripts.\n</info added on 2025-06-20T10:17:33.215Z>",
+            "status": "done",
+            "dependencies": [
+              "11.1"
+            ],
+            "parentTaskId": 11
+          },
+          {
+            "id": 3,
+            "title": "Execute Migration in Phases",
+            "description": "Execute the migration of src/ components to canonical structure in carefully planned phases, starting with infrastructure components, then core domain, supporting domain, and finally interface layer components.",
+            "details": "Migrate components in dependency order to avoid breaking imports: Phase 1 - Infrastructure (database/, deployment/, monitoring/, hardware/), Phase 2 - Core Domain (agents/, models/, simulation/, learning/), Phase 3 - Supporting (readiness/, validation/, pipeline/, knowledge/), Phase 4 - Interface (export/). For each phase: create git branch, move files with git mv, update imports, run tests, commit changes. Include rollback checkpoints at each phase.",
+            "status": "in-progress",
+            "dependencies": [
+              "11.2"
+            ],
+            "parentTaskId": 11
+          },
+          {
+            "id": 4,
+            "title": "Validate Migration and Update References",
+            "description": "Comprehensively validate the migration by running all tests, checking for broken imports, verifying architectural compliance, and updating all configuration files and documentation that reference the old src/ structure.",
+            "details": "Validation checklist: 1) Run full test suite and compare with baseline, 2) Check for any remaining src/ references in code, docs, configs, 3) Verify architectural compliance - no core domain depending on infrastructure, 4) Update pyproject.toml, Docker files, CI/CD configs, README, docs, 5) Test import statements work correctly, 6) Verify git history preservation for moved files, 7) Performance testing to ensure no regressions.",
+            "status": "pending",
+            "dependencies": [
+              "11.3"
+            ],
+            "parentTaskId": 11
+          },
+          {
+            "id": 5,
+            "title": "Remove src/ Directory and Finalize Migration",
+            "description": "Complete the migration by removing the empty src/ directory, creating comprehensive migration documentation, and ensuring the canonical structure is fully implemented and enforced.",
+            "details": "Final steps: 1) Verify src/ directory is completely empty (no remaining files), 2) Remove src/ directory with git rm -r src/, 3) Create migration report documenting what was moved where, 4) Update architectural compliance validation scripts to prevent future src/ usage, 5) Add pre-commit hooks to enforce canonical structure, 6) Create team communication about the new structure, 7) Final commit and merge to main branch.",
+            "status": "pending",
+            "dependencies": [
+              "11.4"
+            ],
+            "parentTaskId": 11
           }
         ]
       }
     ],
     "metadata": {
       "created": "2025-06-20T07:23:51.267Z",
-      "updated": "2025-06-20T08:37:53.424Z",
+      "updated": "2025-06-20T10:18:08.109Z",
       "description": "Tasks for master context"
     }
   }

@@ -87,7 +87,7 @@ import {
 } from "./util";
 
 export class StopState {
-  
+
   constructor(stop) {
     this.stop = stop;
   }

@@ -50,7 +50,7 @@ check_postgres() {
 # Function to create database user and database
 setup_database() {
     echo "Setting up database..."
-    
+
     # Try to create user (might already exist)
     echo -n "Creating user '$DB_USER'... "
     if PGPASSWORD=postgres psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';" 2>/dev/null; then
@@ -58,7 +58,7 @@ setup_database() {
     else
         echo -e "${YELLOW}User already exists${NC}"
     fi
-    
+
     # Create database
     echo -n "Creating database '$DB_NAME'... "
     if PGPASSWORD=postgres psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -c "CREATE DATABASE $DB_NAME OWNER $DB_USER;" 2>/dev/null; then
@@ -66,7 +66,7 @@ setup_database() {
     else
         echo -e "${YELLOW}Database already exists${NC}"
     fi
-    
+
     # Grant privileges
     echo -n "Granting privileges... "
     PGPASSWORD=postgres psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;" 2>/dev/null
@@ -77,9 +77,9 @@ setup_database() {
 run_migrations() {
     echo ""
     echo "Running database migrations..."
-    
+
     export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
-    
+
     cd src/database
     python manage.py migrate
     cd ../..
@@ -89,9 +89,9 @@ run_migrations() {
 seed_data() {
     echo ""
     echo "Seeding database with $ENVIRONMENT data..."
-    
+
     export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
-    
+
     cd src/database
     python manage.py seed --env="$ENVIRONMENT"
     cd ../..
@@ -104,12 +104,12 @@ main() {
         echo -e "${RED}Error: This script must be run from the CogniticNet project root${NC}"
         exit 1
     fi
-    
+
     # Check PostgreSQL
     if ! check_postgres; then
         exit 1
     fi
-    
+
     # Parse command line arguments
     case "${1:-all}" in
         "check")
@@ -148,4 +148,4 @@ main() {
 }
 
 # Run main function
-main "$@" 
+main "$@"

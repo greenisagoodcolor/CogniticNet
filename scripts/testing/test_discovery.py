@@ -19,38 +19,39 @@ import ast
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Any, Union, Tuple
-from collections import defaultdict, Counter
+from typing import Dict, List, Optional, Any, Union, Tuple
+from collections import defaultdict
 import json
-import sys
-import subprocess
 
 
 class TestType(Enum):
     """Test categorization following Gary Bernhardt's testing pyramid."""
-    UNIT = "unit"                    # Fast, isolated tests
-    INTEGRATION = "integration"      # Component interaction tests
-    E2E = "e2e"                     # End-to-end system tests
-    PERFORMANCE = "performance"      # Load/stress tests
-    SMOKE = "smoke"                 # Basic functionality tests
-    REGRESSION = "regression"        # Bug prevention tests
-    UNKNOWN = "unknown"             # Cannot determine type
+
+    UNIT = "unit"  # Fast, isolated tests
+    INTEGRATION = "integration"  # Component interaction tests
+    E2E = "e2e"  # End-to-end system tests
+    PERFORMANCE = "performance"  # Load/stress tests
+    SMOKE = "smoke"  # Basic functionality tests
+    REGRESSION = "regression"  # Bug prevention tests
+    UNKNOWN = "unknown"  # Cannot determine type
 
 
 class TestFramework(Enum):
     """Supported test frameworks across languages."""
-    PYTEST = "pytest"               # Python testing
-    UNITTEST = "unittest"           # Python built-in
-    JEST = "jest"                   # JavaScript/TypeScript
-    MOCHA = "mocha"                 # JavaScript alternative
-    CYPRESS = "cypress"             # E2E testing
-    PLAYWRIGHT = "playwright"       # Modern E2E testing
-    VITEST = "vitest"              # Vite-based testing
-    UNKNOWN = "unknown"             # Cannot determine framework
+
+    PYTEST = "pytest"  # Python testing
+    UNITTEST = "unittest"  # Python built-in
+    JEST = "jest"  # JavaScript/TypeScript
+    MOCHA = "mocha"  # JavaScript alternative
+    CYPRESS = "cypress"  # E2E testing
+    PLAYWRIGHT = "playwright"  # Modern E2E testing
+    VITEST = "vitest"  # Vite-based testing
+    UNKNOWN = "unknown"  # Cannot determine framework
 
 
 class TestLanguage(Enum):
     """Programming languages with test support."""
+
     PYTHON = "python"
     JAVASCRIPT = "javascript"
     TYPESCRIPT = "typescript"
@@ -66,6 +67,7 @@ class TestFile:
     Following Kent Beck's principle that tests should be self-documenting
     and provide clear understanding of their purpose and scope.
     """
+
     path: Path
     test_type: TestType
     framework: TestFramework
@@ -113,7 +115,7 @@ class TestFile:
             "has_mocks": self.has_mocks,
             "has_fixtures": self.has_fixtures,
             "detection_confidence": self.detection_confidence,
-            "detection_method": self.detection_method
+            "detection_method": self.detection_method,
         }
 
 
@@ -125,6 +127,7 @@ class TestDiscoveryResult:
     Provides actionable insights for test baseline establishment
     following expert committee guidance.
     """
+
     test_files: List[TestFile] = field(default_factory=list)
     total_tests: int = 0
 
@@ -154,9 +157,15 @@ class TestDiscoveryResult:
         self.total_tests += test_file.test_count
 
         # Update categorization
-        self.by_type[test_file.test_type.value] = self.by_type.get(test_file.test_type.value, 0) + 1
-        self.by_framework[test_file.framework.value] = self.by_framework.get(test_file.framework.value, 0) + 1
-        self.by_language[test_file.language.value] = self.by_language.get(test_file.language.value, 0) + 1
+        self.by_type[test_file.test_type.value] = (
+            self.by_type.get(test_file.test_type.value, 0) + 1
+        )
+        self.by_framework[test_file.framework.value] = (
+            self.by_framework.get(test_file.framework.value, 0) + 1
+        )
+        self.by_language[test_file.language.value] = (
+            self.by_language.get(test_file.language.value, 0) + 1
+        )
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -175,7 +184,7 @@ class TestDiscoveryResult:
             "recommendations": self.recommendations,
             "discovery_duration": self.discovery_duration,
             "files_scanned": self.files_scanned,
-            "errors_encountered": self.errors_encountered
+            "errors_encountered": self.errors_encountered,
         }
 
 
@@ -200,86 +209,78 @@ class TestDiscovery:
     # Test file patterns by language and framework
     TEST_PATTERNS = {
         TestLanguage.PYTHON: {
-            'filename_patterns': [
-                r'^test_.*\.py$',           # test_module.py
-                r'^.*_test\.py$',           # module_test.py
-                r'^test.*\.py$',            # testmodule.py
-                r'^.*tests\.py$',           # moduletests.py
+            "filename_patterns": [
+                r"^test_.*\.py$",  # test_module.py
+                r"^.*_test\.py$",  # module_test.py
+                r"^test.*\.py$",  # testmodule.py
+                r"^.*tests\.py$",  # moduletests.py
             ],
-            'directory_patterns': [
-                r'tests?',                  # tests/ or test/
-                r'.*tests?',               # anything ending in test(s)
-                r'spec',                   # spec/
+            "directory_patterns": [
+                r"tests?",  # tests/ or test/
+                r".*tests?",  # anything ending in test(s)
+                r"spec",  # spec/
             ],
-            'content_patterns': [
-                r'import\s+pytest',
-                r'import\s+unittest',
-                r'from\s+unittest',
-                r'def\s+test_',
-                r'class\s+Test\w+',
-                r'@pytest\.',
-                r'assert\s+',
-            ]
+            "content_patterns": [
+                r"import\s+pytest",
+                r"import\s+unittest",
+                r"from\s+unittest",
+                r"def\s+test_",
+                r"class\s+Test\w+",
+                r"@pytest\.",
+                r"assert\s+",
+            ],
         },
         TestLanguage.JAVASCRIPT: {
-            'filename_patterns': [
-                r'^.*\.test\.js$',          # module.test.js
-                r'^.*\.spec\.js$',          # module.spec.js
-                r'^test.*\.js$',            # testModule.js
+            "filename_patterns": [
+                r"^.*\.test\.js$",  # module.test.js
+                r"^.*\.spec\.js$",  # module.spec.js
+                r"^test.*\.js$",  # testModule.js
             ],
-            'directory_patterns': [
-                r'__tests__',              # __tests__/
-                r'tests?',                 # tests/ or test/
-                r'spec',                   # spec/
-                r'e2e',                    # e2e/
+            "directory_patterns": [
+                r"__tests__",  # __tests__/
+                r"tests?",  # tests/ or test/
+                r"spec",  # spec/
+                r"e2e",  # e2e/
             ],
-            'content_patterns': [
-                r'describe\s*\(',
-                r'it\s*\(',
-                r'test\s*\(',
-                r'expect\s*\(',
-                r'jest\.',
-                r'mocha',
-                r'chai',
-            ]
+            "content_patterns": [
+                r"describe\s*\(",
+                r"it\s*\(",
+                r"test\s*\(",
+                r"expect\s*\(",
+                r"jest\.",
+                r"mocha",
+                r"chai",
+            ],
         },
         TestLanguage.TYPESCRIPT: {
-            'filename_patterns': [
-                r'^.*\.test\.ts$',          # module.test.ts
-                r'^.*\.spec\.ts$',          # module.spec.ts
-                r'^test.*\.ts$',            # testModule.ts
+            "filename_patterns": [
+                r"^.*\.test\.ts$",  # module.test.ts
+                r"^.*\.spec\.ts$",  # module.spec.ts
+                r"^test.*\.ts$",  # testModule.ts
             ],
-            'directory_patterns': [
-                r'__tests__',
-                r'tests?',
-                r'spec',
-                r'e2e',
+            "directory_patterns": [
+                r"__tests__",
+                r"tests?",
+                r"spec",
+                r"e2e",
             ],
-            'content_patterns': [
-                r'describe\s*\(',
-                r'it\s*\(',
-                r'test\s*\(',
-                r'expect\s*\(',
-                r'jest\.',
-                r'vitest',
-            ]
-        }
+            "content_patterns": [
+                r"describe\s*\(",
+                r"it\s*\(",
+                r"test\s*\(",
+                r"expect\s*\(",
+                r"jest\.",
+                r"vitest",
+            ],
+        },
     }
 
     # Framework configuration files
     FRAMEWORK_CONFIGS = {
-        TestFramework.PYTEST: [
-            'pytest.ini', 'pyproject.toml', 'setup.cfg', 'tox.ini'
-        ],
-        TestFramework.JEST: [
-            'jest.config.js', 'jest.config.json', 'package.json'
-        ],
-        TestFramework.CYPRESS: [
-            'cypress.config.js', 'cypress.json'
-        ],
-        TestFramework.PLAYWRIGHT: [
-            'playwright.config.js', 'playwright.config.ts'
-        ]
+        TestFramework.PYTEST: ["pytest.ini", "pyproject.toml", "setup.cfg", "tox.ini"],
+        TestFramework.JEST: ["jest.config.js", "jest.config.json", "package.json"],
+        TestFramework.CYPRESS: ["cypress.config.js", "cypress.json"],
+        TestFramework.PLAYWRIGHT: ["playwright.config.js", "playwright.config.ts"],
     }
 
     def __init__(
@@ -287,7 +288,7 @@ class TestDiscovery:
         project_root: Union[str, Path],
         include_patterns: Optional[List[str]] = None,
         exclude_patterns: Optional[List[str]] = None,
-        max_file_size: int = 10 * 1024 * 1024  # 10MB
+        max_file_size: int = 10 * 1024 * 1024,  # 10MB
     ):
         """
         Initialize test discovery engine.
@@ -301,26 +302,22 @@ class TestDiscovery:
         self.project_root = Path(project_root).resolve()
         self.include_patterns = include_patterns or []
         self.exclude_patterns = exclude_patterns or [
-            r'node_modules',
-            r'\.git',
-            r'__pycache__',
-            r'\.pytest_cache',
-            r'coverage',
-            r'\.coverage',
-            r'dist',
-            r'build',
-            r'\.venv',
-            r'venv',
+            r"node_modules",
+            r"\.git",
+            r"__pycache__",
+            r"\.pytest_cache",
+            r"coverage",
+            r"\.coverage",
+            r"dist",
+            r"build",
+            r"\.venv",
+            r"venv",
         ]
         self.max_file_size = max_file_size
         self.logger = logging.getLogger(__name__)
 
         # Detection statistics
-        self._detection_stats = {
-            'files_scanned': 0,
-            'tests_found': 0,
-            'errors': []
-        }
+        self._detection_stats = {"files_scanned": 0, "tests_found": 0, "errors": []}
 
     def discover_tests(self) -> TestDiscoveryResult:
         """
@@ -330,6 +327,7 @@ class TestDiscovery:
             TestDiscoveryResult: Comprehensive test discovery results
         """
         import time
+
         start_time = time.time()
 
         self.logger.info(f"Starting test discovery in {self.project_root}")
@@ -347,18 +345,20 @@ class TestDiscovery:
                     test_file = self._analyze_test_file(file_path)
                     if test_file:
                         result.add_test_file(test_file)
-                        self._detection_stats['tests_found'] += 1
+                        self._detection_stats["tests_found"] += 1
 
-                    self._detection_stats['files_scanned'] += 1
+                    self._detection_stats["files_scanned"] += 1
 
                     # Log progress
-                    if self._detection_stats['files_scanned'] % 50 == 0:
-                        self.logger.info(f"Analyzed {self._detection_stats['files_scanned']} files")
+                    if self._detection_stats["files_scanned"] % 50 == 0:
+                        self.logger.info(
+                            f"Analyzed {self._detection_stats['files_scanned']} files"
+                        )
 
                 except Exception as e:
                     error_msg = f"Error analyzing {file_path}: {e}"
                     self.logger.warning(error_msg)
-                    self._detection_stats['errors'].append(error_msg)
+                    self._detection_stats["errors"].append(error_msg)
                     result.errors_encountered.append(error_msg)
 
             # Step 3: Find framework configurations
@@ -368,10 +368,12 @@ class TestDiscovery:
             result.recommendations = self._generate_recommendations(result)
 
             # Step 5: Calculate metrics
-            result.files_scanned = self._detection_stats['files_scanned']
+            result.files_scanned = self._detection_stats["files_scanned"]
             result.discovery_duration = time.time() - start_time
 
-            self.logger.info(f"Test discovery complete: {len(result.test_files)} test files found")
+            self.logger.info(
+                f"Test discovery complete: {len(result.test_files)} test files found"
+            )
 
         except Exception as e:
             self.logger.error(f"Test discovery failed: {e}")
@@ -384,7 +386,7 @@ class TestDiscovery:
         potential_files = set()
 
         # Strategy 1: Filename pattern matching
-        for file_path in self.project_root.rglob('*'):
+        for file_path in self.project_root.rglob("*"):
             if not file_path.is_file():
                 continue
 
@@ -397,7 +399,7 @@ class TestDiscovery:
         # Strategy 2: Directory-based discovery
         test_directories = self._find_test_directories()
         for test_dir in test_directories:
-            for file_path in test_dir.rglob('*'):
+            for file_path in test_dir.rglob("*"):
                 if file_path.is_file() and not self._should_exclude_file(file_path):
                     potential_files.add(file_path)
 
@@ -427,7 +429,7 @@ class TestDiscovery:
 
         # Check each language's patterns
         for language, patterns in self.TEST_PATTERNS.items():
-            for pattern in patterns['filename_patterns']:
+            for pattern in patterns["filename_patterns"]:
                 if re.match(pattern, filename, re.IGNORECASE):
                     return True
 
@@ -437,7 +439,7 @@ class TestDiscovery:
         """Find directories likely to contain tests."""
         test_dirs = []
 
-        for directory in self.project_root.rglob('*'):
+        for directory in self.project_root.rglob("*"):
             if not directory.is_dir():
                 continue
 
@@ -448,7 +450,7 @@ class TestDiscovery:
 
             # Check directory patterns
             for language, patterns in self.TEST_PATTERNS.items():
-                for pattern in patterns['directory_patterns']:
+                for pattern in patterns["directory_patterns"]:
                     if re.match(pattern, dir_name):
                         test_dirs.append(directory)
                         break
@@ -465,7 +467,7 @@ class TestDiscovery:
 
             # Read content
             try:
-                content = file_path.read_text(encoding='utf-8', errors='ignore')
+                content = file_path.read_text(encoding="utf-8", errors="ignore")
             except UnicodeDecodeError:
                 # Binary file, skip
                 return None
@@ -484,7 +486,9 @@ class TestDiscovery:
             test_type = self._detect_test_type(file_path, content)
 
             # Extract test functions and classes
-            test_functions, test_classes = self._extract_test_elements(content, language)
+            test_functions, test_classes = self._extract_test_elements(
+                content, language
+            )
 
             # Quality analysis
             has_assertions = self._has_assertions(content, language)
@@ -506,8 +510,10 @@ class TestDiscovery:
                 has_assertions=has_assertions,
                 has_mocks=has_mocks,
                 has_fixtures=has_fixtures,
-                detection_confidence=self._calculate_confidence(file_path, content, language),
-                detection_method="content_analysis"
+                detection_confidence=self._calculate_confidence(
+                    file_path, content, language
+                ),
+                detection_method="content_analysis",
             )
 
             return test_file
@@ -520,13 +526,13 @@ class TestDiscovery:
         """Detect programming language from file extension."""
         suffix = file_path.suffix.lower()
 
-        if suffix == '.py':
+        if suffix == ".py":
             return TestLanguage.PYTHON
-        elif suffix == '.js':
+        elif suffix == ".js":
             return TestLanguage.JAVASCRIPT
-        elif suffix == '.ts':
+        elif suffix == ".ts":
             return TestLanguage.TYPESCRIPT
-        elif suffix in ['.sh', '.bash']:
+        elif suffix in [".sh", ".bash"]:
             return TestLanguage.SHELL
 
         return TestLanguage.UNKNOWN
@@ -536,21 +542,21 @@ class TestDiscovery:
         content_lower = content.lower()
 
         if language == TestLanguage.PYTHON:
-            if 'pytest' in content_lower or '@pytest.' in content_lower:
+            if "pytest" in content_lower or "@pytest." in content_lower:
                 return TestFramework.PYTEST
-            elif 'unittest' in content_lower or 'from unittest' in content_lower:
+            elif "unittest" in content_lower or "from unittest" in content_lower:
                 return TestFramework.UNITTEST
 
         elif language in [TestLanguage.JAVASCRIPT, TestLanguage.TYPESCRIPT]:
-            if 'jest' in content_lower:
+            if "jest" in content_lower:
                 return TestFramework.JEST
-            elif 'mocha' in content_lower:
+            elif "mocha" in content_lower:
                 return TestFramework.MOCHA
-            elif 'cypress' in content_lower:
+            elif "cypress" in content_lower:
                 return TestFramework.CYPRESS
-            elif 'playwright' in content_lower:
+            elif "playwright" in content_lower:
                 return TestFramework.PLAYWRIGHT
-            elif 'vitest' in content_lower:
+            elif "vitest" in content_lower:
                 return TestFramework.VITEST
 
         return TestFramework.UNKNOWN
@@ -561,25 +567,33 @@ class TestDiscovery:
         content_lower = content.lower()
 
         # E2E tests
-        if any(keyword in path_str for keyword in ['e2e', 'integration', 'cypress', 'playwright']):
+        if any(
+            keyword in path_str
+            for keyword in ["e2e", "integration", "cypress", "playwright"]
+        ):
             return TestType.E2E
 
         # Integration tests
-        if any(keyword in path_str for keyword in ['integration', 'api', 'database']):
+        if any(keyword in path_str for keyword in ["integration", "api", "database"]):
             return TestType.INTEGRATION
 
         # Performance tests
-        if any(keyword in path_str for keyword in ['performance', 'load', 'stress', 'benchmark']):
+        if any(
+            keyword in path_str
+            for keyword in ["performance", "load", "stress", "benchmark"]
+        ):
             return TestType.PERFORMANCE
 
         # Smoke tests
-        if any(keyword in path_str for keyword in ['smoke', 'sanity']):
+        if any(keyword in path_str for keyword in ["smoke", "sanity"]):
             return TestType.SMOKE
 
         # Default to unit tests
         return TestType.UNIT
 
-    def _extract_test_elements(self, content: str, language: TestLanguage) -> Tuple[List[str], List[str]]:
+    def _extract_test_elements(
+        self, content: str, language: TestLanguage
+    ) -> Tuple[List[str], List[str]]:
         """Extract test function and class names."""
         functions = []
         classes = []
@@ -601,16 +615,16 @@ class TestDiscovery:
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.FunctionDef):
-                    if node.name.startswith('test_') or node.name.endswith('_test'):
+                    if node.name.startswith("test_") or node.name.endswith("_test"):
                         functions.append(node.name)
                 elif isinstance(node, ast.ClassDef):
-                    if node.name.startswith('Test') or node.name.endswith('Test'):
+                    if node.name.startswith("Test") or node.name.endswith("Test"):
                         classes.append(node.name)
 
         except SyntaxError:
             # Fallback to regex
-            func_pattern = r'def\s+(test_\w+|\w+_test)\s*\('
-            class_pattern = r'class\s+(Test\w+|\w+Test)\s*[\(:]'
+            func_pattern = r"def\s+(test_\w+|\w+_test)\s*\("
+            class_pattern = r"class\s+(Test\w+|\w+Test)\s*[\(:]"
 
             functions = re.findall(func_pattern, content)
             classes = re.findall(class_pattern, content)
@@ -635,18 +649,18 @@ class TestDiscovery:
     def _has_assertions(self, content: str, language: TestLanguage) -> bool:
         """Check if content has assertion statements."""
         if language == TestLanguage.PYTHON:
-            return bool(re.search(r'\bassert\s+', content))
+            return bool(re.search(r"\bassert\s+", content))
         elif language in [TestLanguage.JAVASCRIPT, TestLanguage.TYPESCRIPT]:
-            return bool(re.search(r'\bexpect\s*\(', content))
+            return bool(re.search(r"\bexpect\s*\(", content))
 
         return False
 
     def _has_mocks(self, content: str, language: TestLanguage) -> bool:
         """Check if content uses mocking."""
         mock_patterns = {
-            TestLanguage.PYTHON: [r'\bmock\b', r'@patch', r'MagicMock', r'Mock\('],
-            TestLanguage.JAVASCRIPT: [r'jest\.mock', r'sinon', r'\.mockImplementation'],
-            TestLanguage.TYPESCRIPT: [r'jest\.mock', r'sinon', r'\.mockImplementation']
+            TestLanguage.PYTHON: [r"\bmock\b", r"@patch", r"MagicMock", r"Mock\("],
+            TestLanguage.JAVASCRIPT: [r"jest\.mock", r"sinon", r"\.mockImplementation"],
+            TestLanguage.TYPESCRIPT: [r"jest\.mock", r"sinon", r"\.mockImplementation"],
         }
 
         patterns = mock_patterns.get(language, [])
@@ -655,15 +669,25 @@ class TestDiscovery:
     def _has_fixtures(self, content: str, language: TestLanguage) -> bool:
         """Check if content uses test fixtures."""
         fixture_patterns = {
-            TestLanguage.PYTHON: [r'@pytest\.fixture', r'setUp\s*\(', r'tearDown\s*\('],
-            TestLanguage.JAVASCRIPT: [r'beforeEach\s*\(', r'afterEach\s*\(', r'beforeAll\s*\('],
-            TestLanguage.TYPESCRIPT: [r'beforeEach\s*\(', r'afterEach\s*\(', r'beforeAll\s*\(']
+            TestLanguage.PYTHON: [r"@pytest\.fixture", r"setUp\s*\(", r"tearDown\s*\("],
+            TestLanguage.JAVASCRIPT: [
+                r"beforeEach\s*\(",
+                r"afterEach\s*\(",
+                r"beforeAll\s*\(",
+            ],
+            TestLanguage.TYPESCRIPT: [
+                r"beforeEach\s*\(",
+                r"afterEach\s*\(",
+                r"beforeAll\s*\(",
+            ],
         }
 
         patterns = fixture_patterns.get(language, [])
         return any(re.search(pattern, content) for pattern in patterns)
 
-    def _calculate_confidence(self, file_path: Path, content: str, language: TestLanguage) -> float:
+    def _calculate_confidence(
+        self, file_path: Path, content: str, language: TestLanguage
+    ) -> float:
         """Calculate confidence score for test detection."""
         confidence = 0.0
 
@@ -673,13 +697,15 @@ class TestDiscovery:
 
         # Content patterns
         if language in self.TEST_PATTERNS:
-            patterns = self.TEST_PATTERNS[language]['content_patterns']
-            matches = sum(1 for pattern in patterns if re.search(pattern, content, re.IGNORECASE))
+            patterns = self.TEST_PATTERNS[language]["content_patterns"]
+            matches = sum(
+                1 for pattern in patterns if re.search(pattern, content, re.IGNORECASE)
+            )
             confidence += min(0.5, matches * 0.1)
 
         # Directory location
         path_str = str(file_path).lower()
-        if any(test_dir in path_str for test_dir in ['test', 'spec', '__tests__']):
+        if any(test_dir in path_str for test_dir in ["test", "spec", "__tests__"]):
             confidence += 0.1
 
         return min(1.0, confidence)
@@ -702,39 +728,50 @@ class TestDiscovery:
 
         # Test coverage recommendations
         if result.total_tests == 0:
-            recommendations.append("❌ No tests found! Implement basic test suite for critical functionality")
+            recommendations.append(
+                "❌ No tests found! Implement basic test suite for critical functionality"
+            )
         elif result.total_tests < 10:
-            recommendations.append("⚠️ Very few tests found. Consider expanding test coverage")
+            recommendations.append(
+                "⚠️ Very few tests found. Consider expanding test coverage"
+            )
 
         # Framework recommendations
         if len(result.by_framework) > 2:
-            recommendations.append("🔧 Multiple test frameworks detected. Consider standardizing on one framework")
+            recommendations.append(
+                "🔧 Multiple test frameworks detected. Consider standardizing on one framework"
+            )
 
         # Test type balance
-        unit_tests = result.by_type.get('unit', 0)
-        integration_tests = result.by_type.get('integration', 0)
-        e2e_tests = result.by_type.get('e2e', 0)
+        unit_tests = result.by_type.get("unit", 0)
+        integration_tests = result.by_type.get("integration", 0)
+        e2e_tests = result.by_type.get("e2e", 0)
 
         if unit_tests == 0:
-            recommendations.append("🧪 No unit tests found. Add fast, isolated unit tests for core logic")
+            recommendations.append(
+                "🧪 No unit tests found. Add fast, isolated unit tests for core logic"
+            )
 
         if integration_tests == 0 and result.total_tests > 5:
-            recommendations.append("🔗 Consider adding integration tests for component interactions")
+            recommendations.append(
+                "🔗 Consider adding integration tests for component interactions"
+            )
 
         if e2e_tests == 0 and result.total_tests > 10:
-            recommendations.append("🎯 Consider adding end-to-end tests for critical user workflows")
+            recommendations.append(
+                "🎯 Consider adding end-to-end tests for critical user workflows"
+            )
 
         # Configuration recommendations
         if not result.config_files:
-            recommendations.append("⚙️ No test configuration files found. Add framework config for better test management")
+            recommendations.append(
+                "⚙️ No test configuration files found. Add framework config for better test management"
+            )
 
         return recommendations
 
 
-def create_test_discovery(
-    project_root: str,
-    **kwargs: Any
-) -> TestDiscovery:
+def create_test_discovery(project_root: str, **kwargs: Any) -> TestDiscovery:
     """
     Factory function to create a TestDiscovery instance.
 
@@ -751,7 +788,6 @@ def create_test_discovery(
 def main():
     """Main function for command-line usage."""
     import argparse
-    import time
 
     parser = argparse.ArgumentParser(description="Discover tests in a project")
     parser.add_argument("project_root", help="Project root directory")
@@ -763,7 +799,7 @@ def main():
     # Configure logging
     logging.basicConfig(
         level=logging.INFO if args.verbose else logging.WARNING,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     # Discover tests
@@ -772,14 +808,14 @@ def main():
 
     # Output results
     if args.output:
-        with open(args.output, 'w') as f:
+        with open(args.output, "w") as f:
             json.dump(result.to_dict(), f, indent=2)
         print(f"Results saved to {args.output}")
     else:
         print(json.dumps(result.to_dict(), indent=2))
 
     # Summary
-    print(f"\n📊 Test Discovery Summary:")
+    print("\n📊 Test Discovery Summary:")
     print(f"  📁 Files scanned: {result.files_scanned}")
     print(f"  🧪 Test files found: {len(result.test_files)}")
     print(f"  📝 Total tests: {result.total_tests}")
@@ -792,7 +828,7 @@ def main():
         print(f"  🔧 By framework: {dict(result.by_framework)}")
 
     if result.recommendations:
-        print(f"\n💡 Recommendations:")
+        print("\n💡 Recommendations:")
         for rec in result.recommendations:
             print(f"  {rec}")
 

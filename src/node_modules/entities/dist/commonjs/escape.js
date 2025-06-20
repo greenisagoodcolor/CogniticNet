@@ -11,7 +11,7 @@ const xmlCodeMap = new Map([
     [62, "&gt;"],
 ]);
 // For compatibility with node < 4, we wrap `codePointAt`
-exports.getCodePoint = 
+exports.getCodePoint =
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 String.prototype.codePointAt == null
     ? (c, index) => (c.charCodeAt(index) & 64512) === 55296
@@ -100,7 +100,7 @@ exports.escapeUTF8 = getEscaper(/["&'<>]/g, xmlCodeMap);
  *
  * @param data String to escape.
  */
-exports.escapeAttribute = 
+exports.escapeAttribute =
 /* #__PURE__ */ getEscaper(/["&\u00A0]/g, new Map([
     [34, "&quot;"],
     [38, "&amp;"],

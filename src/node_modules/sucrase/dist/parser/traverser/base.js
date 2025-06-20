@@ -23,8 +23,8 @@ var _charcodes = require('../util/charcodes');
 } exports.augmentError = augmentError;
 
  class Loc {
-  
-  
+
+
   constructor(line, column) {
     this.line = line;
     this.column = column;

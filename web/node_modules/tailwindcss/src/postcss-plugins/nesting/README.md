@@ -39,4 +39,3 @@ module.exports = {
 ```
 
 This can also be helpful if for whatever reason you need to use a very specific version of `postcss-nested` and want to override the version we bundle with `tailwindcss/nesting` itself.
-

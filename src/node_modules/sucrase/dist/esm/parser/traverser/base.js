@@ -23,8 +23,8 @@ export function augmentError(error) {
 }
 
 export class Loc {
-  
-  
+
+
   constructor(line, column) {
     this.line = line;
     this.column = column;

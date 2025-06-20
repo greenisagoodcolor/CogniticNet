@@ -11,7 +11,10 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
 
 # Get database URL from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://freeagentics:dev_password@localhost:5432/freeagentics_dev")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://freeagentics:dev_password@localhost:5432/freeagentics_dev",
+)
 
 # Configure connection pooling based on environment
 POOL_SIZE = int(os.getenv("DATABASE_POOL_SIZE", "5"))
@@ -30,7 +33,7 @@ else:
         max_overflow=MAX_OVERFLOW,
         pool_timeout=POOL_TIMEOUT,
         pool_pre_ping=True,  # Verify connections before using
-        echo=os.getenv("DATABASE_ECHO", "false").lower() == "true"
+        echo=os.getenv("DATABASE_ECHO", "false").lower() == "true",
     )
 
 # Create session factory
@@ -40,15 +43,15 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def get_db() -> Generator[Session, None, None]:
     """
     Dependency to get database session.
-    
+
     Yields:
         Session: SQLAlchemy database session
-        
+
     Example:
         ```python
         from fastapi import Depends
         from src.database import get_db
-        
+
         @app.get("/agents")
         def get_agents(db: Session = Depends(get_db)):
             return db.query(Agent).all()
@@ -67,4 +70,4 @@ async def get_async_db():
     For future use with async SQLAlchemy.
     """
     # TODO: Implement async database support
-    raise NotImplementedError("Async database support not yet implemented") 
+    raise NotImplementedError("Async database support not yet implemented")

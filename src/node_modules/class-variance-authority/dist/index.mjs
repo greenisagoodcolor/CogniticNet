@@ -53,4 +53,3 @@ export const cva = (base, config)=>(props)=>{
         }, []);
         return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
     };
-

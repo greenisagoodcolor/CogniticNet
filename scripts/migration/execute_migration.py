@@ -17,6 +17,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 MIGRATION_PLAN_PATH = PROJECT_ROOT / "migration-plan.json"
 BATCH_SIZE = 5  # Start with small batches for testing
 
+
 def run_command(command: list[str], cwd: Path) -> bool:
     """Runs a command and returns True if successful, False otherwise."""
     print(f"Running command: {' '.join(command)}")
@@ -29,6 +30,7 @@ def run_command(command: list[str], cwd: Path) -> bool:
     print(result.stdout)
     return True
 
+
 def main():
     """
     Executes the file migration plan in batches, running tests after each batch.
@@ -37,7 +39,7 @@ def main():
         print(f"Migration plan not found at {MIGRATION_PLAN_PATH}")
         sys.exit(1)
 
-    with open(MIGRATION_PLAN_PATH, 'r') as f:
+    with open(MIGRATION_PLAN_PATH, "r") as f:
         migration_plan = json.load(f)
 
     # The plan is a list of dicts with 'source' and 'target'
@@ -72,7 +74,9 @@ def main():
             if not run_command(["git", "mv", str(source), str(target)], PROJECT_ROOT):
                 print(f"Failed to move {source}. Rolling back batch.")
                 run_command(["git", "reset", "--hard"], PROJECT_ROOT)
-                run_command(["git", "checkout", "main"], PROJECT_ROOT) # Or whatever the main branch is
+                run_command(
+                    ["git", "checkout", "main"], PROJECT_ROOT
+                )  # Or whatever the main branch is
                 run_command(["git", "branch", "-D", branch_name], PROJECT_ROOT)
                 return  # Abort the whole process
 
@@ -103,7 +107,16 @@ def main():
 
         # 5. Commit the changes
         print("Tests passed. Committing batch.")
-        if not run_command(["git", "commit", "-m", f"refactor: Migrate file batch {batch_num}/{num_batches}", "--no-verify"], PROJECT_ROOT):
+        if not run_command(
+            [
+                "git",
+                "commit",
+                "-m",
+                f"refactor: Migrate file batch {batch_num}/{num_batches}",
+                "--no-verify",
+            ],
+            PROJECT_ROOT,
+        ):
             print("Failed to commit. Please check git status.")
             break
 
@@ -116,6 +129,7 @@ def main():
             break
 
     print("\\nMigration complete.")
+
 
 if __name__ == "__main__":
     main()

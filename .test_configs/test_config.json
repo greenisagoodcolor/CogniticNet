@@ -46,11 +46,7 @@
         "--cov=.",
         "--cov-report=xml"
       ],
-      "plugins": [
-        "pytest-cov",
-        "pytest-xdist",
-        "pytest-html"
-      ]
+      "plugins": ["pytest-cov", "pytest-xdist", "pytest-html"]
     },
     {
       "runner_type": "unittest",
@@ -67,10 +63,7 @@
       "verbose": false,
       "environment_vars": {},
       "working_directory": null,
-      "extra_args": [
-        "discover",
-        "-v"
-      ],
+      "extra_args": ["discover", "-v"],
       "plugins": []
     }
   ],

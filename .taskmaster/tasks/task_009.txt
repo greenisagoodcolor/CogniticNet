@@ -3,9 +3,9 @@
 # Status: pending
 # Dependencies: 3, 6, 7, 8
 # Priority: medium
-# Description: Develop high-quality documentation including README, API docs, architecture diagrams, tutorials, and examples.
+# Description: Develop high-quality documentation including README, API docs, architecture diagrams, tutorials, and examples, ensuring strict compliance with canonical project structure and architectural decisions.
 # Details:
-Create a comprehensive documentation suite for FreeAgentics:
+Create a comprehensive documentation suite for FreeAgentics that strictly adheres to the project's architectural decisions:
 
 1. Project README:
    - Compelling hero section with animated demo GIF
@@ -14,6 +14,7 @@ Create a comprehensive documentation suite for FreeAgentics:
    - Code example showing core functionality
    - Performance metrics and benchmarks
    - Links to detailed documentation
+   - Must reference canonical structure (ADR-002), naming conventions (ADR-004), and dependency rules (ADR-003)
 
 2. Architecture Documentation:
    - System overview with C4 model diagrams
@@ -21,12 +22,15 @@ Create a comprehensive documentation suite for FreeAgentics:
    - Active Inference mathematical foundations
    - Coalition formation mechanics
    - Data flow diagrams
+   - Clear documentation of layer separation (core domain, interface, infrastructure)
+   - Dependency inversion principle examples
 
 3. API Documentation:
    - OpenAPI/Swagger for REST API
    - GraphQL schema documentation
    - WebSocket protocol documentation
    - Authentication and security details
+   - Clear indication of which layer each API belongs to
 
 4. Tutorials and Guides:
    - Getting started tutorial
@@ -34,6 +38,8 @@ Create a comprehensive documentation suite for FreeAgentics:
    - Implementing business models
    - Deploying to edge devices
    - Advanced Active Inference usage
+   - Guide on proper file placement according to canonical structure
+   - Examples of correct dependency usage
 
 5. Code Examples:
    - Basic agent creation
@@ -41,25 +47,33 @@ Create a comprehensive documentation suite for FreeAgentics:
    - Custom behavior implementation
    - Integration with external systems
    - Visualization examples
+   - All examples must demonstrate proper layer separation
+   - Web interface examples must be in `web/` directory
+   - Deployment examples must be in `deployment/` directory
 
 6. Interactive Documentation:
    - Jupyter notebooks for tutorials
    - Live API playground
    - Interactive architecture explorer
+   - Examples must follow canonical structure
 
 7. Development Documentation:
-   - Contributing guidelines
+   - Contributing guidelines with emphasis on architectural compliance
    - Development environment setup
    - Testing procedures
    - Release process
    - Code style guide
+   - Mandatory reading of ADR-002, ADR-003, and ADR-004
+   - Checklist for verifying architectural compliance
 
-All documentation should include:
+All documentation must include:
 - Clear, concise language
 - Syntax-highlighted code examples
 - Diagrams where appropriate
 - Links to related documentation
 - Version information
+- References to relevant ADRs
+- Examples of correct file placement
 
 Implementation details:
 - Use MkDocs with Material theme for documentation site
@@ -67,6 +81,7 @@ Implementation details:
 - Create architecture diagrams with Mermaid or C4 PlantUML
 - Host interactive notebooks with Binder
 - Include runnable examples in documentation
+- All documentation must be placed in `docs/` directory following canonical structure
 
 # Test Strategy:
 1. Verify all links work correctly
@@ -76,6 +91,11 @@ Implementation details:
 5. Validate API documentation against actual implementation
 6. Check documentation rendering on different devices
 7. Verify version consistency across all documentation
+8. Validate all code examples follow canonical structure (ADR-002)
+9. Ensure all examples respect dependency rules (ADR-003)
+10. Verify naming conventions compliance (ADR-004)
+11. Check that web components are documented as belonging to `web/` directory
+12. Verify deployment components are documented as belonging to `deployment/` directory
 
 # Subtasks:
 ## 1. Draft Project README [pending]
@@ -113,4 +133,16 @@ Use consistent coding style and annotate examples for clarity. Integrate example
 ### Description: Document development workflows, coding standards, testing procedures, and contribution processes. Ensure documentation supports maintainability and onboarding.
 ### Details:
 Follow software documentation standards for completeness and clarity. Reference complexity management practices and rationale for technical decisions.
+
+## 7. Add Architectural Compliance Documentation [pending]
+### Dependencies: 9.2
+### Description: Create comprehensive documentation explaining the canonical directory structure (ADR-002), dependency rules (ADR-003), and naming conventions (ADR-004). Include practical examples and common pitfalls to avoid.
+### Details:
+Document the three-layer architecture (core domain, interface, infrastructure), provide clear examples of proper file placement, explain dependency inversion principle implementation, and create a quick reference guide for developers. Include specific examples showing where web components (`web/` directory) and deployment components (`deployment/` directory) should be placed.
+
+## 8. Update All Examples for Architectural Compliance [pending]
+### Dependencies: 9.5, 9.7
+### Description: Review and update all code examples in documentation to ensure they follow the canonical structure, respect dependency rules, and use correct naming conventions.
+### Details:
+Audit existing examples for compliance with ADR-002, ADR-003, and ADR-004. Update file paths to match canonical structure. Ensure web interface examples are shown in `web/` directory and deployment examples in `deployment/` directory. Add comments explaining architectural decisions in examples.
 

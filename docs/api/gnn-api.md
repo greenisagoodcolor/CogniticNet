@@ -13,6 +13,7 @@ https://api.freeagentics.ai/api/gnn
 ## Authentication
 
 The API requires authentication using either:
+
 - **API Key**: Include in the `x-api-key` header
 - **Session**: Valid user session (for web app users)
 
@@ -26,6 +27,7 @@ curl -H "x-api-key: YOUR_API_KEY" https://api.freeagentics.ai/api/gnn/models
 - **Premium**: 100 requests per minute (contact support)
 
 Rate limit headers:
+
 - `X-RateLimit-Limit`: Request limit
 - `X-RateLimit-Remaining`: Remaining requests
 - `X-RateLimit-Reset`: Reset timestamp
@@ -39,6 +41,7 @@ Get information about available GNN architectures and their parameters.
 **Endpoint**: `GET /api/gnn/models`
 
 **Response**:
+
 ```json
 {
   "models": [
@@ -72,6 +75,7 @@ Submit a graph for processing with a specified model and task.
 **Endpoint**: `POST /api/gnn/process`
 
 **Request Body**:
+
 ```json
 {
   "graph": {
@@ -85,7 +89,7 @@ Submit a graph for processing with a specified model and task.
         },
         "position": {
           "lat": 40.7128,
-          "lon": -74.0060
+          "lon": -74.006
         }
       }
     ],
@@ -115,6 +119,7 @@ Submit a graph for processing with a specified model and task.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -136,6 +141,7 @@ Monitor the status of a processing job.
 **Endpoint**: `GET /api/gnn/jobs/{jobId}`
 
 **Response**:
+
 ```json
 {
   "jobId": "job_123456",
@@ -158,6 +164,7 @@ Monitor the status of a processing job.
 ```
 
 **Status Values**:
+
 - `queued`: Job is waiting to be processed
 - `processing`: Job is currently being processed
 - `completed`: Job finished successfully
@@ -171,6 +178,7 @@ Retrieve the results of a completed job.
 **Endpoint**: `GET /api/gnn/jobs/{jobId}/results`
 
 **Response** (Node Classification):
+
 ```json
 {
   "jobId": "job_123456",
@@ -222,6 +230,7 @@ Cancel a queued or processing job.
 **Endpoint**: `DELETE /api/gnn/jobs/{jobId}`
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -245,6 +254,7 @@ All errors follow a consistent format:
 ```
 
 **Common Error Codes**:
+
 - `400`: Bad Request - Invalid input data
 - `401`: Unauthorized - Missing or invalid authentication
 - `404`: Not Found - Resource doesn't exist
@@ -347,6 +357,7 @@ curl -X POST https://api.freeagentics.ai/api/gnn/process \
 ## SDK Support
 
 Official SDKs available for:
+
 - Python: `pip install freeagentics-gnn`
 - JavaScript/TypeScript: `npm install @freeagentics/gnn`
 - Java: Maven package available
@@ -355,6 +366,7 @@ Official SDKs available for:
 ## Changelog
 
 ### v1.0.0 (2024-01-18)
+
 - Initial release with GCN, GAT, GraphSAGE, and GIN support
 - Support for node classification, graph classification, and link prediction
 - Asynchronous job processing

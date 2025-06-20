@@ -3,9 +3,9 @@ var _keywords = require('./keywords');
 var _types = require('./types');
 
  class Scope {
-  
-  
-  
+
+
+
 
   constructor(startTokenIndex, endTokenIndex, isFunctionScope) {
     this.startTokenIndex = startTokenIndex;

@@ -39,7 +39,7 @@ export declare class EntityDecoder {
     private readonly errors?;
     constructor(
     /** The tree used to decode entities. */
-    decodeTree: Uint16Array, 
+    decodeTree: Uint16Array,
     /**
      * The function that is called when a codepoint is decoded.
      *
@@ -49,7 +49,7 @@ export declare class EntityDecoder {
      * @param codepoint The decoded codepoint.
      * @param consumed The number of bytes consumed by the decoder.
      */
-    emitCodePoint: (cp: number, consumed: number) => void, 
+    emitCodePoint: (cp: number, consumed: number) => void,
     /** An object that is used to produce errors. */
     errors?: EntityErrorProducer | undefined);
     /** The current state of the decoder. */

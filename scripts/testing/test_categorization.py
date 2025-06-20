@@ -16,60 +16,68 @@ Following Clean Code and SOLID principles with extensible tagging system.
 
 import logging
 import re
-import ast
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Any, Union, Tuple
-from collections import defaultdict, Counter
+from typing import Dict, List, Optional, Set, Any, Union
+from collections import defaultdict
 import json
-import sys
 import yaml
-from test_discovery import TestFile, TestDiscoveryResult, TestType, TestFramework, TestLanguage
+from test_discovery import (
+    TestFile,
+    TestDiscoveryResult,
+    TestType,
+    TestFramework,
+    TestLanguage,
+)
 
 
 class TestPriority(Enum):
     """Test priority levels for execution order and resource allocation."""
-    CRITICAL = "critical"        # Must pass for release
-    HIGH = "high"               # Important functionality
-    MEDIUM = "medium"           # Standard test coverage
-    LOW = "low"                 # Nice-to-have coverage
-    UNKNOWN = "unknown"         # Cannot determine priority
+
+    CRITICAL = "critical"  # Must pass for release
+    HIGH = "high"  # Important functionality
+    MEDIUM = "medium"  # Standard test coverage
+    LOW = "low"  # Nice-to-have coverage
+    UNKNOWN = "unknown"  # Cannot determine priority
 
 
 class TestCategory(Enum):
     """Functional area categories for test organization."""
-    CORE_LOGIC = "core_logic"           # Business logic tests
-    API = "api"                         # API endpoint tests
-    DATABASE = "database"               # Data persistence tests
-    UI = "ui"                          # User interface tests
-    AUTHENTICATION = "authentication"   # Auth/security tests
-    INTEGRATION = "integration"         # System integration
-    PERFORMANCE = "performance"         # Performance/load tests
-    SECURITY = "security"              # Security-specific tests
-    UTILITY = "utility"                # Helper/utility tests
-    CONFIGURATION = "configuration"     # Config/setup tests
-    DEPLOYMENT = "deployment"          # Deployment/infrastructure
-    UNKNOWN = "unknown"                # Cannot categorize
+
+    CORE_LOGIC = "core_logic"  # Business logic tests
+    API = "api"  # API endpoint tests
+    DATABASE = "database"  # Data persistence tests
+    UI = "ui"  # User interface tests
+    AUTHENTICATION = "authentication"  # Auth/security tests
+    INTEGRATION = "integration"  # System integration
+    PERFORMANCE = "performance"  # Performance/load tests
+    SECURITY = "security"  # Security-specific tests
+    UTILITY = "utility"  # Helper/utility tests
+    CONFIGURATION = "configuration"  # Config/setup tests
+    DEPLOYMENT = "deployment"  # Deployment/infrastructure
+    UNKNOWN = "unknown"  # Cannot categorize
 
 
 class TestStability(Enum):
     """Test stability classification for CI/CD strategy."""
-    STABLE = "stable"           # Reliable, rarely flaky
-    FLAKY = "flaky"            # Occasionally fails
-    UNSTABLE = "unstable"      # Frequently fails
-    NEW = "new"                # Recently added
-    UNKNOWN = "unknown"        # Stability not assessed
+
+    STABLE = "stable"  # Reliable, rarely flaky
+    FLAKY = "flaky"  # Occasionally fails
+    UNSTABLE = "unstable"  # Frequently fails
+    NEW = "new"  # Recently added
+    UNKNOWN = "unknown"  # Stability not assessed
 
 
 class TestExecutionTier(Enum):
     """Execution tier for CI/CD pipeline optimization."""
-    SMOKE = "smoke"            # Quick sanity checks
-    FAST = "fast"              # < 1 second per test
-    MEDIUM = "medium"          # 1-10 seconds per test
-    SLOW = "slow"              # 10+ seconds per test
-    MANUAL = "manual"          # Requires manual intervention
-    UNKNOWN = "unknown"        # Execution time not measured
+
+    SMOKE = "smoke"  # Quick sanity checks
+    FAST = "fast"  # < 1 second per test
+    MEDIUM = "medium"  # 1-10 seconds per test
+    SLOW = "slow"  # 10+ seconds per test
+    MANUAL = "manual"  # Requires manual intervention
+    UNKNOWN = "unknown"  # Execution time not measured
 
 
 @dataclass
@@ -80,6 +88,7 @@ class TestTag:
     Following Kent Beck's principle that tags should be meaningful
     and provide clear context for test organization.
     """
+
     name: str
     category: str
     description: str
@@ -93,7 +102,7 @@ class TestTag:
             "category": self.category,
             "description": self.description,
             "color": self.color,
-            "priority": self.priority
+            "priority": self.priority,
         }
 
 
@@ -105,6 +114,7 @@ class CategorizedTestFile:
     Extends TestFile with expert committee guidance for comprehensive
     test organization and management.
     """
+
     test_file: TestFile
 
     # Categorization
@@ -168,7 +178,7 @@ class CategorizedTestFile:
             "requires_database": self.requires_database,
             "purpose": self.purpose,
             "owner": self.owner,
-            "documentation_url": self.documentation_url
+            "documentation_url": self.documentation_url,
         }
 
 
@@ -180,6 +190,7 @@ class TestCategorizationResult:
     Provides actionable insights for CI/CD pipeline configuration
     and test management following expert committee guidance.
     """
+
     categorized_tests: List[CategorizedTestFile] = field(default_factory=list)
 
     # Statistics
@@ -213,17 +224,27 @@ class TestCategorizationResult:
         self.total_tests += 1
 
         # Update statistics
-        self.by_priority[categorized_test.priority.value] = self.by_priority.get(categorized_test.priority.value, 0) + 1
-        self.by_category[categorized_test.category.value] = self.by_category.get(categorized_test.category.value, 0) + 1
-        self.by_stability[categorized_test.stability.value] = self.by_stability.get(categorized_test.stability.value, 0) + 1
-        self.by_execution_tier[categorized_test.execution_tier.value] = self.by_execution_tier.get(categorized_test.execution_tier.value, 0) + 1
+        self.by_priority[categorized_test.priority.value] = (
+            self.by_priority.get(categorized_test.priority.value, 0) + 1
+        )
+        self.by_category[categorized_test.category.value] = (
+            self.by_category.get(categorized_test.category.value, 0) + 1
+        )
+        self.by_stability[categorized_test.stability.value] = (
+            self.by_stability.get(categorized_test.stability.value, 0) + 1
+        )
+        self.by_execution_tier[categorized_test.execution_tier.value] = (
+            self.by_execution_tier.get(categorized_test.execution_tier.value, 0) + 1
+        )
 
         # Update tag statistics
         for tag in categorized_test.tags:
             self.tag_usage[tag] = self.tag_usage.get(tag, 0) + 1
 
         for area in categorized_test.functional_areas:
-            self.functional_area_coverage[area] = self.functional_area_coverage.get(area, 0) + 1
+            self.functional_area_coverage[area] = (
+                self.functional_area_coverage.get(area, 0) + 1
+            )
 
         # Update duration estimate
         self.estimated_total_duration += categorized_test.estimated_duration
@@ -246,7 +267,7 @@ class TestCategorizationResult:
             "recommended_tags": [tag.to_dict() for tag in self.recommended_tags],
             "categorization_duration": self.categorization_duration,
             "errors_encountered": self.errors_encountered,
-            "recommendations": self.recommendations
+            "recommendations": self.recommendations,
         }
 
 
@@ -271,66 +292,83 @@ class TestCategorizer:
 
     # Path-based categorization patterns
     CATEGORY_PATTERNS = {
-        TestCategory.API: [
-            r'api', r'endpoint', r'rest', r'graphql', r'route'
-        ],
+        TestCategory.API: [r"api", r"endpoint", r"rest", r"graphql", r"route"],
         TestCategory.DATABASE: [
-            r'database', r'db', r'model', r'repository', r'migration', r'schema'
+            r"database",
+            r"db",
+            r"model",
+            r"repository",
+            r"migration",
+            r"schema",
         ],
         TestCategory.UI: [
-            r'ui', r'component', r'frontend', r'view', r'template', r'jsx', r'tsx'
+            r"ui",
+            r"component",
+            r"frontend",
+            r"view",
+            r"template",
+            r"jsx",
+            r"tsx",
         ],
         TestCategory.AUTHENTICATION: [
-            r'auth', r'login', r'security', r'permission', r'token', r'oauth'
+            r"auth",
+            r"login",
+            r"security",
+            r"permission",
+            r"token",
+            r"oauth",
         ],
-        TestCategory.INTEGRATION: [
-            r'integration', r'e2e', r'end.?to.?end', r'system'
-        ],
+        TestCategory.INTEGRATION: [r"integration", r"e2e", r"end.?to.?end", r"system"],
         TestCategory.PERFORMANCE: [
-            r'performance', r'load', r'stress', r'benchmark', r'speed'
+            r"performance",
+            r"load",
+            r"stress",
+            r"benchmark",
+            r"speed",
         ],
-        TestCategory.CONFIGURATION: [
-            r'config', r'setting', r'environment', r'setup'
-        ],
+        TestCategory.CONFIGURATION: [r"config", r"setting", r"environment", r"setup"],
         TestCategory.DEPLOYMENT: [
-            r'deploy', r'docker', r'kubernetes', r'k8s', r'infrastructure'
+            r"deploy",
+            r"docker",
+            r"kubernetes",
+            r"k8s",
+            r"infrastructure",
         ],
-        TestCategory.UTILITY: [
-            r'util', r'helper', r'common', r'shared', r'tool'
-        ]
+        TestCategory.UTILITY: [r"util", r"helper", r"common", r"shared", r"tool"],
     }
 
     # Priority determination patterns
     PRIORITY_PATTERNS = {
         TestPriority.CRITICAL: [
-            r'critical', r'core', r'essential', r'main', r'primary'
+            r"critical",
+            r"core",
+            r"essential",
+            r"main",
+            r"primary",
         ],
-        TestPriority.HIGH: [
-            r'important', r'key', r'major', r'significant'
-        ],
-        TestPriority.LOW: [
-            r'minor', r'optional', r'nice.?to.?have', r'edge.?case'
-        ]
+        TestPriority.HIGH: [r"important", r"key", r"major", r"significant"],
+        TestPriority.LOW: [r"minor", r"optional", r"nice.?to.?have", r"edge.?case"],
     }
 
     # Execution tier estimation patterns
     EXECUTION_TIER_PATTERNS = {
-        TestExecutionTier.SMOKE: [
-            r'smoke', r'sanity', r'basic', r'quick'
-        ],
+        TestExecutionTier.SMOKE: [r"smoke", r"sanity", r"basic", r"quick"],
         TestExecutionTier.SLOW: [
-            r'slow', r'long', r'heavy', r'database', r'integration', r'e2e'
+            r"slow",
+            r"long",
+            r"heavy",
+            r"database",
+            r"integration",
+            r"e2e",
         ],
-        TestExecutionTier.MANUAL: [
-            r'manual', r'interactive', r'user'
-        ]
+        TestExecutionTier.MANUAL: [r"manual", r"interactive", r"user"],
     }
 
     def __init__(
         self,
         project_root: Union[str, Path],
         custom_rules: Optional[Dict[str, Any]] = None,
-        tag_config_file: Optional[str] = None
+        tag_config_file: Optional[str] = None,
     ):
         """
         Initialize test categorization engine.
@@ -348,12 +386,11 @@ class TestCategorizer:
         self.tag_definitions = self._load_tag_definitions(tag_config_file)
 
         # Categorization statistics
-        self._categorization_stats = {
-            'tests_categorized': 0,
-            'errors': []
-        }
+        self._categorization_stats = {"tests_categorized": 0, "errors": []}
 
-    def categorize_tests(self, discovery_result: TestDiscoveryResult) -> TestCategorizationResult:
+    def categorize_tests(
+        self, discovery_result: TestDiscoveryResult
+    ) -> TestCategorizationResult:
         """
         Categorize all discovered tests following expert committee guidance.
 
@@ -364,9 +401,12 @@ class TestCategorizer:
             TestCategorizationResult: Comprehensive categorization results
         """
         import time
+
         start_time = time.time()
 
-        self.logger.info(f"Starting test categorization for {len(discovery_result.test_files)} test files")
+        self.logger.info(
+            f"Starting test categorization for {len(discovery_result.test_files)} test files"
+        )
 
         result = TestCategorizationResult()
 
@@ -376,23 +416,27 @@ class TestCategorizer:
                 try:
                     categorized_test = self._categorize_test_file(test_file)
                     result.add_categorized_test(categorized_test)
-                    self._categorization_stats['tests_categorized'] += 1
+                    self._categorization_stats["tests_categorized"] += 1
 
                     # Log progress
-                    if self._categorization_stats['tests_categorized'] % 25 == 0:
-                        self.logger.info(f"Categorized {self._categorization_stats['tests_categorized']} tests")
+                    if self._categorization_stats["tests_categorized"] % 25 == 0:
+                        self.logger.info(
+                            f"Categorized {self._categorization_stats['tests_categorized']} tests"
+                        )
 
                 except Exception as e:
                     error_msg = f"Error categorizing {test_file.path}: {e}"
                     self.logger.warning(error_msg)
-                    self._categorization_stats['errors'].append(error_msg)
+                    self._categorization_stats["errors"].append(error_msg)
                     result.errors_encountered.append(error_msg)
 
             # Step 2: Analyze critical path
             result.critical_path_tests = self._identify_critical_path(result)
 
             # Step 3: Group for parallel execution
-            result.parallel_execution_groups = self._group_for_parallel_execution(result)
+            result.parallel_execution_groups = self._group_for_parallel_execution(
+                result
+            )
 
             # Step 4: Identify coverage gaps
             result.test_coverage_gaps = self._identify_coverage_gaps(result)
@@ -406,7 +450,9 @@ class TestCategorizer:
             # Step 7: Calculate final metrics
             result.categorization_duration = time.time() - start_time
 
-            self.logger.info(f"Test categorization complete: {len(result.categorized_tests)} tests categorized")
+            self.logger.info(
+                f"Test categorization complete: {len(result.categorized_tests)} tests categorized"
+            )
 
         except Exception as e:
             self.logger.error(f"Test categorization failed: {e}")
@@ -464,18 +510,29 @@ class TestCategorizer:
         # Check content patterns for Python files
         if test_file.language == TestLanguage.PYTHON:
             try:
-                content = test_file.path.read_text(encoding='utf-8', errors='ignore').lower()
+                content = test_file.path.read_text(
+                    encoding="utf-8", errors="ignore"
+                ).lower()
 
                 # API patterns
-                if any(keyword in content for keyword in ['fastapi', 'flask', 'django', 'request', 'response']):
+                if any(
+                    keyword in content
+                    for keyword in ["fastapi", "flask", "django", "request", "response"]
+                ):
                     return TestCategory.API
 
                 # Database patterns
-                if any(keyword in content for keyword in ['sqlalchemy', 'database', 'db', 'query', 'model']):
+                if any(
+                    keyword in content
+                    for keyword in ["sqlalchemy", "database", "db", "query", "model"]
+                ):
                     return TestCategory.DATABASE
 
                 # Authentication patterns
-                if any(keyword in content for keyword in ['auth', 'login', 'token', 'permission']):
+                if any(
+                    keyword in content
+                    for keyword in ["auth", "login", "token", "permission"]
+                ):
                     return TestCategory.AUTHENTICATION
 
             except Exception:
@@ -559,7 +616,9 @@ class TestCategorizer:
 
         return TestExecutionTier.MEDIUM
 
-    def _generate_tags(self, test_file: TestFile, categorized: CategorizedTestFile) -> Set[str]:
+    def _generate_tags(
+        self, test_file: TestFile, categorized: CategorizedTestFile
+    ) -> Set[str]:
         """Generate appropriate tags for a test file."""
         tags = set()
 
@@ -595,7 +654,7 @@ class TestCategorizer:
         path_parts = test_file.path.parts
         for part in path_parts:
             part_lower = part.lower()
-            if part_lower in ['integration', 'unit', 'e2e', 'api', 'database', 'ui']:
+            if part_lower in ["integration", "unit", "e2e", "api", "database", "ui"]:
                 tags.add(part_lower)
 
         return tags
@@ -607,16 +666,16 @@ class TestCategorizer:
 
         # Common functional areas
         functional_patterns = {
-            'agents': r'agent',
-            'inference': r'inference|ai|ml',
-            'coalition': r'coalition|group',
-            'world': r'world|environment|simulation',
-            'api': r'api|endpoint|route',
-            'database': r'database|db|model',
-            'authentication': r'auth|login|security',
-            'frontend': r'frontend|ui|component',
-            'backend': r'backend|server|service',
-            'deployment': r'deploy|docker|k8s',
+            "agents": r"agent",
+            "inference": r"inference|ai|ml",
+            "coalition": r"coalition|group",
+            "world": r"world|environment|simulation",
+            "api": r"api|endpoint|route",
+            "database": r"database|db|model",
+            "authentication": r"auth|login|security",
+            "frontend": r"frontend|ui|component",
+            "backend": r"backend|server|service",
+            "deployment": r"deploy|docker|k8s",
         }
 
         for area, pattern in functional_patterns.items():
@@ -625,13 +684,15 @@ class TestCategorizer:
 
         # Extract from path components
         for part in test_file.path.parts:
-            part_clean = re.sub(r'[^a-zA-Z0-9]', '', part.lower())
-            if len(part_clean) > 3 and part_clean not in ['test', 'tests', 'spec']:
+            part_clean = re.sub(r"[^a-zA-Z0-9]", "", part.lower())
+            if len(part_clean) > 3 and part_clean not in ["test", "tests", "spec"]:
                 areas.add(part_clean)
 
         return areas
 
-    def _estimate_duration(self, test_file: TestFile, categorized: CategorizedTestFile) -> float:
+    def _estimate_duration(
+        self, test_file: TestFile, categorized: CategorizedTestFile
+    ) -> float:
         """Estimate test execution duration in seconds."""
         base_duration = 0.1  # Base duration per test
 
@@ -642,7 +703,7 @@ class TestCategorizer:
             TestExecutionTier.MEDIUM: 5.0,
             TestExecutionTier.SLOW: 30.0,
             TestExecutionTier.MANUAL: 300.0,
-            TestExecutionTier.UNKNOWN: 2.0
+            TestExecutionTier.UNKNOWN: 2.0,
         }
 
         # Duration multipliers by test type
@@ -653,7 +714,7 @@ class TestCategorizer:
             TestType.PERFORMANCE: 120.0,
             TestType.SMOKE: 0.5,
             TestType.REGRESSION: 5.0,
-            TestType.UNKNOWN: 2.0
+            TestType.UNKNOWN: 2.0,
         }
 
         tier_mult = tier_multipliers.get(categorized.execution_tier, 2.0)
@@ -672,19 +733,37 @@ class TestCategorizer:
     def _requires_docker(self, test_file: TestFile) -> bool:
         """Check if test requires Docker."""
         try:
-            content = test_file.path.read_text(encoding='utf-8', errors='ignore').lower()
-            return any(keyword in content for keyword in ['docker', 'container', 'testcontainer'])
+            content = test_file.path.read_text(
+                encoding="utf-8", errors="ignore"
+            ).lower()
+            return any(
+                keyword in content
+                for keyword in ["docker", "container", "testcontainer"]
+            )
         except Exception:
             return False
 
     def _requires_database(self, test_file: TestFile) -> bool:
         """Check if test requires database."""
         try:
-            content = test_file.path.read_text(encoding='utf-8', errors='ignore').lower()
-            return any(keyword in content for keyword in [
-                'database', 'db', 'sqlalchemy', 'postgresql', 'mysql', 'sqlite',
-                'model', 'query', 'transaction', 'migration'
-            ])
+            content = test_file.path.read_text(
+                encoding="utf-8", errors="ignore"
+            ).lower()
+            return any(
+                keyword in content
+                for keyword in [
+                    "database",
+                    "db",
+                    "sqlalchemy",
+                    "postgresql",
+                    "mysql",
+                    "sqlite",
+                    "model",
+                    "query",
+                    "transaction",
+                    "migration",
+                ]
+            )
         except Exception:
             return False
 
@@ -704,7 +783,9 @@ class TestCategorizer:
 
         return False
 
-    def _generate_purpose(self, test_file: TestFile, categorized: CategorizedTestFile) -> str:
+    def _generate_purpose(
+        self, test_file: TestFile, categorized: CategorizedTestFile
+    ) -> str:
         """Generate a purpose description for the test."""
         purpose_parts = []
 
@@ -715,7 +796,7 @@ class TestCategorizer:
             TestType.E2E: "Validates complete user workflows",
             TestType.PERFORMANCE: "Measures system performance",
             TestType.SMOKE: "Provides basic functionality validation",
-            TestType.REGRESSION: "Prevents known bugs from reoccurring"
+            TestType.REGRESSION: "Prevents known bugs from reoccurring",
         }
 
         if test_file.test_type in type_descriptions:
@@ -727,7 +808,7 @@ class TestCategorizer:
             TestCategory.DATABASE: "for data persistence",
             TestCategory.UI: "for user interface",
             TestCategory.AUTHENTICATION: "for authentication and security",
-            TestCategory.CORE_LOGIC: "for business logic"
+            TestCategory.CORE_LOGIC: "for business logic",
         }
 
         if categorized.category in category_descriptions:
@@ -745,14 +826,18 @@ class TestCategorizer:
         critical_tests = []
 
         for categorized in result.categorized_tests:
-            if (categorized.priority == TestPriority.CRITICAL or
-                categorized.test_file.test_type == TestType.SMOKE or
-                categorized.required_for_merge):
+            if (
+                categorized.priority == TestPriority.CRITICAL
+                or categorized.test_file.test_type == TestType.SMOKE
+                or categorized.required_for_merge
+            ):
                 critical_tests.append(str(categorized.test_file.path))
 
         return critical_tests
 
-    def _group_for_parallel_execution(self, result: TestCategorizationResult) -> Dict[str, List[str]]:
+    def _group_for_parallel_execution(
+        self, result: TestCategorizationResult
+    ) -> Dict[str, List[str]]:
         """Group tests for optimal parallel execution."""
         groups = defaultdict(list)
 
@@ -777,43 +862,65 @@ class TestCategorizer:
 
         # Check category coverage
         category_counts = result.by_category
-        if category_counts.get('api', 0) == 0:
+        if category_counts.get("api", 0) == 0:
             gaps.append("No API tests found - consider adding endpoint tests")
-        if category_counts.get('integration', 0) == 0:
-            gaps.append("No integration tests found - consider adding component interaction tests")
-        if category_counts.get('security', 0) == 0:
-            gaps.append("No security tests found - consider adding authentication/authorization tests")
+        if category_counts.get("integration", 0) == 0:
+            gaps.append(
+                "No integration tests found - consider adding component interaction tests"
+            )
+        if category_counts.get("security", 0) == 0:
+            gaps.append(
+                "No security tests found - consider adding authentication/authorization tests"
+            )
 
         # Check priority distribution
         priority_counts = result.by_priority
         total_tests = sum(priority_counts.values())
         if total_tests > 0:
-            critical_ratio = priority_counts.get('critical', 0) / total_tests
+            critical_ratio = priority_counts.get("critical", 0) / total_tests
             if critical_ratio < 0.1:
-                gaps.append("Low critical test coverage - consider marking more tests as critical")
+                gaps.append(
+                    "Low critical test coverage - consider marking more tests as critical"
+                )
 
         # Check execution tier balance
         tier_counts = result.by_execution_tier
-        if tier_counts.get('fast', 0) < tier_counts.get('slow', 0):
-            gaps.append("More slow tests than fast tests - consider optimizing test performance")
+        if tier_counts.get("fast", 0) < tier_counts.get("slow", 0):
+            gaps.append(
+                "More slow tests than fast tests - consider optimizing test performance"
+            )
 
         return gaps
 
-    def _generate_recommended_tags(self, result: TestCategorizationResult) -> List[TestTag]:
+    def _generate_recommended_tags(
+        self, result: TestCategorizationResult
+    ) -> List[TestTag]:
         """Generate recommended tags based on analysis."""
         recommended = []
 
         # Standard recommended tags
         standard_tags = [
             TestTag("smoke", "execution", "Quick sanity check tests", "#28a745"),
-            TestTag("critical", "priority", "Critical path tests for releases", "#dc3545"),
-            TestTag("fast", "performance", "Tests that run in under 1 second", "#17a2b8"),
-            TestTag("slow", "performance", "Tests that take more than 10 seconds", "#ffc107"),
+            TestTag(
+                "critical", "priority", "Critical path tests for releases", "#dc3545"
+            ),
+            TestTag(
+                "fast", "performance", "Tests that run in under 1 second", "#17a2b8"
+            ),
+            TestTag(
+                "slow", "performance", "Tests that take more than 10 seconds", "#ffc107"
+            ),
             TestTag("flaky", "stability", "Tests that occasionally fail", "#fd7e14"),
-            TestTag("requires-db", "infrastructure", "Tests requiring database", "#6f42c1"),
-            TestTag("requires-docker", "infrastructure", "Tests requiring Docker", "#20c997"),
-            TestTag("parallel-safe", "execution", "Safe for parallel execution", "#28a745"),
-            TestTag("sequential-only", "execution", "Must run sequentially", "#dc3545")
+            TestTag(
+                "requires-db", "infrastructure", "Tests requiring database", "#6f42c1"
+            ),
+            TestTag(
+                "requires-docker", "infrastructure", "Tests requiring Docker", "#20c997"
+            ),
+            TestTag(
+                "parallel-safe", "execution", "Safe for parallel execution", "#28a745"
+            ),
+            TestTag("sequential-only", "execution", "Must run sequentially", "#dc3545"),
         ]
 
         recommended.extend(standard_tags)
@@ -821,9 +928,11 @@ class TestCategorizer:
         # Dynamic tags based on functional areas
         for area in result.functional_area_coverage.keys():
             if result.functional_area_coverage[area] >= 3:  # At least 3 tests
-                recommended.append(TestTag(
-                    area, "functional", f"Tests for {area} functionality", "#6c757d"
-                ))
+                recommended.append(
+                    TestTag(
+                        area, "functional", f"Tests for {area} functionality", "#6c757d"
+                    )
+                )
 
         return recommended
 
@@ -837,37 +946,51 @@ class TestCategorizer:
             return ["❌ No tests categorized - ensure test discovery is working"]
 
         # Priority distribution
-        critical_count = result.by_priority.get('critical', 0)
+        critical_count = result.by_priority.get("critical", 0)
         if critical_count == 0:
-            recommendations.append("⚠️ No critical tests identified - mark essential tests as critical")
+            recommendations.append(
+                "⚠️ No critical tests identified - mark essential tests as critical"
+            )
         elif critical_count / total_tests > 0.5:
-            recommendations.append("📊 High ratio of critical tests - consider if all are truly critical")
+            recommendations.append(
+                "📊 High ratio of critical tests - consider if all are truly critical"
+            )
 
         # Execution tier recommendations
-        slow_count = result.by_execution_tier.get('slow', 0)
-        fast_count = result.by_execution_tier.get('fast', 0)
+        slow_count = result.by_execution_tier.get("slow", 0)
+        fast_count = result.by_execution_tier.get("fast", 0)
 
         if slow_count > fast_count:
-            recommendations.append("🐌 More slow tests than fast tests - optimize for CI/CD performance")
+            recommendations.append(
+                "🐌 More slow tests than fast tests - optimize for CI/CD performance"
+            )
 
         if result.estimated_total_duration > 300:  # 5 minutes
-            recommendations.append(f"⏱️ Total execution time: {result.estimated_total_duration:.1f}s - consider parallel execution")
+            recommendations.append(
+                f"⏱️ Total execution time: {result.estimated_total_duration:.1f}s - consider parallel execution"
+            )
 
         # Coverage recommendations
         category_counts = result.by_category
         if len(category_counts) < 3:
-            recommendations.append("📋 Limited test category diversity - expand test coverage areas")
+            recommendations.append(
+                "📋 Limited test category diversity - expand test coverage areas"
+            )
 
         # Tagging recommendations
         if len(result.tag_usage) < 5:
-            recommendations.append("🏷️ Limited tag usage - improve test organization with more tags")
+            recommendations.append(
+                "🏷️ Limited tag usage - improve test organization with more tags"
+            )
 
         # Stability recommendations
-        flaky_count = result.by_stability.get('flaky', 0)
-        unstable_count = result.by_stability.get('unstable', 0)
+        flaky_count = result.by_stability.get("flaky", 0)
+        unstable_count = result.by_stability.get("unstable", 0)
 
         if (flaky_count + unstable_count) / total_tests > 0.2:
-            recommendations.append("🔧 High ratio of unstable tests - investigate and fix flaky tests")
+            recommendations.append(
+                "🔧 High ratio of unstable tests - investigate and fix flaky tests"
+            )
 
         return recommendations
 
@@ -877,11 +1000,11 @@ class TestCategorizer:
             return {}
 
         try:
-            with open(config_file, 'r') as f:
+            with open(config_file, "r") as f:
                 config = yaml.safe_load(f)
 
             tags = {}
-            for tag_data in config.get('tags', []):
+            for tag_data in config.get("tags", []):
                 tag = TestTag(**tag_data)
                 tags[tag.name] = tag
 
@@ -891,31 +1014,30 @@ class TestCategorizer:
             self.logger.warning(f"Error loading tag definitions: {e}")
             return {}
 
-    def export_categorization_config(self, result: TestCategorizationResult, output_file: str) -> None:
+    def export_categorization_config(
+        self, result: TestCategorizationResult, output_file: str
+    ) -> None:
         """Export categorization results as configuration for CI/CD."""
         config = {
-            'test_categories': {
-                'critical_path': result.critical_path_tests,
-                'parallel_groups': result.parallel_execution_groups,
-                'estimated_duration': result.estimated_total_duration
+            "test_categories": {
+                "critical_path": result.critical_path_tests,
+                "parallel_groups": result.parallel_execution_groups,
+                "estimated_duration": result.estimated_total_duration,
             },
-            'tags': [tag.to_dict() for tag in result.recommended_tags],
-            'statistics': {
-                'total_tests': result.total_tests,
-                'by_priority': result.by_priority,
-                'by_category': result.by_category,
-                'by_execution_tier': result.by_execution_tier
-            }
+            "tags": [tag.to_dict() for tag in result.recommended_tags],
+            "statistics": {
+                "total_tests": result.total_tests,
+                "by_priority": result.by_priority,
+                "by_category": result.by_category,
+                "by_execution_tier": result.by_execution_tier,
+            },
         }
 
-        with open(output_file, 'w') as f:
+        with open(output_file, "w") as f:
             yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
 
-def create_test_categorizer(
-    project_root: str,
-    **kwargs: Any
-) -> TestCategorizer:
+def create_test_categorizer(project_root: str, **kwargs: Any) -> TestCategorizer:
     """
     Factory function to create a TestCategorizer instance.
 
@@ -946,7 +1068,7 @@ def main():
     # Configure logging
     logging.basicConfig(
         level=logging.INFO if args.verbose else logging.WARNING,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     # Discover tests first
@@ -957,14 +1079,13 @@ def main():
 
     # Categorize tests
     categorizer = create_test_categorizer(
-        args.project_root,
-        tag_config_file=args.config
+        args.project_root, tag_config_file=args.config
     )
     result = categorizer.categorize_tests(discovery_result)
 
     # Output results
     if args.output:
-        with open(args.output, 'w') as f:
+        with open(args.output, "w") as f:
             json.dump(result.to_dict(), f, indent=2)
         print(f"Results saved to {args.output}")
 
@@ -974,7 +1095,7 @@ def main():
         print(f"CI/CD configuration exported to {args.export_config}")
 
     # Summary
-    print(f"\n📊 Test Categorization Summary:")
+    print("\n📊 Test Categorization Summary:")
     print(f"  🧪 Tests categorized: {result.total_tests}")
     print(f"  ⏱️ Estimated duration: {result.estimated_total_duration:.1f}s")
     print(f"  🏷️ Tags used: {len(result.tag_usage)}")
@@ -991,7 +1112,7 @@ def main():
         print(f"  ⚡ Parallel groups: {len(result.parallel_execution_groups)}")
 
     if result.recommendations:
-        print(f"\n💡 Recommendations:")
+        print("\n💡 Recommendations:")
         for rec in result.recommendations:
             print(f"  {rec}")
 

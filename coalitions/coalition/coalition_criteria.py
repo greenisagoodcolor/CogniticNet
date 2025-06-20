@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class FormationTrigger(Enum):
     """Triggers that can initiate coalition formation."""
+
     OPPORTUNITY_DETECTED = "opportunity_detected"
     RESOURCE_SHORTAGE = "resource_shortage"
     EXTERNAL_THREAT = "external_threat"
@@ -26,6 +27,7 @@ class FormationTrigger(Enum):
 
 class DissolutionCondition(Enum):
     """Conditions that can trigger coalition dissolution."""
+
     GOAL_ACHIEVED = "goal_achieved"
     TIMEOUT = "timeout"
     MEMBER_DEPARTURE = "member_departure"
@@ -37,13 +39,15 @@ class DissolutionCondition(Enum):
 @dataclass
 class CompatibilityMetric:
     """Metric for measuring agent compatibility."""
+
     name: str
     weight: float = 1.0
     threshold: float = 0.5
     bidirectional: bool = True
 
-    def calculate(self, agent1_profile: Dict[str, Any],
-                 agent2_profile: Dict[str, Any]) -> float:
+    def calculate(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> float:
         """
         Calculate compatibility score between two agents.
 
@@ -61,11 +65,12 @@ class GoalAlignmentMetric(CompatibilityMetric):
         super().__init__(
             name="goal_alignment",
             weight=2.0,  # High importance
-            threshold=0.6
+            threshold=0.6,
         )
 
-    def calculate(self, agent1_profile: Dict[str, Any],
-                 agent2_profile: Dict[str, Any]) -> float:
+    def calculate(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> float:
         """Calculate goal alignment score."""
         goals1 = set(agent1_profile.get("goals", []))
         goals2 = set(agent2_profile.get("goals", []))
@@ -88,11 +93,12 @@ class CapabilityComplementarityMetric(CompatibilityMetric):
             name="capability_complementarity",
             weight=1.5,
             threshold=0.4,
-            bidirectional=False  # A complements B doesn't mean B complements A
+            bidirectional=False,  # A complements B doesn't mean B complements A
         )
 
-    def calculate(self, agent1_profile: Dict[str, Any],
-                 agent2_profile: Dict[str, Any]) -> float:
+    def calculate(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> float:
         """Calculate capability complementarity score."""
         caps1 = set(agent1_profile.get("capabilities", []))
         caps2 = set(agent2_profile.get("capabilities", []))
@@ -113,14 +119,11 @@ class ResourceBalanceMetric(CompatibilityMetric):
     """Measures resource balance between agents."""
 
     def __init__(self):
-        super().__init__(
-            name="resource_balance",
-            weight=1.0,
-            threshold=0.3
-        )
+        super().__init__(name="resource_balance", weight=1.0, threshold=0.3)
 
-    def calculate(self, agent1_profile: Dict[str, Any],
-                 agent2_profile: Dict[str, Any]) -> float:
+    def calculate(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> float:
         """Calculate resource balance score."""
         resources1 = agent1_profile.get("resources", {})
         resources2 = agent2_profile.get("resources", {})
@@ -147,14 +150,11 @@ class TrustMetric(CompatibilityMetric):
     """Measures trust level between agents based on past interactions."""
 
     def __init__(self):
-        super().__init__(
-            name="trust",
-            weight=1.8,
-            threshold=0.5
-        )
+        super().__init__(name="trust", weight=1.8, threshold=0.5)
 
-    def calculate(self, agent1_profile: Dict[str, Any],
-                 agent2_profile: Dict[str, Any]) -> float:
+    def calculate(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> float:
         """Calculate trust score based on interaction history."""
         # Get interaction history
         history = agent1_profile.get("interaction_history", {})
@@ -197,6 +197,7 @@ class CoalitionFormationCriteria:
 
     Defines all parameters and rules for when and how coalitions form.
     """
+
     # Size constraints
     min_members: int = 2
     max_members: int = 10
@@ -215,13 +216,15 @@ class CoalitionFormationCriteria:
     dissolution_conditions: Set[DissolutionCondition] = field(
         default_factory=lambda: {
             DissolutionCondition.GOAL_ACHIEVED,
-            DissolutionCondition.TIMEOUT
+            DissolutionCondition.TIMEOUT,
         }
     )
 
     # Time constraints
     max_formation_time: timedelta = field(default_factory=lambda: timedelta(minutes=5))
-    min_coalition_duration: timedelta = field(default_factory=lambda: timedelta(hours=1))
+    min_coalition_duration: timedelta = field(
+        default_factory=lambda: timedelta(hours=1)
+    )
     max_coalition_duration: timedelta = field(default_factory=lambda: timedelta(days=7))
 
     # Performance thresholds
@@ -244,12 +247,12 @@ class CoalitionFormationCriteria:
                 GoalAlignmentMetric(),
                 CapabilityComplementarityMetric(),
                 ResourceBalanceMetric(),
-                TrustMetric()
+                TrustMetric(),
             ]
 
-    def calculate_compatibility(self,
-                               agent1_profile: Dict[str, Any],
-                               agent2_profile: Dict[str, Any]) -> Tuple[float, Dict[str, float]]:
+    def calculate_compatibility(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> Tuple[float, Dict[str, float]]:
         """
         Calculate overall compatibility between two agents.
 
@@ -273,15 +276,16 @@ class CoalitionFormationCriteria:
 
         return overall_score, scores
 
-    def is_compatible_pair(self,
-                          agent1_profile: Dict[str, Any],
-                          agent2_profile: Dict[str, Any]) -> bool:
+    def is_compatible_pair(
+        self, agent1_profile: Dict[str, Any], agent2_profile: Dict[str, Any]
+    ) -> bool:
         """Check if two agents are compatible for coalition formation."""
         overall_score, _ = self.calculate_compatibility(agent1_profile, agent2_profile)
         return overall_score >= self.min_compatibility_score
 
-    def evaluate_coalition_viability(self,
-                                   member_profiles: List[Dict[str, Any]]) -> Tuple[bool, Dict[str, Any]]:
+    def evaluate_coalition_viability(
+        self, member_profiles: List[Dict[str, Any]]
+    ) -> Tuple[bool, Dict[str, Any]]:
         """
         Evaluate if a proposed coalition meets formation criteria.
 
@@ -294,7 +298,7 @@ class CoalitionFormationCriteria:
             "compatibility_scores": {},
             "resource_totals": {},
             "capability_coverage": set(),
-            "issues": []
+            "issues": [],
         }
 
         # Check size constraints
@@ -310,10 +314,11 @@ class CoalitionFormationCriteria:
         for i in range(len(member_profiles)):
             for j in range(i + 1, len(member_profiles)):
                 score, _ = self.calculate_compatibility(
-                    member_profiles[i],
-                    member_profiles[j]
+                    member_profiles[i], member_profiles[j]
                 )
-                pair_key = f"{member_profiles[i]['agent_id']}-{member_profiles[j]['agent_id']}"
+                pair_key = (
+                    f"{member_profiles[i]['agent_id']}-{member_profiles[j]['agent_id']}"
+                )
                 evaluation["compatibility_scores"][pair_key] = score
 
                 compatibility_sum += score
@@ -325,7 +330,9 @@ class CoalitionFormationCriteria:
                     )
 
         # Average compatibility
-        avg_compatibility = compatibility_sum / compatibility_count if compatibility_count > 0 else 0
+        avg_compatibility = (
+            compatibility_sum / compatibility_count if compatibility_count > 0 else 0
+        )
         evaluation["average_compatibility"] = avg_compatibility
 
         # Aggregate resources
@@ -348,17 +355,18 @@ class CoalitionFormationCriteria:
 
         # Overall viability
         is_viable = (
-            evaluation["size_valid"] and
-            avg_compatibility >= self.min_compatibility_score and
-            len(evaluation["issues"]) == 0
+            evaluation["size_valid"]
+            and avg_compatibility >= self.min_compatibility_score
+            and len(evaluation["issues"]) == 0
         )
 
         evaluation["is_viable"] = is_viable
 
         return is_viable, evaluation
 
-    def check_dissolution_conditions(self,
-                                   coalition_state: Dict[str, Any]) -> Tuple[bool, Optional[DissolutionCondition]]:
+    def check_dissolution_conditions(
+        self, coalition_state: Dict[str, Any]
+    ) -> Tuple[bool, Optional[DissolutionCondition]]:
         """
         Check if any dissolution conditions are met.
 
@@ -367,7 +375,9 @@ class CoalitionFormationCriteria:
         """
         # Check timeout
         if DissolutionCondition.TIMEOUT in self.dissolution_conditions:
-            duration = datetime.utcnow() - coalition_state.get("start_time", datetime.utcnow())
+            duration = datetime.utcnow() - coalition_state.get(
+                "start_time", datetime.utcnow()
+            )
             if duration > self.max_coalition_duration:
                 return True, DissolutionCondition.TIMEOUT
 
@@ -378,7 +388,10 @@ class CoalitionFormationCriteria:
 
         # Check performance
         if DissolutionCondition.PERFORMANCE_THRESHOLD in self.dissolution_conditions:
-            if coalition_state.get("performance_score", 1.0) < self.min_performance_score:
+            if (
+                coalition_state.get("performance_score", 1.0)
+                < self.min_performance_score
+            ):
                 return True, DissolutionCondition.PERFORMANCE_THRESHOLD
 
         # Check member count

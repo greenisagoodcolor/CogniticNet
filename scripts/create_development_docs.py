@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Script to generate comprehensive development documentation."""
 
-import os
-
 DEVELOPMENT_MD = """# FreeAgentics Development Guide
 
 This guide provides comprehensive instructions for setting up and working with the FreeAgentics development environment.
@@ -49,7 +47,7 @@ Before starting development, ensure you have the following installed:
    # Use the setup script for interactive configuration
    cd environments
    ./setup-env.sh
-   
+
    # Or manually copy and edit
    cp env.development .env.development
    # Edit .env.development with your configuration
@@ -59,10 +57,10 @@ Before starting development, ensure you have the following installed:
    ```bash
    # Frontend dependencies
    npm install
-   
+
    # Backend dependencies
    pip install -r requirements.txt
-   
+
    # Development dependencies
    pip install -r requirements-dev.txt
    ```
@@ -71,7 +69,7 @@ Before starting development, ensure you have the following installed:
    ```bash
    # Using the setup script
    ./scripts/setup-database.sh
-   
+
    # Or manually
    cd src/database
    python manage.py init
@@ -81,7 +79,7 @@ Before starting development, ensure you have the following installed:
    ```bash
    # Check all services
    npm run check:all
-   
+
    # Run basic tests
    npm test
    pytest tests/unit
@@ -132,14 +130,14 @@ We follow a modified GitFlow workflow:
    ```bash
    # Create feature branch
    git checkout -b feature/your-feature-name develop
-   
+
    # Make changes and commit
    git add .
    git commit -m "feat: implement new feature"
-   
+
    # Push to remote
    git push origin feature/your-feature-name
-   
+
    # Create pull request
    ```
 
@@ -159,7 +157,7 @@ We follow a modified GitFlow workflow:
    ```bash
    # Pull latest changes
    git pull origin develop
-   
+
    # Start development environment
    docker-compose up -d
    # Or for local development
@@ -170,10 +168,10 @@ We follow a modified GitFlow workflow:
    ```bash
    # Verify all services are running
    docker-compose ps
-   
+
    # Check database connection
    cd src/database && python manage.py check
-   
+
    # View logs if needed
    docker-compose logs -f
    ```
@@ -189,11 +187,11 @@ We follow a modified GitFlow workflow:
    # Run tests
    npm test
    pytest
-   
+
    # Run linters
    npm run lint
    python -m flake8 src/
-   
+
    # Format code
    npm run format
    python -m black src/
@@ -233,7 +231,7 @@ docker-compose -f environments/development/docker-compose.yml build --no-cache
    ```bash
    # List networks
    docker network ls
-   
+
    # Inspect network
    docker network inspect freeagentics_default
    ```
@@ -242,7 +240,7 @@ docker-compose -f environments/development/docker-compose.yml build --no-cache
    ```bash
    # Monitor resource usage
    docker stats
-   
+
    # Limit resources in docker-compose.yml
    services:
      backend:
@@ -273,10 +271,10 @@ docker-compose -f environments/development/docker-compose.yml build --no-cache
    ```bash
    # Upgrade to latest
    alembic upgrade head
-   
+
    # Upgrade to specific revision
    alembic upgrade +1
-   
+
    # Downgrade
    alembic downgrade -1
    ```
@@ -321,17 +319,17 @@ npm run analyze
    ```typescript
    // app/components/MyComponent.tsx
    'use client';
-   
+
    import { useState } from 'react';
-   
+
    interface MyComponentProps {
      title: string;
      onAction?: () => void;
    }
-   
+
    export default function MyComponent({ title, onAction }: MyComponentProps) {
      const [state, setState] = useState(false);
-     
+
      return (
        <div className="component-wrapper">
          <h2>{title}</h2>
@@ -368,9 +366,9 @@ python src/main.py
    from fastapi import APIRouter, Depends
    from sqlalchemy.orm import Session
    from src.database.connection import get_db
-   
+
    router = APIRouter(prefix="/api/v1/agents", tags=["agents"])
-   
+
    @router.get("/")
    async def get_agents(db: Session = Depends(get_db)):
        agents = db.query(Agent).all()
@@ -406,10 +404,10 @@ pytest-watch
    ```bash
    # Format code
    black src/ tests/
-   
+
    # Check linting
    flake8 src/ tests/
-   
+
    # Type checking
    mypy src/
    ```
@@ -418,10 +416,10 @@ pytest-watch
    ```bash
    # Lint code
    npm run lint
-   
+
    # Fix linting issues
    npm run lint:fix
-   
+
    # Format code
    npm run format
    ```
@@ -434,10 +432,10 @@ pytest-watch
    ```bash
    # Check PostgreSQL is running
    docker-compose ps postgres
-   
+
    # Check connection
    cd src/database && python manage.py check
-   
+
    # Common fixes:
    # - Verify DATABASE_URL in .env
    # - Check PostgreSQL logs: docker-compose logs postgres
@@ -448,7 +446,7 @@ pytest-watch
    ```bash
    # Ensure PYTHONPATH is set
    export PYTHONPATH="${PYTHONPATH}:${PWD}"
-   
+
    # Or add to .env
    PYTHONPATH=/app
    ```
@@ -459,7 +457,7 @@ pytest-watch
    docker-compose down -v
    docker-compose build --no-cache
    docker-compose up -d
-   
+
    # Check disk space
    docker system df
    docker system prune -a
@@ -575,12 +573,12 @@ def calculate_agent_score(
     multiplier: Optional[float] = 1.0
 ) -> float:
     \"\"\"Calculate the score for an agent based on their actions.
-    
+
     Args:
         agent_id: Unique identifier for the agent
         actions: List of action names performed
         multiplier: Optional score multiplier
-        
+
     Returns:
         The calculated score as a float
     \"\"\"
@@ -735,21 +733,23 @@ Contributors will be recognized in:
 Thank you for contributing to FreeAgentics!
 """
 
+
 def main():
     """Create development documentation files."""
     # Create DEVELOPMENT.md
-    with open('DEVELOPMENT.md', 'w') as f:
+    with open("DEVELOPMENT.md", "w") as f:
         f.write(DEVELOPMENT_MD)
     print("✅ Created DEVELOPMENT.md")
-    
+
     # Create CONTRIBUTING.md
-    with open('CONTRIBUTING.md', 'w') as f:
+    with open("CONTRIBUTING.md", "w") as f:
         f.write(CONTRIBUTING_MD)
     print("✅ Created CONTRIBUTING.md")
-    
+
     print("\n📚 Development documentation created successfully!")
     print("   - DEVELOPMENT.md: Comprehensive development guide")
     print("   - CONTRIBUTING.md: Contribution guidelines")
 
+
 if __name__ == "__main__":
-    main() 
+    main()

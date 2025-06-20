@@ -46,11 +46,7 @@
         "--cov=.",
         "--cov-report=xml"
       ],
-      "plugins": [
-        "pytest-cov",
-        "pytest-xdist",
-        "pytest-html"
-      ]
+      "plugins": ["pytest-cov", "pytest-xdist", "pytest-html"]
     },
     {
       "runner_type": "unittest",
@@ -67,10 +63,7 @@
       "verbose": false,
       "environment_vars": {},
       "working_directory": null,
-      "extra_args": [
-        "discover",
-        "-v"
-      ],
+      "extra_args": ["discover", "-v"],
       "plugins": []
     }
   ],
@@ -89,10 +82,7 @@
       "required_coverage": 60.0,
       "max_failures": 3,
       "generate_reports": true,
-      "report_formats": [
-        "junit",
-        "html"
-      ],
+      "report_formats": ["junit", "html"],
       "estimated_duration": 0,
       "estimated_cost": 0.0
     },
@@ -226,10 +216,7 @@
       "required_coverage": 80.0,
       "max_failures": 0,
       "generate_reports": true,
-      "report_formats": [
-        "junit",
-        "html"
-      ],
+      "report_formats": ["junit", "html"],
       "estimated_duration": 174420.0,
       "estimated_cost": 0.0
     },
@@ -258,10 +245,7 @@
       "required_coverage": 90.0,
       "max_failures": 0,
       "generate_reports": true,
-      "report_formats": [
-        "junit",
-        "html"
-      ],
+      "report_formats": ["junit", "html"],
       "estimated_duration": 19800.0,
       "estimated_cost": 0.0
     },
@@ -395,10 +379,7 @@
       "required_coverage": 80.0,
       "max_failures": 0,
       "generate_reports": true,
-      "report_formats": [
-        "junit",
-        "html"
-      ],
+      "report_formats": ["junit", "html"],
       "estimated_duration": 52326.0,
       "estimated_cost": 0.0
     }

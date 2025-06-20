@@ -4,13 +4,12 @@ Comprehensive Test Coverage Analysis Script
 Analyzes test coverage for CogniticNet codebase and generates detailed reports
 """
 
-import os
 import sys
 import subprocess
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Tuple
 
 # Add the project root to the Python path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -55,15 +54,19 @@ class TestCoverageAnalyzer:
 
         try:
             # Try to run pytest on the individual file with dry-run
-            result = subprocess.run([
-                sys.executable, "-m", "pytest",
-                str(test_file),
-                "--collect-only", "-q"
-            ],
-            capture_output=True,
-            text=True,
-            cwd=self.project_root,
-            timeout=30
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    str(test_file),
+                    "--collect-only",
+                    "-q",
+                ],
+                capture_output=True,
+                text=True,
+                cwd=self.project_root,
+                timeout=30,
             )
 
             if result.returncode == 0:
@@ -103,20 +106,24 @@ class TestCoverageAnalyzer:
                     print(f"     {error}")
 
         return {
-            'working_tests': working_tests,
-            'failing_tests': failing_tests,
-            'total_discovered': len(test_files),
-            'working_count': len(working_tests),
-            'failing_count': len(failing_tests)
+            "working_tests": working_tests,
+            "failing_tests": failing_tests,
+            "total_discovered": len(test_files),
+            "working_count": len(working_tests),
+            "failing_count": len(failing_tests),
         }
 
-    def run_coverage_on_working_tests(self, working_tests: List[Path]) -> Dict[str, Any]:
+    def run_coverage_on_working_tests(
+        self, working_tests: List[Path]
+    ) -> Dict[str, Any]:
         """Run coverage analysis on working test files"""
         if not working_tests:
             print("No working tests found!")
-            return {'error': 'no_working_tests'}
+            return {"error": "no_working_tests"}
 
-        print(f"\nRunning coverage analysis on {len(working_tests)} working test files...")
+        print(
+            f"\nRunning coverage analysis on {len(working_tests)} working test files..."
+        )
 
         coverage_results = {}
         successful_tests = []
@@ -126,59 +133,67 @@ class TestCoverageAnalyzer:
                 print(f"Running coverage for: {test_file.name}")
 
                 # Run pytest with coverage on individual file
-                result = subprocess.run([
-                    sys.executable, "-m", "pytest",
-                    str(test_file),
-                    "--cov=src",
-                    "--cov=scripts",
-                    "--cov-append",
-                    "--cov-report=term-missing",
-                    "--cov-config=.coveragerc",
-                    "-v", "--tb=short"
-                ],
-                capture_output=True,
-                text=True,
-                cwd=self.project_root,
-                timeout=300  # 5 minute timeout per test file
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        "-m",
+                        "pytest",
+                        str(test_file),
+                        "--cov=src",
+                        "--cov=scripts",
+                        "--cov-append",
+                        "--cov-report=term-missing",
+                        "--cov-config=.coveragerc",
+                        "-v",
+                        "--tb=short",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    cwd=self.project_root,
+                    timeout=300,  # 5 minute timeout per test file
                 )
 
                 coverage_results[str(test_file)] = {
-                    'exit_code': result.returncode,
-                    'stdout': result.stdout,
-                    'stderr': result.stderr,
-                    'success': result.returncode == 0
+                    "exit_code": result.returncode,
+                    "stdout": result.stdout,
+                    "stderr": result.stderr,
+                    "success": result.returncode == 0,
                 }
 
                 if result.returncode == 0:
                     print(f"  ✅ Coverage collected for {test_file.name}")
                     successful_tests.append(test_file)
                 else:
-                    print(f"  ⚠️  Test issues for {test_file.name} (exit code: {result.returncode})")
+                    print(
+                        f"  ⚠️  Test issues for {test_file.name} (exit code: {result.returncode})"
+                    )
 
             except subprocess.TimeoutExpired:
                 print(f"  ⏱️  Timeout for {test_file.name}")
                 coverage_results[str(test_file)] = {
-                    'exit_code': -1,
-                    'error': 'timeout',
-                    'success': False
+                    "exit_code": -1,
+                    "error": "timeout",
+                    "success": False,
                 }
             except Exception as e:
                 print(f"  ❌ Error running {test_file.name}: {e}")
                 coverage_results[str(test_file)] = {
-                    'exit_code': -1,
-                    'error': str(e),
-                    'success': False
+                    "exit_code": -1,
+                    "error": str(e),
+                    "success": False,
                 }
 
-        coverage_results['successful_test_count'] = len(successful_tests)
-        coverage_results['successful_tests'] = [str(t) for t in successful_tests]
+        coverage_results["successful_test_count"] = len(successful_tests)
+        coverage_results["successful_tests"] = [str(t) for t in successful_tests]
 
         return coverage_results
 
-    def generate_comprehensive_coverage_report(self, working_tests: List[Path]) -> Dict[str, Any]:
+    def generate_comprehensive_coverage_report(
+        self, working_tests: List[Path]
+    ) -> Dict[str, Any]:
         """Generate comprehensive coverage report using all working tests"""
         if not working_tests:
-            return {'error': 'no_working_tests'}
+            return {"error": "no_working_tests"}
 
         print("\nGenerating comprehensive coverage report...")
 
@@ -186,47 +201,45 @@ class TestCoverageAnalyzer:
         test_files_str = " ".join([str(t) for t in working_tests])
 
         try:
-            result = subprocess.run([
-                sys.executable, "-m", "pytest"
-            ] + [str(t) for t in working_tests] + [
-                "--cov=src",
-                "--cov=scripts",
-                "--cov-report=html:coverage_reports/html",
-                "--cov-report=xml:coverage_reports/coverage.xml",
-                "--cov-report=json:coverage_reports/coverage.json",
-                "--cov-report=term-missing",
-                "--cov-config=.coveragerc",
-                "-v"
-            ],
-            capture_output=True,
-            text=True,
-            cwd=self.project_root,
-            timeout=600  # 10 minute timeout
+            result = subprocess.run(
+                [sys.executable, "-m", "pytest"]
+                + [str(t) for t in working_tests]
+                + [
+                    "--cov=src",
+                    "--cov=scripts",
+                    "--cov-report=html:coverage_reports/html",
+                    "--cov-report=xml:coverage_reports/coverage.xml",
+                    "--cov-report=json:coverage_reports/coverage.json",
+                    "--cov-report=term-missing",
+                    "--cov-config=.coveragerc",
+                    "-v",
+                ],
+                capture_output=True,
+                text=True,
+                cwd=self.project_root,
+                timeout=600,  # 10 minute timeout
             )
 
             return {
-                'exit_code': result.returncode,
-                'stdout': result.stdout,
-                'stderr': result.stderr,
-                'success': result.returncode == 0,
-                'command': f"pytest {test_files_str} --cov=src --cov-report=..."
+                "exit_code": result.returncode,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "success": result.returncode == 0,
+                "command": f"pytest {test_files_str} --cov=src --cov-report=...",
             }
 
         except Exception as e:
-            return {
-                'error': str(e),
-                'success': False
-            }
+            return {"error": str(e), "success": False}
 
     def analyze_source_files(self) -> Dict[str, Any]:
         """Analyze source files for coverage potential"""
         print("\nAnalyzing source files...")
 
         analysis = {
-            'total_source_files': 0,
-            'total_lines': 0,
-            'modules': {},
-            'file_analysis': []
+            "total_source_files": 0,
+            "total_lines": 0,
+            "modules": {},
+            "file_analysis": [],
         }
 
         # Analyze src directory
@@ -235,38 +248,44 @@ class TestCoverageAnalyzer:
                 continue
 
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     lines = f.readlines()
                     total_lines = len(lines)
-                    code_lines = len([l for l in lines if l.strip() and not l.strip().startswith('#')])
+                    code_lines = len(
+                        [
+                            l
+                            for l in lines
+                            if l.strip() and not l.strip().startswith("#")
+                        ]
+                    )
 
                 relative_path = py_file.relative_to(self.src_dir)
-                module_name = str(relative_path.with_suffix('')).replace('/', '.')
+                module_name = str(relative_path.with_suffix("")).replace("/", ".")
 
                 file_info = {
-                    'file': str(relative_path),
-                    'module': module_name,
-                    'total_lines': total_lines,
-                    'code_lines': code_lines,
-                    'size_bytes': py_file.stat().st_size
+                    "file": str(relative_path),
+                    "module": module_name,
+                    "total_lines": total_lines,
+                    "code_lines": code_lines,
+                    "size_bytes": py_file.stat().st_size,
                 }
 
-                analysis['file_analysis'].append(file_info)
-                analysis['total_source_files'] += 1
-                analysis['total_lines'] += total_lines
+                analysis["file_analysis"].append(file_info)
+                analysis["total_source_files"] += 1
+                analysis["total_lines"] += total_lines
 
                 # Group by top-level module
-                top_module = module_name.split('.')[0]
-                if top_module not in analysis['modules']:
-                    analysis['modules'][top_module] = {
-                        'files': 0,
-                        'lines': 0,
-                        'code_lines': 0
+                top_module = module_name.split(".")[0]
+                if top_module not in analysis["modules"]:
+                    analysis["modules"][top_module] = {
+                        "files": 0,
+                        "lines": 0,
+                        "code_lines": 0,
                     }
 
-                analysis['modules'][top_module]['files'] += 1
-                analysis['modules'][top_module]['lines'] += total_lines
-                analysis['modules'][top_module]['code_lines'] += code_lines
+                analysis["modules"][top_module]["files"] += 1
+                analysis["modules"][top_module]["lines"] += total_lines
+                analysis["modules"][top_module]["code_lines"] += code_lines
 
             except Exception as e:
                 print(f"Error analyzing {py_file}: {e}")
@@ -278,24 +297,32 @@ class TestCoverageAnalyzer:
         json_path = self.coverage_dir / "coverage.json"
 
         if not json_path.exists():
-            return {'error': 'coverage.json not found'}
+            return {"error": "coverage.json not found"}
 
         try:
-            with open(json_path, 'r') as f:
+            with open(json_path, "r") as f:
                 coverage_data = json.load(f)
 
             return {
-                'coverage_percentage': coverage_data.get('totals', {}).get('percent_covered', 0),
-                'lines_covered': coverage_data.get('totals', {}).get('covered_lines', 0),
-                'lines_total': coverage_data.get('totals', {}).get('num_statements', 0),
-                'missing_lines': coverage_data.get('totals', {}).get('missing_lines', 0),
-                'files_analyzed': len(coverage_data.get('files', {})),
-                'file_details': coverage_data.get('files', {})
+                "coverage_percentage": coverage_data.get("totals", {}).get(
+                    "percent_covered", 0
+                ),
+                "lines_covered": coverage_data.get("totals", {}).get(
+                    "covered_lines", 0
+                ),
+                "lines_total": coverage_data.get("totals", {}).get("num_statements", 0),
+                "missing_lines": coverage_data.get("totals", {}).get(
+                    "missing_lines", 0
+                ),
+                "files_analyzed": len(coverage_data.get("files", {})),
+                "file_details": coverage_data.get("files", {}),
             }
         except Exception as e:
-            return {'error': f'Failed to parse coverage.json: {e}'}
+            return {"error": f"Failed to parse coverage.json: {e}"}
 
-    def generate_summary_report(self, test_results: Dict, coverage_analysis: Dict, source_analysis: Dict) -> Dict[str, Any]:
+    def generate_summary_report(
+        self, test_results: Dict, coverage_analysis: Dict, source_analysis: Dict
+    ) -> Dict[str, Any]:
         """Generate comprehensive summary report"""
         print("\nGenerating summary report...")
 
@@ -303,71 +330,102 @@ class TestCoverageAnalyzer:
         coverage_data = self.parse_coverage_json()
 
         summary = {
-            'timestamp': datetime.now().isoformat(),
-            'project_root': str(self.project_root),
-            'test_discovery': {
-                'total_test_files': test_results.get('total_discovered', 0),
-                'working_test_files': test_results.get('working_count', 0),
-                'failing_test_files': test_results.get('failing_count', 0),
-                'working_percentage': round((test_results.get('working_count', 0) / max(test_results.get('total_discovered', 1), 1)) * 100, 2)
+            "timestamp": datetime.now().isoformat(),
+            "project_root": str(self.project_root),
+            "test_discovery": {
+                "total_test_files": test_results.get("total_discovered", 0),
+                "working_test_files": test_results.get("working_count", 0),
+                "failing_test_files": test_results.get("failing_count", 0),
+                "working_percentage": round(
+                    (
+                        test_results.get("working_count", 0)
+                        / max(test_results.get("total_discovered", 1), 1)
+                    )
+                    * 100,
+                    2,
+                ),
             },
-            'coverage_results': coverage_data,
-            'source_code_analysis': source_analysis,
-            'test_execution_analysis': coverage_analysis,
-            'recommendations': self._generate_recommendations(test_results, coverage_data, source_analysis),
-            'report_paths': {
-                'html_report': str(self.coverage_dir / "html" / "index.html"),
-                'xml_report': str(self.coverage_dir / "coverage.xml"),
-                'json_report': str(self.coverage_dir / "coverage.json"),
-                'coverage_dir': str(self.coverage_dir)
-            }
+            "coverage_results": coverage_data,
+            "source_code_analysis": source_analysis,
+            "test_execution_analysis": coverage_analysis,
+            "recommendations": self._generate_recommendations(
+                test_results, coverage_data, source_analysis
+            ),
+            "report_paths": {
+                "html_report": str(self.coverage_dir / "html" / "index.html"),
+                "xml_report": str(self.coverage_dir / "coverage.xml"),
+                "json_report": str(self.coverage_dir / "coverage.json"),
+                "coverage_dir": str(self.coverage_dir),
+            },
         }
 
         return summary
 
-    def _generate_recommendations(self, test_results: Dict, coverage_data: Dict, source_analysis: Dict) -> List[str]:
+    def _generate_recommendations(
+        self, test_results: Dict, coverage_data: Dict, source_analysis: Dict
+    ) -> List[str]:
         """Generate recommendations for improving test coverage"""
         recommendations = []
 
-        working_count = test_results.get('working_count', 0)
-        total_count = test_results.get('total_discovered', 0)
-        coverage_pct = coverage_data.get('coverage_percentage', 0)
+        working_count = test_results.get("working_count", 0)
+        total_count = test_results.get("total_discovered", 0)
+        coverage_pct = coverage_data.get("coverage_percentage", 0)
 
         # Test file recommendations
         if working_count < total_count:
-            recommendations.append(f"🔧 Fix import errors in {total_count - working_count} test files to enable full coverage analysis")
+            recommendations.append(
+                f"🔧 Fix import errors in {total_count - working_count} test files to enable full coverage analysis"
+            )
 
         if working_count == 0:
-            recommendations.append("🚨 CRITICAL: No test files can be executed. Fix import and dependency issues first")
+            recommendations.append(
+                "🚨 CRITICAL: No test files can be executed. Fix import and dependency issues first"
+            )
         elif working_count < 5:
-            recommendations.append("📝 Add more comprehensive test files - currently only {working_count} working test files")
+            recommendations.append(
+                "📝 Add more comprehensive test files - currently only {working_count} working test files"
+            )
 
         # Coverage recommendations
         if coverage_pct < 50:
-            recommendations.append("📊 Coverage is below 50% - prioritize adding tests for core functionality")
+            recommendations.append(
+                "📊 Coverage is below 50% - prioritize adding tests for core functionality"
+            )
         elif coverage_pct < 70:
-            recommendations.append("📈 Coverage is moderate - aim for 70%+ by testing edge cases and error paths")
+            recommendations.append(
+                "📈 Coverage is moderate - aim for 70%+ by testing edge cases and error paths"
+            )
         elif coverage_pct < 90:
-            recommendations.append("🎯 Good coverage foundation - focus on testing remaining critical paths")
+            recommendations.append(
+                "🎯 Good coverage foundation - focus on testing remaining critical paths"
+            )
         else:
-            recommendations.append("✅ Excellent coverage! Maintain with regression tests")
+            recommendations.append(
+                "✅ Excellent coverage! Maintain with regression tests"
+            )
 
         # Module-specific recommendations
-        modules = source_analysis.get('modules', {})
-        large_modules = [(name, stats) for name, stats in modules.items() if stats['files'] > 3]
+        modules = source_analysis.get("modules", {})
+        large_modules = [
+            (name, stats) for name, stats in modules.items() if stats["files"] > 3
+        ]
 
         if large_modules:
-            recommendations.append(f"🏗️  Large modules detected: {', '.join([m[0] for m in large_modules[:3]])} - ensure comprehensive module-level testing")
+            recommendations.append(
+                f"🏗️  Large modules detected: {', '.join([m[0] for m in large_modules[:3]])} - ensure comprehensive module-level testing"
+            )
 
         # General recommendations
-        recommendations.extend([
-            "🧪 Implement test-driven development (TDD) for new features",
-            "🔄 Add integration tests for cross-module functionality",
-            "⚡ Implement performance benchmarks for critical paths",
-            "🔍 Use mutation testing to validate test quality",
-            "📋 Set up continuous integration with coverage reporting",
-            "🎯 Aim for >90% coverage on critical business logic"
-        ])
+        recommendations.extend(
+            [
+                "🧪 Implement test-driven development (TDD) for new features",
+                "🔄 Add integration tests for cross-module functionality",
+                "⚡ Implement performance benchmarks for critical paths",
+                "🔍 Use mutation testing to validate test quality",
+                "📋 Set up continuous integration with coverage reporting",
+                "🎯 Aim for >90% coverage on critical business logic",
+            ]
+        )
 
         return recommendations
 
@@ -379,7 +437,7 @@ class TestCoverageAnalyzer:
 
         report_path = self.coverage_dir / filename
 
-        with open(report_path, 'w', encoding='utf-8') as f:
+        with open(report_path, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, default=str)
 
         print(f"\n📄 Complete analysis report saved to: {report_path}")
@@ -398,14 +456,18 @@ class TestCoverageAnalyzer:
         source_analysis = self.analyze_source_files()
 
         # 3. Run coverage on working tests
-        working_tests = test_results.get('working_tests', [])
+        working_tests = test_results.get("working_tests", [])
         if working_tests:
-            coverage_analysis = self.generate_comprehensive_coverage_report(working_tests)
+            coverage_analysis = self.generate_comprehensive_coverage_report(
+                working_tests
+            )
         else:
-            coverage_analysis = {'error': 'no_working_tests'}
+            coverage_analysis = {"error": "no_working_tests"}
 
         # 4. Generate summary
-        summary = self.generate_summary_report(test_results, coverage_analysis, source_analysis)
+        summary = self.generate_summary_report(
+            test_results, coverage_analysis, source_analysis
+        )
 
         # 5. Save complete report
         report_path = self.save_report(summary)
@@ -421,37 +483,41 @@ class TestCoverageAnalyzer:
         print("📊 COVERAGE ANALYSIS SUMMARY")
         print("=" * 80)
 
-        discovery = summary['test_discovery']
-        print(f"🔍 Test Files Discovery:")
+        discovery = summary["test_discovery"]
+        print("🔍 Test Files Discovery:")
         print(f"  📁 Total test files found: {discovery['total_test_files']}")
         print(f"  ✅ Working test files: {discovery['working_test_files']}")
         print(f"  ❌ Failing test files: {discovery['failing_test_files']}")
         print(f"  📈 Working percentage: {discovery['working_percentage']}%")
 
-        coverage = summary['coverage_results']
-        if 'coverage_percentage' in coverage:
-            print(f"\n📊 Coverage Results:")
+        coverage = summary["coverage_results"]
+        if "coverage_percentage" in coverage:
+            print("\n📊 Coverage Results:")
             print(f"  🎯 Overall coverage: {coverage['coverage_percentage']:.1f}%")
-            print(f"  📝 Lines covered: {coverage['lines_covered']}/{coverage['lines_total']}")
+            print(
+                f"  📝 Lines covered: {coverage['lines_covered']}/{coverage['lines_total']}"
+            )
             print(f"  📂 Files analyzed: {coverage['files_analyzed']}")
-        elif 'error' in coverage:
+        elif "error" in coverage:
             print(f"\n⚠️  Coverage Results: {coverage['error']}")
 
-        source = summary['source_code_analysis']
-        print(f"\n📁 Source Code Analysis:")
+        source = summary["source_code_analysis"]
+        print("\n📁 Source Code Analysis:")
         print(f"  📄 Total source files: {source['total_source_files']}")
         print(f"  📊 Total lines of code: {source['total_lines']}")
         print(f"  🏗️  Modules analyzed: {len(source['modules'])}")
 
-        print(f"\n💡 Key Recommendations:")
-        for i, rec in enumerate(summary['recommendations'][:5], 1):
+        print("\n💡 Key Recommendations:")
+        for i, rec in enumerate(summary["recommendations"][:5], 1):
             print(f"  {i}. {rec}")
 
-        if len(summary['recommendations']) > 5:
-            print(f"  ... and {len(summary['recommendations']) - 5} more recommendations")
+        if len(summary["recommendations"]) > 5:
+            print(
+                f"  ... and {len(summary['recommendations']) - 5} more recommendations"
+            )
 
-        paths = summary['report_paths']
-        print(f"\n📋 Reports Generated:")
+        paths = summary["report_paths"]
+        print("\n📋 Reports Generated:")
         print(f"  📊 HTML Report: {paths['html_report']}")
         print(f"  📄 XML Report: {paths['xml_report']}")
         print(f"  📝 JSON Report: {paths['json_report']}")
@@ -471,6 +537,7 @@ def main():
     except Exception as e:
         print(f"\n❌ Error during analysis: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

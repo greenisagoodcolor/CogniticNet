@@ -16,35 +16,30 @@ Following Clean Code and SOLID principles with rich reporting capabilities.
 
 import logging
 import json
-import yaml
 import csv
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Any, Union, Tuple
-from collections import defaultdict, Counter
+from typing import Dict, List, Optional, Any, Union
 import time
 import datetime
-import hashlib
 import subprocess
-import tempfile
-import shutil
 import os
 from jinja2 import Template
 import matplotlib
-matplotlib.use('Agg')  # Use non-interactive backend
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
 
-from test_discovery import TestDiscoveryResult, TestFile
-from test_categorization import TestCategorizationResult, CategorizedTestFile
-from test_runner_setup import TestRunnerSetupResult, ExecutionPlan
+matplotlib.use("Agg")  # Use non-interactive backend
+import matplotlib.pyplot as plt
+
+from test_discovery import TestDiscoveryResult
+from test_categorization import TestCategorizationResult
+from test_runner_setup import TestRunnerSetupResult
 
 
 class ReportFormat(Enum):
     """Supported report output formats."""
+
     JSON = "json"
     YAML = "yaml"
     HTML = "html"
@@ -56,15 +51,16 @@ class ReportFormat(Enum):
 
 class ReportType(Enum):
     """Types of reports that can be generated."""
-    BASELINE = "baseline"           # Complete system baseline
-    DISCOVERY = "discovery"         # Test discovery results
+
+    BASELINE = "baseline"  # Complete system baseline
+    DISCOVERY = "discovery"  # Test discovery results
     CATEGORIZATION = "categorization"  # Test categorization results
-    EXECUTION = "execution"         # Test execution results
-    COVERAGE = "coverage"           # Code coverage analysis
-    PERFORMANCE = "performance"     # Performance metrics
-    QUALITY = "quality"            # Code quality metrics
-    COMPARISON = "comparison"       # Before/after comparison
-    DASHBOARD = "dashboard"         # Executive dashboard
+    EXECUTION = "execution"  # Test execution results
+    COVERAGE = "coverage"  # Code coverage analysis
+    PERFORMANCE = "performance"  # Performance metrics
+    QUALITY = "quality"  # Code quality metrics
+    COMPARISON = "comparison"  # Before/after comparison
+    DASHBOARD = "dashboard"  # Executive dashboard
 
 
 @dataclass
@@ -75,6 +71,7 @@ class TestExecutionMetrics:
     Captures all relevant metrics for baseline establishment
     and performance tracking over time.
     """
+
     total_tests: int = 0
     passed_tests: int = 0
     failed_tests: int = 0
@@ -119,8 +116,8 @@ class TestExecutionMetrics:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         data = asdict(self)
-        data['pass_rate'] = self.calculate_pass_rate()
-        data['failure_rate'] = self.calculate_failure_rate()
+        data["pass_rate"] = self.calculate_pass_rate()
+        data["failure_rate"] = self.calculate_failure_rate()
         return data
 
 
@@ -132,6 +129,7 @@ class QualityMetrics:
     Integrates with various quality tools to provide
     comprehensive quality assessment.
     """
+
     # Linting metrics
     linting_errors: int = 0
     linting_warnings: int = 0
@@ -162,25 +160,27 @@ class QualityMetrics:
         """Calculate overall quality score (0-100)."""
         # Weighted scoring algorithm
         weights = {
-            'linting': 0.2,
-            'complexity': 0.2,
-            'documentation': 0.2,
-            'security': 0.3,
-            'debt': 0.1
+            "linting": 0.2,
+            "complexity": 0.2,
+            "documentation": 0.2,
+            "security": 0.3,
+            "debt": 0.1,
         }
 
-        linting_score = max(0, 100 - (self.linting_errors * 10 + self.linting_warnings * 2))
+        linting_score = max(
+            0, 100 - (self.linting_errors * 10 + self.linting_warnings * 2)
+        )
         complexity_score = max(0, 100 - (self.cyclomatic_complexity * 5))
         doc_score = (self.docstring_coverage + self.type_hint_coverage) / 2
         security_score = max(0, 100 - (self.security_issues * 20))
         debt_score = max(0, 100 - (self.technical_debt_ratio * 100))
 
         overall = (
-            linting_score * weights['linting'] +
-            complexity_score * weights['complexity'] +
-            doc_score * weights['documentation'] +
-            security_score * weights['security'] +
-            debt_score * weights['debt']
+            linting_score * weights["linting"]
+            + complexity_score * weights["complexity"]
+            + doc_score * weights["documentation"]
+            + security_score * weights["security"]
+            + debt_score * weights["debt"]
         )
 
         return min(100.0, max(0.0, overall))
@@ -188,7 +188,7 @@ class QualityMetrics:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         data = asdict(self)
-        data['overall_score'] = self.calculate_overall_score()
+        data["overall_score"] = self.calculate_overall_score()
         return data
 
 
@@ -200,6 +200,7 @@ class BaselineReport:
     Combines all metrics and analysis into a single comprehensive
     report for tracking progress and quality over time.
     """
+
     # Report metadata
     timestamp: str = ""
     git_commit: str = ""
@@ -212,7 +213,9 @@ class BaselineReport:
     runner_setup_result: Optional[TestRunnerSetupResult] = None
 
     # Execution metrics
-    execution_metrics: TestExecutionMetrics = field(default_factory=TestExecutionMetrics)
+    execution_metrics: TestExecutionMetrics = field(
+        default_factory=TestExecutionMetrics
+    )
     quality_metrics: QualityMetrics = field(default_factory=QualityMetrics)
 
     # Performance benchmarks
@@ -231,27 +234,31 @@ class BaselineReport:
     def calculate_health_score(self) -> float:
         """Calculate overall repository health score (0-100)."""
         weights = {
-            'test_pass_rate': 0.3,
-            'coverage': 0.2,
-            'quality': 0.3,
-            'performance': 0.2
+            "test_pass_rate": 0.3,
+            "coverage": 0.2,
+            "quality": 0.3,
+            "performance": 0.2,
         }
 
         test_score = self.execution_metrics.calculate_pass_rate()
-        coverage_score = (self.execution_metrics.line_coverage +
-                         self.execution_metrics.branch_coverage) / 2
+        coverage_score = (
+            self.execution_metrics.line_coverage
+            + self.execution_metrics.branch_coverage
+        ) / 2
         quality_score = self.quality_metrics.calculate_overall_score()
 
         # Performance score based on test execution time
         performance_score = 100.0
         if self.execution_metrics.total_duration > 300:  # 5 minutes
-            performance_score = max(0, 100 - (self.execution_metrics.total_duration - 300) / 60)
+            performance_score = max(
+                0, 100 - (self.execution_metrics.total_duration - 300) / 60
+            )
 
         health_score = (
-            test_score * weights['test_pass_rate'] +
-            coverage_score * weights['coverage'] +
-            quality_score * weights['quality'] +
-            performance_score * weights['performance']
+            test_score * weights["test_pass_rate"]
+            + coverage_score * weights["coverage"]
+            + quality_score * weights["quality"]
+            + performance_score * weights["performance"]
         )
 
         return min(100.0, max(0.0, health_score))
@@ -259,12 +266,13 @@ class BaselineReport:
     def evaluate_quality_gates(self) -> Dict[str, bool]:
         """Evaluate quality gates for CI/CD pipeline."""
         gates = {
-            'test_pass_rate': self.execution_metrics.calculate_pass_rate() >= 95.0,
-            'coverage_threshold': self.execution_metrics.line_coverage >= 80.0,
-            'no_critical_security': self.quality_metrics.security_issues == 0,
-            'linting_clean': self.quality_metrics.linting_errors == 0,
-            'performance_acceptable': self.execution_metrics.total_duration <= 600,  # 10 minutes
-            'no_flaky_tests': len(self.execution_metrics.flaky_tests) == 0
+            "test_pass_rate": self.execution_metrics.calculate_pass_rate() >= 95.0,
+            "coverage_threshold": self.execution_metrics.line_coverage >= 80.0,
+            "no_critical_security": self.quality_metrics.security_issues == 0,
+            "linting_clean": self.quality_metrics.linting_errors == 0,
+            "performance_acceptable": self.execution_metrics.total_duration
+            <= 600,  # 10 minutes
+            "no_flaky_tests": len(self.execution_metrics.flaky_tests) == 0,
         }
 
         self.quality_gates = gates
@@ -273,32 +281,58 @@ class BaselineReport:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
-            'metadata': {
-                'timestamp': self.timestamp,
-                'git_commit': self.git_commit,
-                'git_branch': self.git_branch,
-                'report_version': self.report_version
+            "metadata": {
+                "timestamp": self.timestamp,
+                "git_commit": self.git_commit,
+                "git_branch": self.git_branch,
+                "report_version": self.report_version,
             },
-            'discovery_summary': {
-                'total_test_files': len(self.discovery_result.test_files) if self.discovery_result else 0,
-                'total_tests': self.discovery_result.total_tests if self.discovery_result else 0,
-                'by_framework': self.discovery_result.by_framework if self.discovery_result else {},
-                'by_language': self.discovery_result.by_language if self.discovery_result else {}
+            "discovery_summary": {
+                "total_test_files": (
+                    len(self.discovery_result.test_files)
+                    if self.discovery_result
+                    else 0
+                ),
+                "total_tests": (
+                    self.discovery_result.total_tests if self.discovery_result else 0
+                ),
+                "by_framework": (
+                    self.discovery_result.by_framework if self.discovery_result else {}
+                ),
+                "by_language": (
+                    self.discovery_result.by_language if self.discovery_result else {}
+                ),
             },
-            'categorization_summary': {
-                'categorized_tests': len(self.categorization_result.categorized_tests) if self.categorization_result else 0,
-                'by_priority': self.categorization_result.by_priority if self.categorization_result else {},
-                'by_category': self.categorization_result.by_category if self.categorization_result else {},
-                'estimated_duration': self.categorization_result.estimated_total_duration if self.categorization_result else 0
+            "categorization_summary": {
+                "categorized_tests": (
+                    len(self.categorization_result.categorized_tests)
+                    if self.categorization_result
+                    else 0
+                ),
+                "by_priority": (
+                    self.categorization_result.by_priority
+                    if self.categorization_result
+                    else {}
+                ),
+                "by_category": (
+                    self.categorization_result.by_category
+                    if self.categorization_result
+                    else {}
+                ),
+                "estimated_duration": (
+                    self.categorization_result.estimated_total_duration
+                    if self.categorization_result
+                    else 0
+                ),
             },
-            'execution_metrics': self.execution_metrics.to_dict(),
-            'quality_metrics': self.quality_metrics.to_dict(),
-            'performance_benchmarks': self.performance_benchmarks,
-            'environment': self.environment,
-            'health_score': self.calculate_health_score(),
-            'quality_gates': self.evaluate_quality_gates(),
-            'recommendations': self.recommendations,
-            'comparison_summary': self.comparison_summary
+            "execution_metrics": self.execution_metrics.to_dict(),
+            "quality_metrics": self.quality_metrics.to_dict(),
+            "performance_benchmarks": self.performance_benchmarks,
+            "environment": self.environment,
+            "health_score": self.calculate_health_score(),
+            "quality_gates": self.evaluate_quality_gates(),
+            "recommendations": self.recommendations,
+            "comparison_summary": self.comparison_summary,
         }
 
 
@@ -320,9 +354,7 @@ class BaselineReporter:
     """
 
     def __init__(
-        self,
-        project_root: Union[str, Path],
-        output_dir: Optional[str] = None
+        self, project_root: Union[str, Path], output_dir: Optional[str] = None
     ):
         """
         Initialize baseline reporting engine.
@@ -332,7 +364,9 @@ class BaselineReporter:
             output_dir: Directory for generated reports
         """
         self.project_root = Path(project_root).resolve()
-        self.output_dir = Path(output_dir) if output_dir else self.project_root / ".test_reports"
+        self.output_dir = (
+            Path(output_dir) if output_dir else self.project_root / ".test_reports"
+        )
         self.logger = logging.getLogger(__name__)
 
         # Ensure output directory exists
@@ -343,9 +377,9 @@ class BaselineReporter:
 
         # Statistics
         self._report_stats: Dict[str, Any] = {
-            'reports_generated': 0,
-            'formats_created': [],
-            'errors': []
+            "reports_generated": 0,
+            "formats_created": [],
+            "errors": [],
         }
 
     def generate_baseline_report(
@@ -354,7 +388,7 @@ class BaselineReporter:
         categorization_result: TestCategorizationResult,
         runner_setup_result: TestRunnerSetupResult,
         execution_metrics: Optional[TestExecutionMetrics] = None,
-        formats: Optional[List[ReportFormat]] = None
+        formats: Optional[List[ReportFormat]] = None,
     ) -> BaselineReport:
         """
         Generate comprehensive baseline report.
@@ -383,7 +417,7 @@ class BaselineReporter:
             categorization_result=categorization_result,
             runner_setup_result=runner_setup_result,
             execution_metrics=execution_metrics or TestExecutionMetrics(),
-            environment=self._get_environment_info()
+            environment=self._get_environment_info(),
         )
 
         # Gather quality metrics
@@ -403,16 +437,18 @@ class BaselineReporter:
             try:
                 output_path = self._generate_report_format(report, format_type)
                 self.logger.info(f"Generated {format_type.value} report: {output_path}")
-                self._report_stats['formats_created'].append(format_type.value)
+                self._report_stats["formats_created"].append(format_type.value)
             except Exception as e:
                 error_msg = f"Error generating {format_type.value} report: {e}"
                 self.logger.error(error_msg)
-                self._report_stats['errors'].append(error_msg)
+                self._report_stats["errors"].append(error_msg)
 
-        self._report_stats['reports_generated'] += 1
+        self._report_stats["reports_generated"] += 1
         return report
 
-    def _generate_report_format(self, report: BaselineReport, format_type: ReportFormat) -> str:
+    def _generate_report_format(
+        self, report: BaselineReport, format_type: ReportFormat
+    ) -> str:
         """Generate report in specific format."""
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -433,7 +469,7 @@ class BaselineReporter:
         """Generate JSON format report."""
         output_path = self.output_dir / f"baseline_report_{timestamp}.json"
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(report.to_dict(), f, indent=2, default=str)
 
         return str(output_path)
@@ -527,37 +563,87 @@ class BaselineReporter:
 
         # Prepare template variables
         template_vars = {
-            'timestamp': report.timestamp,
-            'git_commit': report.git_commit[:8] if report.git_commit else 'Unknown',
-            'git_branch': report.git_branch or 'Unknown',
-            'health_score': f"{report.calculate_health_score():.1f}",
-            'pass_rate': f"{report.execution_metrics.calculate_pass_rate():.1f}",
-            'total_tests': report.execution_metrics.total_tests,
-            'duration': f"{report.execution_metrics.total_duration:.1f}",
-            'line_coverage': f"{report.execution_metrics.line_coverage:.1f}",
-            'branch_coverage': f"{report.execution_metrics.branch_coverage:.1f}",
-            'quality_score': f"{report.quality_metrics.calculate_overall_score():.1f}",
-            'linting_errors': report.quality_metrics.linting_errors,
-            'security_issues': report.quality_metrics.security_issues,
-            'quality_gates': report.quality_gates,
-            'recommendations': report.recommendations,
-            'total_test_files': len(report.discovery_result.test_files) if report.discovery_result else 0,
-            'total_tests_discovered': report.discovery_result.total_tests if report.discovery_result else 0,
-            'frameworks': ', '.join(report.discovery_result.by_framework.keys()) if report.discovery_result else 'None',
-            'languages': ', '.join(report.discovery_result.by_language.keys()) if report.discovery_result else 'None',
-            'categories': ', '.join(report.categorization_result.by_category.keys()) if report.categorization_result else 'None',
-            'priorities': ', '.join(report.categorization_result.by_priority.keys()) if report.categorization_result else 'None',
-            'estimated_duration': f"{report.categorization_result.estimated_total_duration:.1f}" if report.categorization_result else '0',
-            'test_status_class': 'success' if report.execution_metrics.calculate_pass_rate() >= 95 else 'warning' if report.execution_metrics.calculate_pass_rate() >= 80 else 'danger',
-            'coverage_status_class': 'success' if report.execution_metrics.line_coverage >= 80 else 'warning' if report.execution_metrics.line_coverage >= 60 else 'danger',
-            'quality_status_class': 'success' if report.quality_metrics.calculate_overall_score() >= 80 else 'warning' if report.quality_metrics.calculate_overall_score() >= 60 else 'danger'
+            "timestamp": report.timestamp,
+            "git_commit": report.git_commit[:8] if report.git_commit else "Unknown",
+            "git_branch": report.git_branch or "Unknown",
+            "health_score": f"{report.calculate_health_score():.1f}",
+            "pass_rate": f"{report.execution_metrics.calculate_pass_rate():.1f}",
+            "total_tests": report.execution_metrics.total_tests,
+            "duration": f"{report.execution_metrics.total_duration:.1f}",
+            "line_coverage": f"{report.execution_metrics.line_coverage:.1f}",
+            "branch_coverage": f"{report.execution_metrics.branch_coverage:.1f}",
+            "quality_score": f"{report.quality_metrics.calculate_overall_score():.1f}",
+            "linting_errors": report.quality_metrics.linting_errors,
+            "security_issues": report.quality_metrics.security_issues,
+            "quality_gates": report.quality_gates,
+            "recommendations": report.recommendations,
+            "total_test_files": (
+                len(report.discovery_result.test_files)
+                if report.discovery_result
+                else 0
+            ),
+            "total_tests_discovered": (
+                report.discovery_result.total_tests if report.discovery_result else 0
+            ),
+            "frameworks": (
+                ", ".join(report.discovery_result.by_framework.keys())
+                if report.discovery_result
+                else "None"
+            ),
+            "languages": (
+                ", ".join(report.discovery_result.by_language.keys())
+                if report.discovery_result
+                else "None"
+            ),
+            "categories": (
+                ", ".join(report.categorization_result.by_category.keys())
+                if report.categorization_result
+                else "None"
+            ),
+            "priorities": (
+                ", ".join(report.categorization_result.by_priority.keys())
+                if report.categorization_result
+                else "None"
+            ),
+            "estimated_duration": (
+                f"{report.categorization_result.estimated_total_duration:.1f}"
+                if report.categorization_result
+                else "0"
+            ),
+            "test_status_class": (
+                "success"
+                if report.execution_metrics.calculate_pass_rate() >= 95
+                else (
+                    "warning"
+                    if report.execution_metrics.calculate_pass_rate() >= 80
+                    else "danger"
+                )
+            ),
+            "coverage_status_class": (
+                "success"
+                if report.execution_metrics.line_coverage >= 80
+                else (
+                    "warning"
+                    if report.execution_metrics.line_coverage >= 60
+                    else "danger"
+                )
+            ),
+            "quality_status_class": (
+                "success"
+                if report.quality_metrics.calculate_overall_score() >= 80
+                else (
+                    "warning"
+                    if report.quality_metrics.calculate_overall_score() >= 60
+                    else "danger"
+                )
+            ),
         }
 
         # Render template
         template = Template(html_template)
         html_content = template.render(**template_vars)
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(html_content)
 
         return str(output_path)
@@ -613,7 +699,7 @@ class BaselineReporter:
         for rec in report.recommendations:
             markdown_content += f"- {rec}\n"
 
-        markdown_content += f"""
+        markdown_content += """
 ## 📈 Performance Benchmarks
 
 """
@@ -621,7 +707,7 @@ class BaselineReporter:
         for benchmark, value in report.performance_benchmarks.items():
             markdown_content += f"- **{benchmark}**: {value}\n"
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(markdown_content)
 
         return str(output_path)
@@ -632,19 +718,71 @@ class BaselineReporter:
 
         # Prepare metrics data
         metrics_data = [
-            ['Metric', 'Value', 'Unit', 'Status'],
-            ['Health Score', f"{report.calculate_health_score():.1f}", '%', 'Good' if report.calculate_health_score() >= 80 else 'Needs Improvement'],
-            ['Test Pass Rate', f"{report.execution_metrics.calculate_pass_rate():.1f}", '%', 'Pass' if report.execution_metrics.calculate_pass_rate() >= 95 else 'Fail'],
-            ['Line Coverage', f"{report.execution_metrics.line_coverage:.1f}", '%', 'Pass' if report.execution_metrics.line_coverage >= 80 else 'Fail'],
-            ['Branch Coverage', f"{report.execution_metrics.branch_coverage:.1f}", '%', 'Pass' if report.execution_metrics.branch_coverage >= 80 else 'Fail'],
-            ['Quality Score', f"{report.quality_metrics.calculate_overall_score():.1f}", '%', 'Pass' if report.quality_metrics.calculate_overall_score() >= 80 else 'Fail'],
-            ['Total Tests', str(report.execution_metrics.total_tests), 'count', '-'],
-            ['Test Duration', f"{report.execution_metrics.total_duration:.1f}", 'seconds', 'Pass' if report.execution_metrics.total_duration <= 600 else 'Fail'],
-            ['Linting Errors', str(report.quality_metrics.linting_errors), 'count', 'Pass' if report.quality_metrics.linting_errors == 0 else 'Fail'],
-            ['Security Issues', str(report.quality_metrics.security_issues), 'count', 'Pass' if report.quality_metrics.security_issues == 0 else 'Fail']
+            ["Metric", "Value", "Unit", "Status"],
+            [
+                "Health Score",
+                f"{report.calculate_health_score():.1f}",
+                "%",
+                (
+                    "Good"
+                    if report.calculate_health_score() >= 80
+                    else "Needs Improvement"
+                ),
+            ],
+            [
+                "Test Pass Rate",
+                f"{report.execution_metrics.calculate_pass_rate():.1f}",
+                "%",
+                (
+                    "Pass"
+                    if report.execution_metrics.calculate_pass_rate() >= 95
+                    else "Fail"
+                ),
+            ],
+            [
+                "Line Coverage",
+                f"{report.execution_metrics.line_coverage:.1f}",
+                "%",
+                "Pass" if report.execution_metrics.line_coverage >= 80 else "Fail",
+            ],
+            [
+                "Branch Coverage",
+                f"{report.execution_metrics.branch_coverage:.1f}",
+                "%",
+                "Pass" if report.execution_metrics.branch_coverage >= 80 else "Fail",
+            ],
+            [
+                "Quality Score",
+                f"{report.quality_metrics.calculate_overall_score():.1f}",
+                "%",
+                (
+                    "Pass"
+                    if report.quality_metrics.calculate_overall_score() >= 80
+                    else "Fail"
+                ),
+            ],
+            ["Total Tests", str(report.execution_metrics.total_tests), "count", "-"],
+            [
+                "Test Duration",
+                f"{report.execution_metrics.total_duration:.1f}",
+                "seconds",
+                "Pass" if report.execution_metrics.total_duration <= 600 else "Fail",
+            ],
+            [
+                "Linting Errors",
+                str(report.quality_metrics.linting_errors),
+                "count",
+                "Pass" if report.quality_metrics.linting_errors == 0 else "Fail",
+            ],
+            [
+                "Security Issues",
+                str(report.quality_metrics.security_issues),
+                "count",
+                "Pass" if report.quality_metrics.security_issues == 0 else "Fail",
+            ],
         ]
 
-        with open(output_path, 'w', newline='') as f:
+        with open(output_path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerows(metrics_data)
 
@@ -664,7 +802,9 @@ class BaselineReporter:
         metrics = ET.SubElement(root, "metrics")
 
         execution = ET.SubElement(metrics, "execution")
-        execution.set("pass_rate", f"{report.execution_metrics.calculate_pass_rate():.1f}")
+        execution.set(
+            "pass_rate", f"{report.execution_metrics.calculate_pass_rate():.1f}"
+        )
         execution.set("total_tests", str(report.execution_metrics.total_tests))
         execution.set("duration", f"{report.execution_metrics.total_duration:.1f}")
 
@@ -682,7 +822,7 @@ class BaselineReporter:
 
         # Write XML
         tree = ET.ElementTree(root)
-        tree.write(output_path, encoding='utf-8', xml_declaration=True)
+        tree.write(output_path, encoding="utf-8", xml_declaration=True)
 
         return str(output_path)
 
@@ -690,10 +830,10 @@ class BaselineReporter:
         """Get current git commit hash."""
         try:
             result = subprocess.run(
-                ['git', 'rev-parse', 'HEAD'],
+                ["git", "rev-parse", "HEAD"],
                 cwd=self.project_root,
                 capture_output=True,
-                text=True
+                text=True,
             )
             return result.stdout.strip() if result.returncode == 0 else ""
         except Exception:
@@ -703,10 +843,10 @@ class BaselineReporter:
         """Get current git branch."""
         try:
             result = subprocess.run(
-                ['git', 'branch', '--show-current'],
+                ["git", "branch", "--show-current"],
                 cwd=self.project_root,
                 capture_output=True,
-                text=True
+                text=True,
             )
             return result.stdout.strip() if result.returncode == 0 else ""
         except Exception:
@@ -718,12 +858,12 @@ class BaselineReporter:
         import sys
 
         return {
-            'python_version': sys.version,
-            'platform': platform.platform(),
-            'architecture': platform.architecture()[0],
-            'processor': platform.processor(),
-            'hostname': platform.node(),
-            'user': os.environ.get('USER', 'unknown')
+            "python_version": sys.version,
+            "platform": platform.platform(),
+            "architecture": platform.architecture()[0],
+            "processor": platform.processor(),
+            "hostname": platform.node(),
+            "user": os.environ.get("USER", "unknown"),
         }
 
     def _gather_quality_metrics(self) -> QualityMetrics:
@@ -733,14 +873,14 @@ class BaselineReporter:
         # Run linting (if available)
         try:
             result = subprocess.run(
-                ['python', '-m', 'flake8', '--count', '.'],
+                ["python", "-m", "flake8", "--count", "."],
                 cwd=self.project_root,
                 capture_output=True,
-                text=True
+                text=True,
             )
             if result.returncode == 0:
                 # Parse flake8 output for error count
-                output_lines = result.stdout.strip().split('\n')
+                output_lines = result.stdout.strip().split("\n")
                 if output_lines and output_lines[-1].isdigit():
                     metrics.linting_errors = int(output_lines[-1])
         except Exception:
@@ -765,18 +905,19 @@ class BaselineReporter:
         import_start = time.time()
         try:
             import sys
+
             sys.path.append(str(self.project_root))
         except Exception:
             pass
-        benchmarks['import_time_ms'] = (time.time() - import_start) * 1000
+        benchmarks["import_time_ms"] = (time.time() - import_start) * 1000
 
         # Test file system operations
         fs_start = time.time()
-        test_files = list(self.project_root.rglob('*.py'))
-        benchmarks['file_discovery_ms'] = (time.time() - fs_start) * 1000
-        benchmarks['total_python_files'] = len(test_files)
+        test_files = list(self.project_root.rglob("*.py"))
+        benchmarks["file_discovery_ms"] = (time.time() - fs_start) * 1000
+        benchmarks["total_python_files"] = len(test_files)
 
-        benchmarks['benchmark_duration_ms'] = (time.time() - start_time) * 1000
+        benchmarks["benchmark_duration_ms"] = (time.time() - start_time) * 1000
 
         return benchmarks
 
@@ -786,31 +927,47 @@ class BaselineReporter:
 
         # Test-related recommendations
         if report.execution_metrics.calculate_pass_rate() < 95:
-            recommendations.append("🧪 Improve test pass rate - investigate failing tests")
+            recommendations.append(
+                "🧪 Improve test pass rate - investigate failing tests"
+            )
 
         if report.execution_metrics.line_coverage < 80:
-            recommendations.append("📊 Increase test coverage - add tests for uncovered code")
+            recommendations.append(
+                "📊 Increase test coverage - add tests for uncovered code"
+            )
 
         if report.execution_metrics.total_duration > 600:
-            recommendations.append("⚡ Optimize test execution time - consider parallel execution")
+            recommendations.append(
+                "⚡ Optimize test execution time - consider parallel execution"
+            )
 
         # Quality-related recommendations
         if report.quality_metrics.linting_errors > 0:
-            recommendations.append("🔧 Fix linting errors - run flake8 and address issues")
+            recommendations.append(
+                "🔧 Fix linting errors - run flake8 and address issues"
+            )
 
         if report.quality_metrics.security_issues > 0:
-            recommendations.append("🔒 Address security issues - run security audit tools")
+            recommendations.append(
+                "🔒 Address security issues - run security audit tools"
+            )
 
         if report.quality_metrics.calculate_overall_score() < 80:
-            recommendations.append("📈 Improve overall code quality - focus on documentation and complexity")
+            recommendations.append(
+                "📈 Improve overall code quality - focus on documentation and complexity"
+            )
 
         # Performance recommendations
         if len(report.execution_metrics.flaky_tests) > 0:
-            recommendations.append("🎯 Fix flaky tests - investigate and stabilize unreliable tests")
+            recommendations.append(
+                "🎯 Fix flaky tests - investigate and stabilize unreliable tests"
+            )
 
         # Discovery recommendations
         if report.discovery_result and len(report.discovery_result.by_framework) > 3:
-            recommendations.append("🔧 Consider standardizing test frameworks - reduce complexity")
+            recommendations.append(
+                "🔧 Consider standardizing test frameworks - reduce complexity"
+            )
 
         return recommendations
 
@@ -819,36 +976,35 @@ class BaselineReporter:
         charts = {}
 
         # Set style
-        plt.style.use('seaborn-v0_8')
+        plt.style.use("seaborn-v0_8")
 
         # Test results pie chart
         if report.execution_metrics.total_tests > 0:
             fig, ax = plt.subplots(figsize=(8, 6))
 
-            labels = ['Passed', 'Failed', 'Skipped']
+            labels = ["Passed", "Failed", "Skipped"]
             sizes = [
                 report.execution_metrics.passed_tests,
                 report.execution_metrics.failed_tests,
-                report.execution_metrics.skipped_tests
+                report.execution_metrics.skipped_tests,
             ]
-            colors = ['#28a745', '#dc3545', '#ffc107']
+            colors = ["#28a745", "#dc3545", "#ffc107"]
 
-            ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
-            ax.set_title('Test Results Distribution')
+            ax.pie(
+                sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=90
+            )
+            ax.set_title("Test Results Distribution")
 
-            chart_path = self.output_dir / 'test_results_chart.png'
-            plt.savefig(chart_path, dpi=150, bbox_inches='tight')
+            chart_path = self.output_dir / "test_results_chart.png"
+            plt.savefig(chart_path, dpi=150, bbox_inches="tight")
             plt.close()
 
-            charts['test_results'] = str(chart_path)
+            charts["test_results"] = str(chart_path)
 
         return charts
 
 
-def create_baseline_reporter(
-    project_root: str,
-    **kwargs: Any
-) -> BaselineReporter:
+def create_baseline_reporter(project_root: str, **kwargs: Any) -> BaselineReporter:
     """
     Factory function to create a BaselineReporter instance.
 
@@ -872,8 +1028,12 @@ def main():
     parser = argparse.ArgumentParser(description="Generate baseline reports")
     parser.add_argument("project_root", help="Project root directory")
     parser.add_argument("--output-dir", "-o", help="Output directory for reports")
-    parser.add_argument("--formats", nargs="+", default=["json", "html", "markdown"],
-                       help="Report formats to generate")
+    parser.add_argument(
+        "--formats",
+        nargs="+",
+        default=["json", "html", "markdown"],
+        help="Report formats to generate",
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
@@ -881,16 +1041,16 @@ def main():
     # Configure logging
     logging.basicConfig(
         level=logging.INFO if args.verbose else logging.WARNING,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     # Parse formats
     format_map = {
-        'json': ReportFormat.JSON,
-        'html': ReportFormat.HTML,
-        'markdown': ReportFormat.MARKDOWN,
-        'csv': ReportFormat.CSV,
-        'xml': ReportFormat.XML
+        "json": ReportFormat.JSON,
+        "html": ReportFormat.HTML,
+        "markdown": ReportFormat.MARKDOWN,
+        "csv": ReportFormat.CSV,
+        "xml": ReportFormat.XML,
     }
 
     formats = [format_map[f] for f in args.formats if f in format_map]
@@ -910,7 +1070,9 @@ def main():
     # Step 3: Setup test runners
     print("Step 3: Setting up test runners...")
     setup = create_test_runner_setup(args.project_root)
-    runner_setup_result = setup.setup_test_runners(discovery_result, categorization_result)
+    runner_setup_result = setup.setup_test_runners(
+        discovery_result, categorization_result
+    )
     print(f"  Configured {len(runner_setup_result.runner_configs)} runners")
 
     # Step 4: Generate baseline report
@@ -922,9 +1084,10 @@ def main():
         total_tests=categorization_result.total_tests,
         passed_tests=int(categorization_result.total_tests * 0.95),  # 95% pass rate
         failed_tests=int(categorization_result.total_tests * 0.05),
-        total_duration=categorization_result.estimated_total_duration * 0.3,  # Assume 70% efficiency
+        total_duration=categorization_result.estimated_total_duration
+        * 0.3,  # Assume 70% efficiency
         line_coverage=78.5,
-        branch_coverage=72.3
+        branch_coverage=72.3,
     )
 
     report = reporter.generate_baseline_report(
@@ -932,15 +1095,17 @@ def main():
         categorization_result,
         runner_setup_result,
         execution_metrics,
-        formats
+        formats,
     )
 
     # Summary
-    print(f"\n📊 Baseline Report Summary:")
+    print("\n📊 Baseline Report Summary:")
     print(f"  🏥 Health Score: {report.calculate_health_score():.1f}%")
     print(f"  🧪 Test Pass Rate: {report.execution_metrics.calculate_pass_rate():.1f}%")
     print(f"  📊 Line Coverage: {report.execution_metrics.line_coverage:.1f}%")
-    print(f"  🎯 Quality Score: {report.quality_metrics.calculate_overall_score():.1f}%")
+    print(
+        f"  🎯 Quality Score: {report.quality_metrics.calculate_overall_score():.1f}%"
+    )
     print(f"  ⏱️ Test Duration: {report.execution_metrics.total_duration:.1f}s")
 
     quality_gates_passed = sum(report.quality_gates.values())
@@ -948,7 +1113,7 @@ def main():
     print(f"  🎯 Quality Gates: {quality_gates_passed}/{total_gates} passed")
 
     if report.recommendations:
-        print(f"\n💡 Top Recommendations:")
+        print("\n💡 Top Recommendations:")
         for rec in report.recommendations[:3]:
             print(f"  {rec}")
 

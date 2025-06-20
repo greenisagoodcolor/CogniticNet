@@ -11,6 +11,7 @@ All API endpoints require session-based authentication. Include a valid session 
 ## Rate Limiting
 
 The API implements rate limiting to prevent abuse:
+
 - General read operations: 20 requests per minute
 - Create/update operations: 10 requests per minute
 - Delete operations: 5 requests per minute
@@ -34,15 +35,15 @@ GET /api/agents
 
 #### Query Parameters
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| status | string | Filter by agent status (idle, moving, interacting, planning, executing, learning, error, offline) | - |
-| capability | string | Filter by capability | - |
-| tag | string | Filter by tag | - |
-| limit | number | Number of results per page (1-100) | 20 |
-| offset | number | Pagination offset | 0 |
-| sortBy | string | Sort field (created_at, updated_at, name, status) | created_at |
-| sortOrder | string | Sort order (asc, desc) | desc |
+| Parameter  | Type   | Description                                                                                       | Default    |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------- | ---------- |
+| status     | string | Filter by agent status (idle, moving, interacting, planning, executing, learning, error, offline) | -          |
+| capability | string | Filter by capability                                                                              | -          |
+| tag        | string | Filter by tag                                                                                     | -          |
+| limit      | number | Number of results per page (1-100)                                                                | 20         |
+| offset     | number | Pagination offset                                                                                 | 0          |
+| sortBy     | string | Sort field (created_at, updated_at, name, status)                                                 | created_at |
+| sortOrder  | string | Sort order (asc, desc)                                                                            | desc       |
 
 #### Response
 
@@ -244,10 +245,10 @@ GET /api/agents/{agentId}/state
 
 #### Query Parameters
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| limit | number | Number of results | 10 |
-| offset | number | Pagination offset | 0 |
+| Parameter | Type   | Description       | Default |
+| --------- | ------ | ----------------- | ------- |
+| limit     | number | Number of results | 10      |
+| offset    | number | Pagination offset | 0       |
 
 #### Response
 
@@ -299,11 +300,11 @@ GET /api/agents/{agentId}/commands
 
 #### Query Parameters
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| status | string | Filter by status (queued, executing, completed, failed) | - |
-| limit | number | Number of results | 10 |
-| offset | number | Pagination offset | 0 |
+| Parameter | Type   | Description                                             | Default |
+| --------- | ------ | ------------------------------------------------------- | ------- |
+| status    | string | Filter by status (queued, executing, completed, failed) | -       |
+| limit     | number | Number of results                                       | 10      |
+| offset    | number | Pagination offset                                       | 0       |
 
 ### Execute Command
 
@@ -372,14 +373,14 @@ GET /api/agents/{agentId}/memory
 
 #### Query Parameters
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| type | string | Memory type (event, interaction, location, pattern, general) | - |
-| query | string | Search query | - |
-| tags | array | Filter by tags | - |
-| min_importance | number | Minimum importance (0-1) | - |
-| limit | number | Number of results | 20 |
-| offset | number | Pagination offset | 0 |
+| Parameter      | Type   | Description                                                  | Default |
+| -------------- | ------ | ------------------------------------------------------------ | ------- |
+| type           | string | Memory type (event, interaction, location, pattern, general) | -       |
+| query          | string | Search query                                                 | -       |
+| tags           | array  | Filter by tags                                               | -       |
+| min_importance | number | Minimum importance (0-1)                                     | -       |
+| limit          | number | Number of results                                            | 20      |
+| offset         | number | Pagination offset                                            | 0       |
 
 ### Add Memory
 
@@ -534,17 +535,18 @@ curl -X POST http://localhost:3000/api/agents/agent-123/commands \
 
 ```javascript
 // JavaScript/TypeScript example
-const eventSource = new EventSource('/api/agents/agent-123/state/stream');
+const eventSource = new EventSource("/api/agents/agent-123/state/stream");
 
 eventSource.onmessage = (event) => {
   const stateUpdate = JSON.parse(event.data);
-  console.log('State changed:', stateUpdate);
+  console.log("State changed:", stateUpdate);
 };
 ```
 
 ## SDK Support
 
 Official SDKs are available for:
+
 - TypeScript/JavaScript
 - Python
 - Go

@@ -12,14 +12,14 @@ import torch.nn.functional as F
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import add_self_loops, degree, softmax
 from torch_geometric.nn.inits import glorot, zeros
-from typing import Optional, Tuple, Union, Callable
-import math
+from typing import Optional, Tuple, Union
 from dataclasses import dataclass
 from enum import Enum
 
 
 class AggregationType(Enum):
     """Types of aggregation functions for message passing"""
+
     MEAN = "mean"
     MAX = "max"
     ADD = "add"
@@ -30,6 +30,7 @@ class AggregationType(Enum):
 @dataclass
 class LayerConfig:
     """Configuration for GNN layers"""
+
     in_channels: int
     out_channels: int
     heads: int = 1
@@ -67,9 +68,9 @@ class GCNLayer(MessagePassing):
         add_self_loops: bool = True,
         normalize: bool = True,
         bias: bool = True,
-        **kwargs
+        **kwargs,
     ):
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -87,7 +88,7 @@ class GCNLayer(MessagePassing):
         if bias:
             self.bias = nn.Parameter(torch.Tensor(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -102,7 +103,7 @@ class GCNLayer(MessagePassing):
         self,
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        edge_weight: Optional[torch.Tensor] = None
+        edge_weight: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """
         Forward pass of GCN layer.
@@ -121,8 +122,11 @@ class GCNLayer(MessagePassing):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = self.norm(
-                        edge_index, x.size(0), edge_weight,
-                        self.improved, self.add_self_loops
+                        edge_index,
+                        x.size(0),
+                        edge_weight,
+                        self.improved,
+                        self.add_self_loops,
                     )
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
@@ -139,7 +143,9 @@ class GCNLayer(MessagePassing):
 
         return out
 
-    def message(self, x_j: torch.Tensor, edge_weight: Optional[torch.Tensor]) -> torch.Tensor:
+    def message(
+        self, x_j: torch.Tensor, edge_weight: Optional[torch.Tensor]
+    ) -> torch.Tensor:
         """Construct messages from source nodes"""
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
@@ -150,24 +156,27 @@ class GCNLayer(MessagePassing):
         edge_weight: Optional[torch.Tensor] = None,
         improved: bool = False,
         add_self_loops: bool = True,
-        dtype: Optional[torch.dtype] = None
+        dtype: Optional[torch.dtype] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Compute normalized edge weights"""
 
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1),), dtype=dtype,
-                                   device=edge_index.device)
+            edge_weight = torch.ones(
+                (edge_index.size(1),), dtype=dtype, device=edge_index.device
+            )
 
         if add_self_loops:
             edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=2. if improved else 1.,
-                num_nodes=num_nodes
+                edge_index,
+                edge_weight,
+                fill_value=2.0 if improved else 1.0,
+                num_nodes=num_nodes,
             )
 
         row, col = edge_index[0], edge_index[1]
         deg = degree(col, num_nodes, dtype=edge_weight.dtype)
         deg_inv_sqrt = deg.pow(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+        deg_inv_sqrt[deg_inv_sqrt == float("inf")] = 0
 
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
@@ -202,9 +211,9 @@ class GATLayer(MessagePassing):
         dropout: float = 0.0,
         add_self_loops: bool = True,
         bias: bool = True,
-        **kwargs
+        **kwargs,
     ):
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -226,7 +235,7 @@ class GATLayer(MessagePassing):
         elif bias and not concat:
             self.bias = nn.Parameter(torch.Tensor(out_channels))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -243,7 +252,7 @@ class GATLayer(MessagePassing):
         x: torch.Tensor,
         edge_index: torch.Tensor,
         edge_attr: Optional[torch.Tensor] = None,
-        return_attention_weights: bool = False
+        return_attention_weights: bool = False,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]]:
         """
         Forward pass of GAT layer.
@@ -275,8 +284,7 @@ class GATLayer(MessagePassing):
 
         # Message passing
         out = self.propagate(
-            edge_index, x=(x_src, x_dst),
-            alpha=(alpha_src, alpha_dst), size=None
+            edge_index, x=(x_src, x_dst), alpha=(alpha_src, alpha_dst), size=None
         )
 
         if self.concat:
@@ -300,7 +308,7 @@ class GATLayer(MessagePassing):
         alpha_i: torch.Tensor,
         index: torch.Tensor,
         ptr: Optional[torch.Tensor],
-        size_i: Optional[int]
+        size_i: Optional[int],
     ) -> torch.Tensor:
         """Construct messages with attention"""
         alpha = alpha_j + alpha_i
@@ -334,8 +342,8 @@ class SAGELayer(MessagePassing):
         normalize: bool = False,
         root_weight: bool = True,
         bias: bool = True,
-        aggr: str = 'mean',
-        **kwargs
+        aggr: str = "mean",
+        **kwargs,
     ):
         super().__init__(aggr=aggr, **kwargs)
 
@@ -361,7 +369,7 @@ class SAGELayer(MessagePassing):
         self,
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        size: Optional[Tuple[int, int]] = None
+        size: Optional[Tuple[int, int]] = None,
     ) -> torch.Tensor:
         """
         Forward pass of GraphSAGE layer.
@@ -419,9 +427,9 @@ class GINLayer(MessagePassing):
         nn: Optional[nn.Module] = None,
         eps: float = 0.0,
         train_eps: bool = False,
-        **kwargs
+        **kwargs,
     ):
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -432,20 +440,20 @@ class GINLayer(MessagePassing):
             nn = nn.Sequential(
                 nn.Linear(in_channels, out_channels),
                 nn.ReLU(),
-                nn.Linear(out_channels, out_channels)
+                nn.Linear(out_channels, out_channels),
             )
         self.nn = nn
 
         if train_eps:
             self.eps = nn.Parameter(torch.Tensor([eps]))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer("eps", torch.Tensor([eps]))
 
         self.reset_parameters()
 
     def reset_parameters(self):
         """Initialize layer parameters"""
-        if hasattr(self.nn, 'reset_parameters'):
+        if hasattr(self.nn, "reset_parameters"):
             self.nn.reset_parameters()
         self.eps.data.fill_(self.initial_eps)
 
@@ -453,7 +461,7 @@ class GINLayer(MessagePassing):
         self,
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        size: Optional[Tuple[int, int]] = None
+        size: Optional[Tuple[int, int]] = None,
     ) -> torch.Tensor:
         """
         Forward pass of GIN layer.
@@ -504,8 +512,8 @@ class EdgeConvLayer(MessagePassing):
         in_channels: int,
         out_channels: int,
         nn: Optional[nn.Module] = None,
-        aggr: str = 'max',
-        **kwargs
+        aggr: str = "max",
+        **kwargs,
     ):
         super().__init__(aggr=aggr, **kwargs)
 
@@ -516,7 +524,7 @@ class EdgeConvLayer(MessagePassing):
             nn = nn.Sequential(
                 nn.Linear(2 * in_channels, out_channels),
                 nn.ReLU(),
-                nn.Linear(out_channels, out_channels)
+                nn.Linear(out_channels, out_channels),
             )
         self.nn = nn
 
@@ -524,14 +532,14 @@ class EdgeConvLayer(MessagePassing):
 
     def reset_parameters(self):
         """Initialize layer parameters"""
-        if hasattr(self.nn, 'reset_parameters'):
+        if hasattr(self.nn, "reset_parameters"):
             self.nn.reset_parameters()
 
     def forward(
         self,
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        size: Optional[Tuple[int, int]] = None
+        size: Optional[Tuple[int, int]] = None,
     ) -> torch.Tensor:
         """
         Forward pass of EdgeConv layer.
@@ -574,7 +582,7 @@ class ResGNNLayer(nn.Module):
         layer: nn.Module,
         in_channels: int,
         out_channels: int,
-        dropout: float = 0.0
+        dropout: float = 0.0,
     ):
         super().__init__()
 
@@ -619,8 +627,8 @@ class GNNStack(nn.Module):
     def __init__(
         self,
         layer_configs: list,
-        layer_type: str = 'gcn',
-        global_pool: Optional[str] = None
+        layer_type: str = "gcn",
+        global_pool: Optional[str] = None,
     ):
         super().__init__()
 
@@ -632,51 +640,46 @@ class GNNStack(nn.Module):
             layer = self._create_layer(layer_type, config)
 
             # Add residual connection if specified
-            if hasattr(config, 'residual') and config.residual:
+            if hasattr(config, "residual") and config.residual:
                 layer = ResGNNLayer(
                     layer,
                     config.in_channels,
                     config.out_channels,
-                    getattr(config, 'dropout', 0.0)
+                    getattr(config, "dropout", 0.0),
                 )
 
             self.layers.append(layer)
 
     def _create_layer(self, layer_type: str, config: LayerConfig) -> nn.Module:
         """Create a GNN layer based on type and configuration"""
-        if layer_type == 'gcn':
+        if layer_type == "gcn":
             return GCNLayer(
                 config.in_channels,
                 config.out_channels,
                 bias=config.bias,
-                normalize=config.normalize
+                normalize=config.normalize,
             )
-        elif layer_type == 'gat':
+        elif layer_type == "gat":
             return GATLayer(
                 config.in_channels,
                 config.out_channels,
                 heads=config.heads,
                 dropout=config.dropout,
-                bias=config.bias
+                bias=config.bias,
             )
-        elif layer_type == 'sage':
+        elif layer_type == "sage":
             return SAGELayer(
                 config.in_channels,
                 config.out_channels,
                 normalize=config.normalize,
                 bias=config.bias,
-                aggr=config.aggregation.value
+                aggr=config.aggregation.value,
             )
-        elif layer_type == 'gin':
-            return GINLayer(
-                config.in_channels,
-                config.out_channels
-            )
-        elif layer_type == 'edgeconv':
+        elif layer_type == "gin":
+            return GINLayer(config.in_channels, config.out_channels)
+        elif layer_type == "edgeconv":
             return EdgeConvLayer(
-                config.in_channels,
-                config.out_channels,
-                aggr=config.aggregation.value
+                config.in_channels, config.out_channels, aggr=config.aggregation.value
             )
         else:
             raise ValueError(f"Unknown layer type: {layer_type}")
@@ -686,7 +689,7 @@ class GNNStack(nn.Module):
         x: torch.Tensor,
         edge_index: torch.Tensor,
         batch: Optional[torch.Tensor] = None,
-        **kwargs
+        **kwargs,
     ) -> torch.Tensor:
         """
         Forward pass through GNN stack.
@@ -710,11 +713,11 @@ class GNNStack(nn.Module):
 
         # Global pooling for graph-level tasks
         if self.global_pool is not None and batch is not None:
-            if self.global_pool == 'mean':
+            if self.global_pool == "mean":
                 x = global_mean_pool(x, batch)
-            elif self.global_pool == 'max':
+            elif self.global_pool == "max":
                 x = global_max_pool(x, batch)
-            elif self.global_pool == 'add':
+            elif self.global_pool == "add":
                 x = global_add_pool(x, batch)
 
         return x
@@ -738,8 +741,12 @@ def global_max_pool(x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
     return scatter_max(x, batch, dim=0, dim_size=size)[0]
 
 
-def scatter_add(src: torch.Tensor, index: torch.Tensor, dim: int = -1,
-                dim_size: Optional[int] = None) -> torch.Tensor:
+def scatter_add(
+    src: torch.Tensor,
+    index: torch.Tensor,
+    dim: int = -1,
+    dim_size: Optional[int] = None,
+) -> torch.Tensor:
     """Scatter add operation"""
     size = list(src.size())
     if dim_size is not None:
@@ -752,16 +759,24 @@ def scatter_add(src: torch.Tensor, index: torch.Tensor, dim: int = -1,
     return out.scatter_add_(dim, index.expand_as(src), src)
 
 
-def scatter_mean(src: torch.Tensor, index: torch.Tensor, dim: int = -1,
-                 dim_size: Optional[int] = None) -> torch.Tensor:
+def scatter_mean(
+    src: torch.Tensor,
+    index: torch.Tensor,
+    dim: int = -1,
+    dim_size: Optional[int] = None,
+) -> torch.Tensor:
     """Scatter mean operation"""
     out = scatter_add(src, index, dim, dim_size)
     count = scatter_add(torch.ones_like(src), index, dim, dim_size)
     return out / count.clamp(min=1)
 
 
-def scatter_max(src: torch.Tensor, index: torch.Tensor, dim: int = -1,
-                dim_size: Optional[int] = None) -> Tuple[torch.Tensor, torch.Tensor]:
+def scatter_max(
+    src: torch.Tensor,
+    index: torch.Tensor,
+    dim: int = -1,
+    dim_size: Optional[int] = None,
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """Scatter max operation"""
     size = list(src.size())
     if dim_size is not None:
@@ -772,7 +787,7 @@ def scatter_max(src: torch.Tensor, index: torch.Tensor, dim: int = -1,
         size[dim] = int(index.max()) + 1
     out = torch.zeros(size, dtype=src.dtype, device=src.device)
     arg_out = torch.zeros(size, dtype=torch.long, device=src.device)
-    return out.scatter_reduce_(dim, index.expand_as(src), src, 'amax'), arg_out
+    return out.scatter_reduce_(dim, index.expand_as(src), src, "amax"), arg_out
 
 
 # Example usage
@@ -781,11 +796,11 @@ if __name__ == "__main__":
     configs = [
         LayerConfig(in_channels=32, out_channels=64),
         LayerConfig(in_channels=64, out_channels=128),
-        LayerConfig(in_channels=128, out_channels=64)
+        LayerConfig(in_channels=128, out_channels=64),
     ]
 
     # Create GNN stack
-    model = GNNStack(configs, layer_type='gcn')
+    model = GNNStack(configs, layer_type="gcn")
 
     # Example data
     x = torch.randn(100, 32)  # 100 nodes, 32 features

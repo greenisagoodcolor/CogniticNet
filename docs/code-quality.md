@@ -76,6 +76,7 @@ npm run lint:strict
 ```
 
 Key Rules:
+
 - React Hooks rules enforced
 - TypeScript strict mode
 - Accessibility checks enabled
@@ -101,6 +102,7 @@ npm run format:json
 ```
 
 Settings:
+
 - Single quotes
 - No semicolons
 - 2-space indentation
@@ -122,6 +124,7 @@ npm run type-check:watch
 ```
 
 Strict settings enabled:
+
 - `strict: true`
 - `noImplicitAny: true`
 - `strictNullChecks: true`
@@ -148,6 +151,7 @@ npm run test:ci
 ```
 
 Coverage thresholds:
+
 - Statements: 80%
 - Branches: 80%
 - Functions: 80%
@@ -156,6 +160,7 @@ Coverage thresholds:
 ### Python Quality Tools
 
 **Flake8** (Linting):
+
 ```bash
 # Run Flake8
 npm run python:lint
@@ -165,6 +170,7 @@ flake8 src/
 ```
 
 **Black** (Formatting):
+
 ```bash
 # Format Python code
 black src/
@@ -174,12 +180,14 @@ black --check src/
 ```
 
 **mypy** (Type Checking):
+
 ```bash
 # Type check Python
 mypy src/
 ```
 
 **pytest** (Testing):
+
 ```bash
 # Run tests
 npm run python:test
@@ -228,6 +236,7 @@ npm run analyze
 ```
 
 Current limits:
+
 - Main bundle: 150 KB
 - Total JS: 300 KB
 
@@ -290,12 +299,14 @@ npm run test:ci
 ### GitHub Actions Workflows
 
 1. **CI Pipeline** (`.github/workflows/ci.yml`)
+
    - Runs on all PRs and pushes
    - Executes all quality checks
    - Generates coverage reports
    - Posts status comments
 
 2. **Code Quality** (`.github/workflows/code-quality.yml`)
+
    - Deep code analysis
    - Bundle size checks
    - Security scanning
@@ -322,11 +333,13 @@ All pull requests must:
 ### Code Style
 
 1. **Consistency**: Use automated formatters
+
    ```bash
    npm run format
    ```
 
 2. **Type Safety**: Always use TypeScript
+
    ```typescript
    // ✅ Good
    function greet(name: string): string {
@@ -340,6 +353,7 @@ All pull requests must:
    ```
 
 3. **Meaningful Names**: Be descriptive
+
    ```typescript
    // ✅ Good
    const isUserAuthenticated = checkAuth();
@@ -351,13 +365,15 @@ All pull requests must:
 ### Testing
 
 1. **Test Coverage**: Aim for >80%
+
    ```bash
    npm run test:coverage
    ```
 
 2. **Test Structure**: Use AAA pattern
+
    ```typescript
-   test('should calculate total correctly', () => {
+   test("should calculate total correctly", () => {
      // Arrange
      const items = [{ price: 10 }, { price: 20 }];
 
@@ -370,13 +386,14 @@ All pull requests must:
    ```
 
 3. **Edge Cases**: Test boundaries
+
    ```typescript
    test.each([
      [[], 0],
      [null, 0],
      [undefined, 0],
      [[{ price: -10 }], 0],
-   ])('handles edge case %p', (input, expected) => {
+   ])("handles edge case %p", (input, expected) => {
      expect(calculateTotal(input)).toBe(expected);
    });
    ```
@@ -542,6 +559,7 @@ npm run cli
 ```
 
 Interactive menu for common tasks:
+
 - Run quality checks
 - Format code
 - Run tests
@@ -555,6 +573,7 @@ npm run coverage:report
 ```
 
 Interactive coverage reporting:
+
 - Generate reports
 - View in browser
 - Upload to Codecov

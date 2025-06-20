@@ -22,9 +22,9 @@ var _Transformer = require('./Transformer'); var _Transformer2 = _interopRequire
  * type-only imports in TypeScript and Flow.
  */
  class ESMImportTransformer extends _Transformer2.default {
-  
-  
-  
+
+
+
 
   constructor(
      tokens,
@@ -303,7 +303,7 @@ var _Transformer = require('./Transformer'); var _Transformer2 = _interopRequire
 
    processExportDefault() {
     if (
-      _shouldElideDefaultExport2.default.call(void 0, 
+      _shouldElideDefaultExport2.default.call(void 0,
         this.isTypeScriptTransformEnabled,
         this.keepUnusedImports,
         this.tokens,

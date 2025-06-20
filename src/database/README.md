@@ -1,6 +1,7 @@
 # FreeAgentics Database Management
 
 This directory contains all database-related code for FreeAgentics, including:
+
 - SQLAlchemy models
 - Alembic migrations
 - Seed data scripts
@@ -17,24 +18,29 @@ The database consists of the following main tables:
 ### Core Tables
 
 1. **agents** - AI agents in the system
+
    - Stores agent configuration, state, beliefs
    - Tracks location, energy, and experience
    - Supports different agent types (explorer, merchant, guardian, etc.)
 
 2. **conversations** - Communication between agents
+
    - Supports direct, group, broadcast, and system conversations
    - Stores metadata and context
 
 3. **messages** - Individual messages in conversations
+
    - Links to conversations and sender agents
    - Supports different message types
 
 4. **knowledge_graphs** - Agent knowledge storage
+
    - Stores nodes and edges as JSON
    - Supports personal, shared, and global knowledge types
    - Access control via public flag and access lists
 
 5. **coalitions** - Multi-agent collaborations
+
    - Tracks coalition goals, rules, and status
    - Manages shared value pools
 
@@ -76,6 +82,7 @@ python manage.py init
 ```
 
 This will:
+
 1. Create the database
 2. Run all migrations
 3. Seed initial data (if DATABASE_SEED_DATA=true)
@@ -141,11 +148,14 @@ alembic history
 
 1. Edit models in `models.py`
 2. Create a migration:
+
    ```bash
    alembic revision --autogenerate -m "Add new field to agents"
    ```
+
 3. Review the generated migration file
 4. Apply the migration:
+
    ```bash
    alembic upgrade head
    ```
@@ -252,18 +262,22 @@ knowledge = KnowledgeGraph(
 ### Common Issues
 
 1. **Connection Refused**
+
    - Check PostgreSQL is running
    - Verify DATABASE_URL is correct
    - Check firewall/network settings
 
 2. **Role Does Not Exist**
+
    - Create PostgreSQL user:
+
      ```sql
      CREATE USER freeagentics WITH PASSWORD 'password';
      CREATE DATABASE freeagentics_dev OWNER freeagentics;
      ```
 
 3. **Migration Conflicts**
+
    - Check current status: `alembic current`
    - Resolve conflicts in alembic_version table
    - Use `alembic stamp head` to mark as current
@@ -310,4 +324,4 @@ alembic upgrade head
 - [ ] Database partitioning for large datasets
 - [ ] Read replicas for scaling
 - [ ] TimescaleDB for time-series data
-- [ ] Full-text search with PostgreSQL extensions 
+- [ ] Full-text search with PostgreSQL extensions

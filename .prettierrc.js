@@ -11,38 +11,38 @@ module.exports = {
 
   // Quotes
   singleQuote: true,
-  quoteProps: 'as-needed',
+  quoteProps: "as-needed",
 
   // JSX quotes
   jsxSingleQuote: false,
 
   // Trailing commas
-  trailingComma: 'es5',
+  trailingComma: "es5",
 
   // Brackets
   bracketSpacing: true,
   bracketSameLine: false,
 
   // Arrow functions
-  arrowParens: 'always',
+  arrowParens: "always",
 
   // Line endings
-  endOfLine: 'lf',
+  endOfLine: "lf",
 
   // HTML whitespace sensitivity
-  htmlWhitespaceSensitivity: 'css',
+  htmlWhitespaceSensitivity: "css",
 
   // Vue files script and style tags indentation
   vueIndentScriptAndStyle: false,
 
   // Embedded language formatting
-  embeddedLanguageFormatting: 'auto',
+  embeddedLanguageFormatting: "auto",
 
   // Single attribute per line in HTML, Vue and JSX
   singleAttributePerLine: false,
 
   // Prose wrap
-  proseWrap: 'preserve',
+  proseWrap: "preserve",
 
   // Require pragma
   requirePragma: false,
@@ -51,27 +51,27 @@ module.exports = {
   // Override for specific file types
   overrides: [
     {
-      files: ['*.json', '*.jsonc'],
+      files: ["*.json", "*.jsonc"],
       options: {
         printWidth: 80,
-        trailingComma: 'none',
+        trailingComma: "none",
       },
     },
     {
-      files: '*.md',
+      files: "*.md",
       options: {
-        proseWrap: 'always',
+        proseWrap: "always",
         printWidth: 80,
       },
     },
     {
-      files: ['*.yml', '*.yaml'],
+      files: ["*.yml", "*.yaml"],
       options: {
         singleQuote: false,
       },
     },
     {
-      files: ['*.css', '*.scss', '*.less'],
+      files: ["*.css", "*.scss", "*.less"],
       options: {
         singleQuote: false,
       },
@@ -79,7 +79,7 @@ module.exports = {
   ],
 
   // Tailwind CSS plugin configuration
-  plugins: ['prettier-plugin-tailwindcss'],
-  tailwindConfig: './tailwind.config.ts',
-  tailwindFunctions: ['clsx', 'cn', 'twMerge'],
+  plugins: ["prettier-plugin-tailwindcss"],
+  tailwindConfig: "./tailwind.config.ts",
+  tailwindFunctions: ["clsx", "cn", "twMerge"],
 };

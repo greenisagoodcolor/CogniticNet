@@ -5,9 +5,11 @@ This directory contains comprehensive code examples demonstrating various aspect
 ## 📁 Example Files
 
 ### 1. [agent-creation-examples.py](./agent-creation-examples.py)
+
 **Purpose**: Demonstrates agent creation patterns and configurations
 
 **Examples Included**:
+
 - Basic agent creation with standard configurations
 - Advanced agent configurations with custom parameters
 - Coalition formation and multi-agent coordination
@@ -16,6 +18,7 @@ This directory contains comprehensive code examples demonstrating various aspect
 - Performance optimization strategies
 
 **Key Functions**:
+
 - `create_basic_explorer()` - Simple explorer agent creation
 - `create_advanced_specialist()` - Complex agent with custom settings
 - `create_coalition_example()` - Multi-agent coalition formation
@@ -24,15 +27,18 @@ This directory contains comprehensive code examples demonstrating various aspect
 - `performance_example()` - Batch creation and caching
 
 **Run Example**:
+
 ```bash
 cd docs/examples
 python agent-creation-examples.py
 ```
 
 ### 2. [coalition-formation-examples.py](./coalition-formation-examples.py)
+
 **Purpose**: Comprehensive coalition formation patterns and strategies
 
 **Examples Included**:
+
 - Exploration coalition formation
 - Emergency response team assembly
 - Research and development teams
@@ -41,12 +47,14 @@ python agent-creation-examples.py
 - Performance-based team optimization
 
 **Key Functions**:
+
 - `example_1_exploration_coalition()` - Systematic exploration team
 - `example_2_emergency_response_coalition()` - Crisis response formation
 - `example_3_research_coalition()` - Expertise-based research teams
 - `example_4_dynamic_coalition_adaptation()` - Adaptive team evolution
 
 **Run Example**:
+
 ```bash
 cd docs/examples
 python coalition-formation-examples.py
@@ -84,6 +92,7 @@ python coalition-formation-examples.py
 ### Understanding the Output
 
 The examples provide detailed console output showing:
+
 - **Configuration Details**: Agent parameters and settings
 - **Process Flow**: Step-by-step execution information
 - **Performance Metrics**: Timing and efficiency statistics
@@ -95,6 +104,7 @@ The examples provide detailed console output showing:
 ### Agent Creation Patterns
 
 #### Basic Agent Creation
+
 ```python
 # Simple explorer agent
 config = {
@@ -109,6 +119,7 @@ config = {
 ```
 
 #### Advanced Configuration
+
 ```python
 # Specialist agent with complex setup
 config = {
@@ -124,18 +135,21 @@ config = {
 ### Coalition Formation Strategies
 
 #### Compatibility-Based Formation
+
 - Personality trait matching
 - Capability complementarity
 - Communication style alignment
 - Leadership preference compatibility
 
 #### Task-Oriented Assembly
+
 - Required capability mapping
 - Performance history analysis
 - Availability and resource assessment
 - Geographic proximity optimization
 
 #### Dynamic Adaptation
+
 - Performance monitoring
 - Capability gap identification
 - Member addition/removal
@@ -144,6 +158,7 @@ config = {
 ### Communication Patterns
 
 #### Direct Messaging
+
 ```python
 message = {
     "sender_id": "agent_001",
@@ -154,6 +169,7 @@ message = {
 ```
 
 #### Broadcast Communication
+
 ```python
 alert = {
     "sender_id": "guardian_001",
@@ -164,6 +180,7 @@ alert = {
 ```
 
 #### Coordination Protocols
+
 ```python
 coordination = {
     "sender_id": "coordinator_001",
@@ -201,6 +218,7 @@ def validate_agent_config(config):
 ### Performance Optimization Techniques
 
 #### Batch Operations
+
 ```python
 async def create_agents_batch(configs, batch_size=5):
     """Create multiple agents efficiently in batches"""
@@ -212,6 +230,7 @@ async def create_agents_batch(configs, batch_size=5):
 ```
 
 #### Configuration Caching
+
 ```python
 class ConfigCache:
     """Cache for agent configuration templates"""
@@ -237,6 +256,7 @@ The examples include comprehensive monitoring:
 To add your own examples:
 
 1. **Create New Example Function**:
+
 ```python
 async def my_custom_example():
     """Your custom example description"""
@@ -246,6 +266,7 @@ async def my_custom_example():
 ```
 
 2. **Add to Main Function**:
+
 ```python
 async def main():
     # Existing examples...
@@ -253,6 +274,7 @@ async def main():
 ```
 
 3. **Follow Naming Conventions**:
+
 - Use descriptive function names
 - Include comprehensive docstrings
 - Add console output for clarity

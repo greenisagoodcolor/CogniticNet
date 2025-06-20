@@ -7,16 +7,14 @@ coalition formation, communication patterns, and best practices.
 """
 
 import asyncio
-import json
-import random
 from datetime import datetime
-from typing import Dict, List, Any
 from uuid import uuid4
 
 
 # ============================================================================
 # BASIC EXAMPLES
 # ============================================================================
+
 
 async def example_1_basic_agent():
     """Example 1: Create a basic agent"""
@@ -33,7 +31,7 @@ async def example_1_basic_agent():
             "communication_frequency": 0.5,
             "resource_sharing": 0.4,
             "leadership_tendency": 0.5,
-            "adaptability": 0.8
+            "adaptability": 0.8,
         },
         "position": {"x": 0.0, "y": 0.0, "z": 0.0},
         "energy": 100.0,
@@ -41,10 +39,10 @@ async def example_1_basic_agent():
         "capabilities": ["move", "observe", "map", "scout", "navigate"],
         "goals": ["explore_new_areas", "map_territory", "discover_resources"],
         "knowledge": {},
-        "metadata": {"creator": "examples", "version": "1.0"}
+        "metadata": {"creator": "examples", "version": "1.0"},
     }
 
-    print(f"Created agent configuration:")
+    print("Created agent configuration:")
     print(f"  Name: {agent_config['name']}")
     print(f"  Type: {agent_config['agent_type']}")
     print(f"  Capabilities: {len(agent_config['capabilities'])}")
@@ -64,22 +62,22 @@ async def example_2_coalition_formation():
             "name": "Explorer-Leader",
             "agent_type": "explorer",
             "role": "leader",
-            "capabilities": ["move", "observe", "coordinate"]
+            "capabilities": ["move", "observe", "coordinate"],
         },
         {
             "agent_id": str(uuid4()),
             "name": "Monitor-Intel",
             "agent_type": "monitor",
             "role": "intelligence",
-            "capabilities": ["observe", "analyze", "report"]
+            "capabilities": ["observe", "analyze", "report"],
         },
         {
             "agent_id": str(uuid4()),
             "name": "Guardian-Security",
             "agent_type": "guardian",
             "role": "security",
-            "capabilities": ["defend", "protect", "alert"]
-        }
+            "capabilities": ["defend", "protect", "alert"],
+        },
     ]
 
     coalition_config = {
@@ -90,9 +88,9 @@ async def example_2_coalition_formation():
         "coordination_rules": {
             "formation_pattern": "triangular",
             "communication_frequency": 300,
-            "max_separation": 50.0
+            "max_separation": 50.0,
         },
-        "created_at": datetime.now().isoformat()
+        "created_at": datetime.now().isoformat(),
     }
 
     print(f"Coalition: {coalition_config['name']}")
@@ -121,8 +119,8 @@ async def example_3_communication():
         "content": {
             "action": "resource_discovered",
             "location": {"x": 250.0, "y": 180.0},
-            "resource_type": "rare_minerals"
-        }
+            "resource_type": "rare_minerals",
+        },
     }
     messages.append(discovery_msg)
 
@@ -137,8 +135,8 @@ async def example_3_communication():
         "content": {
             "action": "threat_detected",
             "threat_type": "environmental_hazard",
-            "location": {"x": 300.0, "y": 200.0}
-        }
+            "location": {"x": 300.0, "y": 200.0},
+        },
     }
     messages.append(alert_msg)
 
@@ -153,8 +151,8 @@ async def example_3_communication():
         "content": {
             "action": "mission_assignment",
             "mission_type": "emergency_response",
-            "deployment_time": 300
-        }
+            "deployment_time": 300,
+        },
     }
     messages.append(coord_msg)
 
@@ -176,22 +174,22 @@ async def example_4_error_handling():
         errors = []
 
         # Name validation
-        if not config.get('name') or len(config['name']) < 3:
+        if not config.get("name") or len(config["name"]) < 3:
             errors.append("Agent name must be at least 3 characters")
 
         # Type validation
         valid_types = ["explorer", "monitor", "coordinator", "specialist", "guardian"]
-        if config.get('agent_type') not in valid_types:
+        if config.get("agent_type") not in valid_types:
             errors.append(f"Invalid agent type: {config.get('agent_type')}")
 
         # Energy validation
-        energy = config.get('energy', 0)
-        max_energy = config.get('max_energy', 0)
+        energy = config.get("energy", 0)
+        max_energy = config.get("max_energy", 0)
         if energy < 0 or energy > max_energy or max_energy <= 0:
             errors.append("Invalid energy configuration")
 
         # Capabilities validation
-        if not config.get('capabilities'):
+        if not config.get("capabilities"):
             errors.append("Agent must have at least one capability")
 
         return errors
@@ -202,7 +200,7 @@ async def example_4_error_handling():
         "agent_type": "invalid",  # Invalid type
         "energy": -10,  # Invalid energy
         "max_energy": 0,  # Invalid max energy
-        "capabilities": []  # No capabilities
+        "capabilities": [],  # No capabilities
     }
 
     errors = validate_agent_config(invalid_config)
@@ -216,7 +214,7 @@ async def example_4_error_handling():
         "agent_type": "explorer",
         "energy": 80,
         "max_energy": 100,
-        "capabilities": ["move", "observe"]
+        "capabilities": ["move", "observe"],
     }
 
     errors = validate_agent_config(valid_config)
@@ -246,11 +244,7 @@ async def example_5_performance():
                 agent_id = str(uuid4())
                 agent_name = f"Batch-Agent-{i+j+1:03d}"
 
-                result = {
-                    "agent_id": agent_id,
-                    "name": agent_name,
-                    "status": "created"
-                }
+                result = {"agent_id": agent_id, "name": agent_name, "status": "created"}
                 results.append(result)
                 await asyncio.sleep(0.01)  # Simulate processing time
 
@@ -271,12 +265,12 @@ async def example_5_performance():
     templates = {
         "explorer": {
             "capabilities": ["move", "observe", "map"],
-            "personality": {"exploration_tendency": 0.9}
+            "personality": {"exploration_tendency": 0.9},
         },
         "guardian": {
             "capabilities": ["defend", "protect", "alert"],
-            "personality": {"cooperation_level": 0.95}
-        }
+            "personality": {"cooperation_level": 0.95},
+        },
     }
 
     print(f"Available templates: {list(templates.keys())}")
@@ -288,6 +282,7 @@ async def example_5_performance():
 # ============================================================================
 # MAIN FUNCTION
 # ============================================================================
+
 
 async def main():
     """Run all examples"""
@@ -317,6 +312,7 @@ async def main():
     except Exception as e:
         print(f"\n❌ Example execution failed: {e}")
         import traceback
+
         traceback.print_exc()
 
 

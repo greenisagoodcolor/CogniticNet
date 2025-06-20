@@ -8,10 +8,11 @@ The `.gnn.md` (Generalized Notation Notation Markdown) format is a human-readabl
 
 A `.gnn.md` file consists of several sections, each serving a specific purpose in defining the GNN model:
 
-```markdown
+````markdown
 # Model Name
 
 ## Metadata
+
 - Version: 1.0.0
 - Author: System/User
 - Created: 2024-01-01
@@ -19,9 +20,11 @@ A `.gnn.md` file consists of several sections, each serving a specific purpose i
 - Tags: [explorer, cautious, analytical]
 
 ## Description
+
 Natural language description of the model's purpose and behavior.
 
 ## Architecture
+
 ```gnn
 architecture {
   type: "GraphSAGE"
@@ -31,8 +34,10 @@ architecture {
   dropout: 0.2
 }
 ```
+````
 
 ## Parameters
+
 ```gnn
 parameters {
   learning_rate: 0.001
@@ -43,6 +48,7 @@ parameters {
 ```
 
 ## Active Inference Mapping
+
 ```gnn
 active_inference {
   beliefs {
@@ -64,6 +70,7 @@ active_inference {
 ```
 
 ## Node Features
+
 ```gnn
 node_features {
   spatial: ["x", "y", "z"]
@@ -74,6 +81,7 @@ node_features {
 ```
 
 ## Edge Features
+
 ```gnn
 edge_features {
   type: "directed"
@@ -83,6 +91,7 @@ edge_features {
 ```
 
 ## Constraints
+
 ```gnn
 constraints {
   max_nodes: 10000
@@ -93,6 +102,7 @@ constraints {
 ```
 
 ## Validation Rules
+
 ```gnn
 validation {
   node_degree: {
@@ -108,7 +118,8 @@ validation {
   }
 }
 ```
-```
+
+````
 
 ## Section Details
 
@@ -125,19 +136,22 @@ The metadata section contains essential information about the model:
 - Tags: Array of descriptive tags
 - Dependencies: Optional list of required models
 - License: Optional license information
-```
+````
 
 ### 2. Description Section
 
 Natural language description explaining:
+
 - Model purpose and goals
 - Expected behavior patterns
 - Use cases and scenarios
 - Integration requirements
 
 Example:
+
 ```markdown
 ## Description
+
 This model implements an Explorer agent with cautious behavior patterns.
 The agent prioritizes systematic exploration of unknown territories while
 maintaining safety margins. It uses GraphSAGE architecture to aggregate
@@ -505,10 +519,11 @@ active_inference {
 
 ## Example: Complete Explorer Model
 
-```markdown
+````markdown
 # Explorer Cautious Model
 
 ## Metadata
+
 - Version: 1.0.0
 - Author: FreeAgentics Team
 - Created: 2024-01-15T10:00:00Z
@@ -516,12 +531,14 @@ active_inference {
 - Tags: [explorer, cautious, efficient]
 
 ## Description
+
 This model implements a cautious explorer agent that prioritizes safety while
 systematically exploring unknown territories. It uses GraphSAGE architecture
 for efficient neighborhood aggregation and maintains a balance between
 exploration and self-preservation.
 
 ## Architecture
+
 ```gnn
 architecture {
   type: "GraphSAGE"
@@ -534,8 +551,10 @@ architecture {
   batch_norm: true
 }
 ```
+````
 
 ## Parameters
+
 ```gnn
 parameters {
   learning_rate: 0.001
@@ -553,6 +572,7 @@ parameters {
 ```
 
 ## Active Inference Mapping
+
 ```gnn
 active_inference {
   beliefs {
@@ -583,6 +603,7 @@ active_inference {
 ```
 
 ## Node Features
+
 ```gnn
 node_features {
   spatial: ["x", "y", "region_id"]
@@ -602,6 +623,7 @@ node_features {
 ```
 
 ## Edge Features
+
 ```gnn
 edge_features {
   type: "directed"
@@ -618,6 +640,7 @@ edge_features {
 ```
 
 ## Constraints
+
 ```gnn
 constraints {
   max_nodes: 5000
@@ -629,6 +652,7 @@ constraints {
 ```
 
 ## Validation Rules
+
 ```gnn
 validation {
   graph_connectivity: "connected"
@@ -648,6 +672,7 @@ validation {
   required_edge_features: ["distance"]
 }
 ```
+
 ```
 
 ## Error Messages
@@ -680,3 +705,4 @@ When updating model formats:
 ---
 
 This specification defines the complete format for `.gnn.md` files in FreeAgentics. Models following this format can be parsed, validated, and converted into executable Graph Neural Networks for agent behavior modeling.
+```

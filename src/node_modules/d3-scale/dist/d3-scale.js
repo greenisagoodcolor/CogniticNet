@@ -361,7 +361,7 @@ function linearish(scale) {
       step = start, start = stop, stop = step;
       step = i0, i0 = i1, i1 = step;
     }
-    
+
     while (maxIter-- > 0) {
       step = d3Array.tickIncrement(start, stop, count);
       if (step === prestep) {

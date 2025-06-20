@@ -11,9 +11,9 @@ var _getJSXPragmaInfo = require('../util/getJSXPragmaInfo'); var _getJSXPragmaIn
 var _Transformer = require('./Transformer'); var _Transformer2 = _interopRequireDefault(_Transformer);
 
  class JSXTransformer extends _Transformer2.default {
-  
-  
-  
+
+
+
 
   // State for calculating the line number of each JSX tag in development.
   __init() {this.lastLineNumber = 1}

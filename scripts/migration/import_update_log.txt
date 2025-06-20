@@ -1,0 +1,9 @@
+Import Update Log
+==================================================
+
+File: tests/test_readiness_evaluator.py
+Line: 13
+Type: from_import
+Old:  from src.readiness.readiness_evaluator import (
+New:  from readiness.readiness_evaluator import (
+----------------------------------------

@@ -1,0 +1,305 @@
+# Task ID: 11
+# Title: Integrate Legacy src/ Directory into Canonical Structure
+# Status: pending
+# Dependencies: 3, 5
+# Priority: high
+# Description: Analyze and migrate all existing code from the legacy src/ directory into the canonical directory structure defined in ADR-002, ensuring proper domain separation, preserving git history, and updating all references throughout the codebase.
+# Details:
+Execute a systematic migration of the legacy src/ directory to the canonical structure with full architectural compliance:
+
+**CRITICAL COMPLIANCE REQUIREMENTS:**
+- Strict adherence to canonical directory structure (docs/architecture/decisions/002-canonical-directory-structure.md)
+- Follow naming conventions (docs/architecture/decisions/004-naming-conventions.md)
+- Respect dependency rules (docs/architecture/decisions/003-dependency-rules.md)
+
+**Phase 1: Analysis and Mapping (Day 1-2)**
+1. Create comprehensive inventory of src/ contents:
+   ```bash
+   # Generate detailed file listing with sizes and types
+   find src/ -type f -exec file {} \; > src_inventory.txt
+   
+   # Extract all Python imports to understand dependencies
+   grep -r "^import\|^from" src/ > src_imports.txt
+   ```
+
+2. Domain classification for each component:
+   - `src/agents/` → `agents/` (core domain)
+   - `src/models/` → `inference/models/` (core domain)
+   - `src/simulation/` → `world/simulation/` (core domain)
+   - `src/database/` → `infrastructure/persistence/` (infrastructure layer)
+   - `src/deployment/` → `infrastructure/deployment/` (infrastructure layer)
+   - `src/monitoring/` → `infrastructure/monitoring/` (infrastructure layer)
+   - `src/pipeline/` → `supporting/pipeline/` (supporting domain)
+   - `src/validation/` → `supporting/validation/` (supporting domain)
+   - `src/readiness/` → `supporting/readiness/` (supporting domain)
+   - `src/knowledge/` → Analyze further - may split between `world/knowledge/` and `supporting/knowledge/`
+   - `src/hardware/` → `infrastructure/hardware/` (infrastructure layer)
+   - `src/learning/` → `inference/learning/` (core domain)
+   - `src/export/` → `interface/export/` (interface layer)
+
+**Phase 2: Pre-Migration Preparation (Day 2-3)**
+1. Create migration script with git history preservation:
+   ```python
+   # migration_script.py
+   import os
+   import subprocess
+   from pathlib import Path
+   
+   MIGRATIONS = {
+       'src/agents': 'agents',
+       'src/models': 'inference/models',
+       'src/database': 'infrastructure/persistence',
+       # ... complete mapping
+   }
+   
+   def migrate_with_history(src_path, dest_path):
+       """Move files preserving git history using git mv"""
+       # Ensure destination directory exists
+       Path(dest_path).parent.mkdir(parents=True, exist_ok=True)
+       
+       # Use git mv to preserve history
+       subprocess.run(['git', 'mv', src_path, dest_path], check=True)
+   ```
+
+2. Create import update script:
+   ```python
+   # update_imports.py
+   import re
+   from pathlib import Path
+   
+   IMPORT_MAPPINGS = {
+       'from src.agents': 'from agents',
+       'import src.agents': 'import agents',
+       'from src.database': 'from infrastructure.persistence',
+       # ... complete mappings
+   }
+   
+   def update_file_imports(filepath):
+       """Update all imports in a file"""
+       content = Path(filepath).read_text()
+       for old, new in IMPORT_MAPPINGS.items():
+           content = re.sub(rf'^{old}', new, content, flags=re.MULTILINE)
+       Path(filepath).write_text(content)
+   ```
+
+**Phase 3: Migration Execution (Day 3-4)**
+1. Create backup branch:
+   ```bash
+   git checkout -b legacy-src-backup
+   git checkout main
+   git checkout -b integrate-legacy-src
+   ```
+
+2. Execute migrations in dependency order:
+   - First: Infrastructure components (no dependencies on other src/ modules)
+   - Second: Core domain components (may depend on infrastructure)
+   - Third: Supporting domain components
+   - Last: Interface layer components
+
+3. For each migration:
+   ```bash
+   # Example for agents module
+   git mv src/agents agents/
+   
+   # Update imports in moved files
+   find agents/ -name "*.py" -exec python update_imports.py {} \;
+   
+   # Update imports in rest of codebase
+   find . -name "*.py" -not -path "./src/*" -exec python update_imports.py {} \;
+   
+   # Run tests to verify
+   pytest tests/agents/
+   ```
+
+**Phase 4: Validation and Cleanup (Day 4-5)**
+1. Verify no broken imports:
+   ```python
+   # verify_imports.py
+   import ast
+   import sys
+   from pathlib import Path
+   
+   def check_imports(filepath):
+       """Verify all imports in a Python file are valid"""
+       try:
+           tree = ast.parse(Path(filepath).read_text())
+           # Extract and validate imports
+       except Exception as e:
+           print(f"Error in {filepath}: {e}")
+   ```
+
+2. Check architectural compliance:
+   - Ensure no core domain imports from interface/infrastructure
+   - Verify all files are in correct locations per ADR-002
+   - Validate naming conventions per ADR-004
+
+3. Update configuration files:
+   - `pyproject.toml` paths
+   - `.github/workflows/` references
+   - Docker configurations
+   - Documentation references
+
+4. Remove empty src/ directory:
+   ```bash
+   # Verify src/ is empty
+   find src/ -type f | wc -l  # Should be 0
+   
+   # Remove directory
+   git rm -r src/
+   git commit -m "Remove empty src/ directory after migration to canonical structure"
+   ```
+
+**Phase 5: Documentation Updates (Day 5)**
+1. Update all documentation references:
+   - README.md paths
+   - API documentation
+   - Architecture diagrams
+   - Developer guides
+
+2. Create migration report:
+   ```markdown
+   # Legacy src/ Migration Report
+   
+   ## Summary
+   - Files migrated: X
+   - Import statements updated: Y
+   - Git history preserved: ✓
+   
+   ## Mapping Details
+   | Original Path | New Path | Domain Classification |
+   |--------------|----------|---------------------|
+   | src/agents/ | agents/ | Core Domain |
+   ...
+   ```
+
+**Special Considerations:**
+1. Handle circular dependencies by refactoring before migration
+2. Preserve __init__.py files and update their imports
+3. Update any hardcoded paths in configuration files
+4. Ensure CI/CD pipelines continue to work
+5. Update any absolute imports to relative where appropriate
+
+# Test Strategy:
+Comprehensive testing strategy to ensure successful migration without breaking functionality:
+
+**1. Pre-Migration Baseline (Before any changes)**
+- Run full test suite and record results: `pytest --json-report --json-report-file=baseline.json`
+- Generate coverage report: `pytest --cov=src --cov-report=html`
+- Document all test failures (if any) as known issues
+- Create dependency graph: `pydeps src --max-bacon=2 --pylib=False -o deps_before.svg`
+
+**2. Import Verification Testing**
+- Create automated import checker:
+  ```python
+  # test_imports.py
+  def test_all_imports_valid():
+      """Verify no broken imports after migration"""
+      for py_file in Path('.').rglob('*.py'):
+          if 'src/' not in str(py_file):
+              exec(f"import {py_file.stem}")
+  ```
+- Run mypy for static type checking: `mypy . --ignore-missing-imports`
+- Use pylint to detect import errors: `pylint **/*.py --errors-only`
+
+**3. Functionality Testing Per Module**
+For each migrated module:
+- Run module-specific tests: `pytest tests/[module_name]/`
+- Verify API endpoints if applicable
+- Test CLI commands that use the module
+- Check integration points with other modules
+
+**4. Git History Verification**
+- Verify history preservation: `git log --follow agents/base_agent.py`
+- Check blame information: `git blame agents/base_agent.py`
+- Ensure commit count matches: Compare `git log --oneline src/agents | wc -l` with new location
+
+**5. Architectural Compliance Testing**
+- Run dependency checker script:
+  ```python
+  # test_architecture.py
+  def test_no_circular_dependencies():
+      """Ensure no circular imports exist"""
+      # Implementation
+  
+  def test_layer_dependencies():
+      """Verify core domain doesn't import from infrastructure"""
+      # Check that agents/ doesn't import from infrastructure/
+  ```
+- Validate directory structure matches ADR-002
+- Check naming conventions compliance with ADR-004
+
+**6. Integration Testing**
+- Run full application in development mode
+- Execute end-to-end scenarios:
+  - Agent creation and initialization
+  - Coalition formation
+  - Simulation execution
+  - Data persistence
+  - Monitoring and logging
+
+**7. Performance Testing**
+- Compare import times before and after migration
+- Measure application startup time
+- Run performance benchmarks: `pytest tests/performance/ --benchmark-only`
+
+**8. Configuration and Build Testing**
+- Verify Docker builds successfully: `docker build -t freeagentics:test .`
+- Check CI/CD pipeline: Push to feature branch and monitor GitHub Actions
+- Test package installation: `pip install -e .`
+- Verify documentation builds: `mkdocs build --strict`
+
+**9. Rollback Testing**
+- Create rollback plan and test it:
+  ```bash
+  git checkout legacy-src-backup
+  git checkout -b test-rollback
+  git cherry-pick [migration commits]
+  git revert [migration commits]
+  ```
+
+**10. User Acceptance Testing**
+- Have team members pull the branch and test their workflows
+- Verify development environment setup works for new contributors
+- Test common development tasks (running tests, debugging, etc.)
+
+**Success Criteria:**
+- All tests that passed before migration still pass (or are intentionally updated)
+- No broken imports anywhere in the codebase
+- Git history is preserved for all moved files
+- No violations of architectural rules (ADR-002, ADR-003, ADR-004)
+- Performance metrics remain within 5% of baseline
+- All documentation accurately reflects new structure
+- CI/CD pipeline passes all checks
+- No references to src/ directory remain (except in migration documentation)
+
+# Subtasks:
+## 1. Analyze and Map src/ Directory Components [pending]
+### Dependencies: None
+### Description: Conduct comprehensive analysis of all directories and files in src/ to understand their purpose, dependencies, and domain classification. Map each component to the appropriate location in the canonical structure (core domain, interface, infrastructure, supporting).
+### Details:
+Create detailed inventory of src/ contents including: agents/, database/, deployment/, knowledge/, models/, readiness/, simulation/, validation/, pipeline/, monitoring/, hardware/, learning/, export/. For each directory, analyze the code to determine: 1) Its architectural layer (core domain, interface, infrastructure, supporting), 2) Dependencies on other modules, 3) Appropriate destination in canonical structure, 4) Any refactoring needed to comply with dependency rules. Document findings in a migration mapping file.
+
+## 2. Create Migration Scripts and Tools [pending]
+### Dependencies: 11.1
+### Description: Develop automated scripts to safely migrate files from src/ to their canonical locations while preserving git history, updating import statements, and validating architectural compliance.
+### Details:
+Create Python scripts for: 1) File migration with git history preservation using 'git mv', 2) Import statement updates throughout the codebase, 3) Dependency validation to ensure no architectural violations, 4) Rollback capability in case of issues. Scripts must handle edge cases like circular imports, __init__.py files, and configuration file updates. Include comprehensive logging and validation checks.
+
+## 3. Execute Migration in Phases [pending]
+### Dependencies: 11.2
+### Description: Execute the migration of src/ components to canonical structure in carefully planned phases, starting with infrastructure components, then core domain, supporting domain, and finally interface layer components.
+### Details:
+Migrate components in dependency order to avoid breaking imports: Phase 1 - Infrastructure (database/, deployment/, monitoring/, hardware/), Phase 2 - Core Domain (agents/, models/, simulation/, learning/), Phase 3 - Supporting (readiness/, validation/, pipeline/, knowledge/), Phase 4 - Interface (export/). For each phase: create git branch, move files with git mv, update imports, run tests, commit changes. Include rollback checkpoints at each phase.
+
+## 4. Validate Migration and Update References [pending]
+### Dependencies: 11.3
+### Description: Comprehensively validate the migration by running all tests, checking for broken imports, verifying architectural compliance, and updating all configuration files and documentation that reference the old src/ structure.
+### Details:
+Validation checklist: 1) Run full test suite and compare with baseline, 2) Check for any remaining src/ references in code, docs, configs, 3) Verify architectural compliance - no core domain depending on infrastructure, 4) Update pyproject.toml, Docker files, CI/CD configs, README, docs, 5) Test import statements work correctly, 6) Verify git history preservation for moved files, 7) Performance testing to ensure no regressions.
+
+## 5. Remove src/ Directory and Finalize Migration [pending]
+### Dependencies: 11.4
+### Description: Complete the migration by removing the empty src/ directory, creating comprehensive migration documentation, and ensuring the canonical structure is fully implemented and enforced.
+### Details:
+Final steps: 1) Verify src/ directory is completely empty (no remaining files), 2) Remove src/ directory with git rm -r src/, 3) Create migration report documenting what was moved where, 4) Update architectural compliance validation scripts to prevent future src/ usage, 5) Add pre-commit hooks to enforce canonical structure, 6) Create team communication about the new structure, 7) Final commit and merge to main branch.
+

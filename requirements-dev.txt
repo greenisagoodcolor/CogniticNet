@@ -1,0 +1,25 @@
+# Development-specific requirements
+# These are not needed for the final production application,
+# but are useful for development, testing, and analysis.
+
+# Testing
+pytest
+pytest-cov
+pytest-xdist
+
+# Linting & Formatting
+black
+isort
+flake8
+ruff
+pre-commit
+
+# Analysis & Reporting
+pandas
+matplotlib
+seaborn
+lxml
+
+# Dashboarding
+dash
+plotly

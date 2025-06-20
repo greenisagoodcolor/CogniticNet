@@ -9,55 +9,47 @@ from .hal_core import (
     HardwareAbstractionLayer,
     DeviceCapabilities,
     ResourceConstraints,
-    HardwareInterface
+    HardwareInterface,
 )
 
-from .device_discovery import (
-    DeviceDiscovery,
-    DeviceInfo,
-    DeviceType,
-    DeviceStatus
-)
+from .device_discovery import DeviceDiscovery, DeviceInfo, DeviceType, DeviceStatus
 
 from .resource_manager import (
     ResourceManager,
     ResourceAllocation,
     ResourcePriority,
-    ResourceMonitor
+    ResourceMonitor,
 )
 
 from .offline_capabilities import (
     OfflineManager,
     StatePersistence,
     WorkQueue,
-    SyncManager
+    SyncManager,
 )
 
 __all__ = [
     # Core HAL
-    'HardwareAbstractionLayer',
-    'DeviceCapabilities',
-    'ResourceConstraints',
-    'HardwareInterface',
-
+    "HardwareAbstractionLayer",
+    "DeviceCapabilities",
+    "ResourceConstraints",
+    "HardwareInterface",
     # Device Discovery
-    'DeviceDiscovery',
-    'DeviceInfo',
-    'DeviceType',
-    'DeviceStatus',
-
+    "DeviceDiscovery",
+    "DeviceInfo",
+    "DeviceType",
+    "DeviceStatus",
     # Resource Management
-    'ResourceManager',
-    'ResourceAllocation',
-    'ResourcePriority',
-    'ResourceMonitor',
-
+    "ResourceManager",
+    "ResourceAllocation",
+    "ResourcePriority",
+    "ResourceMonitor",
     # Offline Operations
-    'OfflineManager',
-    'StatePersistence',
-    'WorkQueue',
-    'SyncManager'
+    "OfflineManager",
+    "StatePersistence",
+    "WorkQueue",
+    "SyncManager",
 ]
 
 # Module version
-__version__ = '1.0.0'
+__version__ = "1.0.0"

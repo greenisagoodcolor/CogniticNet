@@ -12,10 +12,7 @@
     "coverage_threshold": 80.0,
     "quality_gate_threshold": 95.0,
     "generate_reports": true,
-    "report_formats": [
-      "json",
-      "markdown"
-    ],
+    "report_formats": ["json", "markdown"],
     "project_root": "/Users/matthewmoroney/builds/CogniticNet",
     "output_dir": "",
     "artifacts_dir": "",

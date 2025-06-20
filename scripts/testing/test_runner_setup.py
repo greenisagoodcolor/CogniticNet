@@ -15,25 +15,20 @@ Following Clean Code and SOLID principles with optimized execution strategies.
 """
 
 import logging
-import os
-import subprocess
 import json
-import yaml
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Any, Union, Tuple
-from collections import defaultdict
-import tempfile
+from typing import Dict, List, Optional, Any, Union, Tuple
 import shutil
-import sys
 
-from test_discovery import TestDiscoveryResult, TestFramework, TestLanguage
-from test_categorization import TestCategorizationResult, TestExecutionTier, TestPriority
+from test_discovery import TestDiscoveryResult, TestFramework
+from test_categorization import TestCategorizationResult
 
 
 class RunnerType(Enum):
     """Supported test runner types."""
+
     PYTEST = "pytest"
     UNITTEST = "unittest"
     JEST = "jest"
@@ -46,12 +41,13 @@ class RunnerType(Enum):
 
 class ExecutionMode(Enum):
     """Test execution modes for different scenarios."""
-    FAST = "fast"              # Quick feedback loop
-    COMPLETE = "complete"      # Full test suite
-    CRITICAL = "critical"      # Critical path only
-    PARALLEL = "parallel"      # Parallel execution
+
+    FAST = "fast"  # Quick feedback loop
+    COMPLETE = "complete"  # Full test suite
+    CRITICAL = "critical"  # Critical path only
+    PARALLEL = "parallel"  # Parallel execution
     SEQUENTIAL = "sequential"  # Sequential execution
-    SMOKE = "smoke"           # Smoke tests only
+    SMOKE = "smoke"  # Smoke tests only
 
 
 @dataclass
@@ -62,6 +58,7 @@ class RunnerConfig:
     Following expert committee guidance for optimal test execution
     with framework-specific optimizations.
     """
+
     runner_type: RunnerType
     command: str
     config_file: Optional[str] = None
@@ -107,7 +104,7 @@ class RunnerConfig:
             "environment_vars": self.environment_vars,
             "working_directory": self.working_directory,
             "extra_args": self.extra_args,
-            "plugins": self.plugins
+            "plugins": self.plugins,
         }
 
 
@@ -119,6 +116,7 @@ class ExecutionPlan:
     Implements expert committee guidance for efficient test execution
     with proper parallelization and dependency management.
     """
+
     name: str
     mode: ExecutionMode
 
@@ -166,7 +164,7 @@ class ExecutionPlan:
             "generate_reports": self.generate_reports,
             "report_formats": self.report_formats,
             "estimated_duration": self.estimated_duration,
-            "estimated_cost": self.estimated_cost
+            "estimated_cost": self.estimated_cost,
         }
 
 
@@ -178,6 +176,7 @@ class TestRunnerSetupResult:
     Provides comprehensive configuration for CI/CD integration
     following expert committee guidance.
     """
+
     runner_configs: List[RunnerConfig] = field(default_factory=list)
     execution_plans: List[ExecutionPlan] = field(default_factory=list)
 
@@ -207,7 +206,7 @@ class TestRunnerSetupResult:
             "estimated_total_duration": self.estimated_total_duration,
             "parallel_efficiency": self.parallel_efficiency,
             "setup_duration": self.setup_duration,
-            "recommendations": self.recommendations
+            "recommendations": self.recommendations,
         }
 
 
@@ -236,20 +235,20 @@ class TestRunnerSetup:
             "command": "python -m pytest",
             "config_file": "pytest.ini",
             "plugins": ["pytest-cov", "pytest-xdist", "pytest-html"],
-            "extra_args": ["--tb=short", "--strict-markers"]
+            "extra_args": ["--tb=short", "--strict-markers"],
         },
         RunnerType.JEST: {
             "command": "npx jest",
             "config_file": "jest.config.js",
             "plugins": [],
-            "extra_args": ["--passWithNoTests"]
+            "extra_args": ["--passWithNoTests"],
         },
         RunnerType.UNITTEST: {
             "command": "python -m unittest",
             "config_file": None,
             "plugins": [],
-            "extra_args": ["discover", "-v"]
-        }
+            "extra_args": ["discover", "-v"],
+        },
     }
 
     # Framework-specific optimizations
@@ -258,21 +257,21 @@ class TestRunnerSetup:
             "parallel_args": ["-n", "auto"],
             "coverage_args": ["--cov=.", "--cov-report=xml"],
             "fast_args": ["--ff", "-x"],
-            "output_args": ["--junit-xml=test-results.xml"]
+            "output_args": ["--junit-xml=test-results.xml"],
         },
         TestFramework.JEST: {
             "parallel_args": ["--maxWorkers=50%"],
             "coverage_args": ["--coverage", "--coverageReporters=lcov"],
             "fast_args": ["--bail", "--onlyChanged"],
-            "output_args": ["--outputFile=test-results.json"]
-        }
+            "output_args": ["--outputFile=test-results.json"],
+        },
     }
 
     def __init__(
         self,
         project_root: Union[str, Path],
         output_dir: Optional[str] = None,
-        ci_mode: bool = False
+        ci_mode: bool = False,
     ):
         """
         Initialize test runner setup engine.
@@ -283,7 +282,9 @@ class TestRunnerSetup:
             ci_mode: Whether to optimize for CI/CD environment
         """
         self.project_root = Path(project_root).resolve()
-        self.output_dir = Path(output_dir) if output_dir else self.project_root / ".test_configs"
+        self.output_dir = (
+            Path(output_dir) if output_dir else self.project_root / ".test_configs"
+        )
         self.ci_mode = ci_mode
         self.logger = logging.getLogger(__name__)
 
@@ -291,16 +292,12 @@ class TestRunnerSetup:
         self.output_dir.mkdir(exist_ok=True)
 
         # Setup statistics
-        self._setup_stats = {
-            'configs_created': 0,
-            'plans_generated': 0,
-            'errors': []
-        }
+        self._setup_stats = {"configs_created": 0, "plans_generated": 0, "errors": []}
 
     def setup_test_runners(
         self,
         discovery_result: TestDiscoveryResult,
-        categorization_result: TestCategorizationResult
+        categorization_result: TestCategorizationResult,
     ) -> TestRunnerSetupResult:
         """
         Setup test runners based on discovery and categorization results.
@@ -313,6 +310,7 @@ class TestRunnerSetup:
             TestRunnerSetupResult: Comprehensive setup results
         """
         import time
+
         start_time = time.time()
 
         self.logger.info("Starting test runner setup")
@@ -329,10 +327,14 @@ class TestRunnerSetup:
             )
 
             # Step 3: Create configuration files
-            result.config_files_created = self._create_config_files(result.runner_configs)
+            result.config_files_created = self._create_config_files(
+                result.runner_configs
+            )
 
             # Step 4: Validate configurations
-            result.validation_passed, result.validation_errors = self._validate_setup(result)
+            result.validation_passed, result.validation_errors = self._validate_setup(
+                result
+            )
 
             # Step 5: Calculate performance metrics
             result.estimated_total_duration = self._calculate_total_duration(result)
@@ -344,7 +346,9 @@ class TestRunnerSetup:
             # Step 7: Final metrics
             result.setup_duration = time.time() - start_time
 
-            self.logger.info(f"Test runner setup complete: {len(result.runner_configs)} runners configured")
+            self.logger.info(
+                f"Test runner setup complete: {len(result.runner_configs)} runners configured"
+            )
 
         except Exception as e:
             self.logger.error(f"Test runner setup failed: {e}")
@@ -353,7 +357,9 @@ class TestRunnerSetup:
 
         return result
 
-    def _create_runner_configs(self, discovery_result: TestDiscoveryResult) -> List[RunnerConfig]:
+    def _create_runner_configs(
+        self, discovery_result: TestDiscoveryResult
+    ) -> List[RunnerConfig]:
         """Create runner configurations based on discovered frameworks."""
         configs = []
 
@@ -370,7 +376,7 @@ class TestRunnerSetup:
 
             config = self._create_framework_config(runner_type, count)
             configs.append(config)
-            self._setup_stats['configs_created'] += 1
+            self._setup_stats["configs_created"] += 1
 
         return configs
 
@@ -383,12 +389,14 @@ class TestRunnerSetup:
             "mocha": RunnerType.MOCHA,
             "cypress": RunnerType.CYPRESS,
             "playwright": RunnerType.PLAYWRIGHT,
-            "vitest": RunnerType.VITEST
+            "vitest": RunnerType.VITEST,
         }
 
         return mapping.get(framework.lower(), RunnerType.CUSTOM)
 
-    def _create_framework_config(self, runner_type: RunnerType, test_count: int) -> RunnerConfig:
+    def _create_framework_config(
+        self, runner_type: RunnerType, test_count: int
+    ) -> RunnerConfig:
         """Create optimized configuration for a specific framework."""
         defaults = self.DEFAULT_CONFIGS.get(runner_type, {})
 
@@ -397,7 +405,7 @@ class TestRunnerSetup:
             command=defaults.get("command", f"{runner_type.value}"),
             config_file=defaults.get("config_file"),
             plugins=defaults.get("plugins", []),
-            extra_args=defaults.get("extra_args", [])
+            extra_args=defaults.get("extra_args", []),
         )
 
         # Optimize based on test count and CI mode
@@ -430,7 +438,7 @@ class TestRunnerSetup:
     def _generate_execution_plans(
         self,
         discovery_result: TestDiscoveryResult,
-        categorization_result: TestCategorizationResult
+        categorization_result: TestCategorizationResult,
     ) -> List[ExecutionPlan]:
         """Generate optimized execution plans for different scenarios."""
         plans = []
@@ -441,17 +449,20 @@ class TestRunnerSetup:
             mode=ExecutionMode.FAST,
             fail_fast=True,
             max_failures=3,
-            required_coverage=60.0
+            required_coverage=60.0,
         )
 
         # Add smoke and fast tests
         for categorized in categorization_result.categorized_tests:
-            if (categorized.test_file.test_type.value == "smoke" or
-                categorized.execution_tier.value == "fast"):
+            if (
+                categorized.test_file.test_type.value == "smoke"
+                or categorized.execution_tier.value == "fast"
+            ):
                 fast_plan.test_files.append(str(categorized.test_file.path))
 
         fast_plan.estimated_duration = sum(
-            cat.estimated_duration for cat in categorization_result.categorized_tests
+            cat.estimated_duration
+            for cat in categorization_result.categorized_tests
             if str(cat.test_file.path) in fast_plan.test_files
         )
 
@@ -463,13 +474,15 @@ class TestRunnerSetup:
             mode=ExecutionMode.COMPLETE,
             fail_fast=False,
             required_coverage=80.0,
-            parallel_groups=categorization_result.parallel_execution_groups
+            parallel_groups=categorization_result.parallel_execution_groups,
         )
 
         complete_plan.test_files = [
             str(cat.test_file.path) for cat in categorization_result.categorized_tests
         ]
-        complete_plan.estimated_duration = categorization_result.estimated_total_duration
+        complete_plan.estimated_duration = (
+            categorization_result.estimated_total_duration
+        )
 
         plans.append(complete_plan)
 
@@ -479,12 +492,13 @@ class TestRunnerSetup:
             mode=ExecutionMode.CRITICAL,
             fail_fast=True,
             max_failures=0,
-            required_coverage=90.0
+            required_coverage=90.0,
         )
 
         critical_plan.test_files = categorization_result.critical_path_tests
         critical_plan.estimated_duration = sum(
-            cat.estimated_duration for cat in categorization_result.categorized_tests
+            cat.estimated_duration
+            for cat in categorization_result.categorized_tests
             if str(cat.test_file.path) in critical_plan.test_files
         )
 
@@ -496,9 +510,11 @@ class TestRunnerSetup:
                 name="parallel",
                 mode=ExecutionMode.PARALLEL,
                 parallel_groups=categorization_result.parallel_execution_groups,
-                max_parallel_runners=len(categorization_result.parallel_execution_groups),
+                max_parallel_runners=len(
+                    categorization_result.parallel_execution_groups
+                ),
                 fail_fast=False,
-                required_coverage=80.0
+                required_coverage=80.0,
             )
 
             parallel_plan.test_files = complete_plan.test_files
@@ -507,7 +523,7 @@ class TestRunnerSetup:
 
             plans.append(parallel_plan)
 
-        self._setup_stats['plans_generated'] = len(plans)
+        self._setup_stats["plans_generated"] = len(plans)
         return plans
 
     def _create_config_files(self, runner_configs: List[RunnerConfig]) -> List[str]:
@@ -541,7 +557,7 @@ class TestRunnerSetup:
         except Exception as e:
             error_msg = f"Error creating config for {config.runner_type.value}: {e}"
             self.logger.warning(error_msg)
-            self._setup_stats['errors'].append(error_msg)
+            self._setup_stats["errors"].append(error_msg)
 
         return None
 
@@ -610,11 +626,11 @@ timeout = {config.timeout}
             "project_root": str(self.project_root),
             "output_directory": str(self.output_dir),
             "ci_mode": self.ci_mode,
-            "created_at": "2025-06-20T08:30:00Z"
+            "created_at": "2025-06-20T08:30:00Z",
         }
 
         config_path = self.output_dir / "test_config.json"
-        with open(config_path, 'w') as f:
+        with open(config_path, "w") as f:
             json.dump(master_config, f, indent=2)
 
         return str(config_path)
@@ -651,8 +667,12 @@ timeout = {config.timeout}
 
         # Use the complete plan duration
         complete_plan = next(
-            (plan for plan in result.execution_plans if plan.mode == ExecutionMode.COMPLETE),
-            result.execution_plans[0]
+            (
+                plan
+                for plan in result.execution_plans
+                if plan.mode == ExecutionMode.COMPLETE
+            ),
+            result.execution_plans[0],
         )
 
         return complete_plan.estimated_duration
@@ -660,12 +680,20 @@ timeout = {config.timeout}
     def _calculate_parallel_efficiency(self, result: TestRunnerSetupResult) -> float:
         """Calculate parallel execution efficiency."""
         complete_plan = next(
-            (plan for plan in result.execution_plans if plan.mode == ExecutionMode.COMPLETE),
-            None
+            (
+                plan
+                for plan in result.execution_plans
+                if plan.mode == ExecutionMode.COMPLETE
+            ),
+            None,
         )
         parallel_plan = next(
-            (plan for plan in result.execution_plans if plan.mode == ExecutionMode.PARALLEL),
-            None
+            (
+                plan
+                for plan in result.execution_plans
+                if plan.mode == ExecutionMode.PARALLEL
+            ),
+            None,
         )
 
         if not complete_plan or not parallel_plan:
@@ -675,7 +703,9 @@ timeout = {config.timeout}
             return 0.0
 
         # Efficiency = (sequential_time - parallel_time) / sequential_time
-        efficiency = (complete_plan.estimated_duration - parallel_plan.estimated_duration) / complete_plan.estimated_duration
+        efficiency = (
+            complete_plan.estimated_duration - parallel_plan.estimated_duration
+        ) / complete_plan.estimated_duration
         return max(0.0, min(1.0, efficiency))
 
     def _generate_recommendations(self, result: TestRunnerSetupResult) -> List[str]:
@@ -684,31 +714,45 @@ timeout = {config.timeout}
 
         # Runner configuration recommendations
         if len(result.runner_configs) > 3:
-            recommendations.append("🔧 Multiple test runners detected - consider standardizing on fewer frameworks")
+            recommendations.append(
+                "🔧 Multiple test runners detected - consider standardizing on fewer frameworks"
+            )
 
         # Performance recommendations
         if result.estimated_total_duration > 600:  # 10 minutes
-            recommendations.append("⏱️ Long execution time - implement parallel execution strategies")
+            recommendations.append(
+                "⏱️ Long execution time - implement parallel execution strategies"
+            )
 
         if result.parallel_efficiency < 0.5:
-            recommendations.append("⚡ Low parallel efficiency - optimize test parallelization")
+            recommendations.append(
+                "⚡ Low parallel efficiency - optimize test parallelization"
+            )
 
         # Validation recommendations
         if not result.validation_passed:
-            recommendations.append("❌ Configuration validation failed - fix setup errors before proceeding")
+            recommendations.append(
+                "❌ Configuration validation failed - fix setup errors before proceeding"
+            )
 
         # CI/CD recommendations
         if self.ci_mode and result.estimated_total_duration > 300:  # 5 minutes
-            recommendations.append("🚀 CI/CD optimization needed - consider test splitting and caching")
+            recommendations.append(
+                "🚀 CI/CD optimization needed - consider test splitting and caching"
+            )
 
         # Coverage recommendations
         for plan in result.execution_plans:
             if plan.required_coverage > 90:
-                recommendations.append("📊 High coverage requirements may slow development - balance quality vs speed")
+                recommendations.append(
+                    "📊 High coverage requirements may slow development - balance quality vs speed"
+                )
 
         return recommendations
 
-    def generate_ci_config(self, result: TestRunnerSetupResult, ci_platform: str = "github") -> str:
+    def generate_ci_config(
+        self, result: TestRunnerSetupResult, ci_platform: str = "github"
+    ) -> str:
         """Generate CI/CD configuration file."""
         if ci_platform.lower() == "github":
             return self._generate_github_actions_config(result)
@@ -787,10 +831,7 @@ jobs:
         return str(config_path)
 
 
-def create_test_runner_setup(
-    project_root: str,
-    **kwargs: Any
-) -> TestRunnerSetup:
+def create_test_runner_setup(project_root: str, **kwargs: Any) -> TestRunnerSetup:
     """
     Factory function to create a TestRunnerSetup instance.
 
@@ -812,9 +853,13 @@ def main():
 
     parser = argparse.ArgumentParser(description="Setup and configure test runners")
     parser.add_argument("project_root", help="Project root directory")
-    parser.add_argument("--output-dir", "-o", help="Output directory for configurations")
+    parser.add_argument(
+        "--output-dir", "-o", help="Output directory for configurations"
+    )
     parser.add_argument("--ci-mode", action="store_true", help="Optimize for CI/CD")
-    parser.add_argument("--ci-platform", default="github", help="CI platform (github, gitlab)")
+    parser.add_argument(
+        "--ci-platform", default="github", help="CI platform (github, gitlab)"
+    )
     parser.add_argument("--validate", action="store_true", help="Validate setup only")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
@@ -823,7 +868,7 @@ def main():
     # Configure logging
     logging.basicConfig(
         level=logging.INFO if args.verbose else logging.WARNING,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     # Step 1: Discover tests
@@ -841,9 +886,7 @@ def main():
     # Step 3: Setup test runners
     print("Step 3: Setting up test runners...")
     setup = create_test_runner_setup(
-        args.project_root,
-        output_dir=args.output_dir,
-        ci_mode=args.ci_mode
+        args.project_root, output_dir=args.output_dir, ci_mode=args.ci_mode
     )
     result = setup.setup_test_runners(discovery_result, categorization_result)
 
@@ -854,7 +897,7 @@ def main():
         print(f"  CI configuration saved to {ci_config_path}")
 
     # Summary
-    print(f"\n📊 Test Runner Setup Summary:")
+    print("\n📊 Test Runner Setup Summary:")
     print(f"  🔧 Runners configured: {len(result.runner_configs)}")
     print(f"  📋 Execution plans: {len(result.execution_plans)}")
     print(f"  📁 Config files created: {len(result.config_files_created)}")
@@ -863,12 +906,12 @@ def main():
     print(f"  ⚡ Parallel efficiency: {result.parallel_efficiency:.1%}")
 
     if result.validation_errors:
-        print(f"\n❌ Validation Errors:")
+        print("\n❌ Validation Errors:")
         for error in result.validation_errors:
             print(f"  {error}")
 
     if result.recommendations:
-        print(f"\n💡 Recommendations:")
+        print("\n💡 Recommendations:")
         for rec in result.recommendations:
             print(f"  {rec}")
 

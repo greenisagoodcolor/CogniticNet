@@ -12,26 +12,31 @@ The Active Inference framework in FreeAgentics provides a comprehensive implemen
 ## Key Components
 
 ### 1. Generative Models
+
 - **Discrete Models**: For categorical state spaces
 - **Continuous Models**: For continuous state representations
 - **Hybrid Models**: Combining discrete and continuous aspects
 
 ### 2. Inference Algorithms
+
 - **Variational Inference**: Efficient approximate inference
 - **Particle Filters**: For non-linear continuous models
 - **Message Passing**: For hierarchical models
 
 ### 3. Policy Selection
+
 - **Expected Free Energy**: Balancing exploration and exploitation
 - **Sophisticated Inference**: Multi-step planning
 - **Habit Learning**: Efficient cached policies
 
 ### 4. Learning Mechanisms
+
 - **Parameter Learning**: Online Bayesian learning of model parameters
 - **Structure Learning**: Discovering model structure from data
 - **Active Learning**: Directed exploration for model improvement
 
 ### 5. Advanced Features
+
 - **Hierarchical Inference**: Multi-level temporal abstractions
 - **Precision Control**: Adaptive uncertainty weighting
 - **Computational Optimization**: GPU acceleration and sparse operations

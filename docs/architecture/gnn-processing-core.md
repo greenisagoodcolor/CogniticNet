@@ -1,6 +1,7 @@
 # GNN Processing Core Architecture
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [System Architecture](#system-architecture)
 3. [Component Descriptions](#component-descriptions)
@@ -17,6 +18,7 @@
 The GNN (Generalized Notation Notation) Processing Core is a critical component of the FreeAgentics platform that enables natural language to Active Inference parameter mapping. It processes .gnn.md files, validates models, and generates appropriate Graph Neural Network architectures for agent behavior modeling.
 
 ### Key Objectives
+
 - Parse and validate GNN model definitions from .gnn.md files
 - Map natural language descriptions to Active Inference parameters
 - Generate GNN architectures based on agent personalities
@@ -24,6 +26,7 @@ The GNN (Generalized Notation Notation) Processing Core is a critical component 
 - Ensure high performance and scalability
 
 ### Design Principles
+
 - **Modularity**: Components are loosely coupled and independently deployable
 - **Extensibility**: Easy to add new GNN layer types and parsing formats
 - **Performance**: Optimized for both batch and real-time processing
@@ -103,6 +106,7 @@ graph TB
 ### Input Layer
 
 #### GNN Parser
+
 - **Purpose**: Parse .gnn.md files and extract model definitions
 - **Responsibilities**:
   - Lexical analysis of GNN notation
@@ -113,6 +117,7 @@ graph TB
 - **Interfaces**: File input, JSON/AST output
 
 #### Model Validator
+
 - **Purpose**: Ensure model definitions are semantically correct
 - **Responsibilities**:
   - Schema validation
@@ -123,6 +128,7 @@ graph TB
 - **Interfaces**: AST input, validation result output
 
 #### Preprocessor
+
 - **Purpose**: Prepare data for processing
 - **Responsibilities**:
   - Feature normalization
@@ -135,6 +141,7 @@ graph TB
 ### Processing Layer
 
 #### NL-to-AI Mapper
+
 - **Purpose**: Map natural language descriptions to Active Inference parameters
 - **Responsibilities**:
   - Natural language processing
@@ -145,6 +152,7 @@ graph TB
 - **Interfaces**: Text input, parameter dictionary output
 
 #### Model Generator
+
 - **Purpose**: Generate GNN architectures from specifications
 - **Responsibilities**:
   - Architecture selection
@@ -155,6 +163,7 @@ graph TB
 - **Interfaces**: Specification input, model object output
 
 #### Graph Optimizer
+
 - **Purpose**: Optimize graph structures for efficient processing
 - **Responsibilities**:
   - Graph partitioning
@@ -167,17 +176,21 @@ graph TB
 ### Model Layer
 
 #### GNN Layer Implementations
+
 - **GCN (Graph Convolutional Network)**:
+
   - Spectral-based convolution
   - Efficient for undirected graphs
   - Configurable aggregation functions
 
 - **GAT (Graph Attention Network)**:
+
   - Attention-based aggregation
   - Dynamic edge weighting
   - Multi-head attention support
 
 - **GraphSAGE**:
+
   - Sampling-based approach
   - Inductive learning capability
   - Various aggregator options
@@ -190,6 +203,7 @@ graph TB
 ### Output Layer
 
 #### Model Serializer
+
 - **Purpose**: Convert models to storable formats
 - **Responsibilities**:
   - Binary serialization
@@ -200,6 +214,7 @@ graph TB
 - **Interfaces**: Model input, serialized output
 
 #### Version Manager
+
 - **Purpose**: Track model evolution and versions
 - **Responsibilities**:
   - Version numbering
@@ -210,6 +225,7 @@ graph TB
 - **Interfaces**: Model input, versioned model output
 
 #### Export Handler
+
 - **Purpose**: Export models in various formats
 - **Responsibilities**:
   - Format conversion
@@ -222,6 +238,7 @@ graph TB
 ### Support Services
 
 #### Performance Monitor
+
 - **Purpose**: Track system performance metrics
 - **Responsibilities**:
   - Latency measurement
@@ -232,6 +249,7 @@ graph TB
 - **Interfaces**: Metric collection API
 
 #### Logging Service
+
 - **Purpose**: Comprehensive system logging
 - **Responsibilities**:
   - Structured logging
@@ -242,6 +260,7 @@ graph TB
 - **Interfaces**: Log ingestion API
 
 #### Metrics Collector
+
 - **Purpose**: Collect and aggregate system metrics
 - **Responsibilities**:
   - Custom metric definition
@@ -254,6 +273,7 @@ graph TB
 ## Data Flow
 
 ### Model Creation Flow
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -275,6 +295,7 @@ sequenceDiagram
 ```
 
 ### Model Processing Flow
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -304,6 +325,7 @@ sequenceDiagram
 ### REST API Endpoints
 
 #### Model Management
+
 ```yaml
 POST /api/v1/models
   Description: Create new GNN model from .gnn.md file
@@ -337,6 +359,7 @@ DELETE /api/v1/models/{model_id}
 ```
 
 #### Processing Endpoints
+
 ```yaml
 POST /api/v1/process
   Description: Process graph with specified model
@@ -369,6 +392,7 @@ GET /api/v1/jobs/{job_id}
 ### Internal APIs
 
 #### Parser Interface
+
 ```python
 class GNNParser:
     def parse(self, content: str) -> ParseResult:
@@ -382,6 +406,7 @@ class GNNParser:
 ```
 
 #### Model Generator Interface
+
 ```python
 class ModelGenerator:
     def generate(self, spec: ModelSpec) -> GNNModel:
@@ -397,18 +422,21 @@ class ModelGenerator:
 ## Performance Requirements
 
 ### Latency Requirements
+
 - **Model Creation**: < 5 seconds for typical models
 - **Single Graph Processing**: < 100ms for graphs up to 1000 nodes
 - **Batch Processing**: < 10ms per graph in batch mode
 - **Model Loading**: < 500ms from cache, < 2s from storage
 
 ### Throughput Requirements
+
 - **Concurrent Requests**: Support 100+ concurrent model operations
 - **Batch Size**: Process batches up to 10,000 graphs
 - **Model Storage**: Handle 10,000+ model versions
 - **Cache Hit Rate**: Maintain > 90% cache hit rate
 
 ### Resource Requirements
+
 - **Memory**:
   - Base: 2GB for core services
   - Per Model: 100MB-1GB depending on complexity
@@ -427,17 +455,20 @@ class ModelGenerator:
 ## Scalability Considerations
 
 ### Horizontal Scaling
+
 - **Stateless Services**: Parser, Validator, and Processor are stateless
 - **Load Balancing**: Round-robin or least-connections
 - **Shared Storage**: Models stored in distributed storage (S3, GCS)
 - **Cache Clustering**: Redis cluster for distributed caching
 
 ### Vertical Scaling
+
 - **GPU Acceleration**: Scale up with more powerful GPUs
 - **Memory Scaling**: Increase cache size for larger models
 - **CPU Scaling**: More cores for parallel processing
 
 ### Auto-scaling Policies
+
 ```yaml
 CPU-based:
   - Scale up: CPU > 80% for 5 minutes
@@ -455,6 +486,7 @@ Queue-based:
 ## Integration Points
 
 ### External Services
+
 - **PostgreSQL**: Model metadata, audit logs
 - **Redis**: Caching layer, job queue
 - **S3/GCS**: Model artifact storage
@@ -462,12 +494,14 @@ Queue-based:
 - **Grafana**: Monitoring dashboards
 
 ### Internal Services
+
 - **Agent Engine**: Consumes generated models
 - **API Gateway**: Request routing and authentication
 - **Message Queue**: Async processing requests
 - **Knowledge Graph**: Model relationship tracking
 
 ### Client Libraries
+
 ```python
 # Python client example
 from freeagentics import GNNClient
@@ -480,18 +514,21 @@ result = client.process_graph(model_id=model.id, graph=graph_data)
 ## Security Considerations
 
 ### Authentication & Authorization
+
 - **API Keys**: Service-to-service authentication
 - **JWT Tokens**: User authentication
 - **RBAC**: Role-based access control for models
 - **OAuth2**: Third-party integrations
 
 ### Data Security
+
 - **Encryption at Rest**: Model storage encryption
 - **Encryption in Transit**: TLS 1.3 for all communications
 - **Input Validation**: Strict validation of all inputs
 - **Sandboxing**: Model execution in isolated environments
 
 ### Compliance
+
 - **Audit Logging**: All model operations logged
 - **Data Retention**: Configurable retention policies
 - **GDPR**: Support for data deletion requests
@@ -500,6 +537,7 @@ result = client.process_graph(model_id=model.id, graph=graph_data)
 ## Deployment Architecture
 
 ### Container Architecture
+
 ```yaml
 services:
   gnn-parser:
@@ -526,6 +564,7 @@ services:
 ```
 
 ### Kubernetes Deployment
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -542,19 +581,20 @@ spec:
         app: gnn-core
     spec:
       containers:
-      - name: gnn-processor
-        image: freeagentics/gnn-processor:latest
-        resources:
-          requests:
-            memory: "4Gi"
-            cpu: "2"
-          limits:
-            memory: "8Gi"
-            cpu: "4"
-            nvidia.com/gpu: "1"
+        - name: gnn-processor
+          image: freeagentics/gnn-processor:latest
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "2"
+            limits:
+              memory: "8Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
 ```
 
 ### Health Checks
+
 ```yaml
 livenessProbe:
   httpGet:
@@ -574,7 +614,9 @@ readinessProbe:
 ## Monitoring & Observability
 
 ### Key Metrics
+
 - **System Metrics**:
+
   - Request rate and latency
   - Error rate and types
   - CPU/Memory/GPU utilization
@@ -587,11 +629,13 @@ readinessProbe:
   - User engagement metrics
 
 ### Dashboards
+
 - **Operations Dashboard**: System health, performance metrics
 - **Business Dashboard**: Usage patterns, model statistics
 - **Alert Dashboard**: Active alerts, incident tracking
 
 ### Alerting Rules
+
 ```yaml
 - alert: HighErrorRate
   expr: error_rate > 0.05
@@ -615,6 +659,7 @@ readinessProbe:
 ## Future Considerations
 
 ### Planned Enhancements
+
 1. **Federated Learning**: Support for distributed model training
 2. **Model Marketplace**: Share and discover GNN models
 3. **AutoML Integration**: Automatic model architecture search
@@ -622,6 +667,7 @@ readinessProbe:
 5. **Multi-language Support**: Clients for Java, Go, Rust
 
 ### Research Directions
+
 1. **Novel GNN Architectures**: Implement cutting-edge GNN variants
 2. **Explainability**: Model interpretation and visualization
 3. **Adversarial Robustness**: Defense against graph attacks

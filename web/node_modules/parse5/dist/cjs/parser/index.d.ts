@@ -73,9 +73,9 @@ export declare class Parser<T extends TreeAdapterTypeMap> implements TokenHandle
     protected currentToken: Token | null;
     options: Required<ParserOptions<T>>;
     document: T['document'];
-    constructor(options?: ParserOptions<T>, document?: T['document'], 
+    constructor(options?: ParserOptions<T>, document?: T['document'],
     /** @internal */
-    fragmentContext?: T['element'] | null, 
+    fragmentContext?: T['element'] | null,
     /** @internal */
     scriptHandler?: null | ((pendingScript: T['element']) => void));
     static parse<T extends TreeAdapterTypeMap>(html: string, options?: ParserOptions<T>): T['document'];

@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ScriptTemplate:
     """Template for a deployment script."""
+
     name: str
     filename: str
     content: str
@@ -26,74 +27,79 @@ class ScriptTemplate:
 
 class DeploymentScriptGenerator:
     """Generates deployment scripts for various platforms."""
-    
+
     def __init__(self):
         """Initialize script generator."""
         self.templates = self._create_templates()
-    
-    def generate_scripts(self, output_dir: Path, target_platform: str,
-                        hardware_config: Dict[str, Any],
-                        agent_config: Dict[str, Any]) -> List[Path]:
+
+    def generate_scripts(
+        self,
+        output_dir: Path,
+        target_platform: str,
+        hardware_config: Dict[str, Any],
+        agent_config: Dict[str, Any],
+    ) -> List[Path]:
         """
         Generate all deployment scripts for target platform.
-        
+
         Args:
             output_dir: Directory to write scripts
             target_platform: Target platform (raspberrypi, mac, jetson, etc.)
             hardware_config: Hardware configuration dict
             agent_config: Agent configuration dict
-            
+
         Returns:
             List of generated script paths
         """
         logger.info(f"Generating deployment scripts for {target_platform}")
-        
+
         output_dir.mkdir(parents=True, exist_ok=True)
         generated_files = []
-        
+
         # Filter templates for platform
         templates = [
-            t for t in self.templates
+            t
+            for t in self.templates
             if t.platform is None or t.platform == target_platform
         ]
-        
+
         # Generate each script
         for template in templates:
             content = self._render_template(
                 template.content,
                 platform=target_platform,
                 hardware=hardware_config,
-                agent=agent_config
+                agent=agent_config,
             )
-            
+
             script_path = output_dir / template.filename
-            with open(script_path, 'w') as f:
+            with open(script_path, "w") as f:
                 f.write(content)
-            
+
             # Make executable if needed
             if template.executable:
                 st = os.stat(script_path)
                 os.chmod(script_path, st.st_mode | stat.S_IEXEC)
-            
+
             generated_files.append(script_path)
             logger.debug(f"Generated {template.name}: {script_path}")
-        
+
         # Generate platform-specific extras
-        if target_platform == 'raspberrypi':
+        if target_platform == "raspberrypi":
             generated_files.extend(
                 self._generate_raspberry_pi_extras(output_dir, hardware_config)
             )
-        elif target_platform == 'mac':
+        elif target_platform == "mac":
             generated_files.extend(
                 self._generate_mac_extras(output_dir, hardware_config)
             )
-        elif target_platform == 'jetson':
+        elif target_platform == "jetson":
             generated_files.extend(
                 self._generate_jetson_extras(output_dir, hardware_config)
             )
-        
+
         return generated_files
-    
+
     def _create_templates(self) -> List[ScriptTemplate]:
         """Create script templates."""
         return [
@@ -101,52 +107,46 @@ class DeploymentScriptGenerator:
             ScriptTemplate(
                 name="Run Script",
                 filename="run.sh",
-                content=self._run_script_template()
+                content=self._run_script_template(),
             ),
-            
             # Stop script
             ScriptTemplate(
-                name="Stop Script", 
+                name="Stop Script",
                 filename="stop.sh",
-                content=self._stop_script_template()
+                content=self._stop_script_template(),
             ),
-            
             # Status script
             ScriptTemplate(
                 name="Status Script",
                 filename="status.sh",
-                content=self._status_script_template()
+                content=self._status_script_template(),
             ),
-            
             # Backup script
             ScriptTemplate(
                 name="Backup Script",
                 filename="backup.sh",
-                content=self._backup_script_template()
+                content=self._backup_script_template(),
             ),
-            
             # Restore script
             ScriptTemplate(
                 name="Restore Script",
                 filename="restore.sh",
-                content=self._restore_script_template()
+                content=self._restore_script_template(),
             ),
-            
             # Monitor script
             ScriptTemplate(
                 name="Monitor Script",
                 filename="monitor.sh",
-                content=self._monitor_script_template()
+                content=self._monitor_script_template(),
             ),
-            
             # Python runner
             ScriptTemplate(
                 name="Python Runner",
                 filename="freeagentics_agent.py",
-                content=self._python_runner_template()
-            )
+                content=self._python_runner_template(),
+            ),
         ]
-    
+
     def _render_template(self, template: str, **kwargs) -> str:
         """Render template with variables."""
         # Simple template rendering
@@ -154,15 +154,17 @@ class DeploymentScriptGenerator:
             if isinstance(value, dict):
                 # Handle nested dicts
                 for subkey, subvalue in value.items():
-                    template = template.replace(f"{{{{{key}.{subkey}}}}}", str(subvalue))
+                    template = template.replace(
+                        f"{{{{{key}.{subkey}}}}}", str(subvalue)
+                    )
             else:
                 template = template.replace(f"{{{{{key}}}}}", str(value))
-        
+
         return template
-    
+
     def _run_script_template(self) -> str:
         """Template for main run script."""
-        return '''#!/bin/bash
+        return """#!/bin/bash
 # FreeAgentics Agent Run Script
 # Platform: {{platform}}
 
@@ -238,11 +240,11 @@ echo $! > "$BASE_DIR/agent.pid"
 
 echo "Agent started with PID: $(cat $BASE_DIR/agent.pid)"
 echo "Logs: $FREEAGENTICS_LOG_DIR/agent.log"
-'''
-    
+"""
+
     def _stop_script_template(self) -> str:
         """Template for stop script."""
-        return '''#!/bin/bash
+        return """#!/bin/bash
 # FreeAgentics Agent Stop Script
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -283,11 +285,11 @@ done
 rm -f "$BASE_DIR/agent.pid"
 
 echo "Agent stopped."
-'''
-    
+"""
+
     def _status_script_template(self) -> str:
         """Template for status script."""
-        return '''#!/bin/bash
+        return """#!/bin/bash
 # FreeAgentics Agent Status Script
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -302,14 +304,14 @@ if [ -f "$BASE_DIR/agent.pid" ]; then
     if ps -p $PID > /dev/null 2>&1; then
         echo "Status: RUNNING"
         echo "PID: $PID"
-        
+
         # Get process info
         if command -v ps &> /dev/null; then
             echo ""
             echo "Process Info:"
             ps -p $PID -o pid,vsz,rss,pcpu,pmem,etime,comm
         fi
-        
+
         # Get recent logs
         if [ -f "$BASE_DIR/logs/agent.log" ]; then
             echo ""
@@ -345,11 +347,11 @@ if [ -f "$BASE_DIR/agent.pid" ]; then
         fi
     fi
 fi
-'''
-    
+"""
+
     def _backup_script_template(self) -> str:
         """Template for backup script."""
-        return '''#!/bin/bash
+        return """#!/bin/bash
 # FreeAgentics Agent Backup Script
 
 set -e
@@ -392,11 +394,11 @@ cd "$BACKUP_DIR"
 ls -t agent_backup_*.tar.gz | tail -n +6 | xargs -r rm -f
 
 echo "Backup complete."
-'''
-    
+"""
+
     def _restore_script_template(self) -> str:
         """Template for restore script."""
-        return '''#!/bin/bash
+        return """#!/bin/bash
 # FreeAgentics Agent Restore Script
 
 set -e
@@ -450,11 +452,11 @@ tar -xzf "$BACKUP_FILE" -C "$BASE_DIR"
 
 echo "Restore complete."
 echo "Pre-restore backup saved to: $PRE_RESTORE_BACKUP"
-'''
-    
+"""
+
     def _monitor_script_template(self) -> str:
         """Template for monitoring script."""
-        return '''#!/bin/bash
+        return """#!/bin/bash
 # FreeAgentics Agent Monitor Script
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -473,27 +475,27 @@ while true; do
     echo "=== FreeAgentics Agent Monitor ==="
     echo "Time: $(date)"
     echo ""
-    
+
     # Check if running
     if [ -f "$BASE_DIR/agent.pid" ]; then
         PID=$(cat "$BASE_DIR/agent.pid")
         if ps -p $PID > /dev/null 2>&1; then
             echo "Status: RUNNING (PID: $PID)"
-            
+
             # CPU and Memory
             if command -v ps &> /dev/null; then
                 echo ""
                 echo "Resource Usage:"
                 ps -p $PID -o pid,vsz,rss,pcpu,pmem,etime
             fi
-            
+
             # Network connections
             if command -v netstat &> /dev/null; then
                 echo ""
                 echo "Network Connections:"
                 netstat -tnp 2>/dev/null | grep $PID || echo "No active connections"
             fi
-            
+
             # Recent logs
             if [ -f "$BASE_DIR/logs/agent.log" ]; then
                 echo ""
@@ -506,18 +508,18 @@ while true; do
     else
         echo "Status: NOT RUNNING"
     fi
-    
+
     # System resources
     echo ""
     echo "System Resources:"
     echo "CPU: $(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1)%"
     echo "Memory: $(free -h | awk '/^Mem:/ {print $3 "/" $2}')"
     echo "Disk: $(df -h "$BASE_DIR" | tail -1 | awk '{print $3 "/" $2 " (" $5 ")"}')"
-    
+
     sleep $INTERVAL
 done
-'''
-    
+"""
+
     def _python_runner_template(self) -> str:
         """Template for Python runner script."""
         return '''#!/usr/bin/env python3
@@ -558,75 +560,75 @@ logger = logging.getLogger(__name__)
 
 class AgentRunner:
     """Runs the FreeAgentics agent."""
-    
+
     def __init__(self):
         """Initialize runner."""
         self.running = False
         self.agent = None
         self.config = self._load_config()
-        
+
         # Setup signal handlers
         signal.signal(signal.SIGTERM, self._signal_handler)
         signal.signal(signal.SIGINT, self._signal_handler)
-    
+
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration files."""
         config = {}
-        
+
         # Load agent config
         agent_config_path = BASE_DIR / 'config' / 'agent_config.json'
         if agent_config_path.exists():
             with open(agent_config_path) as f:
                 config['agent'] = json.load(f)
-        
+
         # Load hardware config
         hardware_config_path = BASE_DIR / 'config' / 'hardware_config.json'
         if hardware_config_path.exists():
             with open(hardware_config_path) as f:
                 config['hardware'] = json.load(f)
-        
+
         # Load runtime config
         runtime_config_path = BASE_DIR / 'config' / 'runtime_config.json'
         if runtime_config_path.exists():
             with open(runtime_config_path) as f:
                 config['runtime'] = json.load(f)
-        
+
         return config
-    
+
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals."""
         logger.info(f"Received signal {signum}, shutting down...")
         self.running = False
-    
+
     def run(self):
         """Run the agent."""
         logger.info("Starting FreeAgentics Agent")
         logger.info(f"Agent ID: {self.config.get('agent', {}).get('agent_id', 'unknown')}")
         logger.info(f"Platform: {os.environ.get('FREEAGENTICS_PLATFORM', 'unknown')}")
-        
+
         try:
             # Import agent module (would be the actual agent implementation)
             # from freeagentics.agent import Agent
-            
+
             # Initialize agent
             # self.agent = Agent.from_config(self.config)
-            
+
             # For now, simulate agent running
             self.running = True
             logger.info("Agent initialized successfully")
-            
+
             # Main loop
             while self.running:
                 # Simulate agent work
                 time.sleep(1)
-                
+
                 # In real implementation:
                 # self.agent.step()
                 # self.agent.process_messages()
                 # etc.
-            
+
             logger.info("Agent shutdown complete")
-            
+
         except Exception as e:
             logger.error(f"Agent failed: {e}", exc_info=True)
             sys.exit(1)
@@ -641,16 +643,18 @@ def main():
 if __name__ == '__main__':
     main()
 '''
-    
-    def _generate_raspberry_pi_extras(self, output_dir: Path, 
-                                    hardware_config: Dict[str, Any]) -> List[Path]:
+
+    def _generate_raspberry_pi_extras(
+        self, output_dir: Path, hardware_config: Dict[str, Any]
+    ) -> List[Path]:
         """Generate Raspberry Pi specific files."""
         extras = []
-        
+
         # GPIO setup script
         gpio_script = output_dir / "setup_gpio.sh"
-        with open(gpio_script, 'w') as f:
-            f.write('''#!/bin/bash
+        with open(gpio_script, "w") as f:
+            f.write(
+                """#!/bin/bash
 # Setup GPIO for Raspberry Pi
 
 # Enable I2C for sensors
@@ -663,14 +667,16 @@ sudo raspi-config nonint do_spi 0
 sudo usermod -a -G gpio $USER
 
 echo "GPIO setup complete. Please reboot for changes to take effect."
-''')
+"""
+            )
         os.chmod(gpio_script, 0o755)
         extras.append(gpio_script)
-        
+
         # Temperature monitoring
         temp_script = output_dir / "check_temp.sh"
-        with open(temp_script, 'w') as f:
-            f.write('''#!/bin/bash
+        with open(temp_script, "w") as f:
+            f.write(
+                """#!/bin/bash
 # Check Raspberry Pi temperature
 
 TEMP=$(vcgencmd measure_temp | cut -d'=' -f2 | cut -d"'" -f1)
@@ -680,21 +686,24 @@ echo "CPU Temperature: ${TEMP}°C"
 if (( $(echo "$TEMP > 70" | bc -l) )); then
     echo "WARNING: Temperature is high!"
 fi
-''')
+"""
+            )
         os.chmod(temp_script, 0o755)
         extras.append(temp_script)
-        
+
         return extras
-    
-    def _generate_mac_extras(self, output_dir: Path,
-                           hardware_config: Dict[str, Any]) -> List[Path]:
+
+    def _generate_mac_extras(
+        self, output_dir: Path, hardware_config: Dict[str, Any]
+    ) -> List[Path]:
         """Generate macOS specific files."""
         extras = []
-        
+
         # LaunchAgent installer
         install_service = output_dir / "install_service.sh"
-        with open(install_service, 'w') as f:
-            f.write('''#!/bin/bash
+        with open(install_service, "w") as f:
+            f.write(
+                """#!/bin/bash
 # Install macOS LaunchAgent
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -731,21 +740,24 @@ EOF
 launchctl load ~/Library/LaunchAgents/$PLIST_NAME
 
 echo "Service installed and started"
-''')
+"""
+            )
         os.chmod(install_service, 0o755)
         extras.append(install_service)
-        
+
         return extras
-    
-    def _generate_jetson_extras(self, output_dir: Path,
-                               hardware_config: Dict[str, Any]) -> List[Path]:
+
+    def _generate_jetson_extras(
+        self, output_dir: Path, hardware_config: Dict[str, Any]
+    ) -> List[Path]:
         """Generate Jetson specific files."""
         extras = []
-        
+
         # CUDA setup
         cuda_setup = output_dir / "setup_cuda.sh"
-        with open(cuda_setup, 'w') as f:
-            f.write('''#!/bin/bash
+        with open(cuda_setup, "w") as f:
+            f.write(
+                """#!/bin/bash
 # Setup CUDA for Jetson
 
 # Add CUDA to PATH
@@ -760,8 +772,9 @@ sudo nvpmodel -q
 sudo jetson_clocks --show
 
 echo "CUDA setup complete. Please source ~/.bashrc or restart shell."
-''')
+"""
+            )
         os.chmod(cuda_setup, 0o755)
         extras.append(cuda_setup)
-        
-        return extras 
+
+        return extras

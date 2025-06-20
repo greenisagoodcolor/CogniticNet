@@ -1,21 +1,23 @@
 """
 Agent Models - Enhanced for FreeAgentics with GNN compatibility
 """
+
 from pydantic import BaseModel, Field, validator
 from typing import Optional, Dict, Any, List
 from uuid import UUID, uuid4
 from datetime import datetime
-from enum import Enum
 
 
 class Position(BaseModel):
     """Grid position model"""
+
     x: int = Field(..., ge=0, description="X coordinate")
     y: int = Field(..., ge=0, description="Y coordinate")
 
 
 class KnowledgeEntry(BaseModel):
     """Knowledge entry for agent's memory"""
+
     id: str = Field(default_factory=lambda: str(uuid4()))
     title: str
     content: str
@@ -25,6 +27,7 @@ class KnowledgeEntry(BaseModel):
 
 class AgentToolPermissions(BaseModel):
     """Tool permissions for agent capabilities"""
+
     # Information Access Tools
     internet_search: bool = False
     web_scraping: bool = False
@@ -32,25 +35,25 @@ class AgentToolPermissions(BaseModel):
     news_api: bool = False
     academic_search: bool = False
     document_retrieval: bool = False
-    
+
     # Content Generation & Processing
     image_generation: bool = False
     text_summarization: bool = False
     translation: bool = False
     code_execution: bool = False
-    
+
     # Knowledge & Reasoning Tools
     calculator: bool = False
     knowledge_graph_query: bool = False
     fact_checking: bool = False
     timeline_generator: bool = False
-    
+
     # External Integrations
     weather_data: bool = False
     map_location_data: bool = False
     financial_data: bool = False
     public_datasets: bool = False
-    
+
     # Agent-Specific Tools
     memory_search: bool = True
     cross_agent_knowledge: bool = True
@@ -59,32 +62,38 @@ class AgentToolPermissions(BaseModel):
 
 class AgentBase(BaseModel):
     """Base agent model with all core properties"""
+
     name: str = Field(..., min_length=1, max_length=100)
     biography: str = Field(default="", description="Agent's background story")
     energy: int = Field(default=100, ge=0, le=100)
     resources: int = Field(default=10, ge=0)
     position: Position = Field(default_factory=lambda: Position(x=0, y=0))
-    location: Optional[str] = Field(None, description="H3 cell index for geospatial location")
+    location: Optional[str] = Field(
+        None, description="H3 cell index for geospatial location"
+    )
     color: str = Field(default="#0000FF", pattern="^#[0-9A-Fa-f]{6}$")
     in_conversation: bool = Field(default=False)
     autonomy_enabled: bool = Field(default=False)
     knowledge: List[KnowledgeEntry] = Field(default_factory=list)
     tool_permissions: AgentToolPermissions = Field(default_factory=AgentToolPermissions)
     metadata: Dict[str, Any] = Field(default_factory=dict)
-    
-    @validator('location')
+
+    @validator("location")
     def validate_h3_index(cls, v):
         """Validate H3 index format if provided"""
         if v is not None:
             # Basic H3 validation - should be a hex string of appropriate length
             # H3 indexes are typically 15 characters for resolution 9
-            if not (8 <= len(v) <= 16) or not all(c in '0123456789abcdef' for c in v.lower()):
+            if not (8 <= len(v) <= 16) or not all(
+                c in "0123456789abcdef" for c in v.lower()
+            ):
                 raise ValueError("Invalid H3 cell index format")
         return v
 
 
 class AgentCreate(BaseModel):
     """Model for creating a new agent - allows partial specification"""
+
     name: str = Field(..., min_length=1, max_length=100)
     biography: Optional[str] = None
     energy: Optional[int] = Field(default=100, ge=0, le=100)
@@ -100,6 +109,7 @@ class AgentCreate(BaseModel):
 
 class AgentUpdate(BaseModel):
     """Model for updating an agent - all fields optional"""
+
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     biography: Optional[str] = None
     energy: Optional[int] = Field(None, ge=0, le=100)
@@ -116,16 +126,14 @@ class AgentUpdate(BaseModel):
 
 class Agent(AgentBase):
     """Complete agent model with ID and timestamps"""
+
     id: UUID = Field(default_factory=uuid4)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     class Config:
-        json_encoders = {
-            UUID: str,
-            datetime: lambda v: v.isoformat()
-        }
-    
+        json_encoders = {UUID: str, datetime: lambda v: v.isoformat()}
+
     def to_gnn_format(self) -> Dict[str, Any]:
         """Convert agent to GNN-compatible format for future integration"""
         return {
@@ -136,24 +144,27 @@ class Agent(AgentBase):
                 "autonomy": float(self.autonomy_enabled),
                 "in_conversation": float(self.in_conversation),
                 "knowledge_count": len(self.knowledge),
-                "tool_permissions_count": sum(1 for v in self.tool_permissions.dict().values() if v)
+                "tool_permissions_count": sum(
+                    1 for v in self.tool_permissions.dict().values() if v
+                ),
             },
             "state": {
                 "energy": self.energy,
                 "resources": self.resources,
                 "position": self.position.dict(),
-                "in_conversation": self.in_conversation
+                "in_conversation": self.in_conversation,
             },
-            "location": self.location or f"{self.position.x},{self.position.y}",  # Fallback to grid position
+            "location": self.location
+            or f"{self.position.x},{self.position.y}",  # Fallback to grid position
             "metadata": {
                 "name": self.name,
                 "color": self.color,
                 "biography": self.biography,
                 "created_at": self.created_at.isoformat(),
-                "updated_at": self.updated_at.isoformat()
-            }
+                "updated_at": self.updated_at.isoformat(),
+            },
         }
-    
+
     def to_frontend_format(self) -> Dict[str, Any]:
         """Convert to format compatible with frontend TypeScript interface"""
         return {
@@ -187,14 +198,15 @@ class Agent(AgentBase):
                 "publicDatasets": self.tool_permissions.public_datasets,
                 "memorySearch": self.tool_permissions.memory_search,
                 "crossAgentKnowledge": self.tool_permissions.cross_agent_knowledge,
-                "conversationAnalysis": self.tool_permissions.conversation_analysis
-            }
+                "conversationAnalysis": self.tool_permissions.conversation_analysis,
+            },
         }
 
 
 # Response models for API
 class AgentResponse(BaseModel):
     """Agent response model for API"""
+
     id: str
     name: str
     biography: str
@@ -208,7 +220,7 @@ class AgentResponse(BaseModel):
     knowledge_count: int
     created_at: str
     updated_at: str
-    
+
     @classmethod
     def from_agent(cls, agent: Agent) -> "AgentResponse":
         """Create response from Agent model"""
@@ -225,5 +237,5 @@ class AgentResponse(BaseModel):
             autonomy_enabled=agent.autonomy_enabled,
             knowledge_count=len(agent.knowledge),
             created_at=agent.created_at.isoformat(),
-            updated_at=agent.updated_at.isoformat()
-        ) 
+            updated_at=agent.updated_at.isoformat(),
+        )

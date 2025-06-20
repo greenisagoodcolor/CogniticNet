@@ -3,13 +3,18 @@
 # Status: pending
 # Dependencies: 4
 # Priority: medium
-# Description: Establish and enforce consistent naming conventions throughout the codebase for files, variables, classes, and functions.
+# Description: Establish and enforce consistent naming conventions throughout the codebase for files, variables, classes, and functions, ensuring strict compliance with architectural decision records.
 # Details:
-Implement comprehensive naming consistency across the repository:
+Implement comprehensive naming consistency across the repository in strict accordance with architectural standards:
+
+**CRITICAL COMPLIANCE REQUIREMENT:** All naming changes must adhere to:
+- Canonical directory structure (docs/architecture/decisions/002-canonical-directory-structure.md)
+- Naming conventions (docs/architecture/decisions/004-naming-conventions.md)
+- Dependency rules (docs/architecture/decisions/003-dependency-rules.md)
 
 1. Project name: Use 'FreeAgentics' for product name, 'freeagentics' for package/module names
 
-2. File naming conventions:
+2. File naming conventions (per ADR-004):
    - Python files: kebab-case.py (e.g., belief-update.py)
    - TypeScript/JavaScript files: 
      - Components: PascalCase.tsx (e.g., AgentCreator.tsx)
@@ -37,47 +42,63 @@ Implement comprehensive naming consistency across the repository:
    - GraphQL queries: camelCase (e.g., getAgentById)
 
 Implementation steps:
-1. Create linting rules for each language (flake8, eslint)
-2. Write a custom script to rename files according to conventions
-3. Use AST manipulation to update variable/function names
-4. Add pre-commit hooks to enforce naming conventions
-5. Update documentation to reflect naming standards
+1. Review and validate against ADR documents before any changes
+2. Create linting rules for each language (flake8, eslint) that enforce ADR compliance
+3. Write a custom script to rename files according to conventions while respecting canonical structure
+4. Use AST manipulation to update variable/function names
+5. Add pre-commit hooks to enforce naming conventions and ADR compliance
+6. Update documentation to reflect naming standards and ADR requirements
 
 # Test Strategy:
-1. Create test cases for each naming convention rule
-2. Verify linting catches naming violations
-3. Test file renaming script on sample directories
-4. Validate that imports are correctly updated after renaming
-5. Check that pre-commit hooks properly reject non-compliant names
+1. Validate all naming changes against ADR-004 specifications
+2. Verify file placement adheres to ADR-002 canonical structure
+3. Ensure dependency rules from ADR-003 are not violated by renaming
+4. Create test cases for each naming convention rule
+5. Verify linting catches naming violations and ADR non-compliance
+6. Test file renaming script on sample directories with canonical structure validation
+7. Validate that imports are correctly updated after renaming
+8. Check that pre-commit hooks properly reject non-compliant names and ADR violations
 
 # Subtasks:
-## 1. Define Naming Convention Policy [pending]
+## 0. Review and Document ADR Compliance Requirements [pending]
 ### Dependencies: None
+### Description: Thoroughly review the architectural decision records (ADRs) for canonical directory structure, naming conventions, and dependency rules. Create a compliance checklist and validation criteria for all naming changes.
+### Details:
+Study docs/architecture/decisions/002-canonical-directory-structure.md, 004-naming-conventions.md, and 003-dependency-rules.md. Extract all naming-related requirements and create a comprehensive compliance matrix. Document any conflicts between existing conventions and ADR requirements.
+
+## 1. Define Naming Convention Policy [pending]
+### Dependencies: 5.0
 ### Description: Establish a comprehensive naming convention policy for the codebase, drawing on best practices from Kent Beck, Robert Martin, Martin Fowler, and other expert committee members. Ensure the policy covers variables, functions, classes, files, and directories, and is tailored for multi-language environments.
 ### Details:
-Incorporate principles such as intention-revealing, descriptive, and consistent naming. Reference Clean Code and Implementation Patterns for guidance on clarity and maintainability. Document the rationale and provide examples for each rule.
+Incorporate principles such as intention-revealing, descriptive, and consistent naming. Reference Clean Code and Implementation Patterns for guidance on clarity and maintainability. Document the rationale and provide examples for each rule. Ensure full alignment with ADR-004 specifications.
 
 ## 2. Configure Linting Rules for Naming Enforcement [pending]
 ### Dependencies: 5.1
 ### Description: Set up and customize linting tools for each language in the codebase to enforce the defined naming conventions. Integrate these rules into the CI pipeline to ensure compliance.
 ### Details:
-Select appropriate linters (e.g., ESLint, Pylint, etc.), configure naming rules, and test enforcement on representative code samples. Ensure rules are strict enough to enforce policy but flexible for edge cases.
+Select appropriate linters (e.g., ESLint, Pylint, etc.), configure naming rules, and test enforcement on representative code samples. Ensure rules are strict enough to enforce policy but flexible for edge cases. Include custom rules to validate ADR compliance for file placement and naming.
 
 ## 3. Develop Automated Renaming Scripts [pending]
 ### Dependencies: 5.1, 5.2
 ### Description: Create scripts to automate the renaming of code elements and files according to the new naming conventions, minimizing manual effort and reducing human error.
 ### Details:
-Scripts should support batch processing, handle multi-language code, and provide dry-run and rollback options. Ensure scripts are well-documented and tested on sample repositories.
+Scripts should support batch processing, handle multi-language code, and provide dry-run and rollback options. Ensure scripts are well-documented and tested on sample repositories. Include validation against canonical directory structure (ADR-002) to prevent misplaced files.
 
 ## 4. Implement AST-Based Code Updates [pending]
 ### Dependencies: 5.3
 ### Description: Utilize Abstract Syntax Tree (AST) tools to programmatically update code references, imports, and usages to match renamed elements, ensuring code integrity and correctness.
 ### Details:
-Select AST tooling for each language, implement transformations, and validate changes with automated tests. Address edge cases such as dynamic references and code generation.
+Select AST tooling for each language, implement transformations, and validate changes with automated tests. Address edge cases such as dynamic references and code generation. Ensure import updates respect dependency rules from ADR-003.
 
 ## 5. Update Pre-commit Hooks and Documentation [pending]
 ### Dependencies: 5.2, 5.3, 5.4
 ### Description: Integrate naming checks into pre-commit hooks and update developer documentation to reflect the new conventions and workflows.
 ### Details:
-Configure pre-commit tools to run linting and naming checks. Revise onboarding guides, code review checklists, and internal wikis to ensure all contributors understand and follow the updated standards.
+Configure pre-commit tools to run linting and naming checks. Revise onboarding guides, code review checklists, and internal wikis to ensure all contributors understand and follow the updated standards. Include references to relevant ADRs and compliance requirements.
+
+## 6. Create ADR Compliance Validation Tool [pending]
+### Dependencies: 5.0, 5.3
+### Description: Develop a validation tool that checks all naming changes against the architectural decision records to ensure ongoing compliance with project standards.
+### Details:
+Build a tool that can be run manually or integrated into CI/CD pipelines to validate file names, locations, and code naming against ADR specifications. Include reporting features to identify non-compliant elements and suggest corrections.
 

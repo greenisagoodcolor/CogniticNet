@@ -87,7 +87,7 @@ var _statement = require('./statement');
 var _util = require('./util');
 
  class StopState {
-  
+
   constructor(stop) {
     this.stop = stop;
   }

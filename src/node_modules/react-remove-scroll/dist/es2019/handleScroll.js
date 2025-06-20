@@ -1,4 +1,4 @@
-const alwaysContainsScroll = (node) => 
+const alwaysContainsScroll = (node) =>
 // textarea will always _contain_ scroll inside self. It only can be hidden
 node.tagName === 'TEXTAREA';
 const elementCanBeScrolled = (node, overflow) => {
@@ -45,7 +45,7 @@ const getHScrollVariables = ({ scrollLeft, scrollWidth, clientWidth }) => [
 ];
 const elementCouldBeScrolled = (axis, node) => axis === 'v' ? elementCouldBeVScrolled(node) : elementCouldBeHScrolled(node);
 const getScrollVariables = (axis, node) => axis === 'v' ? getVScrollVariables(node) : getHScrollVariables(node);
-const getDirectionFactor = (axis, direction) => 
+const getDirectionFactor = (axis, direction) =>
 /**
  * If the element's direction is rtl (right-to-left), then scrollLeft is 0 when the scrollbar is at its rightmost position,
  * and then increasingly negative as you scroll towards the end of the content.

@@ -4,8 +4,8 @@ import {augmentError, initParser, state} from "./traverser/base";
 import {parseFile} from "./traverser/index";
 
 export class File {
-  
-  
+
+
 
   constructor(tokens, scopes) {
     this.tokens = tokens;

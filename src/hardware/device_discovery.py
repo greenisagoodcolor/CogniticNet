@@ -19,12 +19,14 @@ from datetime import datetime
 
 try:
     import GPUtil
+
     GPU_UTIL_AVAILABLE = True
 except ImportError:
     GPU_UTIL_AVAILABLE = False
 
 try:
     import pycuda.driver as cuda
+
     CUDA_AVAILABLE = True
 except ImportError:
     CUDA_AVAILABLE = False
@@ -34,6 +36,7 @@ logger = logging.getLogger(__name__)
 
 class DeviceType(Enum):
     """Types of discoverable devices."""
+
     CPU = "cpu"
     GPU = "gpu"
     TPU = "tpu"
@@ -49,6 +52,7 @@ class DeviceType(Enum):
 
 class DeviceStatus(Enum):
     """Status of discovered devices."""
+
     AVAILABLE = "available"
     BUSY = "busy"
     OFFLINE = "offline"
@@ -59,6 +63,7 @@ class DeviceStatus(Enum):
 @dataclass
 class DeviceInfo:
     """Information about a discovered device."""
+
     device_id: str
     device_type: DeviceType
     name: str
@@ -83,18 +88,18 @@ class DeviceInfo:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary representation."""
         return {
-            'device_id': self.device_id,
-            'device_type': self.device_type.value,
-            'name': self.name,
-            'vendor': self.vendor,
-            'model': self.model,
-            'bus_info': self.bus_info,
-            'driver': self.driver,
-            'driver_version': self.driver_version,
-            'capabilities': self.capabilities,
-            'status': self.status.value,
-            'last_seen': self.last_seen.isoformat(),
-            'performance_score': self.performance_score
+            "device_id": self.device_id,
+            "device_type": self.device_type.value,
+            "name": self.name,
+            "vendor": self.vendor,
+            "model": self.model,
+            "bus_info": self.bus_info,
+            "driver": self.driver,
+            "driver_version": self.driver_version,
+            "capabilities": self.capabilities,
+            "status": self.status.value,
+            "last_seen": self.last_seen.isoformat(),
+            "performance_score": self.performance_score,
         }
 
 
@@ -108,12 +113,16 @@ class DeviceDiscovery:
         self._devices: Dict[str, DeviceInfo] = {}
         self._discovery_methods: Dict[DeviceType, List[Callable]] = {
             DeviceType.CPU: [self._discover_cpu],
-            DeviceType.GPU: [self._discover_gpu_nvidia, self._discover_gpu_amd, self._discover_gpu_intel],
+            DeviceType.GPU: [
+                self._discover_gpu_nvidia,
+                self._discover_gpu_amd,
+                self._discover_gpu_intel,
+            ],
             DeviceType.MEMORY: [self._discover_memory],
             DeviceType.STORAGE: [self._discover_storage],
             DeviceType.NETWORK: [self._discover_network],
             DeviceType.USB: [self._discover_usb],
-            DeviceType.TPU: [self._discover_tpu]
+            DeviceType.TPU: [self._discover_tpu],
         }
         self._monitoring = False
         self._monitor_thread = None
@@ -163,46 +172,48 @@ class DeviceDiscovery:
         try:
             # Get CPU info
             cpu_info = {
-                'physical_cores': psutil.cpu_count(logical=False),
-                'logical_cores': psutil.cpu_count(logical=True),
-                'max_frequency': psutil.cpu_freq().max if psutil.cpu_freq() else 0,
-                'architecture': platform.machine()
+                "physical_cores": psutil.cpu_count(logical=False),
+                "logical_cores": psutil.cpu_count(logical=True),
+                "max_frequency": psutil.cpu_freq().max if psutil.cpu_freq() else 0,
+                "architecture": platform.machine(),
             }
 
             # Platform-specific CPU detection
             cpu_model = "Unknown CPU"
             vendor = "Unknown"
 
-            if platform.system() == 'Linux':
+            if platform.system() == "Linux":
                 try:
-                    with open('/proc/cpuinfo', 'r') as f:
+                    with open("/proc/cpuinfo", "r") as f:
                         for line in f:
-                            if 'model name' in line:
-                                cpu_model = line.split(':')[1].strip()
-                            elif 'vendor_id' in line:
-                                vendor = line.split(':')[1].strip()
+                            if "model name" in line:
+                                cpu_model = line.split(":")[1].strip()
+                            elif "vendor_id" in line:
+                                vendor = line.split(":")[1].strip()
                                 break
                 except:
                     pass
 
-            elif platform.system() == 'Darwin':  # macOS
+            elif platform.system() == "Darwin":  # macOS
                 try:
                     result = subprocess.run(
-                        ['sysctl', '-n', 'machdep.cpu.brand_string'],
-                        capture_output=True, text=True
+                        ["sysctl", "-n", "machdep.cpu.brand_string"],
+                        capture_output=True,
+                        text=True,
                     )
                     if result.returncode == 0:
                         cpu_model = result.stdout.strip()
-                        if 'Intel' in cpu_model:
-                            vendor = 'Intel'
-                        elif 'Apple' in cpu_model:
-                            vendor = 'Apple'
+                        if "Intel" in cpu_model:
+                            vendor = "Intel"
+                        elif "Apple" in cpu_model:
+                            vendor = "Apple"
                 except:
                     pass
 
-            elif platform.system() == 'Windows':
+            elif platform.system() == "Windows":
                 try:
                     import wmi
+
                     c = wmi.WMI()
                     for processor in c.Win32_Processor():
                         cpu_model = processor.Name
@@ -219,7 +230,8 @@ class DeviceDiscovery:
                 model=cpu_model,
                 capabilities=cpu_info,
                 status=DeviceStatus.AVAILABLE,
-                performance_score=cpu_info['logical_cores'] * (cpu_info['max_frequency'] / 1000)
+                performance_score=cpu_info["logical_cores"]
+                * (cpu_info["max_frequency"] / 1000),
             )
 
             devices.append(device)
@@ -233,7 +245,7 @@ class DeviceDiscovery:
         """Discover NVIDIA GPUs."""
         devices = []
 
-        if platform.system() == 'Windows':
+        if platform.system() == "Windows":
             nvidia_smi = "nvidia-smi.exe"
         else:
             nvidia_smi = "nvidia-smi"
@@ -241,15 +253,19 @@ class DeviceDiscovery:
         try:
             # Use nvidia-smi to get GPU info
             result = subprocess.run(
-                [nvidia_smi, '--query-gpu=index,name,memory.total,driver_version',
-                 '--format=csv,noheader,nounits'],
-                capture_output=True, text=True
+                [
+                    nvidia_smi,
+                    "--query-gpu=index,name,memory.total,driver_version",
+                    "--format=csv,noheader,nounits",
+                ],
+                capture_output=True,
+                text=True,
             )
 
             if result.returncode == 0:
-                for line in result.stdout.strip().split('\n'):
+                for line in result.stdout.strip().split("\n"):
                     if line:
-                        parts = [p.strip() for p in line.split(',')]
+                        parts = [p.strip() for p in line.split(",")]
                         if len(parts) >= 4:
                             idx, name, memory, driver = parts[:4]
 
@@ -262,11 +278,12 @@ class DeviceDiscovery:
                                 driver="nvidia",
                                 driver_version=driver,
                                 capabilities={
-                                    'memory_mb': int(memory),
-                                    'cuda_capable': True
+                                    "memory_mb": int(memory),
+                                    "cuda_capable": True,
                                 },
                                 status=DeviceStatus.AVAILABLE,
-                                performance_score=int(memory) / 1000  # Simple score based on memory
+                                performance_score=int(memory)
+                                / 1000,  # Simple score based on memory
                             )
                             devices.append(device)
 
@@ -287,11 +304,11 @@ class DeviceDiscovery:
                         vendor="NVIDIA",
                         model=gpu.name,
                         capabilities={
-                            'memory_mb': int(gpu.memoryTotal),
-                            'cuda_capable': True
+                            "memory_mb": int(gpu.memoryTotal),
+                            "cuda_capable": True,
                         },
                         status=DeviceStatus.AVAILABLE,
-                        performance_score=gpu.memoryTotal / 1000
+                        performance_score=gpu.memoryTotal / 1000,
                     )
                     devices.append(device)
             except:
@@ -303,14 +320,13 @@ class DeviceDiscovery:
         """Discover AMD GPUs."""
         devices = []
 
-        if platform.system() != 'Linux':
+        if platform.system() != "Linux":
             return devices
 
         try:
             # Check for AMD GPUs using rocm-smi
             result = subprocess.run(
-                ['rocm-smi', '--showproductname'],
-                capture_output=True, text=True
+                ["rocm-smi", "--showproductname"], capture_output=True, text=True
             )
 
             if result.returncode == 0:
@@ -322,8 +338,8 @@ class DeviceDiscovery:
                     name="AMD GPU",
                     vendor="AMD",
                     driver="amdgpu",
-                    capabilities={'rocm_capable': True},
-                    status=DeviceStatus.AVAILABLE
+                    capabilities={"rocm_capable": True},
+                    status=DeviceStatus.AVAILABLE,
                 )
                 devices.append(device)
 
@@ -339,22 +355,22 @@ class DeviceDiscovery:
         devices = []
 
         # Platform-specific Intel GPU detection
-        if platform.system() == 'Linux':
+        if platform.system() == "Linux":
             try:
                 # Check for Intel GPU in /sys
-                intel_gpu_path = Path('/sys/class/drm/card0/device/vendor')
+                intel_gpu_path = Path("/sys/class/drm/card0/device/vendor")
                 if intel_gpu_path.exists():
-                    with open(intel_gpu_path, 'r') as f:
+                    with open(intel_gpu_path, "r") as f:
                         vendor_id = f.read().strip()
-                        if vendor_id == '0x8086':  # Intel vendor ID
+                        if vendor_id == "0x8086":  # Intel vendor ID
                             device = DeviceInfo(
                                 device_id="gpu_intel_0",
                                 device_type=DeviceType.GPU,
                                 name="Intel Integrated Graphics",
                                 vendor="Intel",
                                 driver="i915",
-                                capabilities={'integrated': True},
-                                status=DeviceStatus.AVAILABLE
+                                capabilities={"integrated": True},
+                                status=DeviceStatus.AVAILABLE,
                             )
                             devices.append(device)
             except:
@@ -377,12 +393,12 @@ class DeviceDiscovery:
                 name="System Memory",
                 vendor="System",
                 capabilities={
-                    'total_mb': mem.total // (1024 * 1024),
-                    'available_mb': mem.available // (1024 * 1024),
-                    'speed_mhz': self._get_memory_speed()
+                    "total_mb": mem.total // (1024 * 1024),
+                    "available_mb": mem.available // (1024 * 1024),
+                    "speed_mhz": self._get_memory_speed(),
                 },
                 status=DeviceStatus.AVAILABLE,
-                performance_score=mem.total // (1024 * 1024 * 1000)  # GB as score
+                performance_score=mem.total // (1024 * 1024 * 1000),  # GB as score
             )
             devices.append(device)
 
@@ -394,10 +410,10 @@ class DeviceDiscovery:
                     name="Swap Memory",
                     vendor="System",
                     capabilities={
-                        'total_mb': swap.total // (1024 * 1024),
-                        'available_mb': swap.free // (1024 * 1024)
+                        "total_mb": swap.total // (1024 * 1024),
+                        "available_mb": swap.free // (1024 * 1024),
                     },
-                    status=DeviceStatus.AVAILABLE
+                    status=DeviceStatus.AVAILABLE,
                 )
                 devices.append(swap_device)
 
@@ -422,14 +438,14 @@ class DeviceDiscovery:
                         device_type=DeviceType.STORAGE,
                         name=partition.device,
                         capabilities={
-                            'mountpoint': partition.mountpoint,
-                            'fstype': partition.fstype,
-                            'total_gb': usage.total // (1024**3),
-                            'free_gb': usage.free // (1024**3),
-                            'opts': partition.opts
+                            "mountpoint": partition.mountpoint,
+                            "fstype": partition.fstype,
+                            "total_gb": usage.total // (1024**3),
+                            "free_gb": usage.free // (1024**3),
+                            "opts": partition.opts,
                         },
                         status=DeviceStatus.AVAILABLE,
-                        performance_score=self._estimate_storage_performance(partition)
+                        performance_score=self._estimate_storage_performance(partition),
                     )
                     devices.append(device)
 
@@ -465,13 +481,17 @@ class DeviceDiscovery:
                         device_type=DeviceType.NETWORK,
                         name=iface_name,
                         capabilities={
-                            'speed_mbps': stat.speed,
-                            'mtu': stat.mtu,
-                            'is_up': stat.isup,
-                            'address': primary_addr
+                            "speed_mbps": stat.speed,
+                            "mtu": stat.mtu,
+                            "is_up": stat.isup,
+                            "address": primary_addr,
                         },
-                        status=DeviceStatus.AVAILABLE if stat.isup else DeviceStatus.OFFLINE,
-                        performance_score=stat.speed / 1000 if stat.speed else 0
+                        status=(
+                            DeviceStatus.AVAILABLE
+                            if stat.isup
+                            else DeviceStatus.OFFLINE
+                        ),
+                        performance_score=stat.speed / 1000 if stat.speed else 0,
                     )
                     devices.append(device)
 
@@ -484,30 +504,30 @@ class DeviceDiscovery:
         """Discover USB devices."""
         devices = []
 
-        if platform.system() == 'Linux':
+        if platform.system() == "Linux":
             try:
-                result = subprocess.run(
-                    ['lsusb'], capture_output=True, text=True
-                )
+                result = subprocess.run(["lsusb"], capture_output=True, text=True)
 
                 if result.returncode == 0:
-                    for line in result.stdout.strip().split('\n'):
-                        if line and 'Hub' not in line:  # Skip USB hubs
+                    for line in result.stdout.strip().split("\n"):
+                        if line and "Hub" not in line:  # Skip USB hubs
                             # Parse lsusb output
-                            parts = line.split(' ', 6)
+                            parts = line.split(" ", 6)
                             if len(parts) >= 7:
                                 bus = parts[1]
-                                device_num = parts[3].rstrip(':')
+                                device_num = parts[3].rstrip(":")
                                 vendor_device = parts[5]
-                                name = parts[6] if len(parts) > 6 else "Unknown USB Device"
+                                name = (
+                                    parts[6] if len(parts) > 6 else "Unknown USB Device"
+                                )
 
                                 device = DeviceInfo(
                                     device_id=f"usb_{bus}_{device_num}",
                                     device_type=DeviceType.USB,
                                     name=name,
                                     bus_info=f"Bus {bus} Device {device_num}",
-                                    capabilities={'vendor_device': vendor_device},
-                                    status=DeviceStatus.AVAILABLE
+                                    capabilities={"vendor_device": vendor_device},
+                                    status=DeviceStatus.AVAILABLE,
                                 )
                                 devices.append(device)
 
@@ -521,11 +541,12 @@ class DeviceDiscovery:
         devices = []
 
         # Check for Coral USB Accelerator
-        if platform.system() == 'Linux':
+        if platform.system() == "Linux":
             try:
                 result = subprocess.run(
-                    ['lsusb', '-d', '1a6e:089a'],  # Google Coral USB ID
-                    capture_output=True, text=True
+                    ["lsusb", "-d", "1a6e:089a"],  # Google Coral USB ID
+                    capture_output=True,
+                    text=True,
                 )
 
                 if result.returncode == 0 and result.stdout:
@@ -536,11 +557,11 @@ class DeviceDiscovery:
                         vendor="Google",
                         model="Coral USB Accelerator",
                         capabilities={
-                            'ops_per_second': 4e12,  # 4 TOPS
-                            'edge_tpu': True
+                            "ops_per_second": 4e12,  # 4 TOPS
+                            "edge_tpu": True,
                         },
                         status=DeviceStatus.AVAILABLE,
-                        performance_score=4000  # 4 TOPS
+                        performance_score=4000,  # 4 TOPS
                     )
                     devices.append(device)
 
@@ -548,7 +569,7 @@ class DeviceDiscovery:
                 pass
 
         # Check for PCIe TPU
-        pcie_tpu_path = Path('/dev/apex_0')
+        pcie_tpu_path = Path("/dev/apex_0")
         if pcie_tpu_path.exists():
             device = DeviceInfo(
                 device_id="tpu_coral_pcie",
@@ -556,13 +577,9 @@ class DeviceDiscovery:
                 name="Google Coral PCIe Accelerator",
                 vendor="Google",
                 model="Coral PCIe Accelerator",
-                capabilities={
-                    'ops_per_second': 4e12,
-                    'edge_tpu': True,
-                    'pcie': True
-                },
+                capabilities={"ops_per_second": 4e12, "edge_tpu": True, "pcie": True},
                 status=DeviceStatus.AVAILABLE,
-                performance_score=4000
+                performance_score=4000,
             )
             devices.append(device)
 
@@ -570,16 +587,17 @@ class DeviceDiscovery:
 
     def _get_memory_speed(self) -> int:
         """Get memory speed in MHz."""
-        if platform.system() == 'Linux':
+        if platform.system() == "Linux":
             try:
                 result = subprocess.run(
-                    ['sudo', 'dmidecode', '-t', 'memory'],
-                    capture_output=True, text=True
+                    ["sudo", "dmidecode", "-t", "memory"],
+                    capture_output=True,
+                    text=True,
                 )
                 if result.returncode == 0:
-                    for line in result.stdout.split('\n'):
-                        if 'Speed:' in line and 'MHz' in line:
-                            speed = line.split(':')[1].strip().split()[0]
+                    for line in result.stdout.split("\n"):
+                        if "Speed:" in line and "MHz" in line:
+                            speed = line.split(":")[1].strip().split()[0]
                             return int(speed)
             except:
                 pass
@@ -591,17 +609,17 @@ class DeviceDiscovery:
         score = 100.0  # Base score
 
         # SSD detection heuristics
-        if 'nvme' in partition.device.lower():
+        if "nvme" in partition.device.lower():
             score = 1000.0  # NVMe SSD
-        elif 'ssd' in partition.device.lower():
-            score = 500.0   # SATA SSD
-        elif partition.device.startswith('/dev/sd'):
-            score = 100.0   # HDD
+        elif "ssd" in partition.device.lower():
+            score = 500.0  # SATA SSD
+        elif partition.device.startswith("/dev/sd"):
+            score = 100.0  # HDD
 
         # Adjust based on filesystem
-        if partition.fstype in ['ext4', 'xfs', 'btrfs']:
+        if partition.fstype in ["ext4", "xfs", "btrfs"]:
             score *= 1.1
-        elif partition.fstype in ['ntfs', 'fat32']:
+        elif partition.fstype in ["ntfs", "fat32"]:
             score *= 0.9
 
         return score
@@ -614,9 +632,7 @@ class DeviceDiscovery:
 
         self._monitoring = True
         self._monitor_thread = threading.Thread(
-            target=self._monitor_loop,
-            args=(interval,),
-            daemon=True
+            target=self._monitor_loop, args=(interval,), daemon=True
         )
         self._monitor_thread.start()
         logger.info(f"Started device monitoring with {interval}s interval")
@@ -641,15 +657,15 @@ class DeviceDiscovery:
                 for device_id, device in current_devices.items():
                     if device_id not in previous_devices:
                         # New device
-                        self._notify_callbacks(device, 'added')
+                        self._notify_callbacks(device, "added")
                     elif previous_devices[device_id].status != device.status:
                         # Status change
-                        self._notify_callbacks(device, 'status_changed')
+                        self._notify_callbacks(device, "status_changed")
 
                 for device_id in previous_devices:
                     if device_id not in current_devices:
                         # Device removed
-                        self._notify_callbacks(previous_devices[device_id], 'removed')
+                        self._notify_callbacks(previous_devices[device_id], "removed")
 
                 previous_devices = current_devices
 
@@ -681,16 +697,16 @@ class DeviceDiscovery:
     def export_inventory(self, filepath: str):
         """Export device inventory to JSON file."""
         inventory = {
-            'timestamp': datetime.now().isoformat(),
-            'platform': {
-                'system': platform.system(),
-                'release': platform.release(),
-                'machine': platform.machine()
+            "timestamp": datetime.now().isoformat(),
+            "platform": {
+                "system": platform.system(),
+                "release": platform.release(),
+                "machine": platform.machine(),
             },
-            'devices': [device.to_dict() for device in self._devices.values()]
+            "devices": [device.to_dict() for device in self._devices.values()],
         }
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(inventory, f, indent=2)
 
         logger.info(f"Exported device inventory to {filepath}")

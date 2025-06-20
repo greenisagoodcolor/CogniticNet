@@ -20,6 +20,7 @@ This guide helps resolve common code quality issues in the FreeAgentics project.
 ### Problem: "Parsing error: Cannot find module"
 
 **Solution:**
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules/.cache
@@ -30,6 +31,7 @@ npm run lint
 ### Problem: "React Hook useEffect has missing dependencies"
 
 **Solution:**
+
 ```typescript
 // Add dependencies
 useEffect(() => {
@@ -46,6 +48,7 @@ useEffect(() => {
 ### Problem: "'X' is defined but never used"
 
 **Solutions:**
+
 ```typescript
 // Remove unused import
 // Before: import { unused } from './module';
@@ -60,6 +63,7 @@ const _intentionallyUnused = value;
 ### Problem: Import order violations
 
 **Solution:**
+
 ```bash
 # Auto-fix import order
 npm run lint:fix
@@ -77,6 +81,7 @@ npm run lint:fix
 ### Problem: Prettier and ESLint conflict
 
 **Solution:**
+
 ```bash
 # Ensure prettier-eslint integration
 npm install --save-dev eslint-config-prettier
@@ -87,11 +92,13 @@ npm run lint:fix
 ### Problem: Files not being formatted
 
 **Check:**
+
 1. File is not in `.prettierignore`
 2. File extension is supported
 3. No syntax errors in file
 
 **Solution:**
+
 ```bash
 # Force format specific file
 npx prettier --write path/to/file.ts
@@ -103,6 +110,7 @@ npm run format
 ### Problem: Line endings issues (CRLF/LF)
 
 **Solution:**
+
 ```bash
 # Configure git
 git config --global core.autocrlf false
@@ -116,6 +124,7 @@ npm run format
 ### Problem: "Cannot find module or its corresponding type declarations"
 
 **Solutions:**
+
 ```bash
 # Install types
 npm install --save-dev @types/package-name
@@ -130,6 +139,7 @@ rm -rf node_modules/.cache/typescript
 ### Problem: "Type 'X' is not assignable to type 'Y'"
 
 **Solutions:**
+
 ```typescript
 // Use type assertion (careful!)
 const value = someValue as ExpectedType;
@@ -148,6 +158,7 @@ function getValue<T>(input: T): T {
 ### Problem: "Object is possibly 'null' or 'undefined'"
 
 **Solutions:**
+
 ```typescript
 // Optional chaining
 const value = object?.property?.nested;
@@ -169,12 +180,13 @@ const value = object!.property;
 ### Problem: "Cannot find module" in tests
 
 **Solution:**
+
 ```javascript
 // Check jest.config.js moduleNameMapper
 module.exports = {
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.js',
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/styleMock.js",
   },
 };
 ```
@@ -182,9 +194,10 @@ module.exports = {
 ### Problem: Tests timing out
 
 **Solutions:**
+
 ```typescript
 // Increase timeout for specific test
-test('long running test', async () => {
+test("long running test", async () => {
   // test code
 }, 10000); // 10 second timeout
 
@@ -197,6 +210,7 @@ module.exports = {
 ### Problem: Snapshot tests failing
 
 **Solutions:**
+
 ```bash
 # Update snapshots if changes are intentional
 npm test -- -u
@@ -208,6 +222,7 @@ npm test ComponentName -- -u
 ### Problem: Coverage thresholds not met
 
 **Solutions:**
+
 ```bash
 # Check coverage report
 npm run test:coverage
@@ -222,6 +237,7 @@ npm test -- --coverage --collectCoverageFrom='src/specific-file.ts'
 ### Problem: Pre-commit hook fails
 
 **Debug:**
+
 ```bash
 # Run hook manually
 sh .husky/pre-commit
@@ -231,6 +247,7 @@ npx lint-staged --debug
 ```
 
 **Solutions:**
+
 ```bash
 # Fix issues
 npm run quality:fix
@@ -242,6 +259,7 @@ git commit --no-verify -m "message"
 ### Problem: Hooks not running
 
 **Solution:**
+
 ```bash
 # Reinstall husky
 rm -rf .husky
@@ -254,6 +272,7 @@ chmod +x .husky/*
 ### Problem: "Command not found" in hooks
 
 **Solution:**
+
 ```bash
 # Add PATH to hook
 echo 'export PATH="$PATH:/usr/local/bin"' >> .husky/pre-commit
@@ -264,11 +283,13 @@ echo 'export PATH="$PATH:/usr/local/bin"' >> .husky/pre-commit
 ### Problem: No coverage generated
 
 **Check:**
+
 1. Tests are actually running
 2. Coverage configuration is correct
 3. Source files are included
 
 **Solution:**
+
 ```javascript
 // jest.config.js
 collectCoverageFrom: [
@@ -281,6 +302,7 @@ collectCoverageFrom: [
 ### Problem: Coverage decreased
 
 **Solutions:**
+
 ```bash
 # Find uncovered lines
 npm run coverage:view
@@ -292,6 +314,7 @@ npm test -- --coverage --watchAll
 ### Problem: Python coverage not working
 
 **Solution:**
+
 ```bash
 # Install coverage
 pip install coverage pytest-cov
@@ -307,6 +330,7 @@ coverage html
 ### Problem: Bundle size exceeds limit
 
 **Debug:**
+
 ```bash
 # Analyze bundle
 npm run analyze
@@ -316,6 +340,7 @@ npm run size
 ```
 
 **Solutions:**
+
 ```typescript
 // Dynamic imports
 const HeavyComponent = lazy(() => import('./HeavyComponent'));
@@ -331,6 +356,7 @@ npm uninstall unused-package
 ### Problem: Large dependencies
 
 **Find them:**
+
 ```bash
 # Check package sizes
 npm list --depth=0 | grep -E '\d+\.\d+\s*MB'
@@ -339,6 +365,7 @@ npm list --depth=0 | grep -E '\d+\.\d+\s*MB'
 ```
 
 **Solutions:**
+
 1. Find lighter alternatives
 2. Load on demand
 3. Use CDN for large libraries
@@ -348,6 +375,7 @@ npm list --depth=0 | grep -E '\d+\.\d+\s*MB'
 ### Problem: Flake8 errors
 
 **Common fixes:**
+
 ```python
 # Line too long
 # Split into multiple lines
@@ -368,6 +396,7 @@ def function():
 ### Problem: Black and Flake8 conflict
 
 **Solution:**
+
 ```ini
 # .flake8
 [flake8]
@@ -378,6 +407,7 @@ extend-ignore = E203, W503
 ### Problem: mypy type errors
 
 **Solutions:**
+
 ```python
 # Add type hints
 def function(param: str) -> int:
@@ -394,12 +424,14 @@ value = something()  # type: ignore[assignment]
 ### Problem: Works locally but fails in CI
 
 **Common causes:**
+
 1. Different Node/Python versions
 2. Missing environment variables
 3. Case sensitivity (macOS vs Linux)
 4. Timezone differences
 
 **Debug:**
+
 ```bash
 # Match CI environment
 node --version
@@ -412,6 +444,7 @@ npm run ci
 ### Problem: Timeout in GitHub Actions
 
 **Solution:**
+
 ```yaml
 # Increase timeout in workflow
 jobs:
@@ -422,6 +455,7 @@ jobs:
 ### Problem: Out of memory in CI
 
 **Solution:**
+
 ```yaml
 # Limit parallelism
 - run: npm test -- --maxWorkers=2
@@ -471,6 +505,7 @@ npm install
 ### VS Code Settings
 
 Ensure `.vscode/settings.json` includes:
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -497,11 +532,13 @@ If none of these solutions work:
 ## Prevention Tips
 
 1. **Run quality checks before pushing**
+
    ```bash
    npm run quality:full
    ```
 
 2. **Keep dependencies updated**
+
    ```bash
    npm outdated
    ```

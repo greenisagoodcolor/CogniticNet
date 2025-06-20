@@ -18,30 +18,38 @@ In discrete state-spaces, the generative model consists of:
 ### 2. Matrix Representations
 
 #### A Matrix - Observation Model
+
 ```
 A[o,s] = P(o_t = o | s_t = s)
 ```
+
 - Shape: `(num_observations, num_states)`
 - Each column sums to 1 (probability distribution over observations)
 
 #### B Tensor - Transition Model
+
 ```
 B[s',s,a] = P(s_{t+1} = s' | s_t = s, a_t = a)
 ```
+
 - Shape: `(num_states, num_states, num_actions)`
 - Each column sums to 1 for each action
 
 #### C Matrix - Preferences
+
 ```
 C[o,t] = log P(o_t = o | C)
 ```
+
 - Shape: `(num_observations, time_horizon)`
 - Encodes desired observations at each time step
 
 #### D Vector - Initial Prior
+
 ```
 D[s] = P(s_0 = s)
 ```
+
 - Shape: `(num_states,)`
 - Sums to 1
 

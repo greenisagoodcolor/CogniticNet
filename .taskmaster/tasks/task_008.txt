@@ -3,19 +3,31 @@
 # Status: pending
 # Dependencies: 7
 # Priority: medium
-# Description: Create a clean, well-documented API for interacting with the agent system, including REST endpoints, WebSocket for real-time updates, and optional GraphQL.
+# Description: Create a clean, well-documented API for interacting with the agent system, including REST endpoints, WebSocket for real-time updates, and optional GraphQL. All implementations must strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architecture decision records.
 # Details:
-Design and implement a comprehensive API layer for the agent system:
+Design and implement a comprehensive API layer for the agent system following strict architectural compliance:
 
-1. RESTful API using FastAPI:
+**CRITICAL: All implementations must adhere to:**
+- Canonical directory structure (docs/architecture/decisions/002-canonical-directory-structure.md)
+- Naming conventions (docs/architecture/decisions/004-naming-conventions.md)
+- Dependency rules (docs/architecture/decisions/003-dependency-rules.md)
+
+**Directory Structure Requirements:**
+- All API components must be placed in `api/` directory (interface layer)
+- Web components must be placed in `web/` directory
+- Follow dependency inversion: interface layers can depend on core domain, but core domain cannot depend on interface layers
+
+1. RESTful API using FastAPI (in `api/rest/`):
    - Agent management endpoints
    - Coalition operations
    - Simulation control
    - World state queries
 
 ```python
+# File: api/rest/endpoints/agents.py
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
+from core.agents.services import AgentService  # Interface layer depends on core
 
 app = FastAPI(title="FreeAgentics API")
 
@@ -57,12 +69,13 @@ async def get_agent(agent_id: str):
     return agent.to_dict()
 ```
 
-2. WebSocket for real-time updates:
+2. WebSocket for real-time updates (in `api/websocket/`):
    - Agent state changes
    - Coalition events
    - World updates
 
 ```python
+# File: api/websocket/handlers/world_updates.py
 @app.websocket("/ws/world-updates")
 async def world_updates_websocket(websocket: WebSocket):
     await websocket.accept()
@@ -85,72 +98,79 @@ async def world_updates_websocket(websocket: WebSocket):
         event_bus.unsubscribe(subscription_id)
 ```
 
-3. GraphQL API (optional):
+3. GraphQL API (optional, in `api/graphql/`):
    - Schema for agents, coalitions, world
    - Queries for complex data retrieval
    - Mutations for system operations
    - Subscriptions for real-time updates
 
-4. API Documentation:
+4. API Documentation (in `api/docs/`):
    - OpenAPI specification
    - Interactive Swagger UI
    - Example requests and responses
    - Authentication documentation
 
-5. Client SDKs:
+5. Client SDKs (in `api/clients/`):
    - Python client library
    - TypeScript/JavaScript client
    - Code generation for other languages
 
-6. Security Features:
+6. Security Features (in `api/security/`):
    - API key authentication
    - Rate limiting
    - Input validation
    - CORS configuration
 
 # Test Strategy:
-1. Unit tests for each endpoint
-2. Integration tests for API flows
+1. Unit tests for each endpoint (following test naming conventions)
+2. Integration tests for API flows (ensuring architectural compliance)
 3. Load testing for performance under concurrent requests
 4. Security testing (authentication, input validation)
 5. WebSocket connection testing
 6. API contract testing with consumer-driven contracts
 7. Documentation testing (ensure examples work)
+8. Architectural compliance testing (verify correct directory placement and dependency rules)
 
 # Subtasks:
 ## 1. REST API Implementation [pending]
 ### Dependencies: None
-### Description: Design and implement a robust REST API following best practices for endpoint naming, HTTP method usage, resource-based architecture, stateless communication, and proper versioning. Ensure endpoints are intuitive, scalable, and maintainable, with clear separation of concerns and adherence to semantic versioning.
+### Description: Design and implement a robust REST API following best practices for endpoint naming, HTTP method usage, resource-based architecture, stateless communication, and proper versioning. Ensure endpoints are intuitive, scalable, and maintainable, with clear separation of concerns and adherence to semantic versioning. All REST API components must be placed in the `api/rest/` directory following the canonical structure.
 ### Details:
-Follow expert recommendations from Kent Beck, Robert Martin, and Martin Fowler. Use plural nouns for resources, implement GET/POST/PUT/DELETE as appropriate, and ensure statelessness. Plan for future extensibility and maintainability.
+Follow expert recommendations from Kent Beck, Robert Martin, and Martin Fowler. Use plural nouns for resources, implement GET/POST/PUT/DELETE as appropriate, and ensure statelessness. Plan for future extensibility and maintainability. Strictly adhere to the project's architectural decisions: place all REST endpoints in `api/rest/endpoints/`, models in `api/rest/models/`, and ensure the API layer only depends on core domain interfaces, never the other way around.
 
 ## 2. WebSocket Integration [pending]
 ### Dependencies: 8.1
-### Description: Integrate WebSocket support for real-time, bidirectional communication where required by the PRD. Ensure seamless coexistence with the REST API and proper handling of connection lifecycle, message routing, and error management.
+### Description: Integrate WebSocket support for real-time, bidirectional communication where required by the PRD. Ensure seamless coexistence with the REST API and proper handling of connection lifecycle, message routing, and error management. All WebSocket components must be placed in the `api/websocket/` directory.
 ### Details:
-Design WebSocket endpoints and message schemas that complement the REST API. Ensure robust connection management, authentication, and graceful degradation to REST where WebSockets are unavailable.
+Design WebSocket endpoints and message schemas that complement the REST API. Ensure robust connection management, authentication, and graceful degradation to REST where WebSockets are unavailable. Place handlers in `api/websocket/handlers/`, connection managers in `api/websocket/managers/`, and follow the naming conventions specified in the architecture decisions.
 
 ## 3. GraphQL Schema Design (Optional) [pending]
 ### Dependencies: 8.1
-### Description: Design and implement a GraphQL schema to provide flexible, client-driven data querying as an optional API layer. Ensure schema clarity, type safety, and alignment with the underlying data models.
+### Description: Design and implement a GraphQL schema to provide flexible, client-driven data querying as an optional API layer. Ensure schema clarity, type safety, and alignment with the underlying data models. All GraphQL components must be placed in the `api/graphql/` directory.
 ### Details:
-Define queries, mutations, and subscriptions as needed. Ensure the schema is well-documented and supports efficient data fetching while preventing over-fetching and under-fetching.
+Define queries, mutations, and subscriptions as needed. Ensure the schema is well-documented and supports efficient data fetching while preventing over-fetching and under-fetching. Place schema definitions in `api/graphql/schema/`, resolvers in `api/graphql/resolvers/`, and maintain strict dependency rules.
 
 ## 4. API Documentation [pending]
 ### Dependencies: 8.1, 8.2, 8.3
-### Description: Produce comprehensive, interactive API documentation covering REST, WebSocket, and GraphQL endpoints. Ensure documentation is clear, up-to-date, and accessible to both internal and external developers.
+### Description: Produce comprehensive, interactive API documentation covering REST, WebSocket, and GraphQL endpoints. Ensure documentation is clear, up-to-date, and accessible to both internal and external developers. All documentation must be placed in the `api/docs/` directory.
 ### Details:
-Use OpenAPI/Swagger for REST, and appropriate tools for WebSocket and GraphQL docs. Include example requests/responses, authentication flows, error codes, and versioning information.
+Use OpenAPI/Swagger for REST, and appropriate tools for WebSocket and GraphQL docs. Include example requests/responses, authentication flows, error codes, and versioning information. Follow the documentation structure and naming conventions defined in the architecture decisions.
 
 ## 5. Client SDKs [pending]
 ### Dependencies: 8.1, 8.2, 8.3, 8.4
-### Description: Develop and maintain client SDKs for major platforms (e.g., JavaScript, Python, Java) to facilitate easy integration with the API. Ensure SDKs are idiomatic, well-tested, and documented.
+### Description: Develop and maintain client SDKs for major platforms (e.g., JavaScript, Python, Java) to facilitate easy integration with the API. Ensure SDKs are idiomatic, well-tested, and documented. All client SDKs must be placed in the `api/clients/` directory.
 ### Details:
-Automate SDK generation where possible. Include authentication helpers, error handling, and support for all major API features. Provide usage examples and versioning.
+Automate SDK generation where possible. Include authentication helpers, error handling, and support for all major API features. Provide usage examples and versioning. Organize SDKs by language: `api/clients/python/`, `api/clients/javascript/`, etc., following the naming conventions.
 
 ## 6. Security Features [pending]
 ### Dependencies: 8.1, 8.2, 8.3, 8.4, 8.5
-### Description: Implement robust security measures across all API layers, including authentication (OAuth 2.0/JWT), authorization, input validation, HTTPS enforcement, CORS, rate limiting, and monitoring.
+### Description: Implement robust security measures across all API layers, including authentication (OAuth 2.0/JWT), authorization, input validation, HTTPS enforcement, CORS, rate limiting, and monitoring. All security components must be placed in the `api/security/` directory.
 ### Details:
-Follow security best practices from industry experts. Conduct thorough security testing, monitor for vulnerabilities, and ensure compliance with relevant standards.
+Follow security best practices from industry experts. Conduct thorough security testing, monitor for vulnerabilities, and ensure compliance with relevant standards. Organize security components: authentication in `api/security/auth/`, middleware in `api/security/middleware/`, and utilities in `api/security/utils/`.
+
+## 7. Architectural Compliance Verification [pending]
+### Dependencies: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6
+### Description: Implement automated checks and manual review processes to ensure all API and interface layer implementations strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architecture decision records.
+### Details:
+Create automated linting rules and CI/CD checks that verify: 1) All API files are in the correct directories, 2) Naming conventions are followed, 3) No core domain modules import from interface layers, 4) All interface layer imports from core domain use proper abstractions. Include documentation on how to maintain architectural compliance.
 

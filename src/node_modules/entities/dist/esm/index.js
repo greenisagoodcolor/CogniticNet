@@ -98,10 +98,10 @@ export function encode(input, options = EntityLevel.XML) {
     }
 }
 export { encodeXML, escape, escapeUTF8, escapeAttribute, escapeText, } from "./escape.js";
-export { encodeHTML, encodeNonAsciiHTML, 
+export { encodeHTML, encodeNonAsciiHTML,
 // Legacy aliases (deprecated)
 encodeHTML as encodeHTML4, encodeHTML as encodeHTML5, } from "./encode.js";
-export { EntityDecoder, DecodingMode, decodeXML, decodeHTML, decodeHTMLStrict, decodeHTMLAttribute, 
+export { EntityDecoder, DecodingMode, decodeXML, decodeHTML, decodeHTMLStrict, decodeHTMLAttribute,
 // Legacy aliases (deprecated)
 decodeHTML as decodeHTML4, decodeHTML as decodeHTML5, decodeHTMLStrict as decodeHTML4Strict, decodeHTMLStrict as decodeHTML5Strict, decodeXML as decodeXMLStrict, } from "./decode.js";
 //# sourceMappingURL=index.js.map

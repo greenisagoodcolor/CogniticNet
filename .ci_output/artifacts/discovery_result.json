@@ -68,9 +68,7 @@
       "language": "python",
       "test_count": 1,
       "test_functions": [],
-      "test_classes": [
-        "TestExecutionMetrics"
-      ],
+      "test_classes": ["TestExecutionMetrics"],
       "file_size": 38822,
       "line_count": 960,
       "last_modified": 1750408875.8188741,
@@ -107,9 +105,7 @@
       "framework": "pytest",
       "language": "python",
       "test_count": 8,
-      "test_functions": [
-        "add_categorized_test"
-      ],
+      "test_functions": ["add_categorized_test"],
       "test_classes": [
         "TestPriority",
         "TestCategory",
@@ -163,10 +159,7 @@
       "language": "python",
       "test_count": 2,
       "test_functions": [],
-      "test_classes": [
-        "TestRunnerSetupResult",
-        "TestRunnerSetup"
-      ],
+      "test_classes": ["TestRunnerSetupResult", "TestRunnerSetup"],
       "file_size": 30931,
       "line_count": 879,
       "last_modified": 1750408875.8200235,
@@ -204,11 +197,7 @@
       "language": "python",
       "test_count": 3,
       "test_functions": [],
-      "test_classes": [
-        "TestScenario",
-        "TestMetrics",
-        "TestOrchestrator"
-      ],
+      "test_classes": ["TestScenario", "TestMetrics", "TestOrchestrator"],
       "file_size": 20852,
       "line_count": 606,
       "last_modified": 1750408875.8215048,
@@ -262,10 +251,7 @@
         "test_many_agents_simulation",
         "test_memory_system_capacity"
       ],
-      "test_classes": [
-        "TestAgentIntegration",
-        "TestAgentStressTests"
-      ],
+      "test_classes": ["TestAgentIntegration", "TestAgentStressTests"],
       "file_size": 14721,
       "line_count": 439,
       "last_modified": 1750408884.7685654,
@@ -450,9 +436,7 @@
         "test_cache_performance",
         "test_resource_clusters_in_biomes"
       ],
-      "test_classes": [
-        "TestSpatialIntegration"
-      ],
+      "test_classes": ["TestSpatialIntegration"],
       "file_size": 11006,
       "line_count": 326,
       "last_modified": 1750408884.770644,
@@ -587,9 +571,7 @@
         "test_error_handling",
         "test_custom_weights"
       ],
-      "test_classes": [
-        "TestReadinessEvaluator"
-      ],
+      "test_classes": ["TestReadinessEvaluator"],
       "file_size": 15832,
       "line_count": 411,
       "last_modified": 1750408884.771217,
@@ -1038,11 +1020,7 @@
         "test_adjacency_matrix_conversion",
         "test_edge_statistics"
       ],
-      "test_classes": [
-        "TestEdgeConfig",
-        "TestEdge",
-        "TestEdgeProcessor"
-      ],
+      "test_classes": ["TestEdgeConfig", "TestEdge", "TestEdgeProcessor"],
       "file_size": 13879,
       "line_count": 414,
       "last_modified": 1750408884.781436,
@@ -1076,10 +1054,7 @@
         "test_handle_missing_data_strategies",
         "test_extraction_metadata"
       ],
-      "test_classes": [
-        "TestFeatureConfig",
-        "TestNodeFeatureExtractor"
-      ],
+      "test_classes": ["TestFeatureConfig", "TestNodeFeatureExtractor"],
       "file_size": 12628,
       "line_count": 397,
       "last_modified": 1750408884.7818754,
@@ -1277,11 +1252,7 @@
         "test_parse_file_not_found",
         "test_ast_structure"
       ],
-      "test_classes": [
-        "TestGNNLexer",
-        "TestGNNBlockParser",
-        "TestGNNParser"
-      ],
+      "test_classes": ["TestGNNLexer", "TestGNNBlockParser", "TestGNNParser"],
       "file_size": 11992,
       "line_count": 444,
       "last_modified": 1750408884.782669,
@@ -1797,10 +1768,7 @@
         "test_restore_nonexistent_snapshot",
         "test_list_snapshots"
       ],
-      "test_classes": [
-        "TestAgentPersistence",
-        "TestAgentSnapshot"
-      ],
+      "test_classes": ["TestAgentPersistence", "TestAgentSnapshot"],
       "file_size": 17123,
       "line_count": 446,
       "last_modified": 1750408884.7863865,

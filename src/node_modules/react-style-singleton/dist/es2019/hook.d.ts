@@ -5,7 +5,7 @@ declare type StyleSingletonHook = (
 /**
  * styles to create
  */
-styles: string, 
+styles: string,
 /**
  * indication that styles should be reapplied on change
  */

@@ -700,7 +700,7 @@ function parseVarHead(isBlockScope) {
   if (funcContextId) {
     _base.state.tokens[_base.state.tokens.length - 1].contextId = funcContextId;
   }
-  _lval.parseBindingList.call(void 0, 
+  _lval.parseBindingList.call(void 0,
     _types.TokenType.parenR,
     false /* isBlockScope */,
     false /* allowEmpty */,
@@ -1285,7 +1285,7 @@ function parseImportSpecifiers() {
     } else {
       // Detect an attempt to deep destructure
       if (_tokenizer.eat.call(void 0, _types.TokenType.colon)) {
-        _util.unexpected.call(void 0, 
+        _util.unexpected.call(void 0,
           "ES2015 named imports do not destructure. Use another statement for destructuring after the import.",
         );
       }

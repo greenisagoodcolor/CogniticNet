@@ -25,7 +25,7 @@ export default class CJSImportTransformer extends Transformer {
    __init() {this.hadExport = false}
    __init2() {this.hadNamedExport = false}
    __init3() {this.hadDefaultExport = false}
-  
+
 
   constructor(
      rootTransformer,

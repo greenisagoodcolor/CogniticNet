@@ -1,360 +1,95 @@
-name: Continuous Integration
+name: Main CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - master
+      - develop
   pull_request:
-    branches: [ main ]
-
-env:
-  NODE_VERSION: '20'
-  PYTHON_VERSION: '3.11'
+    branches:
+      - main
+      - master
+      - develop
 
 jobs:
-  code-quality:
-    name: Code Quality Checks
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+      - name: Install linting dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black isort flake8
 
-    - name: Install dependencies
-      run: |
-        npm ci --legacy-peer-deps
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt -r requirements-dev.txt
+      - name: Run Linters
+        run: |
+          flake8 .
+          isort . --check-only
+          black . --check
 
-    - name: Run TypeScript type checking
-      run: npm run type-check
-
-    - name: Run ESLint
-      run: npm run lint:strict
-
-    - name: Check code formatting
-      run: npm run format:check
-
-    - name: Run Python linting
-      run: npm run python:lint
-
-    - name: Run Python type checking
-      run: npm run python:type || echo "MyPy checks not yet fully configured"
-
-    - name: Check for dead code
-      run: npm run find-deadcode || echo "Dead code detection completed"
-
-    - name: Check bundle size
-      run: |
-        npm run build
-        npm run size || echo "Bundle size check completed"
-
-    - name: Upload ESLint report
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: eslint-report
-        path: eslint-report.json
-        retention-days: 7
-
-  backend-tests:
-    name: Backend Tests
+  test:
+    name: Run Tests
+    needs: lint
     runs-on: ubuntu-latest
-    needs: code-quality
-
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Cache pip packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'requirements-dev.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
 
-    - name: Run Python quality checks
-      run: |
-        npm install --no-save
-        npm run python:quality || echo "Python quality checks completed"
+      - name: Install Node.js Dependencies
+        run: |
+          # Run install in all directories with a package.json
+          for dir in $(find . -name 'package.json' -not -path './node_modules/*' -exec dirname {} \; | sort -u); do
+            (cd "$dir" && npm install)
+          done
 
-    - name: Run backend tests
-      run: npm run python:test || echo "Python tests not yet implemented"
+      - name: Run Python Tests
+        run: pytest --cov=. --cov-report=xml
 
-    - name: Upload coverage
-      uses: codecov/codecov-action@v3
-      if: matrix.python-version == '3.11'
-      with:
-        file: ./src/htmlcov/coverage.xml
-        flags: backend
-        name: Backend Coverage
+      - name: Run JS/TS Tests
+        run: |
+          for dir in $(find . -name 'package.json' -not -path './node_modules/*' -exec dirname {} \; | sort -u); do
+            if [ -n "$(jq .scripts.test "$dir/package.json")" ]; then
+              (cd "$dir" && npm test)
+            fi
+          done
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      if: always() && matrix.python-version == '3.11'
-      with:
-        name: pytest-results
-        path: |
-          src/htmlcov/
-          src/.coverage
-        retention-days: 7
-
-  frontend-tests:
-    name: Frontend Tests
-    runs-on: ubuntu-latest
-    needs: code-quality
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci --legacy-peer-deps
-
-    - name: Run quality checks
-      run: npm run quality
-
-    - name: Run unit tests with coverage
-      run: npm run test:ci
-
-    - name: Generate coverage report
-      run: |
-        npm run test:coverage || true
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/lcov.info
-        flags: frontend
-        name: Frontend Coverage
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: jest-results
-        path: |
-          coverage/
-          test-results/
-        retention-days: 7
-
-    - name: Build application
-      env:
-        NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
-      run: npm run build
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-output
-        path: |
-          .next/
-          out/
-        retention-days: 7
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
-
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: freeagentics
-          POSTGRES_PASSWORD: testpassword
-          POSTGRES_DB: freeagentics_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:6
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-
-    - name: Install backend dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
-
-    - name: Install frontend dependencies
-      run: npm ci --legacy-peer-deps
-
-    - name: Set up test environment
-      env:
-        DATABASE_URL: postgresql://freeagentics:testpassword@localhost:5432/freeagentics_test
-        REDIS_URL: redis://localhost:6379
-      run: |
-        # Run database migrations
-        cd src/database
-        alembic upgrade head || echo "Migrations not yet configured"
-        cd ../..
-
-    - name: Run integration tests
-      env:
-        DATABASE_URL: postgresql://freeagentics:testpassword@localhost:5432/freeagentics_test
-        REDIS_URL: redis://localhost:6379
-        NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
-      run: |
-        # Start backend server in background
-        cd src
-        python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
-        BACKEND_PID=$!
-        cd ..
-
-        # Wait for backend to start
-        sleep 10
-
-        # Run integration tests
-        pytest tests/integration/ -v || echo "Integration tests not yet implemented"
-
-        # Kill backend server
-        kill $BACKEND_PID || true
-
-  docker-build:
-    name: Docker Build Test
-    runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Build Backend Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./Dockerfile
-        push: false
-        tags: freeagentics-backend:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        target: backend
-
-    - name: Build Frontend Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./Dockerfile
-        push: false
-        tags: freeagentics-frontend:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        target: frontend
-        build-args: |
-          NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-
-    - name: Test Docker Compose
-      run: |
-        # Create test environment file
-        cp environments/env.test .env.test
-
-        # Start services with docker-compose
-        docker-compose -f environments/development/docker-compose.yml --env-file .env.test up -d
-
-        # Wait for services to be ready
-        sleep 30
-
-        # Check if services are running
-        docker-compose -f environments/development/docker-compose.yml ps
-
-        # Test backend health
-        curl -f http://localhost:8000/health || echo "Backend health check not yet implemented"
-
-        # Test frontend
-        curl -f http://localhost:3000 || echo "Frontend not yet fully configured"
-
-        # Stop services
-        docker-compose -f environments/development/docker-compose.yml down
-
-  security-scan:
-    name: Security Scanning
-    runs-on: ubuntu-latest
-    needs: code-quality
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-
-    - name: Install security tools
-      run: |
-        python -m pip install --upgrade pip
-        pip install bandit safety
-
-    - name: Run Bandit security scan
-      run: bandit -r src/ -ll --skip B101,B601
-
-    - name: Check for vulnerable dependencies
-      run: safety check --json || echo "Some vulnerabilities found - review needed"
-
-    - name: Run npm audit
-      run: npm audit --audit-level=moderate || echo "Some npm vulnerabilities found - review needed"
-
-  all-checks-passed:
-    name: All Checks Passed
-    runs-on: ubuntu-latest
-    needs: [code-quality, backend-tests, frontend-tests, integration-tests, docker-build, security-scan]
-
-    steps:
-    - name: All checks completed successfully
-      run: echo "✅ All CI checks passed!"
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: pytest
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true

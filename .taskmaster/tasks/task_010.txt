@@ -3,18 +3,20 @@
 # Status: pending
 # Dependencies: 5, 6, 7, 8, 9
 # Priority: medium
-# Description: Enhance the developer experience with intuitive APIs, development tools, debugging capabilities, and comprehensive examples.
+# Description: Enhance the developer experience with intuitive APIs, development tools, debugging capabilities, and comprehensive examples, while ensuring strict compliance with the project's canonical architecture and naming conventions.
 # Details:
-Implement a suite of developer experience improvements:
+Implement a suite of developer experience improvements that strictly adhere to the canonical directory structure, naming conventions, and dependency rules:
 
-1. Intuitive API Design:
-   - Fluent interface patterns for agent creation
-   - Builder patterns for complex objects
+1. Intuitive API Design (Following Canonical Structure):
+   - Fluent interface patterns for agent creation (in `src/domain/agents/`)
+   - Builder patterns for complex objects (in appropriate domain modules)
    - Sensible defaults with override options
    - Support for both sync and async usage
+   - All interfaces must follow dependency inversion principle
 
 ```python
 # Example of fluent interface for agent creation
+# Located in: src/domain/agents/agent_factory.py
 from freeagentics import Agent, World
 
 # Simple case with sensible defaults
@@ -29,6 +31,7 @@ developer = (Agent.create("Developer")
 )
 
 # Coalition creation with builder pattern
+# Located in: src/domain/coalitions/coalition_builder.py
 coalition = (Coalition.builder()
     .add_agent(explorer)
     .add_agent(developer)
@@ -44,14 +47,14 @@ async with coalition.operate() as business:
     print(f"Revenue: ${metrics.revenue:,.2f}")
 ```
 
-2. Development Tools:
-   - CLI for common operations
-   - Development dashboard
-   - Test data generators
-   - Local development server
+2. Development Tools (Infrastructure Layer):
+   - CLI for common operations (in `deployment/cli/`)
+   - Development dashboard (in `deployment/dashboard/`)
+   - Test data generators (in `tests/fixtures/`)
+   - Local development server (in `deployment/dev-server/`)
 
 ```bash
-# CLI example
+# CLI example - located in deployment/cli/
 $ freeagentics agent create --name Alice --class Explorer --personality curious:0.9
 
 ✨ Created Explorer agent 'Alice' with ID: agent_7f3a9c
@@ -65,14 +68,15 @@ $ freeagentics world simulate --agents Alice,Bob --steps 1000 --visualize
 💼 Step 156: Coalition 'ResourceMapper Inc' formed!
 ```
 
-3. Debugging and Observability:
-   - OpenTelemetry integration
-   - Debug mode with detailed logging
-   - Belief state visualizer
-   - Performance profiler
+3. Debugging and Observability (Monitoring Layer):
+   - OpenTelemetry integration (in `monitoring/telemetry/`)
+   - Debug mode with detailed logging (configuration in `config/debug/`)
+   - Belief state visualizer (in `monitoring/visualizers/`)
+   - Performance profiler (in `monitoring/profiling/`)
 
 ```python
-# Debugging example
+# Debugging example - interfaces in src/interfaces/debug/
+# Implementation in monitoring/debug/
 from freeagentics import Agent, enable_tracing
 from freeagentics.debug import BeliefVisualizer
 
@@ -91,23 +95,28 @@ with agent.verbose_logging():
     action = agent.select_action()
 ```
 
-4. Comprehensive Examples:
-   - Basic examples for getting started
-   - Advanced examples showing complex scenarios
-   - Interactive examples with visualization
-   - Deployment examples for edge devices
+4. Comprehensive Examples (Following Structure):
+   - Basic examples (in `examples/basic/`)
+   - Advanced examples (in `examples/advanced/`)
+   - Interactive examples (in `examples/interactive/`)
+   - Deployment examples (in `deployment/examples/`)
 
-5. Development Environment:
-   - Docker development container
-   - VS Code configuration
-   - Pre-commit hooks
-   - Makefile for common tasks
+5. Development Environment (Infrastructure):
+   - Docker development container (in `deployment/docker/dev/`)
+   - VS Code configuration (in `.vscode/`)
+   - Pre-commit hooks (in `.pre-commit-config.yaml`)
+   - Makefile for common tasks (in project root)
 
-6. Performance Optimization Tools:
-   - Profiling utilities
-   - Benchmark suite
-   - Memory usage analyzer
-   - Scaling test framework
+6. Performance Optimization Tools (Monitoring):
+   - Profiling utilities (in `monitoring/profiling/`)
+   - Benchmark suite (in `tests/benchmarks/`)
+   - Memory usage analyzer (in `monitoring/memory/`)
+   - Scaling test framework (in `tests/scaling/`)
+
+All components must follow:
+- Canonical directory structure from `docs/architecture/decisions/002-canonical-directory-structure.md`
+- Naming conventions from `docs/architecture/decisions/004-naming-conventions.md`
+- Dependency rules from `docs/architecture/decisions/003-dependency-rules.md`
 
 # Test Strategy:
 1. User testing with developers new to the project
@@ -117,47 +126,55 @@ with agent.verbose_logging():
 5. Test examples to ensure they work as documented
 6. Validate development environment setup on different platforms
 7. Benchmark performance tools for accuracy
+8. Verify all components follow canonical structure and naming conventions
+9. Validate dependency rules are not violated (core domain doesn't depend on infrastructure)
 
 # Subtasks:
 ## 1. API Design Improvements [pending]
 ### Dependencies: None
-### Description: Refactor and enhance the API following best practices for resource-based architecture, stateless communication, clear URI design, semantic versioning, and robust security.
+### Description: Refactor and enhance the API following best practices for resource-based architecture, stateless communication, clear URI design, semantic versioning, and robust security, while adhering to canonical structure.
 ### Details:
-Apply recommendations from Kent Beck, Robert Martin, and Martin Fowler. Ensure APIs use plural nouns for resources, proper HTTP methods, OAuth 2.0/JWT authentication, semantic versioning, and provide OpenAPI/Swagger documentation. Optimize for performance with caching and compression.
+Apply recommendations from Kent Beck, Robert Martin, and Martin Fowler. Ensure APIs use plural nouns for resources, proper HTTP methods, OAuth 2.0/JWT authentication, semantic versioning, and provide OpenAPI/Swagger documentation. Optimize for performance with caching and compression. All API interfaces must be defined in `src/interfaces/` with implementations following dependency inversion principle.
 
 ## 2. CLI/Tooling Enhancements [pending]
 ### Dependencies: 10.1
-### Description: Develop and improve command-line tools and developer utilities to streamline API consumption, testing, and automation.
+### Description: Develop and improve command-line tools and developer utilities to streamline API consumption, testing, and automation, placing all CLI components in the deployment/cli/ directory.
 ### Details:
-Design CLI tools that align with the improved API, supporting common developer workflows such as scaffolding, testing, and deployment. Ensure tools are intuitive and provide helpful error messages and documentation.
+Design CLI tools that align with the improved API, supporting common developer workflows such as scaffolding, testing, and deployment. Ensure tools are intuitive and provide helpful error messages and documentation. CLI must be placed in `deployment/cli/` as it's infrastructure layer, with interfaces defined in `src/interfaces/cli/` if needed.
 
 ## 3. Debugging and Observability [pending]
 ### Dependencies: 10.1, 10.2
-### Description: Implement comprehensive debugging and observability features to aid developers in identifying and resolving issues efficiently.
+### Description: Implement comprehensive debugging and observability features in the monitoring/ directory to aid developers in identifying and resolving issues efficiently.
 ### Details:
-Integrate structured logging, distributed tracing, and real-time monitoring. Provide clear error reporting, correlation IDs, and metrics dashboards. Ensure observability tools are accessible via both API and CLI.
+Integrate structured logging, distributed tracing, and real-time monitoring. Provide clear error reporting, correlation IDs, and metrics dashboards. Place all monitoring components in `monitoring/` directory with appropriate subdirectories for telemetry, profiling, and visualizers. Configuration files go in `config/debug/`.
 
 ## 4. Example Suite Development [pending]
 ### Dependencies: 10.1, 10.2, 10.3
-### Description: Create a robust suite of example projects and code snippets demonstrating best practices and common use cases.
+### Description: Create a robust suite of example projects and code snippets demonstrating best practices and common use cases, organized according to canonical structure.
 ### Details:
-Develop examples covering authentication, CRUD operations, error handling, and performance optimization. Ensure examples are well-documented, tested, and kept up-to-date with API changes.
+Develop examples covering authentication, CRUD operations, error handling, and performance optimization. Place basic examples in `examples/basic/`, advanced in `examples/advanced/`, interactive in `examples/interactive/`, and deployment-specific examples in `deployment/examples/`. Ensure all examples follow naming conventions.
 
 ## 5. Development Environment Setup [pending]
 ### Dependencies: 10.1, 10.2, 10.3, 10.4
-### Description: Standardize and automate the setup of local development environments for contributors and users.
+### Description: Standardize and automate the setup of local development environments for contributors and users, with all infrastructure components in deployment/ directory.
 ### Details:
-Provide scripts and configuration files for environment provisioning, dependency management, and consistent tooling. Document setup steps and troubleshooting tips.
+Provide scripts and configuration files for environment provisioning, dependency management, and consistent tooling. Docker configurations go in `deployment/docker/dev/`, development server in `deployment/dev-server/`. Document setup steps and troubleshooting tips.
 
 ## 6. Performance Tools Integration [pending]
 ### Dependencies: 10.1, 10.2, 10.3, 10.4, 10.5
-### Description: Integrate and document performance profiling and benchmarking tools to help developers optimize their workflows.
+### Description: Integrate and document performance profiling and benchmarking tools in the monitoring/ directory to help developers optimize their workflows.
 ### Details:
-Include tools for load testing, latency measurement, and resource usage analysis. Offer guidance on interpreting results and tuning performance.
+Include tools for load testing, latency measurement, and resource usage analysis. Place profiling utilities in `monitoring/profiling/`, memory analyzers in `monitoring/memory/`, benchmarks in `tests/benchmarks/`, and scaling tests in `tests/scaling/`. Offer guidance on interpreting results and tuning performance.
 
 ## 7. User Testing and Feedback Loops [pending]
 ### Dependencies: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
 ### Description: Establish structured processes for user testing, feedback collection, and iterative improvement.
 ### Details:
 Conduct usability studies, surveys, and interviews. Implement feedback mechanisms in CLI and documentation. Regularly review and act on user insights to refine the developer experience.
+
+## 8. Architecture Compliance Validation [pending]
+### Dependencies: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
+### Description: Implement automated checks to ensure all developer experience improvements comply with canonical structure, naming conventions, and dependency rules.
+### Details:
+Create pre-commit hooks and CI/CD checks that validate file placement according to `docs/architecture/decisions/002-canonical-directory-structure.md`, naming according to `docs/architecture/decisions/004-naming-conventions.md`, and dependency rules from `docs/architecture/decisions/003-dependency-rules.md`. Ensure no core domain modules depend on infrastructure layers.
 

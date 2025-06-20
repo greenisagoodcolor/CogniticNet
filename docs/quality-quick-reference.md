@@ -3,6 +3,7 @@
 ## 🚀 Essential Commands
 
 ### Before Starting Work
+
 ```bash
 git pull origin main
 npm install
@@ -10,6 +11,7 @@ npm run quality
 ```
 
 ### While Developing
+
 ```bash
 npm run dev          # Start dev server
 npm run test:watch   # Run tests in watch mode
@@ -17,6 +19,7 @@ npm run lint:fix     # Fix linting issues
 ```
 
 ### Before Committing
+
 ```bash
 npm run quality:fix  # Auto-fix all issues
 npm run test         # Run all tests
@@ -25,6 +28,7 @@ git commit -m "type: description"
 ```
 
 ### Quality Check Commands
+
 ```bash
 npm run quality      # Quick quality check
 npm run quality:fix  # Fix auto-fixable issues
@@ -42,6 +46,7 @@ footer (optional)
 ```
 
 ### Types
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation
@@ -52,6 +57,7 @@ footer (optional)
 - `chore`: Maintenance
 
 ### Examples
+
 ```bash
 git commit -m "feat: add user authentication"
 git commit -m "fix: resolve memory leak in agent manager"
@@ -107,6 +113,7 @@ black src/              # Format Python code
 ## 🏃‍♂️ Quick Workflows
 
 ### Fix Everything
+
 ```bash
 npm run quality:fix
 npm run format
@@ -114,12 +121,14 @@ git add .
 ```
 
 ### Full Quality Check
+
 ```bash
 npm run quality:full
 npm run test:ci
 ```
 
 ### Pre-Push Validation
+
 ```bash
 npm run validate
 ```
@@ -127,17 +136,20 @@ npm run validate
 ## 🛠️ Troubleshooting
 
 ### Skip Git Hooks (Emergency Only!)
+
 ```bash
 git commit --no-verify -m "emergency fix"
 ```
 
 ### Reset Git Hooks
+
 ```bash
 rm -rf .husky
 npm run prepare
 ```
 
 ### Clean Install
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install

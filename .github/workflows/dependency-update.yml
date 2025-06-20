@@ -3,7 +3,7 @@ name: Dependency Updates
 on:
   schedule:
     # Run every Monday at 9 AM UTC
-    - cron: '0 9 * * 1'
+    - cron: "0 9 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -12,188 +12,188 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Install pip-tools
-      run: |
-        python -m pip install --upgrade pip
-        pip install pip-tools
+      - name: Install pip-tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-tools
 
-    - name: Update requirements
-      run: |
-        # Compile updated requirements
-        pip-compile requirements.in --upgrade
-        pip-compile requirements-dev.in --upgrade
+      - name: Update requirements
+        run: |
+          # Compile updated requirements
+          pip-compile requirements.in --upgrade
+          pip-compile requirements-dev.in --upgrade
 
-    - name: Test updated dependencies
-      run: |
-        # Install updated dependencies
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+      - name: Test updated dependencies
+        run: |
+          # Install updated dependencies
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
 
-        # Run basic import tests
-        python -c "import src; print('Backend imports successfully')"
+          # Run basic import tests
+          python -c "import src; print('Backend imports successfully')"
 
-        # Run tests if available
-        pytest tests/ || echo "Tests not yet implemented"
+          # Run tests if available
+          pytest tests/ || echo "Tests not yet implemented"
 
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'chore: update Python dependencies'
-        title: 'chore: Update Python dependencies'
-        body: |
-          ## Python Dependency Updates
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update Python dependencies"
+          title: "chore: Update Python dependencies"
+          body: |
+            ## Python Dependency Updates
 
-          This PR contains automated updates to Python dependencies.
+            This PR contains automated updates to Python dependencies.
 
-          ### Changes
-          - Updated requirements.txt
-          - Updated requirements-dev.txt
+            ### Changes
+            - Updated requirements.txt
+            - Updated requirements-dev.txt
 
-          ### Testing
-          - ✅ Dependencies install successfully
-          - ✅ Basic import tests pass
-          - 🔄 Full test suite status: see CI results
+            ### Testing
+            - ✅ Dependencies install successfully
+            - ✅ Basic import tests pass
+            - 🔄 Full test suite status: see CI results
 
-          Please review the changes and ensure all tests pass before merging.
-        branch: deps/python-update
-        delete-branch: true
+            Please review the changes and ensure all tests pass before merging.
+          branch: deps/python-update
+          delete-branch: true
 
   update-npm-dependencies:
     name: Update NPM Dependencies
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
 
-    - name: Update dependencies
-      run: |
-        # Update dependencies to latest versions
-        npx npm-check-updates -u
+      - name: Update dependencies
+        run: |
+          # Update dependencies to latest versions
+          npx npm-check-updates -u
 
-        # Install updated dependencies
-        npm install --legacy-peer-deps
+          # Install updated dependencies
+          npm install --legacy-peer-deps
 
-    - name: Run tests
-      run: |
-        # Type checking
-        npm run type-check || npx tsc --noEmit
+      - name: Run tests
+        run: |
+          # Type checking
+          npm run type-check || npx tsc --noEmit
 
-        # Linting
-        npm run lint || npx next lint
+          # Linting
+          npm run lint || npx next lint
 
-        # Build test
-        npm run build
+          # Build test
+          npm run build
 
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'chore: update NPM dependencies'
-        title: 'chore: Update NPM dependencies'
-        body: |
-          ## NPM Dependency Updates
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update NPM dependencies"
+          title: "chore: Update NPM dependencies"
+          body: |
+            ## NPM Dependency Updates
 
-          This PR contains automated updates to NPM dependencies.
+            This PR contains automated updates to NPM dependencies.
 
-          ### Changes
-          - Updated package.json
-          - Updated package-lock.json
+            ### Changes
+            - Updated package.json
+            - Updated package-lock.json
 
-          ### Testing
-          - ✅ Dependencies install successfully
-          - ✅ Type checking passes
-          - ✅ Linting passes
-          - ✅ Build succeeds
+            ### Testing
+            - ✅ Dependencies install successfully
+            - ✅ Type checking passes
+            - ✅ Linting passes
+            - ✅ Build succeeds
 
-          Please review the changes and ensure all tests pass before merging.
-        branch: deps/npm-update
-        delete-branch: true
+            Please review the changes and ensure all tests pass before merging.
+          branch: deps/npm-update
+          delete-branch: true
 
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
 
-    - name: Python security audit
-      run: |
-        pip install safety bandit
-        safety check --json > python-security-report.json || true
-        bandit -r src/ -f json -o python-bandit-report.json || true
+      - name: Python security audit
+        run: |
+          pip install safety bandit
+          safety check --json > python-security-report.json || true
+          bandit -r src/ -f json -o python-bandit-report.json || true
 
-    - name: NPM security audit
-      run: |
-        npm audit --json > npm-security-report.json || true
+      - name: NPM security audit
+        run: |
+          npm audit --json > npm-security-report.json || true
 
-    - name: Generate security report
-      run: |
-        cat > security-report.md << EOF
-        # Security Audit Report
+      - name: Generate security report
+        run: |
+          cat > security-report.md << EOF
+          # Security Audit Report
 
-        Generated on: $(date)
+          Generated on: $(date)
 
-        ## Python Dependencies
+          ## Python Dependencies
 
-        ### Safety Check Results
-        \`\`\`json
-        $(cat python-security-report.json | jq '.')
-        \`\`\`
+          ### Safety Check Results
+          \`\`\`json
+          $(cat python-security-report.json | jq '.')
+          \`\`\`
 
-        ### Bandit Results
-        \`\`\`json
-        $(cat python-bandit-report.json | jq '.')
-        \`\`\`
+          ### Bandit Results
+          \`\`\`json
+          $(cat python-bandit-report.json | jq '.')
+          \`\`\`
 
-        ## NPM Dependencies
+          ## NPM Dependencies
 
-        \`\`\`json
-        $(cat npm-security-report.json | jq '.')
-        \`\`\`
-        EOF
+          \`\`\`json
+          $(cat npm-security-report.json | jq '.')
+          \`\`\`
+          EOF
 
-    - name: Upload security reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: security-reports
-        path: |
-          security-report.md
-          *-security-report.json
-          *-bandit-report.json
+      - name: Upload security reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: |
+            security-report.md
+            *-security-report.json
+            *-bandit-report.json
 
-    - name: Create issue if vulnerabilities found
-      run: |
-        # Check for high/critical vulnerabilities
-        PYTHON_VULNS=$(cat python-security-report.json | jq '.vulnerabilities | length' || echo 0)
-        NPM_VULNS=$(cat npm-security-report.json | jq '.metadata.vulnerabilities.high + .metadata.vulnerabilities.critical' || echo 0)
+      - name: Create issue if vulnerabilities found
+        run: |
+          # Check for high/critical vulnerabilities
+          PYTHON_VULNS=$(cat python-security-report.json | jq '.vulnerabilities | length' || echo 0)
+          NPM_VULNS=$(cat npm-security-report.json | jq '.metadata.vulnerabilities.high + .metadata.vulnerabilities.critical' || echo 0)
 
-        if [ "$PYTHON_VULNS" -gt 0 ] || [ "$NPM_VULNS" -gt 0 ]; then
-          echo "Found security vulnerabilities!"
-          # Create issue using GitHub CLI if available
-          # gh issue create --title "Security vulnerabilities detected" --body "See workflow run for details"
-        fi
+          if [ "$PYTHON_VULNS" -gt 0 ] || [ "$NPM_VULNS" -gt 0 ]; then
+            echo "Found security vulnerabilities!"
+            # Create issue using GitHub CLI if available
+            # gh issue create --title "Security vulnerabilities detected" --body "See workflow run for details"
+          fi

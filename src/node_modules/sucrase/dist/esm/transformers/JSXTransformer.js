@@ -11,9 +11,9 @@ import getJSXPragmaInfo, {} from "../util/getJSXPragmaInfo";
 import Transformer from "./Transformer";
 
 export default class JSXTransformer extends Transformer {
-  
-  
-  
+
+
+
 
   // State for calculating the line number of each JSX tag in development.
   __init() {this.lastLineNumber = 1}

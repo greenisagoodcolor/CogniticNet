@@ -9,17 +9,17 @@ export declare class Mouse {
     private selecting?;
     private buttonDownTarget;
     private readonly clickCount;
-    move(instance: Instance, position: PointerPosition, 
+    move(instance: Instance, position: PointerPosition,
     /** Whether `preventDefault()` has been called on the `pointerdown` event */
     isPrevented: boolean): {
         leave: () => void;
         enter: () => void;
         move: () => void;
     } | undefined;
-    down(instance: Instance, keyDef: pointerKey, 
+    down(instance: Instance, keyDef: pointerKey,
     /** Whether `preventDefault()` has been called on the `pointerdown` event */
     isPrevented: boolean): void;
-    up(instance: Instance, keyDef: pointerKey, 
+    up(instance: Instance, keyDef: pointerKey,
     /** Whether `preventDefault()` has been called on the `pointerdown` event */
     isPrevented: boolean): void;
     resetClickCount(): void;
