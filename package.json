@@ -1,0 +1,29 @@
+{
+    "name": "cogniticnet",
+    "version": "1.0.0",
+    "description": "AI Agent Platform with Active Inference and Coalition Formation",
+    "main": "index.js",
+    "scripts": {
+        "dev": "npm run dev:web",
+        "dev:web": "cd web && npm run dev",
+        "build": "npm run build:web",
+        "build:web": "cd web && npm run build",
+        "test": "npm run test:web",
+        "test:web": "cd web && npm test",
+        "lint": "npm run lint:web",
+        "lint:web": "cd web && npm run lint"
+    },
+    "keywords": [
+        "ai",
+        "agents",
+        "active-inference",
+        "coalition",
+        "platform"
+    ],
+    "author": "CogniticNet Team",
+    "license": "MIT",
+    "private": true,
+    "workspaces": [
+        "web"
+    ]
+}

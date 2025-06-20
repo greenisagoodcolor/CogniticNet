@@ -1,3 +1,0 @@
-"""
-Simulation engine and logic
-"""

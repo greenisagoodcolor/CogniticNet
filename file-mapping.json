@@ -1,0 +1,213 @@
+{
+  "summary": {
+    "total_files_to_move": 22,
+    "layer_distribution": {
+      "infrastructure": 20,
+      "testing": 2
+    },
+    "priority_distribution": {
+      "2": 22
+    }
+  },
+  "mappings": [
+    {
+      "current_path": ".coveragerc",
+      "target_path": "config/.coveragerc",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".editorconfig",
+      "target_path": "config/.editorconfig",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".eslintignore",
+      "target_path": "config/.eslintignore",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".eslintrc.js",
+      "target_path": "config/.eslintrc.js",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".lintstagedrc.js",
+      "target_path": "config/.lintstagedrc.js",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".markdownlint.json",
+      "target_path": "config/.markdownlint.json",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".prettierignore",
+      "target_path": "config/.prettierignore",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".prettierrc.js",
+      "target_path": "config/.prettierrc.js",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": ".size-limit.json",
+      "target_path": "config/.size-limit.json",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "__mocks__/file-mock.js",
+      "target_path": "tests/__mocks__/file-mock.js",
+      "reason": "Mock files should be in tests/ directory",
+      "layer": "testing",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "__mocks__/style-mock.js",
+      "target_path": "tests/__mocks__/style-mock.js",
+      "reason": "Mock files should be in tests/ directory",
+      "layer": "testing",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "next-env.d.ts",
+      "target_path": "config/next-env.d.ts",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/deployment/build-release.sh",
+      "target_path": "infrastructure/scripts/deployment/build-release.sh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/deployment/deploy-environment.sh",
+      "target_path": "infrastructure/scripts/deployment/deploy-environment.sh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/setup-database.sh",
+      "target_path": "infrastructure/scripts/setup-database.sh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/setup/create-freeagentics-structuresh",
+      "target_path": "infrastructure/scripts/setup/create-freeagentics-structuresh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/setup/initialize-database.sh",
+      "target_path": "infrastructure/scripts/setup/initialize-database.sh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/setup/install-dependencies.sh",
+      "target_path": "infrastructure/scripts/setup/install-dependencies.sh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/setup/migrate-to-freeagenticssh",
+      "target_path": "infrastructure/scripts/setup/migrate-to-freeagenticssh",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/testing/__pycache__/test_runner_setup.cpython-313.pyc",
+      "target_path": "infrastructure/scripts/testing/__pycache__/test_runner_setup.cpython-313.pyc",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "scripts/testing/test_runner_setup.py",
+      "target_path": "infrastructure/scripts/testing/test_runner_setup.py",
+      "reason": "Deployment/setup scripts belong in infrastructure layer",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    },
+    {
+      "current_path": "tailwind.config.ts",
+      "target_path": "config/tailwind.config.ts",
+      "reason": "Configuration file should be in config/ directory per ADR-002",
+      "layer": "infrastructure",
+      "priority": 2,
+      "dependencies": []
+    }
+  ],
+  "layers": {
+    "domain": [
+      "coalitions",
+      "agents",
+      "world",
+      "inference"
+    ],
+    "interface": [
+      "web",
+      "api"
+    ],
+    "infrastructure": [
+      "data",
+      "config",
+      "infrastructure"
+    ],
+    "documentation": [
+      "docs"
+    ],
+    "testing": [
+      "tests"
+    ]
+  }
+}

@@ -81,7 +81,7 @@ The structure should support:
 ### Details:
 Engage stakeholders through interviews, workshops, and document analysis. Capture explicit and implicit requirements, including architectural constraints, business goals, and quality attributes. Reference complexity analysis to prioritize and clarify ambiguous areas.
 
-## 2. Draft Structure Proposal [pending]
+## 2. Draft Structure Proposal [done]
 ### Dependencies: 3.1
 ### Description: Develop a high-level structure for the architecture documentation and ADRs, informed by requirements and best practices. Propose sections, templates, and documentation flow.
 ### Details:

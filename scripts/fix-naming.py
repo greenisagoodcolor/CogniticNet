@@ -5,9 +5,9 @@ Automatically fixes naming convention violations found in the audit
 Lead: Robert Martin (Clean Code)
 """
 
+import json
 import os
 import re
-import json
 import subprocess
 from pathlib import Path
 
@@ -52,8 +52,6 @@ class NamingFixer:
             "cogniticnet": "freeagentics",
             "CogniticNet": "FreeAgentics",
             "COGNITICNET": "FREEAGENTICS",
-            "spawn": "initialize",
-            "respawn": "reset",
             "PlayerAgent": "ExplorerAgent",
             "NPCAgent": "AutonomousAgent",
             "EnemyAgent": "CompetitiveAgent",
@@ -184,7 +182,7 @@ class NamingFixer:
                             )
                             self.fixed_count += 1
                             print(f"   ✓ Renamed: {old_name} → {new_name}")
-                        except:
+                        except (subprocess.CalledProcessError, OSError):
                             os.rename(filepath, new_path)
                             self.fixed_count += 1
                             print(f"   ✓ Renamed (no git): {old_name} → {new_name}")
@@ -246,10 +244,8 @@ class NamingFixer:
                         )
                         self.fixed_count += 1
                         print(f"   ✓ Renamed: {old_name} → {new_name}")
-                    except:
-                        os.rename(filepath, new_path)
-                        self.fixed_count += 1
-                        print(f"   ✓ Renamed (no git): {old_name} → {new_name}")
+                    except (IOError, UnicodeDecodeError):
+                        pass
                 else:
                     self.fixed_count += 1
                     print(f"   ✓ Would rename: {old_name} → {new_name}")
@@ -394,7 +390,7 @@ class NamingFixer:
 
                             print(f"      Updated imports in: {filepath}")
 
-                    except:
+                    except (IOError, UnicodeDecodeError):
                         pass
 
     def save_changes_log(self):

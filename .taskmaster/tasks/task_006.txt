@@ -5,7 +5,9 @@
 # Priority: high
 # Description: Develop a clean, efficient implementation of Active Inference that serves as the cognitive engine for agents, strictly following the project's canonical architecture and naming conventions.
 # Details:
-Implement a high-performance Active Inference engine that serves as the cognitive core for all agents, adhering to the canonical directory structure and architectural decisions:
+Implement a high-performance Active Inference engine that serves as the cognitive core for all agents. Do not create new code unless absolutely necessary because you are using Generalized Notation Notation for all model speciifcation: https://github.com/ActiveInferenceInstitute/GeneralizedNotationNotation ; pymdp for all the active inference mathematical calculations https://github.com/infer-actively/pymdp; and os-cliamte for data import for h3 https://github.com/os-climate/osc-geo-h3loader-cli ; and finally make sure you cross-reference and use geo-infer for any h3 agentic implementation for active inference. all those repos are being unifed here in FreeAgentics and this is the core of their identity.
+
+Adhering to the canonical directory structure and architectural decisions:
 
 1. Core components (to be placed in `inference/` directory):
    - BeliefState class for representing agent beliefs

@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "generated_at": "2025-06-20T11:40:00Z",
+    "total_files": 22,
+    "total_batches": 4,
+    "estimated_total_duration": "30-50 minutes"
+  },
+  "execution_strategy": {
+    "approach": "Incremental batch movement with validation",
+    "rollback_support": true,
+    "git_history_preservation": true,
+    "validation_between_batches": true
+  },
+  "batches": [
+    {
+      "batch_id": 1,
+      "files": [
+        ".coveragerc",
+        ".editorconfig",
+        ".eslintignore",
+        ".markdownlint.json",
+        ".prettierignore",
+        ".size-limit.json",
+        "next-env.d.ts",
+        "tailwind.config.ts"
+      ],
+      "description": "Independent configuration files with no cross-dependencies",
+      "dependencies": [],
+      "risk_level": "low",
+      "estimated_duration": "5-10 minutes"
+    },
+    {
+      "batch_id": 2,
+      "files": [
+        "__mocks__/file-mock.js",
+        "__mocks__/style-mock.js"
+      ],
+      "description": "Test mock files - isolated with no production dependencies",
+      "dependencies": [],
+      "risk_level": "low",
+      "estimated_duration": "5 minutes"
+    },
+    {
+      "batch_id": 3,
+      "files": [
+        ".eslintrc.js",
+        ".lintstagedrc.js",
+        ".prettierrc.js"
+      ],
+      "description": "Configuration files with potential cross-dependencies",
+      "dependencies": [
+        1
+      ],
+      "risk_level": "medium",
+      "estimated_duration": "10-15 minutes"
+    },
+    {
+      "batch_id": 4,
+      "files": [
+        "scripts/deployment/build-release.sh",
+        "scripts/deployment/deploy-environment.sh",
+        "scripts/setup-database.sh",
+        "scripts/setup/create-freeagentics-structuresh",
+        "scripts/setup/initialize-database.sh",
+        "scripts/setup/install-dependencies.sh",
+        "scripts/setup/migrate-to-freeagenticssh",
+        "scripts/testing/__pycache__/test_runner_setup.cpython-313.pyc",
+        "scripts/testing/test_runner_setup.py"
+      ],
+      "description": "Infrastructure and deployment scripts",
+      "dependencies": [
+        1,
+        2,
+        3
+      ],
+      "risk_level": "medium",
+      "estimated_duration": "15-20 minutes"
+    }
+  ],
+  "risk_assessment": {
+    "overall_risk": "LOW",
+    "risk_factors": {
+      "configuration_files": {
+        "risk": "Medium",
+        "mitigation": "Move in dependency order, validate tool functionality"
+      },
+      "script_files": {
+        "risk": "Medium",
+        "mitigation": "Test execution after movement, update any hardcoded paths"
+      },
+      "mock_files": {
+        "risk": "Low",
+        "mitigation": "Isolated test files with minimal dependencies"
+      }
+    },
+    "file_distribution": {
+      "low_risk": 10,
+      "medium_risk": 12,
+      "high_risk": 0
+    },
+    "success_probability": "95%"
+  },
+  "validation_steps": [
+    {
+      "batch_id": "all",
+      "step": "Pre-movement validation",
+      "actions": [
+        "Run dependency validation script",
+        "Ensure clean git working directory",
+        "Backup current state",
+        "Verify all target directories exist"
+      ]
+    },
+    {
+      "batch_id": 1,
+      "step": "Configuration files validation",
+      "actions": [
+        "Test linting tools (eslint, prettier)",
+        "Verify build process",
+        "Check configuration file resolution"
+      ]
+    },
+    {
+      "batch_id": 2,
+      "step": "Mock files validation",
+      "actions": [
+        "Run test suite",
+        "Verify mock file imports resolve correctly"
+      ]
+    },
+    {
+      "batch_id": 3,
+      "step": "Dependent configuration validation",
+      "actions": [
+        "Test all development tools",
+        "Verify configuration inheritance",
+        "Run full build pipeline"
+      ]
+    },
+    {
+      "batch_id": 4,
+      "step": "Infrastructure scripts validation",
+      "actions": [
+        "Test script execution",
+        "Verify path references",
+        "Check deployment pipeline functionality"
+      ]
+    }
+  ],
+  "rollback_procedure": {
+    "emergency_rollback": {
+      "command": "git reset --hard HEAD~1",
+      "description": "Immediately revert last commit if critical failure occurs"
+    },
+    "selective_rollback": {
+      "approach": "Cherry-pick revert individual file moves",
+      "commands": [
+        "git log --oneline -n 10  # Find commit to revert",
+        "git revert <commit-hash>  # Revert specific batch",
+        "git reset HEAD~1  # Undo commit but keep changes for manual fix"
+      ]
+    },
+    "validation_failure_response": [
+      "Stop movement process immediately",
+      "Document failure details",
+      "Revert last batch if needed",
+      "Investigate root cause before continuing"
+    ]
+  }
+}
