@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "generation_timestamp": "2025-06-20T08:17:32.904469+00:00",
+    "project_root": "/Users/matthewmoroney/builds/CogniticNet",
+    "total_files_analyzed": 30,
+    "analysis_modules_completed": 6
+  },
+  "analysis_results": {
+    "files_processed": 30,
+    "hashes_calculated": 10,
+    "metadata_extracted": 30,
+    "dependencies_found": 3,
+    "entry_points_detected": 5,
+    "naming_violations": 21
+  },
+  "summary": {
+    "file_types": {
+      "json": 3,
+      "other": 10,
+      "markdown": 3,
+      "python": 2,
+      "javascript": 3,
+      "config": 8,
+      "documentation": 1
+    },
+    "languages": {
+      "JSON": 3,
+      "Markdown": 3,
+      "Python": 2,
+      "JavaScript": 3,
+      "YAML": 7,
+      "Shell": 1,
+      "Makefile": 1,
+      "TOML": 1
+    },
+    "risk_level": "LOW"
+  }
+}

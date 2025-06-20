@@ -1,65 +1,96 @@
 # Task ID: 2
-# Title: Core Domain Implementation: Agents
+# Title: Establish Test Baseline & CI Pipeline
 # Status: pending
 # Dependencies: 1
 # Priority: high
-# Description: Implement the core domain logic for agents, including the base agent class, explorer agent, and basic behaviors.
+# Description: Discover all existing tests, establish a baseline of test coverage, and implement a CI pipeline to ensure changes don't break functionality.
 # Details:
-1. Create the base/agent.py file with a BaseAgent class.
-2. Implement the explorer/explorer.py file with an ExplorerAgent class inheriting from BaseAgent.
-3. Define basic agent behaviors in base/behaviors.py.
-4. Create interfaces for agents in base/interfaces.py.
-5. Implement unit tests for BaseAgent and ExplorerAgent.
+1. Discover all test files in the repository using pattern matching:
+   - Python: `test_*.py`, `*_test.py`
+   - JavaScript: `*.spec.js`, `*.test.js`
+   - End-to-end tests in dedicated directories
 
-Use the following technologies:
-- Python 3.9+
-- pytest 6.2+ for testing
-- typing module for type hints
-- abc module for abstract base classes
+2. Categorize tests by type (unit, integration, e2e)
 
-Ensure proper encapsulation and follow SOLID principles in the implementation.
+3. Set up test runners for each language/framework:
+   - Python: pytest with coverage
+   - JavaScript: Jest with coverage
+
+4. Create a baseline report of:
+   - Test count by category
+   - Pass/fail status
+   - Code coverage percentage
+   - Test execution time
+
+5. Implement GitHub Actions workflow for CI:
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      - name: Test with pytest
+        run: pytest --cov=. --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+```
+
+6. Add pre-commit hooks to run tests locally before commits
+
+7. Create a test report dashboard for visibility
 
 # Test Strategy:
-1. Write unit tests for BaseAgent methods.
-2. Create tests for ExplorerAgent specific behaviors.
-3. Test inheritance and proper use of interfaces.
-4. Verify type hints are correctly used and mypy passes without errors.
-5. Ensure 90%+ test coverage for the implemented classes.
+1. Verify all tests are discovered by comparing with manual inventory
+2. Ensure baseline metrics are accurately captured
+3. Validate CI pipeline by introducing a passing test and a failing test
+4. Test pre-commit hooks with various scenarios
+5. Verify coverage reports match expected values
 
 # Subtasks:
-## 1. Define naming convention rules [pending]
+## 1. Automated Test Discovery Implementation [pending]
 ### Dependencies: None
-### Description: Create a comprehensive document outlining specific naming rules for different file types, classes, functions, variables, and other code elements.
+### Description: Develop and configure scripts or tooling to automatically discover all relevant test cases across supported languages and frameworks, ensuring comprehensive coverage and alignment with repository structure.
 ### Details:
-Include rules for file names, class names, function names, variable names, constant names, and database object names. Consider prefixes, suffixes, capitalization, and abbreviations.
+Leverage best practices to identify high-value, repeatable, and critical tests for automation. Ensure the discovery process is extensible and maintainable, supporting future test additions and changes. Validate discovery accuracy with sample runs and stakeholder feedback.
 
-## 2. Audit existing codebase [pending]
+## 2. Test Categorization and Tagging [pending]
 ### Dependencies: 2.1
-### Description: Perform a thorough audit of the existing codebase to identify all instances where current naming doesn't conform to the new conventions.
+### Description: Design and implement a robust system for categorizing and tagging discovered tests by type (e.g., smoke, regression, performance), functional area, and priority, following expert committee guidance.
 ### Details:
-Use automated tools to scan the codebase and generate a report of non-compliant names. Categorize issues by severity and file type.
+Establish clear taxonomy and tagging conventions. Ensure categories align with business priorities and risk areas. Implement tagging in code or via configuration, and validate categorization with representative test sets.
 
-## 3. Refactor code to apply new conventions [pending]
-### Dependencies: 2.1, 2.2
-### Description: Systematically update all code elements to adhere to the new naming conventions, focusing on stability and backwards compatibility.
+## 3. Test Runner Setup and Configuration [pending]
+### Dependencies: 2.2
+### Description: Select, configure, and integrate appropriate test runners for each language and framework, ensuring compatibility with the discovery and categorization systems.
 ### Details:
-Start with low-risk changes and progress to more complex refactoring. Use IDE refactoring tools where possible to minimize errors. Update all references and dependencies.
+Standardize runner invocation across environments. Implement support for parallel execution, data-driven testing, and integration with version control. Validate runner setup with sample categorized tests.
 
-## 4. Update documentation [pending]
-### Dependencies: 2.1, 2.3
-### Description: Revise all existing documentation to reflect the new naming conventions and explain the rationale behind the changes.
+## 4. Baseline Reporting Framework Establishment [pending]
+### Dependencies: 2.3
+### Description: Develop a baseline reporting system that aggregates and visualizes test results, supporting categorization, historical trends, and actionable insights for stakeholders.
 ### Details:
-Update API documentation, code comments, README files, and any external documentation. Clearly explain the new conventions and provide examples of correct usage.
+Ensure reports are accessible, versioned, and support drill-down by category, priority, and test type. Integrate with version control and provide export options. Validate reporting accuracy and usability with stakeholders.
 
-## 5. Implement automated naming checks [pending]
-### Dependencies: 2.1, 2.3
-### Description: Set up linting rules and CI/CD checks to enforce the new naming conventions in all future code contributions.
+## 5. Continuous Integration (CI) Pipeline Implementation [pending]
+### Dependencies: 2.4
+### Description: Integrate automated test discovery, categorization, runner execution, and reporting into the CI pipeline, ensuring reliable, repeatable, and scalable test automation as part of the development workflow.
 ### Details:
-Configure linting tools to flag violations of the new naming rules. Integrate these checks into the CI/CD pipeline to prevent non-compliant names from being merged.
+Configure CI triggers, environment provisioning, and artifact management. Ensure pipeline supports parallelism, fail-fast strategies, and clear feedback to developers. Validate pipeline stability and performance with real-world scenarios.
 
-## 6. Conduct comprehensive testing [pending]
-### Dependencies: 2.3, 2.4, 2.5
-### Description: Perform extensive testing to ensure that the naming convention changes haven't introduced any bugs or breaking changes.
+## 6. Pre-commit Hooks and Test Dashboard Setup [pending]
+### Dependencies: 2.5
+### Description: Implement pre-commit hooks to enforce test execution and reporting before code merges, and deploy a real-time dashboard for monitoring test health and trends.
 ### Details:
-Run all existing unit tests, integration tests, and end-to-end tests. Perform manual testing of key functionalities. Pay special attention to areas where naming changes might have affected functionality.
+Configure hooks for local and remote environments, ensuring minimal developer friction. Design and deploy a dashboard that surfaces key metrics, failures, and trends, supporting rapid feedback and continuous improvement.
 

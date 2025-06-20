@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"generatedAt": "2025-06-18T21:16:37.614Z",
+		"generatedAt": "2025-06-20T07:24:23.128Z",
 		"tasksAnalyzed": 10,
 		"totalTasks": 10,
 		"analysisCount": 25,
@@ -131,83 +131,83 @@
 		},
 		{
 			"taskId": 1,
-			"taskTitle": "The Great Migration",
-			"complexityScore": 8,
+			"taskTitle": "Repository State Analysis & Inventory",
+			"complexityScore": 9,
 			"recommendedSubtasks": 7,
-			"expansionPrompt": "Break down the migration process into detailed steps, including preparation, execution, and validation phases.",
-			"reasoning": "High complexity due to the need to preserve git history and ensure no functionality is lost during a major restructuring."
+			"expansionPrompt": "Break down the repository analysis tool into subtasks for: (1) repository traversal, (2) MD5 hash calculation, (3) metadata extraction, (4) dependency graph construction (Python and JS/TS), (5) entry point detection, (6) naming inconsistency detection, and (7) structured JSON output.",
+			"reasoning": "This task requires building a comprehensive analysis tool that combines file system traversal, metadata extraction, dependency parsing for multiple languages, and consistency checks, all with robust output and validation. Each component is non-trivial and must be modular for maintainability and testability, reflecting high complexity and the need for granular subtasks."
 		},
 		{
 			"taskId": 2,
-			"taskTitle": "Naming Harmonization",
-			"complexityScore": 7,
+			"taskTitle": "Establish Test Baseline & CI Pipeline",
+			"complexityScore": 8,
 			"recommendedSubtasks": 6,
-			"expansionPrompt": "Detail the process of implementing naming conventions, including specific rules for different file types and code elements.",
-			"reasoning": "Moderate to high complexity due to the need for consistent implementation across the entire codebase and potential for breaking changes."
+			"expansionPrompt": "Expand into subtasks for: (1) test discovery, (2) test categorization, (3) test runner setup, (4) baseline reporting, (5) CI pipeline implementation, and (6) pre-commit/test dashboard setup.",
+			"reasoning": "This task spans automated test discovery, categorization, reporting, CI/CD integration, and developer workflow enhancements. Each step involves configuration, scripting, and validation across languages, requiring careful coordination and multiple focused subtasks."
 		},
 		{
 			"taskId": 3,
-			"taskTitle": "Dependency Lockdown",
-			"complexityScore": 6,
+			"taskTitle": "Design New Directory Structure",
+			"complexityScore": 7,
 			"recommendedSubtasks": 5,
-			"expansionPrompt": "Outline the steps for auditing dependencies, implementing security measures, and creating a robust dependency management system.",
-			"reasoning": "Moderate complexity due to the need for careful auditing and potential impact on existing functionality."
+			"expansionPrompt": "Decompose into subtasks for: (1) requirements gathering, (2) draft structure proposal, (3) ADR documentation, (4) dependency/naming rule definition, and (5) team review/validation.",
+			"reasoning": "While primarily a design and documentation task, it requires deep understanding of the domain, stakeholder input, and formalization of architecture decisions, making it moderately complex and suitable for several focused subtasks."
 		},
 		{
 			"taskId": 4,
-			"taskTitle": "Testing Renaissance",
-			"complexityScore": 9,
-			"recommendedSubtasks": 8,
-			"expansionPrompt": "Break down the process of improving test coverage, including strategies for different types of tests and performance benchmarks.",
-			"reasoning": "High complexity due to the extensive scope of testing required and the need for specialized tests for Active Inference components."
+			"taskTitle": "Implement File Movement Plan",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Expand into subtasks for: (1) file mapping generation, (2) dependency-based movement ordering, (3) import statement updating, (4) git history preservation, (5) batch move/test/commit cycles, and (6) rollback procedure implementation.",
+			"reasoning": "This task involves orchestrating large-scale file operations with dependency awareness, automated code updates, and robust safety nets, all while preserving history and minimizing disruption. Each aspect is complex and warrants a dedicated subtask."
 		},
 		{
 			"taskId": 5,
-			"taskTitle": "Environment Orchestration",
+			"taskTitle": "Implement Naming Consistency",
 			"complexityScore": 7,
-			"recommendedSubtasks": 6,
-			"expansionPrompt": "Detail the process of creating and configuring Docker environments, including specific steps for each of the 5 environments.",
-			"reasoning": "Moderate to high complexity due to the need for proper isolation and configuration of multiple environments."
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down into subtasks for: (1) naming convention definition, (2) linting rule setup, (3) automated renaming scripts, (4) AST-based code updates, and (5) pre-commit/documentation updates.",
+			"reasoning": "Enforcing naming consistency across a large, multi-language codebase involves both policy and automation, including code and file renaming, linting, and developer workflow integration, each requiring focused attention."
 		},
 		{
 			"taskId": 6,
-			"taskTitle": "Documentation Blitz",
-			"complexityScore": 6,
-			"recommendedSubtasks": 5,
-			"expansionPrompt": "Outline the process of creating comprehensive documentation, including specific sections to be covered in the README and other documents.",
-			"reasoning": "Moderate complexity due to the need for clear, comprehensive documentation covering various aspects of the project."
+			"taskTitle": "Implement Active Inference Core",
+			"complexityScore": 9,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Decompose into subtasks for: (1) BeliefState implementation, (2) FreeEnergyCalculator, (3) BeliefUpdater, (4) PolicySelector, (5) performance optimization, (6) integration points (LLM, GNN, H3), and (7) documentation/testing.",
+			"reasoning": "This is a highly technical, algorithm-heavy task involving mathematical modeling, performance engineering, and integration with other subsystems. Each core component and integration point is complex and should be developed and tested independently."
 		},
 		{
 			"taskId": 7,
-			"taskTitle": "API Excellence",
-			"complexityScore": 8,
+			"taskTitle": "Develop Agent System Architecture",
+			"complexityScore": 9,
 			"recommendedSubtasks": 7,
-			"expansionPrompt": "Break down the process of designing and implementing the API, including specific endpoints, authentication mechanisms, and rate limiting strategies.",
-			"reasoning": "High complexity due to the need for a well-designed, secure, and scalable API structure."
+			"expansionPrompt": "Expand into subtasks for: (1) base agent framework, (2) personality/trait system, (3) specialized agent types, (4) coalition framework, (5) world integration, (6) resource/business model mechanics, and (7) testing/validation.",
+			"reasoning": "Designing a flexible, extensible agent system with coalition and world integration is architecturally and technically demanding, requiring modular development and extensive validation, justifying a high complexity score and multiple subtasks."
 		},
 		{
 			"taskId": 8,
-			"taskTitle": "Active Inference Integration",
-			"complexityScore": 9,
-			"recommendedSubtasks": 8,
-			"expansionPrompt": "Detail the steps for integrating PyMDP, fixing imports, and creating the belief update pipeline, including mathematical considerations.",
-			"reasoning": "High complexity due to the specialized nature of Active Inference and the need for mathematical correctness."
+			"taskTitle": "Implement API and Interface Layer",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down into subtasks for: (1) REST API implementation, (2) WebSocket integration, (3) GraphQL schema (optional), (4) API documentation, (5) client SDKs, and (6) security features.",
+			"reasoning": "Building a robust, multi-protocol API layer with documentation, SDKs, and security involves several distinct technical domains, each requiring specialized implementation and testing."
 		},
 		{
 			"taskId": 9,
-			"taskTitle": "Coalition Mechanics",
-			"complexityScore": 8,
-			"recommendedSubtasks": 7,
-			"expansionPrompt": "Break down the implementation of coalition formation logic, including algorithms for preference matching and stability testing.",
-			"reasoning": "High complexity due to the algorithmic nature of coalition formation and the need for robust stability testing."
+			"taskTitle": "Create Comprehensive Documentation",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Expand into subtasks for: (1) project README, (2) architecture documentation, (3) API docs, (4) tutorials/guides, (5) code/interactive examples, and (6) development documentation.",
+			"reasoning": "Comprehensive documentation spans multiple formats and audiences, requiring coordination, technical writing, and tooling setup, but is less algorithmically complex than core system development."
 		},
 		{
 			"taskId": 10,
-			"taskTitle": "Investor Package",
-			"complexityScore": 7,
-			"recommendedSubtasks": 6,
-			"expansionPrompt": "Outline the steps for creating a polished demo and investor materials, including specific improvements and security considerations.",
-			"reasoning": "Moderate to high complexity due to the need to coordinate multiple aspects of the project and create a compelling presentation for investors."
+			"taskTitle": "Implement Developer Experience Improvements",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Decompose into subtasks for: (1) API design improvements, (2) CLI/tooling, (3) debugging/observability, (4) example suite, (5) development environment setup, (6) performance tools, and (7) user testing/feedback.",
+			"reasoning": "Improving developer experience is multifaceted, involving API ergonomics, tooling, debugging, documentation, and feedback loops, each with its own technical and usability challenges."
 		}
 	]
 }

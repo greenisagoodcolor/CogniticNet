@@ -1,61 +1,131 @@
 # Task ID: 6
-# Title: Frontend Development
+# Title: Implement Active Inference Core
 # Status: pending
-# Dependencies: 5
-# Priority: medium
-# Description: Develop the basic frontend components for agent creation, world visualization, and coalition management.
+# Dependencies: 4
+# Priority: high
+# Description: Develop a clean, efficient implementation of Active Inference that serves as the cognitive engine for agents.
 # Details:
-1. Set up the web/src directory with components, stores, and api subdirectories.
-2. Implement the AgentCreator component for agent creation UI.
-3. Create the WorldViewer component for hexagonal world visualization.
-4. Develop the CoalitionManager component for coalition interface.
-5. Set up state management using a store (e.g., Redux).
-6. Implement API client for frontend-backend communication.
+Implement a high-performance Active Inference engine that uses existing active inference mathmatics calculations with the https://github.com/infer-actively/pymdp and uses the generalized notation notation repository https://github.com/ActiveInferenceInstitute/GeneralizedNotationNotation for the agents to specify models with natural language llm to serves as the cognitive core for all agents:
 
-Use the following:
-- React 17+
-- TypeScript 4.3+
-- Redux Toolkit 1.6+ for state management
-- Axios 0.21+ for API requests
-- D3.js 7.0+ for data visualization
+1. Core components:
+   - BeliefState class for representing agent beliefs
+   - FreeEnergyCalculator for policy evaluation
+   - BeliefUpdater for Bayesian belief updates
+   - PolicySelector for action selection
 
-Ensure the frontend is responsive and follows modern web development best practices.
+2. Key mathematical implementations:
+   - Expected Free Energy calculation: F = -log P(o|s) + KL[Q(s)||P(s)]
+   - Belief updates using Bayes rule
+   - Precision-weighted policy selection
+
+3. Performance optimizations:
+   - Vectorized operations with NumPy
+   - JIT compilation with Numba for hot paths
+   - Caching for repeated calculations
+   - Batch processing for multiple agents
+
+4. Integration points:
+   - LLM-informed belief updates
+   - GNN (Generalized Notation Notation) integration
+   - H3 spatial awareness
+
+Example implementation:
+
+```python
+class ActiveInferenceEngine:
+    """Core implementation of Active Inference for agent cognition."""
+
+    def __init__(self, precision: float = 1.0):
+        self.precision = precision  # Controls exploration vs. exploitation
+        self._belief_updater = BeliefUpdater()
+        self._free_energy_calculator = FreeEnergyCalculator()
+
+    def update_beliefs(self,
+                      agent: Agent,
+                      observations: Observations) -> None:
+        """Update agent beliefs based on new observations."""
+        prior_beliefs = agent.beliefs
+        likelihood = self._compute_likelihood(observations)
+
+        # Bayesian belief update
+        posterior_beliefs = self._belief_updater.update(
+            prior_beliefs,
+            likelihood,
+            observations
+        )
+
+        # Update agent's belief state
+        agent.beliefs = posterior_beliefs
+
+    def select_policy(self,
+                     agent: Agent,
+                     available_policies: List[Policy]) -> Policy:
+        """Select policy that minimizes expected free energy."""
+        free_energies = []
+
+        for policy in available_policies:
+            # Calculate expected free energy for this policy
+            ef = self._free_energy_calculator.calculate(
+                agent.beliefs,
+                policy,
+                self.precision
+            )
+            free_energies.append((policy, ef))
+
+        # Select policy with minimum free energy
+        selected_policy = min(free_energies, key=lambda x: x[1])[0]
+        return selected_policy
+```
+
+Ensure comprehensive documentation of the mathematical principles and implementation details.
 
 # Test Strategy:
-1. Write unit tests for React components using Jest and React Testing Library.
-2. Implement integration tests for component interactions.
-3. Test state management and API client functionality.
-4. Perform end-to-end tests using Cypress for critical user flows.
-5. Conduct cross-browser testing to ensure compatibility.
+1. Unit tests for each component (BeliefUpdater, FreeEnergyCalculator, etc.)
+2. Property-based tests to verify mathematical invariants
+3. Performance benchmarks comparing optimized vs. naive implementations
+4. Integration tests with agent behaviors
+5. Validation against published Active Inference papers
+6. Edge case testing with extreme belief states
 
 # Subtasks:
-## 1. Fix broken components and functionalities [pending]
+## 1. BeliefState Implementation [pending]
 ### Dependencies: None
-### Description: Identify and repair any non-functioning or malfunctioning parts of the codebase
+### Description: Design and implement the BeliefState component, ensuring it encapsulates all necessary probabilistic state representations and supports efficient access and mutation. Follow Single Responsibility Principle and ensure clear data abstractions.
 ### Details:
-Review existing issues, run diagnostics, and systematically address broken features or components. Focus on critical functionalities first.
+Define interfaces and data structures for BeliefState. Ensure encapsulation, immutability where possible, and compliance with clean code practices. Include unit tests for all public methods.
 
-## 2. Reorganize and refactor codebase [pending]
+## 2. FreeEnergyCalculator Development [pending]
 ### Dependencies: 6.1
-### Description: Clean up and restructure the existing code for better organization and maintainability
+### Description: Develop the FreeEnergyCalculator module to compute variational free energy given a BeliefState. Ensure mathematical correctness and optimize for computational efficiency.
 ### Details:
-Implement consistent coding standards, improve file structure, and refactor complex or redundant code sections. Ensure proper separation of concerns.
+Implement core algorithms for free energy calculation. Validate with mathematical test cases. Profile for performance bottlenecks and document assumptions.
 
-## 3. Create comprehensive README documentation [pending]
-### Dependencies: 6.2
-### Description: Develop a detailed README file covering project overview, setup, and usage instructions
+## 3. BeliefUpdater Implementation [pending]
+### Dependencies: 6.1, 6.2
+### Description: Create the BeliefUpdater component to update BeliefState based on new observations and actions, using outputs from FreeEnergyCalculator.
 ### Details:
-Include sections on project description, installation steps, configuration, usage examples, and contribution guidelines. Ensure clarity and completeness.
+Design update algorithms that are modular and testable. Ensure updates are atomic and side-effect free. Provide comprehensive unit tests.
 
-## 4. Implement thorough testing suite [pending]
-### Dependencies: 6.2
-### Description: Develop and execute a comprehensive set of tests to ensure stability and reliability
+## 4. PolicySelector Module [pending]
+### Dependencies: 6.1, 6.2, 6.3
+### Description: Implement the PolicySelector to choose optimal actions based on current BeliefState and free energy estimates.
 ### Details:
-Create unit tests, integration tests, and end-to-end tests covering critical functionalities. Implement continuous integration for automated testing.
+Develop selection strategies (e.g., softmax, argmax) and ensure extensibility for future policy types. Include tests for edge cases and integration with BeliefState.
 
-## 5. Enhance security measures [pending]
-### Dependencies: 6.2, 6.4
-### Description: Identify and address potential security vulnerabilities in the codebase
+## 5. Performance Optimization [pending]
+### Dependencies: 6.1, 6.2, 6.3, 6.4
+### Description: Profile and optimize all core modules (BeliefState, FreeEnergyCalculator, BeliefUpdater, PolicySelector) for speed and memory usage, following expert recommendations for clean, efficient code.
 ### Details:
-Conduct a security audit, implement proper authentication and authorization, secure data handling, and follow best practices for input validation and error handling.
+Use profiling tools to identify bottlenecks. Refactor code for efficiency without sacrificing readability or testability. Document all optimizations and their impact.
 
+## 6. Integration Points: LLM, GNN, H3 [pending]
+### Dependencies: 6.1, 6.2, 6.3, 6.4, 6.5
+### Description: Define and implement integration interfaces for connecting the core modules with external systems: LLM, GNN, and H3. Ensure boundaries are well-defined and dependencies are abstracted for h3 defer to insights from https://github.com/ActiveInferenceInstitute/GEO-INFER  and make sure it integrates properly. make sure it integrates with https://github.com/os-climate/osc-geo-h3loader-cli for data imports using h3
+### Details:
+Design adapters or facades for each integration point. Mock external systems for testing. Ensure integration code is isolated and testable.
+
+## 7. Documentation and Testing [pending]
+### Dependencies: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
+### Description: Produce comprehensive documentation and automated tests for all modules and integration points, following best practices from Clean Code and Agile methodologies.
+### Details:
+Write API docs, usage guides, and architectural overviews. Ensure all code is covered by unit and integration tests. Validate against PRD acceptance criteria.

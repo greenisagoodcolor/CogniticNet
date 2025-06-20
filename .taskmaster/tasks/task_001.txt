@@ -1,74 +1,78 @@
 # Task ID: 1
-# Title: Project Structure and Repository Setup
+# Title: Repository State Analysis & Inventory
 # Status: pending
 # Dependencies: None
 # Priority: high
-# Description: Set up the initial project structure and repository according to the new architecture design, including directory structure, naming conventions, and basic configuration files.
+# Description: Create a complete inventory of the repository, capturing file metadata, dependencies, and entry points to establish a baseline before reorganization.
 # Details:
-1. Create the new directory structure as outlined in the final architecture.
-2. Set up a Git repository with the new structure.
-3. Create initial configuration files: .gitignore, pyproject.toml, package.json, Dockerfile, docker-compose.yml.
-4. Set up pre-commit hooks for linting and code style checks.
-5. Create a Makefile for common development tasks.
-6. Set up VS Code dev container configuration.
-7. Initialize the documentation structure with placeholder files.
+Implement a comprehensive repository analysis tool that:
 
-Use the following tools and versions:
-- Git 2.30+
-- Python 3.9+
-- Node.js 14+
-- Docker 20.10+
-- VS Code 1.60+
+1. Traverses the entire repository structure using `os.walk()` or `pathlib`
+2. Calculates MD5 hash for each file to identify duplicates and track changes
+3. Extracts file metadata (size, last modified, permissions)
+4. Builds a dependency graph by parsing Python imports and JavaScript/TypeScript imports
+5. Identifies critical entry points (main.py, app.py, etc.)
+6. Detects naming inconsistencies (FreeAgentics vs. cogniticnet)
+7. Stores the complete inventory in a structured JSON format
 
-Ensure all naming conventions are followed (kebab-case for files, PascalCase for TypeScript components, etc.).
+Implementation should use AST parsing for Python files to accurately extract imports rather than regex. For JavaScript/TypeScript, use a proper parser like `esprima` or `babel-parser`.
+
+The output should include:
+- Complete file list with metadata
+- Dependency graph (what imports what)
+- Entry points list
+- Potential duplicates
+- Naming inconsistencies
+
+This inventory will serve as the foundation for safe reorganization.
 
 # Test Strategy:
-1. Verify the correct directory structure is in place.
-2. Ensure all initial configuration files are present and valid.
-3. Test pre-commit hooks by intentionally introducing style violations.
-4. Verify Makefile commands work as expected.
-5. Test VS Code dev container by opening the project in a container.
+1. Verify inventory completeness by comparing file count with `find . -type f | wc -l`
+2. Validate MD5 hash calculation by comparing with system `md5sum` tool
+3. Test dependency extraction with known import patterns
+4. Verify entry point detection with manual review
+5. Test on sample repositories with known structure
+6. Ensure the tool handles edge cases like circular imports and dynamic imports
 
 # Subtasks:
-## 1. Audit and document existing codebase [pending]
+## 1. Repository Traversal Implementation [pending]
 ### Dependencies: None
-### Description: Thoroughly review the current CogniticNet codebase, documenting its structure, dependencies, and known issues.
+### Description: Develop a robust module to recursively traverse the repository file system, efficiently handling large codebases and various directory structures. Ensure modularity for easy integration and testability.
 ### Details:
-Create a comprehensive inventory of all modules, libraries, and services. Identify and document broken features, messy code areas, and unclear documentation. This will serve as a baseline for the migration process.
+Follow best practices for file system access, handle symlinks, hidden files, and permission errors gracefully. Provide hooks for filtering files by type or pattern as recommended by expert committee guidance.
 
-## 2. Develop migration strategy and plan [pending]
+## 2. MD5 Hash Calculation for Files [pending]
 ### Dependencies: 1.1
-### Description: Create a detailed migration plan outlining the steps to transform CogniticNet into FreeAgentics.
+### Description: Implement functionality to compute MD5 hashes for all relevant files discovered during traversal, ensuring accuracy and performance.
 ### Details:
-Define the new project structure, identify components to be refactored or reorganized, and establish a timeline for the migration process. Include plans for preserving git history and ensuring no functionality is lost during the restructuring.
+Optimize for large files and parallel processing where feasible. Store hashes in a way that supports later validation and change detection. Ensure code is modular and testable.
 
-## 3. Set up new project structure and repository [pending]
-### Dependencies: 1.2
-### Description: Create the new FreeAgentics repository with the planned structure and migrate the existing codebase.
+## 3. Metadata Extraction Module [pending]
+### Dependencies: 1.1
+### Description: Extract and normalize metadata (e.g., file size, timestamps, language, author if available) for each file and directory in the repository.
 ### Details:
-Set up the new repository with appropriate branches and folder structure. Migrate the existing code while preserving git history. Ensure all necessary files, including documentation and configuration files, are properly transferred.
+Design for extensibility to support additional metadata fields in the future. Ensure extracted metadata is validated and consistently formatted.
 
-## 4. Refactor and organize codebase [pending]
-### Dependencies: 1.3
-### Description: Clean up and reorganize the migrated code to improve structure and readability.
+## 4. Dependency Graph Construction (Python and JS/TS) [pending]
+### Dependencies: 1.1, 1.3
+### Description: Parse and analyze Python and JavaScript/TypeScript files to construct accurate dependency graphs, capturing both internal and external dependencies.
 ### Details:
-Refactor messy code areas, improve code organization, and ensure consistent coding standards across the project. Focus on fixing broken features and organizing what's messy without adding new functionality.
+Utilize language-specific parsers and static analysis tools. Ensure graphs are normalized and can be exported or visualized. Follow modular design for maintainability.
 
-## 5. Update and expand documentation [pending]
-### Dependencies: 1.4
-### Description: Improve existing documentation and create new documentation where needed.
+## 5. Entry Point Detection [pending]
+### Dependencies: 1.1, 1.3, 1.4
+### Description: Identify and catalog entry points (e.g., main scripts, CLI commands, web server initializers) in the repository for supported languages.
 ### Details:
-Review and update all existing documentation. Create new documentation for undocumented features or processes. Ensure all documentation is clear, comprehensive, and follows a consistent format.
+Use language conventions and configuration files (e.g., setup.py, package.json, Dockerfiles) to detect entry points. Ensure detection logic is extensible and well-documented.
 
-## 6. Implement comprehensive testing [pending]
-### Dependencies: 1.4, 1.5
-### Description: Develop and execute a thorough testing plan to ensure stability and functionality.
+## 6. Naming Inconsistency Detection [pending]
+### Dependencies: 1.1, 1.3
+### Description: Analyze file, directory, and symbol names to detect inconsistencies or violations of naming conventions across the repository.
 ### Details:
-Create unit tests, integration tests, and end-to-end tests for all components. Pay special attention to previously untested features. Implement continuous integration to automate testing processes.
+Implement checks for case sensitivity, snake_case vs camelCase, and other project-specific rules. Provide actionable reports and suggestions for remediation.
 
-## 7. Conduct security audit and improvements [pending]
-### Dependencies: 1.4, 1.6
-### Description: Perform a security audit of the migrated codebase and implement necessary security enhancements.
+## 7. Structured JSON Output Generation [pending]
+### Dependencies: 1.2, 1.3, 1.4, 1.5, 1.6
+### Description: Aggregate all extracted data and analysis results into a well-structured, validated JSON output that meets the .taskmaster/docs/PRD.txt and all the insights and intent of the expert committee's discussion and requirements.
 ### Details:
-Identify and address security vulnerabilities in the code and infrastructure. Implement security best practices, update dependencies to secure versions, and ensure proper access controls are in place.
-
+Ensure output is schema-validated, human-readable, and suitable for downstream consumption. Include comprehensive error reporting and versioning information.

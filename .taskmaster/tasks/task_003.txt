@@ -1,58 +1,107 @@
 # Task ID: 3
-# Title: Active Inference Engine Integration
+# Title: Design New Directory Structure
 # Status: pending
-# Dependencies: 2
+# Dependencies: 1
 # Priority: high
-# Description: Integrate the Active Inference engine using PyMDP and implement the core logic for belief updates and policy selection using generalized notation notation (GNN) https://github.com/ActiveInferenceInstitute/GeneralizedNotationNotation/tree/main for the agents to sepcify the active inference models.
+# Description: Create a domain-driven directory structure that properly separates concerns and follows clean architecture principles.
 # Details:
-1. Set up the inference/engine directory with active-inference.py, belief-update.py, and policy-selection.py.
-2. Integrate PyMDP library (version 1.0+) for Active Inference computations.
-3. Implement belief state management in belief-update.py.
-4. Create policy selection logic in policy-selection.py.
-5. Connect the Active Inference engine to the agent classes.
+Design a new directory structure following domain-driven design and clean architecture principles:
 
-Use the following:
-- PyMDP 1.0+
-- NumPy 1.20+
-- SciPy 1.6+
+```
+freeagentics/
+├── agents/                # Core domain - Agent definitions
+│   ├── explorer/
+│   ├── merchant/
+│   ├── scholar/
+│   └── base/
+├── inference/             # Core domain - Active Inference
+│   ├── engine/
+│   ├── gnn/
+│   └── llm/
+├── coalitions/            # Core domain - Coalition formation
+│   ├── formation/
+│   ├── contracts/
+│   └── deployment/
+├── world/                 # Core domain - Environment
+│   ├── grid/
+│   ├── resources/
+│   └── physics/
+├── api/                   # Interface layer
+│   ├── rest/
+│   ├── websocket/
+│   └── graphql/
+├── web/                   # Interface layer - Frontend
+│   ├── src/
+│   └── public/
+├── infrastructure/        # Infrastructure layer
+│   ├── docker/
+│   ├── kubernetes/
+│   └── terraform/
+├── config/                # Configuration
+│   ├── environments/
+│   ├── database/
+│   └── logging/
+├── data/                  # Data assets
+├── scripts/               # Automation
+├── tests/                 # Test suites
+└── docs/                  # Documentation
+```
 
-Ensure the implementation is modular and allows for future extensions or replacements of the inference engine.
+Key principles:
+1. Domain-first organization (agents, inference, coalitions, world)
+2. Clear separation of interface, domain, and infrastructure
+3. Configuration separate from code
+4. Tests mirror source structure
+5. Documentation as first-class citizen
+
+Create an Architecture Decision Record (ADR) documenting:
+- Rationale for structure
+- Dependency rules (what can import what)
+- Naming conventions
+- File organization principles
+
+The structure should support:
+- Active Inference implementation
+- Agent creation and management
+- Coalition formation
+- H3 spatial integration
+- LLM-informed belief updates
 
 # Test Strategy:
-1. Write unit tests for belief update mechanisms.
-2. Create tests for policy selection algorithms.
-3. Implement integration tests to verify correct interaction between agents and the inference engine.
-4. Benchmark performance of belief updates and policy selection for different agent counts.
-5. Verify mathematical correctness of the Active Inference implementations against known examples or papers.
+1. Review structure with team members for feedback
+2. Validate against domain model
+3. Check that structure accommodates all existing functionality
+4. Ensure structure follows clean architecture principles
+5. Verify naming consistency throughout
 
 # Subtasks:
-## 1. Audit existing dependencies [pending]
+## 1. Requirements Gathering [pending]
 ### Dependencies: None
-### Description: Conduct a comprehensive audit of all existing dependencies in the project to identify outdated, unused, or potentially vulnerable packages.
+### Description: Collect and synthesize all relevant requirements from stakeholders, domain experts, and the PRD. Ensure alignment with expert committee guidance (Kent Beck, Robert Martin, Martin Fowler, etc.) and document both functional and non-functional needs.
 ### Details:
-Use automated tools to scan the project's dependency tree. Create a report listing all dependencies, their versions, and usage status. Identify any deprecated or vulnerable packages.
+Engage stakeholders through interviews, workshops, and document analysis. Capture explicit and implicit requirements, including architectural constraints, business goals, and quality attributes. Reference complexity analysis to prioritize and clarify ambiguous areas.
 
-## 2. Implement dependency security measures [pending]
+## 2. Draft Structure Proposal [pending]
 ### Dependencies: 3.1
-### Description: Implement security measures to protect against vulnerabilities in dependencies and ensure the integrity of the project's dependency chain.
+### Description: Develop a high-level structure for the architecture documentation and ADRs, informed by requirements and best practices. Propose sections, templates, and documentation flow.
 ### Details:
-Set up automated security scanning for dependencies. Configure dependency lockfiles to prevent unintended updates. Implement checksums for package verification. Document the security measures implemented.
+Leverage established ADR templates (e.g., MADR, Michael Nygard, Tyree/Akerman) and committee recommendations. Outline the documentation hierarchy, naming conventions, and storage strategy. Ensure the structure supports traceability and future extensibility.
 
-## 3. Create a dependency management system [pending]
-### Dependencies: 3.1, 3.2
-### Description: Develop a robust dependency management system to streamline the process of updating, adding, and removing dependencies.
+## 3. ADR Documentation [pending]
+### Dependencies: 3.2
+### Description: Formalize key architectural decisions using the selected ADR template. Document context, options, rationale, and consequences for each major decision.
 ### Details:
-Define a clear process for adding new dependencies. Create guidelines for version pinning and updating. Implement automated dependency update checks. Document the dependency management workflow for the team.
+Apply concise, collaborative, and transparent ADR practices. Ensure each ADR includes context, considered alternatives, decision rationale, and consequences. Store ADRs centrally for team access and future reference. Link related ADRs and update superseded records as needed.
 
-## 4. Clean up and organize dependencies [pending]
-### Dependencies: 3.1, 3.3
-### Description: Remove unused dependencies, update outdated ones, and organize the remaining dependencies for better maintainability.
+## 4. Dependency and Naming Rule Definition [pending]
+### Dependencies: 3.3
+### Description: Define and document rules for architectural dependencies and naming conventions to ensure consistency and maintainability across the project.
 ### Details:
-Remove all unused dependencies identified in the audit. Update outdated dependencies to their latest stable versions. Organize dependencies into logical groups or categories. Update all relevant documentation to reflect changes.
+Establish clear dependency management guidelines (e.g., allowed dependencies, layering, versioning). Specify naming rules for ADRs, components, and documentation artifacts. Align with industry standards and committee guidance. Document these rules within the architecture documentation.
 
-## 5. Test dependency changes [pending]
+## 5. Team Review and Validation [pending]
 ### Dependencies: 3.4
-### Description: Conduct thorough testing to ensure that all dependency changes and updates do not introduce new issues or break existing functionality.
+### Description: Facilitate a collaborative review process for all documentation, ensuring completeness, clarity, and consensus. Incorporate feedback and finalize deliverables.
 ### Details:
-Create a comprehensive test suite covering all areas affected by dependency changes. Run integration tests to verify system stability. Perform regression testing to ensure no new bugs are introduced. Document test results and any necessary fixes.
+Organize focused, time-bound review sessions. Gather and address feedback from all relevant team members and stakeholders. Resolve comments, document decisions, and achieve consensus. Finalize and publish the documentation in the central repository.
 

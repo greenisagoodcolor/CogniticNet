@@ -1,76 +1,102 @@
 # Task ID: 4
-# Title: World Environment Implementation
+# Title: Implement File Movement Plan
 # Status: pending
-# Dependencies: 1
+# Dependencies: 1, 2, 3
 # Priority: medium
-# Description: Create the hexagonal world environment, including spatial indexing and basic resource management.
+# Description: Create and execute a safe plan for moving files to the new structure while preserving git history and maintaining functionality.
 # Details:
-1. Implement hex-world.py in the world/grid directory.
-2. Integrate H3 library for spatial indexing in spatial-index.py.
-3. Create basic resource management in the world/resources directory.
-4. Implement simple physics rules in world/physics.
-5. Connect the world environment to the agent system.
+Create a detailed file movement plan that:
 
-Use the following:
-- H3-Python 3.7+
-- NumPy 1.20+
-- Shapely 1.8+ for geometric operations
+1. Maps each file from current location to target location in new structure
+2. Calculates correct movement order based on dependency graph
+3. Updates import statements in all affected files
+4. Preserves git history using `git mv`
 
-Ensure the world implementation is efficient and can handle a large number of agents and resources.
+Implementation steps:
+
+```python
+def plan_file_movements():
+    # Load file inventory and dependency graph from Task 1
+    inventory = load_inventory()
+    dependencies = load_dependency_graph()
+    
+    # Create mapping of current to target locations
+    file_mapping = {}
+    for file_path in inventory:
+        target_path = determine_target_location(file_path)
+        if target_path != file_path:
+            file_mapping[file_path] = target_path
+    
+    # Sort files by dependency order (least dependencies first)
+    sorted_files = topological_sort(file_mapping.keys(), dependencies)
+    
+    # Generate movement commands
+    commands = []
+    for file in sorted_files:
+        if file in file_mapping:
+            commands.append({
+                'source': file,
+                'target': file_mapping[file],
+                'git_command': f'git mv {file} {file_mapping[file]}',
+                'affected_files': find_files_importing(file)
+            })
+    
+    return commands
+```
+
+Execute the plan in batches:
+1. Move a small batch of files (5-10)
+2. Update import statements in affected files
+3. Run tests to verify functionality
+4. Commit changes
+5. Repeat until all files are moved
+
+For import updates, use AST manipulation rather than string replacement to avoid changing imports in strings or comments.
+
+Include rollback procedures for each batch in case of test failures.
 
 # Test Strategy:
-1. Write unit tests for hexagonal grid operations.
-2. Test spatial indexing functions for correctness and performance.
-3. Create tests for resource generation and management.
-4. Implement integration tests between the world and agents.
-5. Benchmark world update performance with varying numbers of agents and resources.
+1. Test the movement plan on a copy of the repository first
+2. After each batch of moves, run the full test suite
+3. Verify import statements are correctly updated
+4. Check that git history is preserved using `git log --follow`
+5. Validate that the build still works after all movements
+6. Test rollback procedures on a sample batch
 
 # Subtasks:
-## 1. Analyze current test coverage [pending]
+## 1. File Mapping Generation [pending]
 ### Dependencies: None
-### Description: Assess the existing test suite and identify areas with insufficient coverage
+### Description: Design and implement a comprehensive mapping of all files to be moved, including their current and target locations, metadata, and any special handling requirements. Ensure the mapping accounts for project structure, naming conventions, and future maintainability.
 ### Details:
-Use code coverage tools to generate reports on current test coverage. Identify critical components, especially those related to Active Inference, that lack adequate testing.
+Leverage automated tools and scripts to scan the codebase, generate a mapping file (e.g., JSON or CSV), and validate the mapping with stakeholders. Incorporate expert committee recommendations for clarity and extensibility.
 
-## 2. Fix broken tests [pending]
+## 2. Dependency-Based Movement Ordering [pending]
 ### Dependencies: 4.1
-### Description: Identify and repair any existing tests that are failing or unreliable
+### Description: Analyze code dependencies to determine a safe and efficient order for moving files, minimizing breakage and circular dependencies. Prioritize moves that unblock others and reduce risk.
 ### Details:
-Review test logs, fix broken assertions, update outdated test data, and ensure all existing tests pass consistently.
+Utilize static analysis tools to build a dependency graph. Apply topological sorting or similar algorithms to derive the optimal movement sequence, following best practices from Kent Beck and Robert Martin on incremental, safe change.
 
-## 3. Organize and refactor test suite [pending]
+## 3. Import Statement Updating [pending]
 ### Dependencies: 4.2
-### Description: Restructure the test suite for better organization and maintainability
+### Description: Automate the updating of import statements and references throughout the codebase to reflect new file locations, ensuring code remains functional after each move.
 ### Details:
-Group tests logically, remove redundant tests, and improve naming conventions for better clarity and easier maintenance.
+Develop or adapt scripts to parse and rewrite import paths. Include tests to verify correctness. Follow Martin Fowler’s guidance on behavior-preserving refactoring and incremental change.
 
-## 4. Implement unit tests for core components [pending]
+## 4. Git History Preservation [pending]
 ### Dependencies: 4.3
-### Description: Develop comprehensive unit tests for key Active Inference algorithms and functions
+### Description: Ensure that file moves and refactorings preserve git history for traceability and accountability, using git-native operations and best practices.
 ### Details:
-Write unit tests for individual functions and methods, focusing on edge cases and error handling in core Active Inference components.
+Use 'git mv' and related commands to retain file history. Document procedures for reviewers. Validate history preservation with sample queries and expert committee sign-off.
 
-## 5. Create integration tests [pending]
+## 5. Batch Move/Test/Commit Cycles [pending]
 ### Dependencies: 4.4
-### Description: Develop tests to ensure different components work together correctly
+### Description: Implement a process for moving files in manageable batches, running automated tests after each batch, and committing only when tests pass. This minimizes disruption and enables rapid feedback.
 ### Details:
-Design and implement integration tests that verify the correct interaction between various modules, especially those involved in the Active Inference process.
+Define batch sizes based on complexity analysis. Automate the cycle: move files, update imports, run tests, and commit. Roll back and adjust as needed if failures occur. Document each batch for traceability.
 
-## 6. Implement performance benchmarks [pending]
+## 6. Rollback Procedure Implementation [pending]
 ### Dependencies: 4.5
-### Description: Develop tests to measure and track system performance
+### Description: Develop robust rollback procedures to quickly revert changes in case of failures, ensuring minimal downtime and data integrity.
 ### Details:
-Create benchmarks for key operations, focusing on computational efficiency of Active Inference algorithms. Set up automated performance tracking.
-
-## 7. Enhance test documentation [pending]
-### Dependencies: 4.6
-### Description: Improve documentation for all tests to ensure clarity and maintainability
-### Details:
-Write clear descriptions for each test, explaining its purpose, inputs, expected outputs, and any specific setup required. Update or create a testing guide for developers.
-
-## 8. Implement security tests [pending]
-### Dependencies: 4.7
-### Description: Develop tests to identify and prevent security vulnerabilities
-### Details:
-Create security-focused tests, including input validation, authentication checks, and tests for common vulnerabilities. Ensure sensitive Active Inference data is properly protected.
+Script and document rollback steps for each batch. Integrate with CI/CD pipelines. Test rollback scenarios to ensure reliability, following expert recommendations for safety nets and continuous improvement.
 

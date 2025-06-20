@@ -1,65 +1,83 @@
 # Task ID: 5
-# Title: API Layer Development
+# Title: Implement Naming Consistency
 # Status: pending
-# Dependencies: 2, 3, 4
-# Priority: high
-# Description: Develop the API layer for external interactions, including RESTful endpoints and WebSocket for real-time updates.
+# Dependencies: 4
+# Priority: medium
+# Description: Establish and enforce consistent naming conventions throughout the codebase for files, variables, classes, and functions.
 # Details:
-1. Set up the api directory with rest and websocket subdirectories.
-2. Implement RESTful endpoints for agent CRUD operations, coalition management, and simulation control.
-3. Create WebSocket functionality for real-time agent updates.
-4. Implement basic authentication and rate limiting.
-5. Generate OpenAPI (Swagger) documentation for the REST API.
+Implement comprehensive naming consistency across the repository:
 
-Use the following:
-- FastAPI 0.68+ for REST API
-- Websockets 10.0+ for WebSocket support
-- Pydantic 1.8+ for data validation
-- SQLAlchemy 1.4+ for database interactions
+1. Project name: Use 'FreeAgentics' for product name, 'freeagentics' for package/module names
 
-Ensure the API is versioned (v1) and follows RESTful best practices.
+2. File naming conventions:
+   - Python files: kebab-case.py (e.g., belief-update.py)
+   - TypeScript/JavaScript files: 
+     - Components: PascalCase.tsx (e.g., AgentCreator.tsx)
+     - Utilities: camelCase.ts (e.g., beliefUtils.ts)
+   - Configuration files: kebab-case.yml (e.g., development.yml)
+   - Documentation: kebab-case.md (e.g., getting-started.md)
+
+3. Code naming conventions:
+   - Python:
+     - Classes: PascalCase (e.g., ExplorerAgent)
+     - Functions/methods: snake_case (e.g., calculate_free_energy)
+     - Variables: snake_case (e.g., belief_state)
+     - Constants: UPPER_SNAKE_CASE (e.g., MAX_AGENTS)
+     - Private attributes: leading underscore (e.g., _internal_state)
+
+   - TypeScript/JavaScript:
+     - Classes/Components: PascalCase (e.g., AgentCreator)
+     - Functions/methods: camelCase (e.g., calculateFreeEnergy)
+     - Variables: camelCase (e.g., beliefState)
+     - Constants: UPPER_SNAKE_CASE (e.g., MAX_AGENTS)
+     - Private attributes: leading underscore (e.g., _internalState)
+
+4. API endpoint naming:
+   - RESTful endpoints: kebab-case (e.g., /api/v1/agent-types)
+   - GraphQL queries: camelCase (e.g., getAgentById)
+
+Implementation steps:
+1. Create linting rules for each language (flake8, eslint)
+2. Write a custom script to rename files according to conventions
+3. Use AST manipulation to update variable/function names
+4. Add pre-commit hooks to enforce naming conventions
+5. Update documentation to reflect naming standards
 
 # Test Strategy:
-1. Write unit tests for each API endpoint.
-2. Implement integration tests for API and database interactions.
-3. Test WebSocket connections and message handling.
-4. Verify API documentation accuracy and completeness.
-5. Perform load testing on API endpoints to ensure they can handle expected traffic.
+1. Create test cases for each naming convention rule
+2. Verify linting catches naming violations
+3. Test file renaming script on sample directories
+4. Validate that imports are correctly updated after renaming
+5. Check that pre-commit hooks properly reject non-compliant names
 
 # Subtasks:
-## 1. Analyze current Docker configuration [pending]
+## 1. Define Naming Convention Policy [pending]
 ### Dependencies: None
-### Description: Review and document the existing Docker setup for all 5 environments, identifying issues and areas for improvement.
+### Description: Establish a comprehensive naming convention policy for the codebase, drawing on best practices from Kent Beck, Robert Martin, Martin Fowler, and other expert committee members. Ensure the policy covers variables, functions, classes, files, and directories, and is tailored for multi-language environments.
 ### Details:
-Examine Dockerfiles, docker-compose files, and any related scripts. Document current configuration, noting any broken or messy aspects. Identify security vulnerabilities and missing tests.
+Incorporate principles such as intention-revealing, descriptive, and consistent naming. Reference Clean Code and Implementation Patterns for guidance on clarity and maintainability. Document the rationale and provide examples for each rule.
 
-## 2. Standardize Docker environment configurations [pending]
+## 2. Configure Linting Rules for Naming Enforcement [pending]
 ### Dependencies: 5.1
-### Description: Create a consistent and organized structure for all 5 Docker environments.
+### Description: Set up and customize linting tools for each language in the codebase to enforce the defined naming conventions. Integrate these rules into the CI pipeline to ensure compliance.
 ### Details:
-Develop a standardized template for Dockerfiles and docker-compose files. Ensure proper isolation between environments. Document the new structure and configuration approach.
+Select appropriate linters (e.g., ESLint, Pylint, etc.), configure naming rules, and test enforcement on representative code samples. Ensure rules are strict enough to enforce policy but flexible for edge cases.
 
-## 3. Implement security best practices [pending]
-### Dependencies: 5.2
-### Description: Address vulnerabilities and implement security measures across all Docker environments.
+## 3. Develop Automated Renaming Scripts [pending]
+### Dependencies: 5.1, 5.2
+### Description: Create scripts to automate the renaming of code elements and files according to the new naming conventions, minimizing manual effort and reducing human error.
 ### Details:
-Apply least privilege principle, use official base images, implement proper network segmentation, and ensure secrets management. Document all security measures implemented.
+Scripts should support batch processing, handle multi-language code, and provide dry-run and rollback options. Ensure scripts are well-documented and tested on sample repositories.
 
-## 4. Develop comprehensive testing suite [pending]
-### Dependencies: 5.2, 5.3
-### Description: Create and implement tests for Docker configurations and environment setups.
+## 4. Implement AST-Based Code Updates [pending]
+### Dependencies: 5.3
+### Description: Utilize Abstract Syntax Tree (AST) tools to programmatically update code references, imports, and usages to match renamed elements, ensuring code integrity and correctness.
 ### Details:
-Develop unit tests for individual components and integration tests for the entire Docker setup. Include security tests and performance benchmarks. Document the testing strategy and procedures.
+Select AST tooling for each language, implement transformations, and validate changes with automated tests. Address edge cases such as dynamic references and code generation.
 
-## 5. Migrate existing services to new Docker structure [pending]
+## 5. Update Pre-commit Hooks and Documentation [pending]
 ### Dependencies: 5.2, 5.3, 5.4
-### Description: Transfer all current services and applications to the newly configured Docker environments.
+### Description: Integrate naming checks into pre-commit hooks and update developer documentation to reflect the new conventions and workflows.
 ### Details:
-Systematically move each service to its appropriate Docker environment. Ensure all dependencies are properly configured. Document the migration process and any issues encountered.
-
-## 6. Create comprehensive documentation [pending]
-### Dependencies: 5.1, 5.2, 5.3, 5.4, 5.5
-### Description: Develop detailed documentation for the entire Docker setup and migration process.
-### Details:
-Create user guides, administration manuals, and troubleshooting documentation. Include architecture diagrams, configuration details, and best practices for future maintenance and scaling.
+Configure pre-commit tools to run linting and naming checks. Revise onboarding guides, code review checklists, and internal wikis to ensure all contributors understand and follow the updated standards.
 

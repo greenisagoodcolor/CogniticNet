@@ -1,76 +1,156 @@
 # Task ID: 8
-# Title: LLM Integration for Belief Updates
+# Title: Implement API and Interface Layer
 # Status: pending
-# Dependencies: 2, 3
+# Dependencies: 7
 # Priority: medium
-# Description: Integrate LLM capabilities for enhancing agent belief updates and decision-making processes.
+# Description: Create a clean, well-documented API for interacting with the agent system, including REST endpoints, WebSocket for real-time updates, and optional GraphQL.
 # Details:
-1. Set up the inference/llm directory with providers and prompts subdirectories.
-2. Implement abstract interfaces for LLM providers in providers/base.py.
-3. Create concrete implementations for specific LLM providers (e.g., OpenAI, Hugging Face).
-4. Develop prompt templates for agent belief updates in prompts/belief_update_template.py.
-5. Implement the belief-integration.py to connect LLM outputs with the Active Inference engine.
+Design and implement a comprehensive API layer for the agent system:
 
-Use the following:
-- OpenAI API (latest version) for GPT integration
-- Hugging Face Transformers 4.10+ for open-source LLM options
-- Jinja2 2.11+ for prompt templating
+1. RESTful API using FastAPI:
+   - Agent management endpoints
+   - Coalition operations
+   - Simulation control
+   - World state queries
 
-Ensure the LLM integration is modular and allows for easy switching between different providers.
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+
+app = FastAPI(title="FreeAgentics API")
+
+class AgentCreate(BaseModel):
+    name: str
+    agent_type: str
+    personality: dict = {}
+    location: Optional[str] = None
+
+class AgentResponse(BaseModel):
+    id: str
+    name: str
+    agent_type: str
+    personality: dict
+    location: Optional[str]
+    energy: float
+    status: str
+
+@app.post("/api/v1/agents", response_model=AgentResponse)
+async def create_agent(agent_data: AgentCreate):
+    """Create a new agent in the system."""
+    try:
+        agent = agent_service.create_agent(
+            name=agent_data.name,
+            agent_type=agent_data.agent_type,
+            personality=agent_data.personality,
+            location=agent_data.location
+        )
+        return agent.to_dict()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/agents/{agent_id}", response_model=AgentResponse)
+async def get_agent(agent_id: str):
+    """Get agent details by ID."""
+    agent = agent_service.get_agent(agent_id)
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    return agent.to_dict()
+```
+
+2. WebSocket for real-time updates:
+   - Agent state changes
+   - Coalition events
+   - World updates
+
+```python
+@app.websocket("/ws/world-updates")
+async def world_updates_websocket(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        # Subscribe to world events
+        subscription_id = event_bus.subscribe("world_updates")
+        
+        while True:
+            # Get updates from event bus
+            updates = await event_bus.get_updates(subscription_id)
+            
+            # Send to client
+            if updates:
+                await websocket.send_json(updates)
+            
+            # Small delay to prevent CPU spinning
+            await asyncio.sleep(0.1)
+    except WebSocketDisconnect:
+        # Clean up subscription
+        event_bus.unsubscribe(subscription_id)
+```
+
+3. GraphQL API (optional):
+   - Schema for agents, coalitions, world
+   - Queries for complex data retrieval
+   - Mutations for system operations
+   - Subscriptions for real-time updates
+
+4. API Documentation:
+   - OpenAPI specification
+   - Interactive Swagger UI
+   - Example requests and responses
+   - Authentication documentation
+
+5. Client SDKs:
+   - Python client library
+   - TypeScript/JavaScript client
+   - Code generation for other languages
+
+6. Security Features:
+   - API key authentication
+   - Rate limiting
+   - Input validation
+   - CORS configuration
 
 # Test Strategy:
-1. Write unit tests for LLM provider interfaces and implementations.
-2. Create tests for prompt template rendering.
-3. Implement integration tests for LLM-based belief updates.
-4. Benchmark performance and token usage of LLM calls.
-5. Verify the coherence and relevance of LLM-generated belief updates.
+1. Unit tests for each endpoint
+2. Integration tests for API flows
+3. Load testing for performance under concurrent requests
+4. Security testing (authentication, input validation)
+5. WebSocket connection testing
+6. API contract testing with consumer-driven contracts
+7. Documentation testing (ensure examples work)
 
 # Subtasks:
-## 1. Fix PyMDP imports and dependencies [pending]
+## 1. REST API Implementation [pending]
 ### Dependencies: None
-### Description: Resolve import issues and ensure all necessary PyMDP dependencies are correctly installed and imported.
+### Description: Design and implement a robust REST API following best practices for endpoint naming, HTTP method usage, resource-based architecture, stateless communication, and proper versioning. Ensure endpoints are intuitive, scalable, and maintainable, with clear separation of concerns and adherence to semantic versioning.
 ### Details:
-Identify and correct any broken imports related to PyMDP. Update requirements.txt with correct versions. Ensure compatibility with the existing codebase.
+Follow expert recommendations from Kent Beck, Robert Martin, and Martin Fowler. Use plural nouns for resources, implement GET/POST/PUT/DELETE as appropriate, and ensure statelessness. Plan for future extensibility and maintainability.
 
-## 2. Refactor belief update pipeline [pending]
+## 2. WebSocket Integration [pending]
 ### Dependencies: 8.1
-### Description: Reorganize and streamline the belief update pipeline for better structure and efficiency.
+### Description: Integrate WebSocket support for real-time, bidirectional communication where required by the PRD. Ensure seamless coexistence with the REST API and proper handling of connection lifecycle, message routing, and error management.
 ### Details:
-Analyze the current belief update process. Refactor the code to improve modularity and readability. Ensure mathematical correctness in the implementation.
+Design WebSocket endpoints and message schemas that complement the REST API. Ensure robust connection management, authentication, and graceful degradation to REST where WebSockets are unavailable.
 
-## 3. Document mathematical considerations [pending]
-### Dependencies: 8.2
-### Description: Create comprehensive documentation for the mathematical aspects of the belief update pipeline.
+## 3. GraphQL Schema Design (Optional) [pending]
+### Dependencies: 8.1
+### Description: Design and implement a GraphQL schema to provide flexible, client-driven data querying as an optional API layer. Ensure schema clarity, type safety, and alignment with the underlying data models.
 ### Details:
-Write detailed explanations of the mathematical principles used in the belief update process. Include formulas, derivations, and their implementation details.
+Define queries, mutations, and subscriptions as needed. Ensure the schema is well-documented and supports efficient data fetching while preventing over-fetching and under-fetching.
 
-## 4. Implement unit tests for belief update functions [pending]
-### Dependencies: 8.2, 8.3
-### Description: Develop a suite of unit tests to ensure the correctness of belief update functions.
+## 4. API Documentation [pending]
+### Dependencies: 8.1, 8.2, 8.3
+### Description: Produce comprehensive, interactive API documentation covering REST, WebSocket, and GraphQL endpoints. Ensure documentation is clear, up-to-date, and accessible to both internal and external developers.
 ### Details:
-Create test cases covering various scenarios of belief updates. Include edge cases and verify mathematical accuracy of the results.
+Use OpenAPI/Swagger for REST, and appropriate tools for WebSocket and GraphQL docs. Include example requests/responses, authentication flows, error codes, and versioning information.
 
-## 5. Secure data handling in belief update process [pending]
-### Dependencies: 8.2
-### Description: Review and enhance the security measures for data handling within the belief update pipeline.
+## 5. Client SDKs [pending]
+### Dependencies: 8.1, 8.2, 8.3, 8.4
+### Description: Develop and maintain client SDKs for major platforms (e.g., JavaScript, Python, Java) to facilitate easy integration with the API. Ensure SDKs are idiomatic, well-tested, and documented.
 ### Details:
-Identify potential vulnerabilities in data processing. Implement proper data sanitization and validation. Ensure secure storage and transmission of belief-related data.
+Automate SDK generation where possible. Include authentication helpers, error handling, and support for all major API features. Provide usage examples and versioning.
 
-## 6. Optimize performance of belief update calculations [pending]
-### Dependencies: 8.2, 8.4
-### Description: Analyze and improve the performance of mathematical calculations in the belief update process.
+## 6. Security Features [pending]
+### Dependencies: 8.1, 8.2, 8.3, 8.4, 8.5
+### Description: Implement robust security measures across all API layers, including authentication (OAuth 2.0/JWT), authorization, input validation, HTTPS enforcement, CORS, rate limiting, and monitoring.
 ### Details:
-Profile the existing code to identify performance bottlenecks. Optimize algorithms and data structures used in calculations. Consider parallelization where applicable.
-
-## 7. Create integration tests for PyMDP and belief update pipeline [pending]
-### Dependencies: 8.1, 8.2, 8.4
-### Description: Develop integration tests to ensure smooth interaction between PyMDP and the belief update pipeline.
-### Details:
-Design test scenarios that cover the entire flow from PyMDP integration to belief updates. Verify correct data flow and consistency across different components.
-
-## 8. Update project documentation for PyMDP integration [pending]
-### Dependencies: 8.1, 8.2, 8.3, 8.5, 8.6
-### Description: Revise and expand project documentation to reflect the PyMDP integration and belief update pipeline changes.
-### Details:
-Update README.md with new setup instructions. Create or update API documentation for new/modified functions. Include examples of usage and best practices for the integrated system.
+Follow security best practices from industry experts. Conduct thorough security testing, monitor for vulnerabilities, and ensure compliance with relevant standards.
 

@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "generation_timestamp": "2025-06-20T08:13:31.063798+00:00",
+    "project_root": "/Users/matthewmoroney/builds/CogniticNet",
+    "total_files_analyzed": 50,
+    "analysis_modules": [
+      "traversal",
+      "metadata",
+      "dependencies",
+      "entry_points",
+      "naming"
+    ]
+  },
+  "files": 50,
+  "dependencies": 3,
+  "entry_points": 8,
+  "naming_violations": 248,
+  "status": "complete"
+}
