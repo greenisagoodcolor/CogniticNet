@@ -7,12 +7,16 @@ temporal, categorical, numerical, and embeddings.
 """
 
 import numpy as np
-import pandas as pd
-from typing import Dict, List, Any, Optional, Union, Tuple, Callable
+from typing import Dict, List, Any, Optional, Tuple, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, LabelEncoder
+from sklearn.preprocessing import (
+    StandardScaler,
+    MinMaxScaler,
+    RobustScaler,
+    LabelEncoder,
+)
 from sklearn.feature_extraction.text import TfidfVectorizer
 import torch
 import torch.nn.functional as F
@@ -25,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 class FeatureType(Enum):
     """Types of node features"""
+
     SPATIAL = "spatial"
     TEMPORAL = "temporal"
     CATEGORICAL = "categorical"
@@ -36,16 +41,18 @@ class FeatureType(Enum):
 
 class NormalizationType(Enum):
     """Types of normalization methods"""
+
     STANDARD = "standard"  # Zero mean, unit variance
-    MINMAX = "minmax"     # Scale to [0, 1]
-    ROBUST = "robust"     # Robust to outliers
-    LOG = "log"           # Log transformation
-    NONE = "none"         # No normalization
+    MINMAX = "minmax"  # Scale to [0, 1]
+    ROBUST = "robust"  # Robust to outliers
+    LOG = "log"  # Log transformation
+    NONE = "none"  # No normalization
 
 
 @dataclass
 class FeatureConfig:
     """Configuration for a feature"""
+
     name: str
     type: FeatureType
     dimension: Optional[int] = None
@@ -58,6 +65,7 @@ class FeatureConfig:
 @dataclass
 class ExtractionResult:
     """Result of feature extraction"""
+
     features: np.ndarray
     feature_names: List[str]
     feature_dims: Dict[str, Tuple[int, int]]  # name -> (start_idx, end_idx)
@@ -105,10 +113,13 @@ class NodeFeatureExtractor:
                 self.encoders[name] = LabelEncoder()
 
             elif config.type == FeatureType.TEXT:
-                self.vectorizers[name] = TfidfVectorizer(max_features=config.dimension or 100)
+                self.vectorizers[name] = TfidfVectorizer(
+                    max_features=config.dimension or 100
+                )
 
-    def extract_features(self, nodes: List[Dict[str, Any]],
-                        graph: Optional[Any] = None) -> ExtractionResult:
+    def extract_features(
+        self, nodes: List[Dict[str, Any]], graph: Optional[Any] = None
+    ) -> ExtractionResult:
         """
         Extract features from a list of nodes.
 
@@ -121,9 +132,7 @@ class NodeFeatureExtractor:
         """
         if not nodes:
             return ExtractionResult(
-                features=np.array([]),
-                feature_names=[],
-                feature_dims={}
+                features=np.array([]), feature_names=[], feature_dims={}
             )
 
         feature_arrays = []
@@ -149,7 +158,9 @@ class NodeFeatureExtractor:
             elif config.type == FeatureType.TEXT:
                 features, names = self._extract_text_features(nodes, config)
             elif config.type == FeatureType.GRAPH_STRUCTURAL:
-                features, names = self._extract_structural_features(nodes, config, graph)
+                features, names = self._extract_structural_features(
+                    nodes, config, graph
+                )
             else:
                 logger.warning(f"Unknown feature type: {config.type}")
                 continue
@@ -178,14 +189,15 @@ class NodeFeatureExtractor:
             feature_dims=feature_dims,
             missing_mask=missing_mask,
             metadata={
-                'num_nodes': len(nodes),
-                'num_features': len(feature_names),
-                'extraction_time': datetime.now().isoformat()
-            }
+                "num_nodes": len(nodes),
+                "num_features": len(feature_names),
+                "extraction_time": datetime.now().isoformat(),
+            },
         )
 
-    def _extract_spatial_features(self, nodes: List[Dict[str, Any]],
-                                 config: FeatureConfig) -> Tuple[np.ndarray, List[str]]:
+    def _extract_spatial_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract spatial features like coordinates, H3 cells, regions"""
         feature_values = []
 
@@ -194,16 +206,16 @@ class NodeFeatureExtractor:
 
             if value is None:
                 # Handle missing spatial data
-                if config.name in ['x', 'y', 'z']:
-                    feature_values.append([0.0] * (3 if config.name == 'z' else 2))
-                elif 'h3' in config.name.lower():
+                if config.name in ["x", "y", "z"]:
+                    feature_values.append([0.0] * (3 if config.name == "z" else 2))
+                elif "h3" in config.name.lower():
                     feature_values.append([0.0] * 7)  # H3 cell features
                 else:
                     feature_values.append([0.0])
             else:
                 if isinstance(value, (list, tuple)):
                     feature_values.append(value)
-                elif 'h3' in config.name.lower() and isinstance(value, str):
+                elif "h3" in config.name.lower() and isinstance(value, str):
                     # Extract H3 cell features
                     h3_features = self._extract_h3_features(value)
                     feature_values.append(h3_features)
@@ -214,7 +226,9 @@ class NodeFeatureExtractor:
 
         # Apply normalization
         if config.normalization != NormalizationType.NONE:
-            features = self._normalize_features(features, config.name, config.normalization)
+            features = self._normalize_features(
+                features, config.name, config.normalization
+            )
 
         # Generate feature names
         if features.shape[1] == 1:
@@ -251,8 +265,9 @@ class NodeFeatureExtractor:
             logger.warning(f"Invalid H3 cell: {h3_cell}")
             return [0.0] * 7
 
-    def _extract_temporal_features(self, nodes: List[Dict[str, Any]],
-                                  config: FeatureConfig) -> Tuple[np.ndarray, List[str]]:
+    def _extract_temporal_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract temporal features like timestamps, durations, ages"""
         feature_values = []
 
@@ -285,7 +300,9 @@ class NodeFeatureExtractor:
 
         # Apply normalization
         if config.normalization != NormalizationType.NONE:
-            features = self._normalize_features(features, config.name, config.normalization)
+            features = self._normalize_features(
+                features, config.name, config.normalization
+            )
 
         # Generate feature names
         names = [
@@ -295,10 +312,10 @@ class NodeFeatureExtractor:
             f"{config.name}_month",
             f"{config.name}_year",
             f"{config.name}_is_weekend",
-            f"{config.name}_timestamp_normalized"
+            f"{config.name}_timestamp_normalized",
         ]
 
-        return features, names[:features.shape[1]]
+        return features, names[: features.shape[1]]
 
     def _extract_timestamp_features(self, timestamp: float) -> List[float]:
         """Extract multiple features from a timestamp"""
@@ -311,13 +328,14 @@ class NodeFeatureExtractor:
             dt.month / 12.0,  # Normalized month
             (dt.year - 2000) / 100.0,  # Normalized year
             float(dt.weekday() >= 5),  # Is weekend
-            timestamp / 1e10  # Normalized timestamp
+            timestamp / 1e10,  # Normalized timestamp
         ]
 
         return features
 
-    def _extract_categorical_features(self, nodes: List[Dict[str, Any]],
-                                     config: FeatureConfig) -> Tuple[np.ndarray, List[str]]:
+    def _extract_categorical_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract categorical features with one-hot or label encoding"""
         values = []
 
@@ -349,8 +367,9 @@ class NodeFeatureExtractor:
 
         return one_hot, names
 
-    def _extract_numerical_features(self, nodes: List[Dict[str, Any]],
-                                   config: FeatureConfig) -> Tuple[np.ndarray, List[str]]:
+    def _extract_numerical_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract numerical features with appropriate scaling"""
         values = []
 
@@ -369,14 +388,16 @@ class NodeFeatureExtractor:
         features = np.array(values, dtype=np.float32)
 
         # Apply constraints if specified
-        if 'min' in config.constraints:
-            features = np.maximum(features, config.constraints['min'])
-        if 'max' in config.constraints:
-            features = np.minimum(features, config.constraints['max'])
+        if "min" in config.constraints:
+            features = np.maximum(features, config.constraints["min"])
+        if "max" in config.constraints:
+            features = np.minimum(features, config.constraints["max"])
 
         # Apply normalization
         if config.normalization != NormalizationType.NONE:
-            features = self._normalize_features(features, config.name, config.normalization)
+            features = self._normalize_features(
+                features, config.name, config.normalization
+            )
 
         # Generate feature names
         if features.shape[1] == 1:
@@ -386,8 +407,9 @@ class NodeFeatureExtractor:
 
         return features, names
 
-    def _extract_embedding_features(self, nodes: List[Dict[str, Any]],
-                                   config: FeatureConfig) -> Tuple[np.ndarray, List[str]]:
+    def _extract_embedding_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract pre-computed embeddings or generate new ones"""
         embeddings = []
         embedding_dim = config.dimension or 16
@@ -440,8 +462,9 @@ class NodeFeatureExtractor:
 
         return embedding
 
-    def _extract_text_features(self, nodes: List[Dict[str, Any]],
-                              config: FeatureConfig) -> Tuple[np.ndarray, List[str]]:
+    def _extract_text_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract features from text using TF-IDF or other methods"""
         texts = []
 
@@ -455,8 +478,7 @@ class NodeFeatureExtractor:
         # Get or create vectorizer
         if config.name not in self.vectorizers:
             self.vectorizers[config.name] = TfidfVectorizer(
-                max_features=config.dimension or 100,
-                stop_words='english'
+                max_features=config.dimension or 100, stop_words="english"
             )
 
         try:
@@ -475,9 +497,9 @@ class NodeFeatureExtractor:
 
         return features.astype(np.float32), names
 
-    def _extract_structural_features(self, nodes: List[Dict[str, Any]],
-                                    config: FeatureConfig,
-                                    graph: Optional[Any]) -> Tuple[np.ndarray, List[str]]:
+    def _extract_structural_features(
+        self, nodes: List[Dict[str, Any]], config: FeatureConfig, graph: Optional[Any]
+    ) -> Tuple[np.ndarray, List[str]]:
         """Extract graph structural features like degree, centrality, etc."""
         if graph is None:
             # Return default features if no graph provided
@@ -488,7 +510,7 @@ class NodeFeatureExtractor:
                 f"{config.name}_in_degree",
                 f"{config.name}_out_degree",
                 f"{config.name}_clustering",
-                f"{config.name}_pagerank"
+                f"{config.name}_pagerank",
             ]
             return features, names
 
@@ -497,15 +519,15 @@ class NodeFeatureExtractor:
         features = []
 
         for i, node in enumerate(nodes):
-            node_id = node.get('id', i)
+            node_id = node.get("id", i)
 
             # Example structural features
             structural_feats = [
-                graph.degree(node_id) if hasattr(graph, 'degree') else 0,
-                graph.in_degree(node_id) if hasattr(graph, 'in_degree') else 0,
-                graph.out_degree(node_id) if hasattr(graph, 'out_degree') else 0,
+                graph.degree(node_id) if hasattr(graph, "degree") else 0,
+                graph.in_degree(node_id) if hasattr(graph, "in_degree") else 0,
+                graph.out_degree(node_id) if hasattr(graph, "out_degree") else 0,
                 0.0,  # Clustering coefficient placeholder
-                0.0   # PageRank placeholder
+                0.0,  # PageRank placeholder
             ]
 
             features.append(structural_feats)
@@ -514,20 +536,23 @@ class NodeFeatureExtractor:
 
         # Normalize
         if config.normalization != NormalizationType.NONE:
-            features = self._normalize_features(features, config.name, config.normalization)
+            features = self._normalize_features(
+                features, config.name, config.normalization
+            )
 
         names = [
             f"{config.name}_degree",
             f"{config.name}_in_degree",
             f"{config.name}_out_degree",
             f"{config.name}_clustering",
-            f"{config.name}_pagerank"
+            f"{config.name}_pagerank",
         ]
 
         return features, names
 
-    def _normalize_features(self, features: np.ndarray, name: str,
-                           normalization: NormalizationType) -> np.ndarray:
+    def _normalize_features(
+        self, features: np.ndarray, name: str, normalization: NormalizationType
+    ) -> np.ndarray:
         """Apply normalization to features"""
         if normalization == NormalizationType.NONE:
             return features
@@ -563,9 +588,9 @@ class NodeFeatureExtractor:
 
         return features
 
-    def handle_missing_data(self, features: np.ndarray,
-                           missing_mask: np.ndarray,
-                           strategy: str = "mean") -> np.ndarray:
+    def handle_missing_data(
+        self, features: np.ndarray, missing_mask: np.ndarray, strategy: str = "mean"
+    ) -> np.ndarray:
         """
         Handle missing data in features.
 
@@ -619,29 +644,26 @@ if __name__ == "__main__":
             name="position",
             type=FeatureType.SPATIAL,
             dimension=2,
-            normalization=NormalizationType.MINMAX
+            normalization=NormalizationType.MINMAX,
         ),
         FeatureConfig(
             name="timestamp",
             type=FeatureType.TEMPORAL,
-            normalization=NormalizationType.STANDARD
+            normalization=NormalizationType.STANDARD,
         ),
-        FeatureConfig(
-            name="status",
-            type=FeatureType.CATEGORICAL
-        ),
+        FeatureConfig(name="status", type=FeatureType.CATEGORICAL),
         FeatureConfig(
             name="energy",
             type=FeatureType.NUMERICAL,
             normalization=NormalizationType.MINMAX,
-            constraints={"min": 0, "max": 1}
+            constraints={"min": 0, "max": 1},
         ),
         FeatureConfig(
             name="embedding",
             type=FeatureType.EMBEDDING,
             dimension=16,
-            normalization=NormalizationType.NONE
-        )
+            normalization=NormalizationType.NONE,
+        ),
     ]
 
     # Create extractor
@@ -654,15 +676,15 @@ if __name__ == "__main__":
             "position": [0.5, 0.3],
             "timestamp": 1642000000,
             "status": "active",
-            "energy": 0.8
+            "energy": 0.8,
         },
         {
             "id": 2,
             "position": [0.7, 0.9],
             "timestamp": 1642001000,
             "status": "idle",
-            "energy": 0.3
-        }
+            "energy": 0.3,
+        },
     ]
 
     # Extract features

@@ -1,82 +1,101 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, useMemo, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Save, Trash, Edit, ArrowLeft, Search, X } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { formatTimestamp, extractTagsFromMarkdown } from "@/lib/utils"
-import type { Agent, Conversation, KnowledgeEntry } from "@/lib/types"
-import { useToast } from "@/hooks/use-toast"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { useLLM } from "@/contexts/llm-context"
-import { type ExtractedBelief, type RefinedBelief, parseBeliefs, parseRefinedBeliefs } from "@/lib/belief-extraction"
-import { exportAgentKnowledge } from "@/lib/knowledge-export"
-import { debugLog } from "@/lib/debug-logger"
-import { createLogger } from "@/lib/debug-logger"
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Save, Trash, Edit, ArrowLeft, Search, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatTimestamp, extractTagsFromMarkdown } from "@/lib/utils";
+import type { Agent, Conversation, KnowledgeEntry } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { useLLM } from "@/contexts/llm-context";
+import {
+  type ExtractedBelief,
+  type RefinedBelief,
+  parseBeliefs,
+  parseRefinedBeliefs,
+} from "@/lib/belief-extraction";
+import { exportAgentKnowledge } from "@/lib/knowledge-export";
+import { debugLog } from "@/lib/debug-logger";
+import { createLogger } from "@/lib/debug-logger";
 
-const logger = createLogger("MEMORY-VIEWER")
+const logger = createLogger("MEMORY-VIEWER");
 
 // Note: Conversation history scrollbar styles have been moved to app/globals.css
 
 // Define the AgentToolPermissions type
 export type AgentToolPermissions = {
   // Information Access Tools
-  internetSearch: boolean
-  webScraping: boolean
-  wikipediaAccess: boolean
-  newsApi: boolean
-  academicSearch: boolean
-  documentRetrieval: boolean
+  internetSearch: boolean;
+  webScraping: boolean;
+  wikipediaAccess: boolean;
+  newsApi: boolean;
+  academicSearch: boolean;
+  documentRetrieval: boolean;
 
   // Content Generation & Processing
-  imageGeneration: boolean
-  textSummarization: boolean
-  translation: boolean
-  codeExecution: boolean
+  imageGeneration: boolean;
+  textSummarization: boolean;
+  translation: boolean;
+  codeExecution: boolean;
 
   // Knowledge & Reasoning Tools
-  calculator: boolean
-  knowledgeGraphQuery: boolean
-  factChecking: boolean
-  timelineGenerator: boolean
+  calculator: boolean;
+  knowledgeGraphQuery: boolean;
+  factChecking: boolean;
+  timelineGenerator: boolean;
 
   // External Integrations
-  weatherData: boolean
-  mapLocationData: boolean
-  financialData: boolean
-  publicDatasets: boolean
+  weatherData: boolean;
+  mapLocationData: boolean;
+  financialData: boolean;
+  publicDatasets: boolean;
 
   // Agent-Specific Tools
-  memorySearch: boolean
-  crossAgentKnowledge: boolean
-  conversationAnalysis: boolean
-}
+  memorySearch: boolean;
+  crossAgentKnowledge: boolean;
+  conversationAnalysis: boolean;
+};
 
 // Update the MemoryViewerProps interface to include the toolPermissions update
 interface MemoryViewerProps {
-  selectedAgent: Agent | null
-  conversationHistory: Conversation[]
-  onAddKnowledge: (agentId: string, knowledge: KnowledgeEntry) => void
+  selectedAgent: Agent | null;
+  conversationHistory: Conversation[];
+  onAddKnowledge: (agentId: string, knowledge: KnowledgeEntry) => void;
   onUpdateAgent: (
     agentId: string,
-    updates: { name?: string; biography?: string; toolPermissions?: AgentToolPermissions },
-  ) => void
-  onDeleteKnowledge: (agentId: string, knowledgeId: string) => void
-  onUpdateKnowledge: (agentId: string, knowledgeId: string, updates: Partial<KnowledgeEntry>) => void
-  agents: Agent[]
+    updates: {
+      name?: string;
+      biography?: string;
+      toolPermissions?: AgentToolPermissions;
+    },
+  ) => void;
+  onDeleteKnowledge: (agentId: string, knowledgeId: string) => void;
+  onUpdateKnowledge: (
+    agentId: string,
+    knowledgeId: string,
+    updates: Partial<KnowledgeEntry>,
+  ) => void;
+  agents: Agent[];
   selectedKnowledgeNode?: {
-    type: "entry" | "tag"
-    id: string
-    title: string
-  } | null
-  onClearSelectedKnowledgeNode?: () => void
-  onSelectAgent?: (agent: Agent) => void
+    type: "entry" | "tag";
+    id: string;
+    title: string;
+  } | null;
+  onClearSelectedKnowledgeNode?: () => void;
+  onSelectAgent?: (agent: Agent) => void;
 }
 
 // Add default tool permissions
@@ -111,7 +130,7 @@ const defaultToolPermissions: AgentToolPermissions = {
   memorySearch: false,
   crossAgentKnowledge: false,
   conversationAnalysis: false,
-}
+};
 
 export default function MemoryViewer({
   selectedAgent,
@@ -125,82 +144,98 @@ export default function MemoryViewer({
   onClearSelectedKnowledgeNode = () => {},
   onSelectAgent,
 }: MemoryViewerProps) {
-  const [biography, setBiography] = useState<string>("")
-  const [selectedView, setSelectedView] = useState<string>("biography")
-  const { toast } = useToast()
+  const [biography, setBiography] = useState<string>("");
+  const [selectedView, setSelectedView] = useState<string>("biography");
+  const { toast } = useToast();
 
   // Get LLM context
-  const llmContext = useLLM()
-  const { isProcessing, setIsProcessing } = llmContext
+  const llmContext = useLLM();
+  const { isProcessing, setIsProcessing } = llmContext;
 
   // Knowledge state
-  const [knowledgeTab, setKnowledgeTab] = useState<string>("browse")
-  const [newKnowledgeTitle, setNewKnowledgeTitle] = useState<string>("")
-  const [newKnowledgeContent, setNewKnowledgeContent] = useState<string>("")
-  const [selectedKnowledge, setSelectedKnowledge] = useState<KnowledgeEntry | null>(null)
-  const [editingKnowledge, setEditingKnowledge] = useState<boolean>(false)
+  const [knowledgeTab, setKnowledgeTab] = useState<string>("browse");
+  const [newKnowledgeTitle, setNewKnowledgeTitle] = useState<string>("");
+  const [newKnowledgeContent, setNewKnowledgeContent] = useState<string>("");
+  const [selectedKnowledge, setSelectedKnowledge] =
+    useState<KnowledgeEntry | null>(null);
+  const [editingKnowledge, setEditingKnowledge] = useState<boolean>(false);
   const [beliefsPrompt, setBeliefsPrompt] = useState<string>(
     "Extract factual [[knowledge]], user [[preferences]], and [[research-relevant]] information. Focus on substantive content that would help with research projects and future conversations.",
-  )
-  const [editedKnowledgeContent, setEditedKnowledgeContent] = useState<string>("")
-  const [editedKnowledgeTitle, setEditedKnowledgeTitle] = useState<string>("")
+  );
+  const [editedKnowledgeContent, setEditedKnowledgeContent] =
+    useState<string>("");
+  const [editedKnowledgeTitle, setEditedKnowledgeTitle] = useState<string>("");
 
   // Knowledge search and filter state
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const [selectedTag, setSelectedTag] = useState<string>("all_tags")
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title">("newest")
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("all_tags");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title">("newest");
 
   // Delete confirmation dialog
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false)
-  const [knowledgeToDelete, setKnowledgeToDelete] = useState<KnowledgeEntry | null>(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const [knowledgeToDelete, setKnowledgeToDelete] =
+    useState<KnowledgeEntry | null>(null);
 
   // System prompt state
-  const [systemPrompt, setSystemPrompt] = useState<string>("")
-  const [systemPromptName, setSystemPromptName] = useState<string>("Default")
+  const [systemPrompt, setSystemPrompt] = useState<string>("");
+  const [systemPromptName, setSystemPromptName] = useState<string>("Default");
 
   // Belief extraction state
-  const [extractedBeliefs, setExtractedBeliefs] = useState<RefinedBelief[]>([])
-  const [rawBeliefs, setRawBeliefs] = useState<ExtractedBelief[]>([])
-  const [isExtractingBeliefs, setIsExtractingBeliefs] = useState(false)
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
-  const [extractionStep, setExtractionStep] = useState<"idle" | "extracting" | "refining" | "complete">("idle")
-  const [extractionProgress, setExtractionProgress] = useState(0)
-  const [inferenceTab, setInferenceTab] = useState<"prompt" | "results" | "preview">("prompt")
+  const [extractedBeliefs, setExtractedBeliefs] = useState<RefinedBelief[]>([]);
+  const [rawBeliefs, setRawBeliefs] = useState<ExtractedBelief[]>([]);
+  const [isExtractingBeliefs, setIsExtractingBeliefs] = useState(false);
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    string | null
+  >(null);
+  const [extractionStep, setExtractionStep] = useState<
+    "idle" | "extracting" | "refining" | "complete"
+  >("idle");
+  const [extractionProgress, setExtractionProgress] = useState(0);
+  const [inferenceTab, setInferenceTab] = useState<
+    "prompt" | "results" | "preview"
+  >("prompt");
 
   // Add these state variables to the MemoryViewer component, near the other state declarations
-  const [toolPermissions, setToolPermissions] = useState<AgentToolPermissions>(defaultToolPermissions)
-  const [isSavingTools, setIsSavingTools] = useState<boolean>(false)
-  const [hasToolChanges, setHasToolChanges] = useState<boolean>(false)
+  const [toolPermissions, setToolPermissions] = useState<AgentToolPermissions>(
+    defaultToolPermissions,
+  );
+  const [isSavingTools, setIsSavingTools] = useState<boolean>(false);
+  const [hasToolChanges, setHasToolChanges] = useState<boolean>(false);
 
   // Add a ref to track pending knowledge selection after agent change
-  const pendingKnowledgeSelectionRef = useRef<KnowledgeEntry | null>(null)
-  const previousAgentIdRef = useRef<string | null>(null)
+  const pendingKnowledgeSelectionRef = useRef<KnowledgeEntry | null>(null);
+  const previousAgentIdRef = useRef<string | null>(null);
 
   // Update biography state when selected agent changes
   useEffect(() => {
     if (selectedAgent) {
-      setBiography(selectedAgent.biography)
+      setBiography(selectedAgent.biography);
 
       // Only reset selectedKnowledge if we don't have a pending selection
       // and if the agent has actually changed
-      if (!pendingKnowledgeSelectionRef.current && previousAgentIdRef.current !== selectedAgent.id) {
-        setSelectedKnowledge(null)
+      if (
+        !pendingKnowledgeSelectionRef.current &&
+        previousAgentIdRef.current !== selectedAgent.id
+      ) {
+        setSelectedKnowledge(null);
       }
 
-      setEditingKnowledge(false)
+      setEditingKnowledge(false);
 
       // Reset search and filter when changing agents
-      setSearchQuery("")
-      setSelectedTag("all_tags")
+      setSearchQuery("");
+      setSelectedTag("all_tags");
 
       // Initialize tool permissions with agent's existing permissions or defaults
-      setToolPermissions(selectedAgent.toolPermissions || defaultToolPermissions)
-      setHasToolChanges(false)
+      setToolPermissions(
+        selectedAgent.toolPermissions || defaultToolPermissions,
+      );
+      setHasToolChanges(false);
 
       // Update the previous agent id ref
-      previousAgentIdRef.current = selectedAgent.id
+      previousAgentIdRef.current = selectedAgent.id;
     }
-  }, [selectedAgent])
+  }, [selectedAgent]);
 
   // Add a new useEffect to handle pending knowledge selection
   useEffect(() => {
@@ -209,111 +244,119 @@ export default function MemoryViewer({
       // Find the matching knowledge entry in the selected agent's knowledge
       const matchingEntry = selectedAgent.knowledge.find(
         (entry) => entry.id === pendingKnowledgeSelectionRef.current?.id,
-      )
+      );
 
       // If we found a matching entry, select it
       if (matchingEntry) {
-        setSelectedKnowledge(matchingEntry)
+        setSelectedKnowledge(matchingEntry);
       }
       // If we didn't find a matching entry but have a title, try to find by title
       else if (pendingKnowledgeSelectionRef.current.title) {
         const entryByTitle = selectedAgent.knowledge.find(
-          (entry) => entry.title === pendingKnowledgeSelectionRef.current?.title,
-        )
+          (entry) =>
+            entry.title === pendingKnowledgeSelectionRef.current?.title,
+        );
 
         if (entryByTitle) {
-          setSelectedKnowledge(entryByTitle)
+          setSelectedKnowledge(entryByTitle);
         }
       }
 
       // Clear the pending selection
-      pendingKnowledgeSelectionRef.current = null
+      pendingKnowledgeSelectionRef.current = null;
     }
-  }, [selectedAgent])
+  }, [selectedAgent]);
 
   // Update edited knowledge content when selected knowledge changes
   useEffect(() => {
     if (selectedKnowledge) {
-      setEditedKnowledgeContent(selectedKnowledge.content)
-      setEditedKnowledgeTitle(selectedKnowledge.title)
+      setEditedKnowledgeContent(selectedKnowledge.content);
+      setEditedKnowledgeTitle(selectedKnowledge.title);
     }
-  }, [selectedKnowledge])
+  }, [selectedKnowledge]);
 
   // When a knowledge node is selected from the global graph, switch to the node selection view
   useEffect(() => {
     if (selectedKnowledgeNode) {
-      setSelectedView("node-selection")
+      setSelectedView("node-selection");
     }
-  }, [selectedKnowledgeNode])
+  }, [selectedKnowledgeNode]);
 
   // Get all unique tags from the selected agent's knowledge
   const uniqueTags = useMemo(() => {
-    if (!selectedAgent) return []
+    if (!selectedAgent) return [];
 
-    const tags = new Set<string>()
+    const tags = new Set<string>();
     selectedAgent.knowledge.forEach((entry) => {
-      entry.tags.forEach((tag) => tags.add(tag))
-    })
+      entry.tags.forEach((tag) => tags.add(tag));
+    });
 
-    return Array.from(tags).sort()
-  }, [selectedAgent])
+    return Array.from(tags).sort();
+  }, [selectedAgent]);
 
   // Filter and sort knowledge entries based on search, tag, and sort criteria
   const filteredKnowledge = useMemo(() => {
-    if (!selectedAgent) return []
+    if (!selectedAgent) return [];
 
-    let filtered = [...selectedAgent.knowledge]
+    let filtered = [...selectedAgent.knowledge];
 
     // Apply search filter
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        (entry) => entry.title.toLowerCase().includes(query) || entry.content.toLowerCase().includes(query),
-      )
+        (entry) =>
+          entry.title.toLowerCase().includes(query) ||
+          entry.content.toLowerCase().includes(query),
+      );
     }
 
     // Apply tag filter
     if (selectedTag && selectedTag !== "all_tags") {
-      filtered = filtered.filter((entry) => entry.tags.includes(selectedTag))
+      filtered = filtered.filter((entry) => entry.tags.includes(selectedTag));
     }
 
     // Apply sorting
     switch (sortBy) {
       case "newest":
-        filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-        break
+        filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        break;
       case "oldest":
-        filtered.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
-        break
+        filtered.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+        break;
       case "title":
-        filtered.sort((a, b) => a.title.localeCompare(b.title))
-        break
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
     }
 
-    return filtered
-  }, [selectedAgent, searchQuery, selectedTag, sortBy])
+    return filtered;
+  }, [selectedAgent, searchQuery, selectedTag, sortBy]);
 
   // Get relevant conversations for the selected agent
   const relevantConversations = useMemo(() => {
-    if (!selectedAgent) return []
+    if (!selectedAgent) return [];
 
     return conversationHistory
       .filter((conv) => conv.participants.includes(selectedAgent.id))
-      .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())
-  }, [selectedAgent, conversationHistory])
+      .sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
+  }, [selectedAgent, conversationHistory]);
 
   const handleSaveBiography = () => {
-    if (!selectedAgent) return
-    onUpdateAgent(selectedAgent.id, { biography })
+    if (!selectedAgent) return;
+    onUpdateAgent(selectedAgent.id, { biography });
     toast({
       title: "Biography updated",
       description: `${selectedAgent.name}'s biography has been updated.`,
       duration: 3000,
-    })
-  }
+    });
+  };
 
   const handleAddKnowledge = () => {
-    if (!selectedAgent || !newKnowledgeTitle.trim() || !newKnowledgeContent.trim()) return
+    if (
+      !selectedAgent ||
+      !newKnowledgeTitle.trim() ||
+      !newKnowledgeContent.trim()
+    )
+      return;
 
     const newKnowledge: KnowledgeEntry = {
       id: `knowledge-${Date.now()}`,
@@ -321,18 +364,18 @@ export default function MemoryViewer({
       content: newKnowledgeContent,
       timestamp: new Date(),
       tags: extractTagsFromMarkdown(newKnowledgeContent),
-    }
+    };
 
-    onAddKnowledge(selectedAgent.id, newKnowledge)
-    setNewKnowledgeTitle("")
-    setNewKnowledgeContent("")
+    onAddKnowledge(selectedAgent.id, newKnowledge);
+    setNewKnowledgeTitle("");
+    setNewKnowledgeContent("");
 
     toast({
       title: "Knowledge added",
       description: `"${newKnowledgeTitle}" has been added to ${selectedAgent.name}'s knowledge.`,
       duration: 3000,
-    })
-  }
+    });
+  };
 
   // Handle belief extraction with progress tracking
   const handleUpdateBeliefs = async () => {
@@ -342,8 +385,8 @@ export default function MemoryViewer({
         description: "Please select an agent first",
         variant: "destructive",
         duration: 3000,
-      })
-      return
+      });
+      return;
     }
 
     // Get the selected conversation or the most recent one
@@ -351,7 +394,7 @@ export default function MemoryViewer({
       ? conversationHistory.find((conv) => conv.id === selectedConversationId)
       : conversationHistory
           .filter((conv) => conv.participants.includes(selectedAgent.id))
-          .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())[0]
+          .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())[0];
 
     if (!targetConversation) {
       toast({
@@ -359,54 +402,59 @@ export default function MemoryViewer({
         description: "There are no conversations for this agent to analyze",
         variant: "destructive",
         duration: 3000,
-      })
-      return
+      });
+      return;
     }
 
-    setIsExtractingBeliefs(true)
-    setExtractionStep("extracting")
-    setExtractionProgress(10)
-    setInferenceTab("results")
+    setIsExtractingBeliefs(true);
+    setExtractionStep("extracting");
+    setExtractionProgress(10);
+    setInferenceTab("results");
 
     try {
       // Format the conversation for analysis
       const conversationText = targetConversation.messages
         .map((msg) => {
           const senderName =
-            msg.senderId === "user" ? "User" : agents.find((a) => a.id === msg.senderId)?.name || "Unknown"
-          return `${senderName}: ${msg.content}`
+            msg.senderId === "user"
+              ? "User"
+              : agents.find((a) => a.id === msg.senderId)?.name || "Unknown";
+          return `${senderName}: ${msg.content}`;
         })
-        .join("\n\n")
+        .join("\n\n");
 
-      debugLog("Formatted conversation for belief extraction:", conversationText)
+      debugLog(
+        "Formatted conversation for belief extraction:",
+        conversationText,
+      );
 
       // FIXED: Use the client's extractBeliefs method directly instead of calling the function
       // with settings that don't contain the API key
-      setExtractionProgress(30)
+      setExtractionProgress(30);
       try {
         // Call the client's extractBeliefs method which handles API key retrieval
         if (!llmContext.client) {
-          throw new Error("LLM client is not available")
+          throw new Error("LLM client is not available");
         }
 
         const rawBeliefsResponse = await llmContext.client.extractBeliefs(
           conversationText,
           selectedAgent.name,
           beliefsPrompt,
-        )
+        );
 
         // Parse the response - the client returns a string, but we need to parse it into beliefs
-        const rawBeliefs = parseBeliefs(rawBeliefsResponse)
-        debugLog("Raw beliefs extracted:", rawBeliefs)
+        const rawBeliefs = parseBeliefs(rawBeliefsResponse);
+        debugLog("Raw beliefs extracted:", rawBeliefs);
 
-        setRawBeliefs(rawBeliefs)
-        setExtractionProgress(60)
-        setExtractionStep("refining")
+        setRawBeliefs(rawBeliefs);
+        setExtractionProgress(60);
+        setExtractionStep("refining");
 
         // Now refine the beliefs using the client's method
         try {
           // Get the existing knowledge to check for duplicates
-          const existingKnowledge = selectedAgent.knowledge
+          const existingKnowledge = selectedAgent.knowledge;
 
           // Call the refine method on the client
           const refinedResponse = await llmContext.client.generateResponse(
@@ -416,7 +464,7 @@ Your task is to analyze each belief, rate its accuracy and relevance, categorize
 
 IMPORTANT: Maintain the Obsidian-style markdown format with [[double brackets]] around key concepts.`,
             // User prompt with the raw beliefs
-            `Below are beliefs extracted from a conversation. 
+            `Below are beliefs extracted from a conversation.
 Refine these beliefs according to these priorities: ${beliefsPrompt}
 
 EXTRACTED BELIEFS:
@@ -454,74 +502,86 @@ Format your response as a JSON array with one object per belief:
  },
  ...
 ]`,
-          )
+          );
 
           // Parse the refined beliefs from the response
-          const refined = parseRefinedBeliefs(refinedResponse, rawBeliefs)
-          debugLog("Refined beliefs:", refined)
+          const refined = parseRefinedBeliefs(refinedResponse, rawBeliefs);
+          debugLog("Refined beliefs:", refined);
 
           if (refined && refined.length > 0) {
-            setExtractedBeliefs(refined)
-            setExtractionProgress(100)
-            setExtractionStep("complete")
+            setExtractedBeliefs(refined);
+            setExtractionProgress(100);
+            setExtractionStep("complete");
 
             toast({
               title: "Beliefs extracted",
               description: `Found ${refined.length} potential new beliefs for ${selectedAgent.name}`,
               duration: 3000,
-            })
+            });
           } else {
-            throw new Error("No beliefs could be extracted from this conversation")
+            throw new Error(
+              "No beliefs could be extracted from this conversation",
+            );
           }
         } catch (refineError) {
-          console.error("Error refining beliefs:", refineError)
+          console.error("Error refining beliefs:", refineError);
           toast({
             title: "Error refining beliefs",
-            description: "The system encountered an error while processing the extracted beliefs. Please try again.",
+            description:
+              "The system encountered an error while processing the extracted beliefs. Please try again.",
             variant: "destructive",
             duration: 5000,
-          })
-          setExtractionStep("idle")
+          });
+          setExtractionStep("idle");
         }
       } catch (extractError) {
-        console.error("Error extracting raw beliefs:", extractError)
+        console.error("Error extracting raw beliefs:", extractError);
         toast({
           title: "Error extracting beliefs",
-          description: "The system encountered an error while analyzing the conversation. Please try again.",
+          description:
+            "The system encountered an error while analyzing the conversation. Please try again.",
           variant: "destructive",
           duration: 5000,
-        })
-        setExtractionStep("idle")
+        });
+        setExtractionStep("idle");
       }
     } catch (error) {
-      console.error("Error in belief extraction process:", error)
+      console.error("Error in belief extraction process:", error);
       toast({
         title: "Error extracting beliefs",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
         duration: 5000,
-      })
-      setExtractionStep("idle")
+      });
+      setExtractionStep("idle");
     } finally {
-      setIsExtractingBeliefs(false)
+      setIsExtractingBeliefs(false);
     }
-  }
+  };
 
   // Handle toggling belief selection
   const handleToggleBelief = (index: number) => {
     setExtractedBeliefs((prev) =>
       prev.map((belief, i) =>
-        i === index ? { ...belief, selected: belief.selected === false ? true : false } : belief,
+        i === index
+          ? { ...belief, selected: belief.selected === false ? true : false }
+          : belief,
       ),
-    )
-  }
+    );
+  };
 
   // Handle adding selected beliefs to knowledge
   const handleAddSelectedBeliefs = async () => {
-    if (!selectedAgent) return
+    if (!selectedAgent) return;
 
-    const selectedBeliefs = extractedBeliefs.filter((belief) => belief.selected !== false)
-    logger.info(`Selected beliefs count: ${selectedBeliefs.length}`, selectedBeliefs)
+    const selectedBeliefs = extractedBeliefs.filter(
+      (belief) => belief.selected !== false,
+    );
+    logger.info(
+      `Selected beliefs count: ${selectedBeliefs.length}`,
+      selectedBeliefs,
+    );
 
     if (selectedBeliefs.length === 0) {
       toast({
@@ -529,8 +589,8 @@ Format your response as a JSON array with one object per belief:
         description: "Please select at least one belief to add to knowledge",
         variant: "destructive",
         duration: 3000,
-      })
-      return
+      });
+      return;
     }
 
     try {
@@ -541,184 +601,197 @@ Format your response as a JSON array with one object per belief:
         content: belief.refined_content,
         timestamp: new Date(),
         tags: belief.tags,
-      }))
+      }));
 
-      logger.info(`Adding ${knowledgeEntries.length} knowledge entries to agent's knowledge`)
+      logger.info(
+        `Adding ${knowledgeEntries.length} knowledge entries to agent's knowledge`,
+      );
 
       // Add each entry to the agent's knowledge
       for (const entry of knowledgeEntries) {
-        logger.info(`Adding entry: ${entry.title}`)
-        onAddKnowledge(selectedAgent.id, entry)
+        logger.info(`Adding entry: ${entry.title}`);
+        onAddKnowledge(selectedAgent.id, entry);
       }
 
       // Clear extracted beliefs
-      setExtractedBeliefs([])
-      setRawBeliefs([])
-      setExtractionStep("idle")
+      setExtractedBeliefs([]);
+      setRawBeliefs([]);
+      setExtractionStep("idle");
 
       toast({
         title: "Knowledge updated",
         description: `Added ${knowledgeEntries.length} new knowledge entries to ${selectedAgent.name}'s knowledge`,
         duration: 3000,
-      })
+      });
 
       // Switch to browse tab
-      setKnowledgeTab("browse")
+      setKnowledgeTab("browse");
     } catch (error) {
-      console.error("Error adding beliefs to knowledge:", error)
+      console.error("Error adding beliefs to knowledge:", error);
       toast({
         title: "Error adding beliefs",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
         duration: 5000,
-      })
+      });
     }
-  }
+  };
 
   const handleSaveKnowledgeChanges = () => {
-    if (!selectedAgent || !selectedKnowledge) return
+    if (!selectedAgent || !selectedKnowledge) return;
 
     // Extract tags from the updated content
-    const updatedTags = extractTagsFromMarkdown(editedKnowledgeContent)
+    const updatedTags = extractTagsFromMarkdown(editedKnowledgeContent);
 
     // Create the updates object
     const updates: Partial<KnowledgeEntry> = {
       title: editedKnowledgeTitle,
       content: editedKnowledgeContent,
       tags: updatedTags,
-    }
+    };
 
     // Call the update function
-    onUpdateKnowledge(selectedAgent.id, selectedKnowledge.id, updates)
+    onUpdateKnowledge(selectedAgent.id, selectedKnowledge.id, updates);
 
     // Update the local state
     setSelectedKnowledge({
       ...selectedKnowledge,
       ...updates,
-    })
+    });
 
     // Exit editing mode
-    setEditingKnowledge(false)
+    setEditingKnowledge(false);
 
     toast({
       title: "Knowledge updated",
       description: "Knowledge entry has been updated successfully.",
       duration: 3000,
-    })
-  }
+    });
+  };
 
   const handleDeleteKnowledge = () => {
-    if (!selectedAgent || !knowledgeToDelete) return
+    if (!selectedAgent || !knowledgeToDelete) return;
 
     // Call the delete function
-    onDeleteKnowledge(selectedAgent.id, knowledgeToDelete.id)
+    onDeleteKnowledge(selectedAgent.id, knowledgeToDelete.id);
 
     // Clear the selected knowledge if it's the one being deleted
     if (selectedKnowledge?.id === knowledgeToDelete.id) {
-      setSelectedKnowledge(null)
+      setSelectedKnowledge(null);
     }
 
     // Close the dialog
-    setIsDeleteDialogOpen(false)
-    setKnowledgeToDelete(null)
+    setIsDeleteDialogOpen(false);
+    setKnowledgeToDelete(null);
 
     toast({
       title: "Knowledge deleted",
       description: `"${knowledgeToDelete.title}" has been deleted from ${selectedAgent.name}'s knowledge.`,
       duration: 3000,
-    })
-  }
+    });
+  };
 
   const handleSelectAgentForKnowledge = (agent: Agent) => {
     // Find the specific knowledge entry if we're looking at an entry
     if (selectedKnowledgeNode?.type === "entry") {
       // For consolidated entries, check by title
-      const entry = agent.knowledge.find((k) => k.title === selectedKnowledgeNode.title)
+      const entry = agent.knowledge.find(
+        (k) => k.title === selectedKnowledgeNode.title,
+      );
       if (entry) {
         // Store the entry we want to select in the ref
-        pendingKnowledgeSelectionRef.current = entry
+        pendingKnowledgeSelectionRef.current = entry;
 
         // Select the agent if it's not already selected
         if (onSelectAgent && selectedAgent?.id !== agent.id) {
-          onSelectAgent(agent)
+          onSelectAgent(agent);
         } else if (selectedAgent?.id === agent.id) {
           // If the agent is already selected, we can set the knowledge directly
-          setSelectedKnowledge(entry)
+          setSelectedKnowledge(entry);
         }
 
-        setKnowledgeTab("browse")
-        setSelectedView("knowledge")
-        onClearSelectedKnowledgeNode()
+        setKnowledgeTab("browse");
+        setSelectedView("knowledge");
+        onClearSelectedKnowledgeNode();
       }
     }
     // If we're looking at a tag, switch to the knowledge view with that tag
     else if (selectedKnowledgeNode?.type === "tag") {
-      setSelectedView("knowledge")
-      setKnowledgeTab("browse")
-      setSelectedTag(selectedKnowledgeNode.title)
-      onClearSelectedKnowledgeNode()
+      setSelectedView("knowledge");
+      setKnowledgeTab("browse");
+      setSelectedTag(selectedKnowledgeNode.title);
+      onClearSelectedKnowledgeNode();
 
       // Select the agent if it's not already selected
       if (onSelectAgent && selectedAgent?.id !== agent.id) {
-        onSelectAgent(agent)
+        onSelectAgent(agent);
       }
     }
-  }
+  };
 
   // Add a new function to handle clicking on a specific knowledge entry
-  const handleSelectKnowledgeEntry = (agent: Agent, entry: KnowledgeEntry, event: React.MouseEvent) => {
+  const handleSelectKnowledgeEntry = (
+    agent: Agent,
+    entry: KnowledgeEntry,
+    event: React.MouseEvent,
+  ) => {
     // Prevent the click from propagating to the agent card
-    event.stopPropagation()
+    event.stopPropagation();
 
     // Store the entry we want to select in the ref
-    pendingKnowledgeSelectionRef.current = entry
+    pendingKnowledgeSelectionRef.current = entry;
 
     // Select the agent using the onSelectAgent prop
     if (onSelectAgent && selectedAgent?.id !== agent.id) {
-      onSelectAgent(agent)
+      onSelectAgent(agent);
     } else if (selectedAgent?.id === agent.id) {
       // If the agent is already selected, we can set the knowledge directly
-      setSelectedKnowledge(entry)
+      setSelectedKnowledge(entry);
     }
 
     // Switch to the knowledge view
-    setKnowledgeTab("browse")
-    setSelectedView("knowledge")
+    setKnowledgeTab("browse");
+    setSelectedView("knowledge");
 
     // Clear the selected knowledge node
-    onClearSelectedKnowledgeNode()
-  }
+    onClearSelectedKnowledgeNode();
+  };
 
   const getAgentsWithSelectedNode = () => {
-    if (!selectedKnowledgeNode) return []
+    if (!selectedKnowledgeNode) return [];
 
     return agents.filter((agent) => {
       if (selectedKnowledgeNode.type === "entry") {
         // For consolidated entries, check by title
-        return agent.knowledge.some((entry) => entry.title === selectedKnowledgeNode.title)
+        return agent.knowledge.some(
+          (entry) => entry.title === selectedKnowledgeNode.title,
+        );
       } else if (selectedKnowledgeNode.type === "tag") {
-        return agent.knowledge.some((entry) => entry.tags.includes(selectedKnowledgeNode.title))
+        return agent.knowledge.some((entry) =>
+          entry.tags.includes(selectedKnowledgeNode.title),
+        );
       }
-      return false
-    })
-  }
+      return false;
+    });
+  };
 
   // Get knowledge entries that match the selected tag
   const getEntriesWithTag = (agent: Agent, tag: string) => {
-    return agent.knowledge.filter((entry) => entry.tags.includes(tag))
-  }
+    return agent.knowledge.filter((entry) => entry.tags.includes(tag));
+  };
 
   // Get knowledge entries that match the selected title
   const getEntriesWithTitle = (agent: Agent, title: string) => {
-    return agent.knowledge.filter((entry) => entry.title === title)
-  }
+    return agent.knowledge.filter((entry) => entry.title === title);
+  };
 
   // Clear all search and filter criteria
   const clearFilters = () => {
-    setSearchQuery("")
-    setSelectedTag("all_tags")
-    setSortBy("newest")
-  }
+    setSearchQuery("");
+    setSelectedTag("all_tags");
+    setSortBy("newest");
+  };
 
   // Helper function to render markdown with highlighted tags
   const renderMarkdownWithTags = (content: string) => {
@@ -726,8 +799,8 @@ Format your response as a JSON array with one object per belief:
     return content.replace(
       /\[\[(.*?)\]\]/g,
       '<span class="bg-purple-500/20 text-purple-900 px-1 rounded cursor-pointer hover:bg-purple-500/30 transition-colors" data-tag="$1">[[<span class="font-medium">$1</span>]]</span>',
-    )
-  }
+    );
+  };
 
   // Handle saving system prompt
   const handleSaveSystemPrompt = () => {
@@ -737,11 +810,11 @@ Format your response as a JSON array with one object per belief:
         description: "Agent or prompt not available",
         variant: "destructive",
         duration: 3000,
-      })
-      return
+      });
+      return;
     }
 
-    setIsProcessing(true)
+    setIsProcessing(true);
 
     // Simulate a delay
     setTimeout(() => {
@@ -750,69 +823,75 @@ Format your response as a JSON array with one object per belief:
           title: "System prompt saved",
           description: `System prompt "${systemPromptName}" has been saved for ${selectedAgent.name}.`,
           duration: 3000,
-        })
+        });
       } catch (error) {
-        console.error("Error in handleSaveSystemPrompt:", error)
+        console.error("Error in handleSaveSystemPrompt:", error);
         toast({
           title: "Error saving system prompt",
-          description: error instanceof Error ? error.message : "An unknown error occurred",
+          description:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
           variant: "destructive",
           duration: 5000,
-        })
+        });
       } finally {
-        setIsProcessing(false)
+        setIsProcessing(false);
       }
-    }, 1000)
-  }
+    }, 1000);
+  };
 
   // Add this function inside the MemoryViewer component
   const handleTagClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Check if the clicked element or its parent has a data-tag attribute
-    const target = e.target as HTMLElement
-    const tagElement = target.closest("[data-tag]")
+    const target = e.target as HTMLElement;
+    const tagElement = target.closest("[data-tag]");
 
     if (tagElement) {
-      const tag = tagElement.getAttribute("data-tag")
+      const tag = tagElement.getAttribute("data-tag");
       if (tag) {
-        setSelectedTag(tag)
-        setSelectedKnowledge(null)
-        setKnowledgeTab("browse")
+        setSelectedTag(tag);
+        setSelectedKnowledge(null);
+        setKnowledgeTab("browse");
       }
     }
-  }
+  };
 
   // Add these handler functions for tool permissions
-  const handleToolChange = (toolKey: keyof AgentToolPermissions, checked: boolean) => {
+  const handleToolChange = (
+    toolKey: keyof AgentToolPermissions,
+    checked: boolean,
+  ) => {
     setToolPermissions((prev) => {
-      const updated = { ...prev, [toolKey]: checked }
+      const updated = { ...prev, [toolKey]: checked };
       // Mark that we have unsaved changes
-      setHasToolChanges(true)
-      return updated
-    })
-  }
+      setHasToolChanges(true);
+      return updated;
+    });
+  };
 
   const handleSaveToolSettings = () => {
-    if (!selectedAgent) return
+    if (!selectedAgent) return;
 
-    setIsSavingTools(true)
+    setIsSavingTools(true);
 
     // Update the agent with new tool permissions
-    onUpdateAgent(selectedAgent.id, { toolPermissions })
+    onUpdateAgent(selectedAgent.id, { toolPermissions });
 
     // Reset the changes flag
-    setHasToolChanges(false)
+    setHasToolChanges(false);
 
     // Show success message
     toast({
       title: "Tool settings saved",
       description: `Tool permissions for ${selectedAgent.name} have been updated.`,
       duration: 3000,
-    })
+    });
 
     setTimeout(() => {
-      setIsSavingTools(false)
-    }, 500)
-  }
+      setIsSavingTools(false);
+    }, 500);
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -827,8 +906,8 @@ Format your response as a JSON array with one object per belief:
               variant="ghost"
               size="sm"
               onClick={() => {
-                onClearSelectedKnowledgeNode()
-                setSelectedView("biography")
+                onClearSelectedKnowledgeNode();
+                setSelectedView("biography");
               }}
               className="mr-2 bg-purple-900/30 text-white hover:bg-purple-800/50 hover:text-white"
             >
@@ -836,7 +915,10 @@ Format your response as a JSON array with one object per belief:
               Back
             </Button>
             <h3 className="text-lg font-semibold text-white">
-              {selectedKnowledgeNode.type === "entry" ? "Knowledge Entry" : "Tag"}: {selectedKnowledgeNode.title}
+              {selectedKnowledgeNode.type === "entry"
+                ? "Knowledge Entry"
+                : "Tag"}
+              : {selectedKnowledgeNode.title}
             </h3>
           </div>
 
@@ -845,7 +927,9 @@ Format your response as a JSON array with one object per belief:
               <CardHeader className="pb-2">
                 <CardTitle className="text-base">
                   Agents with{" "}
-                  {selectedKnowledgeNode.type === "entry" ? "this knowledge" : `"${selectedKnowledgeNode.title}" tag`}
+                  {selectedKnowledgeNode.type === "entry"
+                    ? "this knowledge"
+                    : `"${selectedKnowledgeNode.title}" tag`}
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-[calc(100%-60px)]">
@@ -859,21 +943,39 @@ Format your response as a JSON array with one object per belief:
                           onClick={() => handleSelectAgentForKnowledge(agent)}
                         >
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: agent.color }} />
+                            <div
+                              className="w-4 h-4 rounded-full"
+                              style={{ backgroundColor: agent.color }}
+                            />
                             <h3 className="font-medium">{agent.name}</h3>
                           </div>
 
                           {selectedKnowledgeNode.type === "tag" ? (
                             <div className="mt-2">
                               <p className="text-sm text-muted-foreground mb-1">
-                                {getEntriesWithTag(agent, selectedKnowledgeNode.title).length} entries with this tag:
+                                {
+                                  getEntriesWithTag(
+                                    agent,
+                                    selectedKnowledgeNode.title,
+                                  ).length
+                                }{" "}
+                                entries with this tag:
                               </p>
                               <div className="space-y-1 ml-2">
-                                {getEntriesWithTag(agent, selectedKnowledgeNode.title).map((entry) => (
+                                {getEntriesWithTag(
+                                  agent,
+                                  selectedKnowledgeNode.title,
+                                ).map((entry) => (
                                   <div
                                     key={entry.id}
                                     className="text-sm py-1 px-2 rounded hover:bg-purple-800/30 cursor-pointer flex items-center"
-                                    onClick={(e) => handleSelectKnowledgeEntry(agent, entry, e)}
+                                    onClick={(e) =>
+                                      handleSelectKnowledgeEntry(
+                                        agent,
+                                        entry,
+                                        e,
+                                      )
+                                    }
                                   >
                                     <span className="w-1 h-1 bg-purple-400 rounded-full mr-2"></span>
                                     <span>{entry.title}</span>
@@ -884,18 +986,35 @@ Format your response as a JSON array with one object per belief:
                           ) : (
                             <div className="mt-2">
                               <p className="text-sm text-muted-foreground mb-1">
-                                {getEntriesWithTitle(agent, selectedKnowledgeNode.title).length} entries with this
-                                title:
+                                {
+                                  getEntriesWithTitle(
+                                    agent,
+                                    selectedKnowledgeNode.title,
+                                  ).length
+                                }{" "}
+                                entries with this title:
                               </p>
                               <div className="space-y-1 ml-2">
-                                {getEntriesWithTitle(agent, selectedKnowledgeNode.title).map((entry) => (
+                                {getEntriesWithTitle(
+                                  agent,
+                                  selectedKnowledgeNode.title,
+                                ).map((entry) => (
                                   <div
                                     key={entry.id}
                                     className="text-sm py-1 px-2 rounded hover:bg-purple-800/30 cursor-pointer flex items-center"
-                                    onClick={(e) => handleSelectKnowledgeEntry(agent, entry, e)}
+                                    onClick={(e) =>
+                                      handleSelectKnowledgeEntry(
+                                        agent,
+                                        entry,
+                                        e,
+                                      )
+                                    }
                                   >
                                     <span className="w-1 h-1 bg-purple-400 rounded-full mr-2"></span>
-                                    <span>Created: {formatTimestamp(entry.timestamp)}</span>
+                                    <span>
+                                      Created:{" "}
+                                      {formatTimestamp(entry.timestamp)}
+                                    </span>
                                   </div>
                                 ))}
                               </div>
@@ -906,7 +1025,11 @@ Format your response as a JSON array with one object per belief:
                     </div>
                   ) : (
                     <div className="flex items-center justify-center h-full text-muted-foreground">
-                      No agents have this {selectedKnowledgeNode.type === "entry" ? "knowledge entry" : "tag"}.
+                      No agents have this{" "}
+                      {selectedKnowledgeNode.type === "entry"
+                        ? "knowledge entry"
+                        : "tag"}
+                      .
                     </div>
                   )}
                 </ScrollArea>
@@ -921,7 +1044,7 @@ Format your response as a JSON array with one object per belief:
               <Select
                 value={selectedView}
                 onValueChange={(value) => {
-                  setSelectedView(value)
+                  setSelectedView(value);
                 }}
               >
                 <SelectTrigger className="w-full bg-purple-950 border-purple-700 text-white">
@@ -954,12 +1077,17 @@ Format your response as a JSON array with one object per belief:
             {selectedView === "biography" && (
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">{selectedAgent.name}'s Profile</CardTitle>
+                  <CardTitle className="text-base">
+                    {selectedAgent.name}'s Profile
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label htmlFor="agent-biography" className="text-sm font-medium">
+                      <label
+                        htmlFor="agent-biography"
+                        className="text-sm font-medium"
+                      >
                         Biography
                       </label>
                       <Textarea
@@ -970,7 +1098,10 @@ Format your response as a JSON array with one object per belief:
                         placeholder="Enter agent biography..."
                       />
                     </div>
-                    <Button onClick={handleSaveBiography} className="bg-purple-700 hover:bg-purple-600 text-white">
+                    <Button
+                      onClick={handleSaveBiography}
+                      className="bg-purple-700 hover:bg-purple-600 text-white"
+                    >
                       <Save size={16} className="mr-2" />
                       Save Biography
                     </Button>
@@ -982,7 +1113,9 @@ Format your response as a JSON array with one object per belief:
             {selectedView === "conversations" && (
               <Card className="h-full flex flex-col">
                 <CardHeader className="pb-2 flex-shrink-0">
-                  <CardTitle className="text-base">Conversation History</CardTitle>
+                  <CardTitle className="text-base">
+                    Conversation History
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 p-0 overflow-hidden">
                   <ScrollArea
@@ -991,23 +1124,39 @@ Format your response as a JSON array with one object per belief:
                       height: "calc(100vh - 220px)",
                     }}
                   >
-                    {conversationHistory.filter((conv) => conv.participants.includes(selectedAgent.id)).length > 0 ? (
+                    {conversationHistory.filter((conv) =>
+                      conv.participants.includes(selectedAgent.id),
+                    ).length > 0 ? (
                       <div className="space-y-4">
                         {/* Conversation entries remain the same */}
                         {conversationHistory
-                          .filter((conv) => conv.participants.includes(selectedAgent.id))
-                          .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())
+                          .filter((conv) =>
+                            conv.participants.includes(selectedAgent.id),
+                          )
+                          .sort(
+                            (a, b) =>
+                              b.startTime.getTime() - a.startTime.getTime(),
+                          )
                           .map((conv) => (
                             <Card key={conv.id} className="p-4">
                               <div className="mb-2">
                                 <div className="flex justify-between items-center">
-                                  <h3 className="font-medium">Conversation {formatTimestamp(conv.startTime)}</h3>
-                                  <span className="text-xs text-muted-foreground">{conv.messages.length} messages</span>
+                                  <h3 className="font-medium">
+                                    Conversation{" "}
+                                    {formatTimestamp(conv.startTime)}
+                                  </h3>
+                                  <span className="text-xs text-muted-foreground">
+                                    {conv.messages.length} messages
+                                  </span>
                                 </div>
                                 <div className="text-xs text-muted-foreground mt-1">
                                   Participants:{" "}
                                   {conv.participants
-                                    .map((id) => agents.find((a) => a.id === id)?.name || "Unknown")
+                                    .map(
+                                      (id) =>
+                                        agents.find((a) => a.id === id)?.name ||
+                                        "Unknown",
+                                    )
                                     .join(", ")}
                                 </div>
                               </div>
@@ -1020,18 +1169,24 @@ Format your response as a JSON array with one object per belief:
                                           <span className="font-medium">
                                             {msg.senderId === "user"
                                               ? "You"
-                                              : agents.find((a) => a.id === msg.senderId)?.name || "Unknown"}
+                                              : agents.find(
+                                                  (a) => a.id === msg.senderId,
+                                                )?.name || "Unknown"}
                                             :
                                           </span>
                                           <span className="text-xs text-muted-foreground">
-                                            {new Date(msg.timestamp).toLocaleTimeString()}
+                                            {new Date(
+                                              msg.timestamp,
+                                            ).toLocaleTimeString()}
                                           </span>
                                         </div>
                                         <p className="text-sm">{msg.content}</p>
                                       </div>
                                     ))
                                   ) : (
-                                    <p className="text-muted-foreground">No messages in this conversation.</p>
+                                    <p className="text-muted-foreground">
+                                      No messages in this conversation.
+                                    </p>
                                   )}
                                 </div>
                               </div>
@@ -1056,7 +1211,10 @@ Format your response as a JSON array with one object per belief:
                 <CardContent className="h-[calc(100%-60px)] p-0">
                   <div className="h-full flex flex-col">
                     <div className="px-6 py-2 border-b">
-                      <Select value={knowledgeTab} onValueChange={setKnowledgeTab}>
+                      <Select
+                        value={knowledgeTab}
+                        onValueChange={setKnowledgeTab}
+                      >
                         <SelectTrigger className="w-full bg-purple-950 border-purple-700 text-white">
                           <SelectValue placeholder="Select view" />
                         </SelectTrigger>
@@ -1075,15 +1233,27 @@ Format your response as a JSON array with one object per belief:
                             <div className="col-span-1 border-r h-full">
                               <div className="p-4 border-b">
                                 <div className="flex items-center gap-2 mb-2">
-                                  <Search size={14} className="text-muted-foreground" />
+                                  <Search
+                                    size={14}
+                                    className="text-muted-foreground"
+                                  />
                                   <Input
                                     placeholder="Search knowledge..."
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) =>
+                                      setSearchQuery(e.target.value)
+                                    }
                                     className="h-8"
                                   />
-                                  {(searchQuery || selectedTag || sortBy !== "newest") && (
-                                    <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8 w-8 p-0">
+                                  {(searchQuery ||
+                                    selectedTag ||
+                                    sortBy !== "newest") && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={clearFilters}
+                                      className="h-8 w-8 p-0"
+                                    >
                                       <X size={14} />
                                     </Button>
                                   )}
@@ -1091,12 +1261,17 @@ Format your response as a JSON array with one object per belief:
 
                                 <div className="flex flex-wrap gap-2 mb-2">
                                   {uniqueTags.length > 0 && (
-                                    <Select value={selectedTag} onValueChange={setSelectedTag}>
+                                    <Select
+                                      value={selectedTag}
+                                      onValueChange={setSelectedTag}
+                                    >
                                       <SelectTrigger className="h-8 w-full bg-purple-950 border-purple-700 text-white">
                                         <SelectValue placeholder="Filter by tag" />
                                       </SelectTrigger>
                                       <SelectContent className="bg-purple-950 border-purple-700 text-white">
-                                        <SelectItem value="all_tags">All tags</SelectItem>
+                                        <SelectItem value="all_tags">
+                                          All tags
+                                        </SelectItem>
                                         {uniqueTags.map((tag) => (
                                           <SelectItem key={tag} value={tag}>
                                             {tag}
@@ -1111,14 +1286,25 @@ Format your response as a JSON array with one object per belief:
                                   <span className="text-xs text-muted-foreground">
                                     {filteredKnowledge.length} entries
                                   </span>
-                                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
+                                  <Select
+                                    value={sortBy}
+                                    onValueChange={(value) =>
+                                      setSortBy(value as any)
+                                    }
+                                  >
                                     <SelectTrigger className="h-7 text-xs w-28 bg-purple-950 border-purple-700 text-white">
                                       <SelectValue placeholder="Sort by" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-purple-950 border-purple-700 text-white">
-                                      <SelectItem value="newest">Newest</SelectItem>
-                                      <SelectItem value="oldest">Oldest</SelectItem>
-                                      <SelectItem value="title">Title</SelectItem>
+                                      <SelectItem value="newest">
+                                        Newest
+                                      </SelectItem>
+                                      <SelectItem value="oldest">
+                                        Oldest
+                                      </SelectItem>
+                                      <SelectItem value="title">
+                                        Title
+                                      </SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -1144,23 +1330,32 @@ Format your response as a JSON array with one object per belief:
                                             : "border-border hover:bg-muted"
                                         }`}
                                         onClick={() => {
-                                          setSelectedKnowledge(k)
-                                          setEditingKnowledge(false)
+                                          setSelectedKnowledge(k);
+                                          setEditingKnowledge(false);
                                         }}
                                       >
-                                        <h4 className="font-medium text-sm truncate">{k.title}</h4>
+                                        <h4 className="font-medium text-sm truncate">
+                                          {k.title}
+                                        </h4>
                                         <p className="text-xs text-muted-foreground mt-1">
                                           {formatTimestamp(k.timestamp)}
                                         </p>
                                         {k.tags.length > 0 && (
                                           <div className="flex flex-wrap gap-1 mt-1">
                                             {k.tags.slice(0, 2).map((tag) => (
-                                              <Badge key={tag} variant="secondary" className="text-xs py-0 h-5">
+                                              <Badge
+                                                key={tag}
+                                                variant="secondary"
+                                                className="text-xs py-0 h-5"
+                                              >
                                                 {tag}
                                               </Badge>
                                             ))}
                                             {k.tags.length > 2 && (
-                                              <Badge variant="outline" className="text-xs py-0 h-5">
+                                              <Badge
+                                                variant="outline"
+                                                className="text-xs py-0 h-5"
+                                              >
                                                 +{k.tags.length - 2}
                                               </Badge>
                                             )}
@@ -1192,12 +1387,18 @@ Format your response as a JSON array with one object per belief:
                                 {selectedKnowledge ? (
                                   <div className="flex flex-col">
                                     <div className="flex justify-between items-center mb-2">
-                                      <h3 className="font-medium">{selectedKnowledge.title}</h3>
+                                      <h3 className="font-medium">
+                                        {selectedKnowledge.title}
+                                      </h3>
                                       <div className="flex gap-2">
                                         <Button
                                           variant="outline"
                                           size="sm"
-                                          onClick={() => setEditingKnowledge(!editingKnowledge)}
+                                          onClick={() =>
+                                            setEditingKnowledge(
+                                              !editingKnowledge,
+                                            )
+                                          }
                                           className="bg-purple-900/50 border-purple-500 text-white hover:bg-purple-800 hover:text-white"
                                         >
                                           <Edit size={14} className="mr-1" />
@@ -1207,8 +1408,10 @@ Format your response as a JSON array with one object per belief:
                                           variant="destructive"
                                           size="sm"
                                           onClick={() => {
-                                            setKnowledgeToDelete(selectedKnowledge)
-                                            setIsDeleteDialogOpen(true)
+                                            setKnowledgeToDelete(
+                                              selectedKnowledge,
+                                            );
+                                            setIsDeleteDialogOpen(true);
                                           }}
                                         >
                                           <Trash size={14} className="mr-1" />
@@ -1229,7 +1432,11 @@ Format your response as a JSON array with one object per belief:
                                           <Input
                                             id="edit-knowledge-title"
                                             value={editedKnowledgeTitle}
-                                            onChange={(e) => setEditedKnowledgeTitle(e.target.value)}
+                                            onChange={(e) =>
+                                              setEditedKnowledgeTitle(
+                                                e.target.value,
+                                              )
+                                            }
                                             placeholder="Knowledge title..."
                                           />
                                         </div>
@@ -1243,13 +1450,18 @@ Format your response as a JSON array with one object per belief:
                                           <Textarea
                                             id="edit-knowledge-content"
                                             value={editedKnowledgeContent}
-                                            onChange={(e) => setEditedKnowledgeContent(e.target.value)}
+                                            onChange={(e) =>
+                                              setEditedKnowledgeContent(
+                                                e.target.value,
+                                              )
+                                            }
                                             className="flex-1 min-h-[200px]"
                                             placeholder="Knowledge content..."
                                           />
                                         </div>
                                         <div className="mt-2 text-xs text-muted-foreground">
-                                          Use [[tag]] syntax to add tags to your knowledge.
+                                          Use [[tag]] syntax to add tags to your
+                                          knowledge.
                                         </div>
                                         <Button
                                           className="mt-4 bg-purple-700 hover:bg-purple-600 text-white"
@@ -1264,19 +1476,25 @@ Format your response as a JSON array with one object per belief:
                                         <div
                                           className="prose max-w-none"
                                           dangerouslySetInnerHTML={{
-                                            __html: renderMarkdownWithTags(selectedKnowledge.content),
+                                            __html: renderMarkdownWithTags(
+                                              selectedKnowledge.content,
+                                            ),
                                           }}
                                           onClick={handleTagClick}
                                         />
                                         <p className="text-xs text-muted-foreground mt-2">
-                                          Created: {formatTimestamp(selectedKnowledge.timestamp)}
+                                          Created:{" "}
+                                          {formatTimestamp(
+                                            selectedKnowledge.timestamp,
+                                          )}
                                         </p>
                                       </div>
                                     )}
                                   </div>
                                 ) : (
                                   <div className="text-center text-muted-foreground py-8">
-                                    Select a knowledge entry to view its contents.
+                                    Select a knowledge entry to view its
+                                    contents.
                                   </div>
                                 )}
                               </ScrollArea>
@@ -1289,29 +1507,40 @@ Format your response as a JSON array with one object per belief:
                         <div className="p-4">
                           <div className="space-y-4">
                             <div className="space-y-2">
-                              <label htmlFor="new-knowledge-title" className="text-sm font-medium">
+                              <label
+                                htmlFor="new-knowledge-title"
+                                className="text-sm font-medium"
+                              >
                                 Title
                               </label>
                               <Input
                                 id="new-knowledge-title"
                                 value={newKnowledgeTitle}
-                                onChange={(e) => setNewKnowledgeTitle(e.target.value)}
+                                onChange={(e) =>
+                                  setNewKnowledgeTitle(e.target.value)
+                                }
                                 placeholder="Knowledge title..."
                               />
                             </div>
                             <div className="space-y-2">
-                              <label htmlFor="new-knowledge-content" className="text-sm font-medium">
+                              <label
+                                htmlFor="new-knowledge-content"
+                                className="text-sm font-medium"
+                              >
                                 Content
                               </label>
                               <Textarea
                                 id="new-knowledge-content"
                                 value={newKnowledgeContent}
-                                onChange={(e) => setNewKnowledgeContent(e.target.value)}
+                                onChange={(e) =>
+                                  setNewKnowledgeContent(e.target.value)
+                                }
                                 className="min-h-[200px]"
                                 placeholder="Knowledge content..."
                               />
                               <div className="text-xs text-muted-foreground">
-                                Use [[tag]] syntax to add tags to your knowledge.
+                                Use [[tag]] syntax to add tags to your
+                                knowledge.
                               </div>
                             </div>
                             <Button
@@ -1328,9 +1557,11 @@ Format your response as a JSON array with one object per belief:
                       {knowledgeTab === "inference" && (
                         <div className="flex flex-col h-full">
                           <div className="px-6 py-2 border-b">
-                            <Select 
-                              value={inferenceTab} 
-                              onValueChange={(value: "prompt" | "results" | "preview") => setInferenceTab(value)}
+                            <Select
+                              value={inferenceTab}
+                              onValueChange={(
+                                value: "prompt" | "results" | "preview",
+                              ) => setInferenceTab(value)}
                             >
                               <SelectTrigger className="w-full bg-purple-950 border-purple-700 text-white">
                                 <SelectValue placeholder="Select view" />
@@ -1347,25 +1578,35 @@ Format your response as a JSON array with one object per belief:
                             <div className="p-4">
                               <div className="space-y-4">
                                 <div className="space-y-2">
-                                  <label htmlFor="beliefs-prompt" className="text-sm font-medium">
+                                  <label
+                                    htmlFor="beliefs-prompt"
+                                    className="text-sm font-medium"
+                                  >
                                     Beliefs Prompt
                                   </label>
                                   <Textarea
                                     id="beliefs-prompt"
                                     value={beliefsPrompt}
-                                    onChange={(e) => setBeliefsPrompt(e.target.value)}
+                                    onChange={(e) =>
+                                      setBeliefsPrompt(e.target.value)
+                                    }
                                     className="min-h-[100px]"
                                     placeholder="Enter prompt for extracting beliefs..."
                                   />
                                 </div>
 
                                 <div className="space-y-2">
-                                  <label htmlFor="conversation-select" className="text-sm font-medium">
+                                  <label
+                                    htmlFor="conversation-select"
+                                    className="text-sm font-medium"
+                                  >
                                     Select Conversation
                                   </label>
-                                  <Select 
-                                    value={selectedConversationId || undefined} 
-                                    onValueChange={(value: string) => setSelectedConversationId(value)}
+                                  <Select
+                                    value={selectedConversationId || undefined}
+                                    onValueChange={(value: string) =>
+                                      setSelectedConversationId(value)
+                                    }
                                   >
                                     <SelectTrigger className="w-full bg-purple-950 border-purple-700 text-white">
                                       <SelectValue placeholder="Select a conversation" />
@@ -1373,12 +1614,19 @@ Format your response as a JSON array with one object per belief:
                                     <SelectContent className="bg-purple-950 border-purple-700 text-white">
                                       {relevantConversations.length > 0 ? (
                                         relevantConversations.map((conv) => (
-                                          <SelectItem key={conv.id} value={conv.id}>
-                                            Conversation {formatTimestamp(conv.startTime)}
+                                          <SelectItem
+                                            key={conv.id}
+                                            value={conv.id}
+                                          >
+                                            Conversation{" "}
+                                            {formatTimestamp(conv.startTime)}
                                           </SelectItem>
                                         ))
                                       ) : (
-                                        <SelectItem disabled value="no-conversations">
+                                        <SelectItem
+                                          disabled
+                                          value="no-conversations"
+                                        >
                                           No conversations available
                                         </SelectItem>
                                       )}
@@ -1392,7 +1640,10 @@ Format your response as a JSON array with one object per belief:
                                   disabled={isExtractingBeliefs}
                                 >
                                   {isExtractingBeliefs ? (
-                                    <>Extracting Beliefs... ({extractionProgress}%)</>
+                                    <>
+                                      Extracting Beliefs... (
+                                      {extractionProgress}%)
+                                    </>
                                   ) : (
                                     <>
                                       <Search size={16} className="mr-2" />
@@ -1407,32 +1658,46 @@ Format your response as a JSON array with one object per belief:
                           {inferenceTab === "results" && (
                             <div className="flex-1 p-4 overflow-auto">
                               {extractionStep === "idle" && (
-                                <div className="text-center text-muted-foreground py-8">No beliefs extracted yet.</div>
+                                <div className="text-center text-muted-foreground py-8">
+                                  No beliefs extracted yet.
+                                </div>
                               )}
 
                               {extractionStep === "extracting" && (
                                 <div className="text-center py-8 space-y-4">
-                                  <p className="text-muted-foreground">Extracting beliefs...</p>
+                                  <p className="text-muted-foreground">
+                                    Extracting beliefs...
+                                  </p>
                                   <div className="w-full max-w-md mx-auto bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                                     <div
                                       className="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
-                                      style={{ width: `${extractionProgress}%` }}
+                                      style={{
+                                        width: `${extractionProgress}%`,
+                                      }}
                                     ></div>
                                   </div>
-                                  <p className="text-sm text-muted-foreground">{extractionProgress}% complete</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {extractionProgress}% complete
+                                  </p>
                                 </div>
                               )}
 
                               {extractionStep === "refining" && (
                                 <div className="text-center py-8 space-y-4">
-                                  <p className="text-muted-foreground">Refining beliefs...</p>
+                                  <p className="text-muted-foreground">
+                                    Refining beliefs...
+                                  </p>
                                   <div className="w-full max-w-md mx-auto bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                                     <div
                                       className="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
-                                      style={{ width: `${extractionProgress}%` }}
+                                      style={{
+                                        width: `${extractionProgress}%`,
+                                      }}
                                     ></div>
                                   </div>
-                                  <p className="text-sm text-muted-foreground">{extractionProgress}% complete</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {extractionProgress}% complete
+                                  </p>
                                 </div>
                               )}
 
@@ -1442,16 +1707,26 @@ Format your response as a JSON array with one object per belief:
                                     extractedBeliefs.map((belief, index) => (
                                       <Card key={index} className="p-4">
                                         <div className="flex items-center justify-between">
-                                          <h3 className="font-medium truncate max-w-[80%]" title={belief.title}>
+                                          <h3
+                                            className="font-medium truncate max-w-[80%]"
+                                            title={belief.title}
+                                          >
                                             {belief.title || "Untitled belief"}
-                                            {belief.title && belief.title.length > 30 ? "..." : ""}
+                                            {belief.title &&
+                                            belief.title.length > 30
+                                              ? "..."
+                                              : ""}
                                           </h3>
                                           <label className="inline-flex items-center space-x-2 cursor-pointer">
                                             <input
                                               type="checkbox"
                                               className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
-                                              checked={belief.selected !== false}
-                                              onChange={() => handleToggleBelief(index)}
+                                              checked={
+                                                belief.selected !== false
+                                              }
+                                              onChange={() =>
+                                                handleToggleBelief(index)
+                                              }
                                             />
                                             <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                               Select
@@ -1459,12 +1734,15 @@ Format your response as a JSON array with one object per belief:
                                           </label>
                                         </div>
                                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                          {belief.refined_content || "No content available"}
+                                          {belief.refined_content ||
+                                            "No content available"}
                                         </p>
                                       </Card>
                                     ))
                                   ) : (
-                                    <div className="text-center text-muted-foreground py-8">No beliefs extracted.</div>
+                                    <div className="text-center text-muted-foreground py-8">
+                                      No beliefs extracted.
+                                    </div>
                                   )}
 
                                   <Button
@@ -1483,7 +1761,10 @@ Format your response as a JSON array with one object per belief:
                             <div className="p-4">
                               <div className="space-y-4">
                                 <div className="space-y-2">
-                                  <label htmlFor="raw-beliefs" className="text-sm font-medium">
+                                  <label
+                                    htmlFor="raw-beliefs"
+                                    className="text-sm font-medium"
+                                  >
                                     Raw Beliefs
                                   </label>
                                   <Textarea
@@ -1495,12 +1776,19 @@ Format your response as a JSON array with one object per belief:
                                 </div>
 
                                 <div className="space-y-2">
-                                  <label htmlFor="extracted-beliefs" className="text-sm font-medium">
+                                  <label
+                                    htmlFor="extracted-beliefs"
+                                    className="text-sm font-medium"
+                                  >
                                     Extracted Beliefs
                                   </label>
                                   <Textarea
                                     id="extracted-beliefs"
-                                    value={JSON.stringify(extractedBeliefs, null, 2)}
+                                    value={JSON.stringify(
+                                      extractedBeliefs,
+                                      null,
+                                      2,
+                                    )}
                                     className="min-h-[100px]"
                                     readOnly
                                   />
@@ -1524,7 +1812,10 @@ Format your response as a JSON array with one object per belief:
                 <CardContent>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label htmlFor="system-prompt-name" className="text-sm font-medium">
+                      <label
+                        htmlFor="system-prompt-name"
+                        className="text-sm font-medium"
+                      >
                         Prompt Name
                       </label>
                       <Input
@@ -1535,7 +1826,10 @@ Format your response as a JSON array with one object per belief:
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="system-prompt" className="text-sm font-medium">
+                      <label
+                        htmlFor="system-prompt"
+                        className="text-sm font-medium"
+                      >
                         System Prompt
                       </label>
                       <Textarea
@@ -1568,14 +1862,21 @@ Format your response as a JSON array with one object per belief:
                   <div className="space-y-4">
                     {/* Information Access Tools */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Information Access Tools</h4>
+                      <h4 className="text-sm font-medium">
+                        Information Access Tools
+                      </h4>
                       <div className="grid grid-cols-2 gap-2">
                         <label className="inline-flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.internetSearch}
-                            onChange={(e) => handleToolChange("internetSearch", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "internetSearch",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Internet Search
@@ -1586,7 +1887,9 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.webScraping}
-                            onChange={(e) => handleToolChange("webScraping", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("webScraping", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Web Scraping
@@ -1597,7 +1900,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.wikipediaAccess}
-                            onChange={(e) => handleToolChange("wikipediaAccess", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "wikipediaAccess",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Wikipedia Access
@@ -1608,7 +1916,9 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.newsApi}
-                            onChange={(e) => handleToolChange("newsApi", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("newsApi", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             News API
@@ -1619,7 +1929,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.academicSearch}
-                            onChange={(e) => handleToolChange("academicSearch", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "academicSearch",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Academic Search
@@ -1630,7 +1945,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.documentRetrieval}
-                            onChange={(e) => handleToolChange("documentRetrieval", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "documentRetrieval",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Document Retrieval
@@ -1641,14 +1961,21 @@ Format your response as a JSON array with one object per belief:
 
                     {/* Content Generation & Processing */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Content Generation &amp; Processing</h4>
+                      <h4 className="text-sm font-medium">
+                        Content Generation &amp; Processing
+                      </h4>
                       <div className="grid grid-cols-2 gap-2">
                         <label className="inline-flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.imageGeneration}
-                            onChange={(e) => handleToolChange("imageGeneration", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "imageGeneration",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Image Generation
@@ -1659,7 +1986,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.textSummarization}
-                            onChange={(e) => handleToolChange("textSummarization", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "textSummarization",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Text Summarization
@@ -1670,7 +2002,9 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.translation}
-                            onChange={(e) => handleToolChange("translation", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("translation", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Translation
@@ -1681,7 +2015,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.codeExecution}
-                            onChange={(e) => handleToolChange("codeExecution", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "codeExecution",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Code Execution
@@ -1692,14 +2031,18 @@ Format your response as a JSON array with one object per belief:
 
                     {/* Knowledge & Reasoning Tools */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Knowledge &amp; Reasoning Tools</h4>
+                      <h4 className="text-sm font-medium">
+                        Knowledge &amp; Reasoning Tools
+                      </h4>
                       <div className="grid grid-cols-2 gap-2">
                         <label className="inline-flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.calculator}
-                            onChange={(e) => handleToolChange("calculator", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("calculator", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Calculator
@@ -1710,7 +2053,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.knowledgeGraphQuery}
-                            onChange={(e) => handleToolChange("knowledgeGraphQuery", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "knowledgeGraphQuery",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Knowledge Graph Query
@@ -1721,7 +2069,9 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.factChecking}
-                            onChange={(e) => handleToolChange("factChecking", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("factChecking", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Fact Checking
@@ -1732,7 +2082,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.timelineGenerator}
-                            onChange={(e) => handleToolChange("timelineGenerator", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "timelineGenerator",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Timeline Generator
@@ -1743,14 +2098,18 @@ Format your response as a JSON array with one object per belief:
 
                     {/* External Integrations */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium">External Integrations</h4>
+                      <h4 className="text-sm font-medium">
+                        External Integrations
+                      </h4>
                       <div className="grid grid-cols-2 gap-2">
                         <label className="inline-flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.weatherData}
-                            onChange={(e) => handleToolChange("weatherData", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("weatherData", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Weather Data
@@ -1761,7 +2120,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.mapLocationData}
-                            onChange={(e) => handleToolChange("mapLocationData", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "mapLocationData",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Map Location Data
@@ -1772,7 +2136,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.financialData}
-                            onChange={(e) => handleToolChange("financialData", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "financialData",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Financial Data
@@ -1783,7 +2152,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.publicDatasets}
-                            onChange={(e) => handleToolChange("publicDatasets", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "publicDatasets",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Public Datasets
@@ -1794,14 +2168,18 @@ Format your response as a JSON array with one object per belief:
 
                     {/* Agent-Specific Tools */}
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Agent-Specific Tools</h4>
+                      <h4 className="text-sm font-medium">
+                        Agent-Specific Tools
+                      </h4>
                       <div className="grid grid-cols-2 gap-2">
                         <label className="inline-flex items-center space-x-2 cursor-pointer">
                           <input
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.memorySearch}
-                            onChange={(e) => handleToolChange("memorySearch", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange("memorySearch", e.target.checked)
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Memory Search
@@ -1812,7 +2190,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.crossAgentKnowledge}
-                            onChange={(e) => handleToolChange("crossAgentKnowledge", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "crossAgentKnowledge",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Cross-Agent Knowledge
@@ -1823,7 +2206,12 @@ Format your response as a JSON array with one object per belief:
                             type="checkbox"
                             className="h-5 w-5 rounded-sm border-gray-700 text-purple-500 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed peer"
                             checked={toolPermissions.conversationAnalysis}
-                            onChange={(e) => handleToolChange("conversationAnalysis", e.target.checked)}
+                            onChange={(e) =>
+                              handleToolChange(
+                                "conversationAnalysis",
+                                e.target.checked,
+                              )
+                            }
                           />
                           <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                             Conversation Analysis
@@ -1860,9 +2248,14 @@ Format your response as a JSON array with one object per belief:
               <CardTitle>Delete Knowledge</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Are you sure you want to delete "{knowledgeToDelete?.title}"?</p>
+              <p>
+                Are you sure you want to delete "{knowledgeToDelete?.title}"?
+              </p>
               <div className="mt-4 flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button variant="destructive" onClick={handleDeleteKnowledge}>
@@ -1874,5 +2267,5 @@ Format your response as a JSON array with one object per belief:
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { CharacterCreator } from '@/components/character-creator';
-import { BackendAgentList } from '@/components/backend-agent-list';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Users, Brain, Activity } from 'lucide-react';
+import { useState } from "react";
+import { CharacterCreator } from "@/components/character-creator";
+import { BackendAgentList } from "@/components/backend-agent-list";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Users, Brain, Activity } from "lucide-react";
 
 export default function AgentsPage() {
   const [showCreator, setShowCreator] = useState(false);
@@ -22,7 +28,7 @@ export default function AgentsPage() {
             Create, manage, and monitor your Active Inference agents
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => setShowCreator(true)}
           size="lg"
           className="gap-2"
@@ -56,7 +62,9 @@ export default function AgentsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Knowledge Nodes</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Knowledge Nodes
+            </CardTitle>
             <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -66,7 +74,9 @@ export default function AgentsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Performance</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Avg. Performance
+            </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -95,7 +105,7 @@ export default function AgentsPage() {
 
         <TabsContent value="explorer" className="space-y-4">
           <BackendAgentList
-            filter={{ class: 'Explorer' }}
+            filter={{ class: "Explorer" }}
             onSelectAgent={setSelectedAgent}
             selectedAgent={selectedAgent}
           />
@@ -103,7 +113,7 @@ export default function AgentsPage() {
 
         <TabsContent value="merchant" className="space-y-4">
           <BackendAgentList
-            filter={{ class: 'Merchant' }}
+            filter={{ class: "Merchant" }}
             onSelectAgent={setSelectedAgent}
             selectedAgent={selectedAgent}
           />
@@ -111,7 +121,7 @@ export default function AgentsPage() {
 
         <TabsContent value="scholar" className="space-y-4">
           <BackendAgentList
-            filter={{ class: 'Scholar' }}
+            filter={{ class: "Scholar" }}
             onSelectAgent={setSelectedAgent}
             selectedAgent={selectedAgent}
           />
@@ -119,7 +129,7 @@ export default function AgentsPage() {
 
         <TabsContent value="guardian" className="space-y-4">
           <BackendAgentList
-            filter={{ class: 'Guardian' }}
+            filter={{ class: "Guardian" }}
             onSelectAgent={setSelectedAgent}
             selectedAgent={selectedAgent}
           />
@@ -155,4 +165,4 @@ export default function AgentsPage() {
       )}
     </div>
   );
-} 
+}

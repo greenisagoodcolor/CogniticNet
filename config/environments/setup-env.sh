@@ -21,7 +21,7 @@ echo "================================"
 create_env_file() {
     local template=$1
     local target=$2
-    
+
     if [ -f "$SCRIPT_DIR/$target" ]; then
         echo -e "${YELLOW}Warning: $target already exists${NC}"
         read -p "Overwrite? (y/N): " -n 1 -r
@@ -31,10 +31,10 @@ create_env_file() {
             return
         fi
     fi
-    
+
     cp "$SCRIPT_DIR/$template" "$SCRIPT_DIR/$target"
     echo -e "${GREEN}Created $target from $template${NC}"
-    
+
     # Set proper permissions
     chmod 600 "$SCRIPT_DIR/$target"
     echo "Set permissions to 600 (read/write for owner only)"
@@ -132,4 +132,4 @@ echo "Remember:"
 echo "- Never commit .env files to version control"
 echo "- Keep production secrets secure"
 echo "- Rotate keys regularly"
-echo "- Use different keys for each environment" 
+echo "- Use different keys for each environment"

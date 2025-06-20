@@ -1,44 +1,60 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ConversationView } from '@/components/conversation-view';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare, Users, TrendingUp, Clock, Filter, Play, Pause } from 'lucide-react';
+import { useState } from "react";
+import { ConversationView } from "@/components/conversation-view";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  MessageSquare,
+  Users,
+  TrendingUp,
+  Clock,
+  Filter,
+  Play,
+  Pause,
+} from "lucide-react";
 
 export default function ConversationsPage() {
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<
+    string | null
+  >(null);
   const [isLive, setIsLive] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
 
   // Mock conversation data
   const conversations = [
     {
-      id: 'conv_123',
-      participants: ['CuriousExplorer', 'WiseScholar'],
-      status: 'active',
-      startTime: '2 minutes ago',
+      id: "conv_123",
+      participants: ["CuriousExplorer", "WiseScholar"],
+      status: "active",
+      startTime: "2 minutes ago",
       messageCount: 8,
-      intent: 'knowledge_sharing',
+      intent: "knowledge_sharing",
     },
     {
-      id: 'conv_456',
-      participants: ['BravePioneer', 'CautiousGuardian', 'CleverMerchant'],
-      status: 'active',
-      startTime: '5 minutes ago',
+      id: "conv_456",
+      participants: ["BravePioneer", "CautiousGuardian", "CleverMerchant"],
+      status: "active",
+      startTime: "5 minutes ago",
       messageCount: 15,
-      intent: 'alliance_formation',
+      intent: "alliance_formation",
     },
     {
-      id: 'conv_789',
-      participants: ['ResourceHunter', 'TerrainMapper'],
-      status: 'completed',
-      startTime: '10 minutes ago',
+      id: "conv_789",
+      participants: ["ResourceHunter", "TerrainMapper"],
+      status: "completed",
+      startTime: "10 minutes ago",
       messageCount: 23,
-      intent: 'trade_negotiation',
+      intent: "trade_negotiation",
     },
   ];
 
@@ -81,7 +97,9 @@ export default function ConversationsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Conversations</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Conversations
+            </CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -101,12 +119,16 @@ export default function ConversationsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Unique Participants</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Unique Participants
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">18</div>
-            <p className="text-xs text-muted-foreground">75% of active agents</p>
+            <p className="text-xs text-muted-foreground">
+              75% of active agents
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -140,21 +162,29 @@ export default function ConversationsPage() {
               <ScrollArea className="h-[550px]">
                 <div className="space-y-2">
                   {conversations
-                    .filter(c => filter === 'all' || c.status === filter)
+                    .filter((c) => filter === "all" || c.status === filter)
                     .map((conv) => (
                       <Card
                         key={conv.id}
                         className={`cursor-pointer transition-colors ${
-                          selectedConversation === conv.id ? 'border-primary' : ''
+                          selectedConversation === conv.id
+                            ? "border-primary"
+                            : ""
                         }`}
                         onClick={() => setSelectedConversation(conv.id)}
                       >
                         <CardContent className="p-4">
                           <div className="flex justify-between items-start mb-2">
                             <div className="text-sm font-medium">
-                              {conv.participants.join(' ↔ ')}
+                              {conv.participants.join(" ↔ ")}
                             </div>
-                            <Badge variant={conv.status === 'active' ? 'default' : 'secondary'}>
+                            <Badge
+                              variant={
+                                conv.status === "active"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                            >
                               {conv.status}
                             </Badge>
                           </div>
@@ -163,7 +193,7 @@ export default function ConversationsPage() {
                             <span>{conv.messageCount} messages</span>
                           </div>
                           <Badge variant="outline" className="mt-2 text-xs">
-                            {conv.intent.replace('_', ' ')}
+                            {conv.intent.replace("_", " ")}
                           </Badge>
                         </CardContent>
                       </Card>
@@ -180,9 +210,7 @@ export default function ConversationsPage() {
             <CardHeader>
               <CardTitle>Conversation Details</CardTitle>
               {selectedConversation && (
-                <CardDescription>
-                  Live transcript and analysis
-                </CardDescription>
+                <CardDescription>Live transcript and analysis</CardDescription>
               )}
             </CardHeader>
             <CardContent>
@@ -206,16 +234,18 @@ export default function ConversationsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Intent Distribution</CardTitle>
-            <CardDescription>Communication purposes in the last hour</CardDescription>
+            <CardDescription>
+              Communication purposes in the last hour
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {[
-                { intent: 'Knowledge Sharing', count: 45, percentage: 35 },
-                { intent: 'Trade Negotiation', count: 32, percentage: 25 },
-                { intent: 'Alliance Formation', count: 26, percentage: 20 },
-                { intent: 'Casual Greeting', count: 19, percentage: 15 },
-                { intent: 'Warning/Alert', count: 6, percentage: 5 },
+                { intent: "Knowledge Sharing", count: 45, percentage: 35 },
+                { intent: "Trade Negotiation", count: 32, percentage: 25 },
+                { intent: "Alliance Formation", count: 26, percentage: 20 },
+                { intent: "Casual Greeting", count: 19, percentage: 15 },
+                { intent: "Warning/Alert", count: 6, percentage: 5 },
               ].map((item) => (
                 <div key={item.intent} className="space-y-1">
                   <div className="flex justify-between text-sm">
@@ -242,19 +272,25 @@ export default function ConversationsPage() {
           <CardContent>
             <div className="space-y-3">
               <div className="p-3 bg-secondary rounded-lg">
-                <div className="font-medium text-sm mb-1">Trust Networks Forming</div>
+                <div className="font-medium text-sm mb-1">
+                  Trust Networks Forming
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Explorers and Scholars showing increased cooperation frequency
                 </p>
               </div>
               <div className="p-3 bg-secondary rounded-lg">
-                <div className="font-medium text-sm mb-1">Resource Information Flow</div>
+                <div className="font-medium text-sm mb-1">
+                  Resource Information Flow
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Knowledge about eastern forest resources spreading rapidly
                 </p>
               </div>
               <div className="p-3 bg-secondary rounded-lg">
-                <div className="font-medium text-sm mb-1">Multi-Agent Coordination</div>
+                <div className="font-medium text-sm mb-1">
+                  Multi-Agent Coordination
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Groups of 3+ agents coordinating exploration efforts
                 </p>
@@ -265,4 +301,4 @@ export default function ConversationsPage() {
       </div>
     </div>
   );
-} 
+}

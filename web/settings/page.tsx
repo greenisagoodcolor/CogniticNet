@@ -1,81 +1,125 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Spinner } from "@/components/ui/spinner"
-import { useLLM } from "@/contexts/llm-context"
-import { useToast } from "@/hooks/use-toast"
-import LLMTest from "@/components/LlmTest"
-import { validateStoredSession } from "@/lib/session-management"
-import { Shield, ShieldAlert, ShieldCheck } from "lucide-react"
-import type { LLMSettings } from "@/lib/llm-settings"
-import { createLogger } from "@/lib/debug-logger"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
+import { useLLM } from "@/contexts/llm-context";
+import { useToast } from "@/hooks/use-toast";
+import LLMTest from "@/components/LlmTest";
+import { validateStoredSession } from "@/lib/session-management";
+import { Shield, ShieldAlert, ShieldCheck } from "lucide-react";
+import type { LLMSettings } from "@/lib/llm-settings";
+import { createLogger } from "@/lib/debug-logger";
 
-const logger = createLogger("SETTINGS")
+const logger = createLogger("SETTINGS");
 
 export default function SettingsPage() {
-  const { settings, updateSettings, saveSettings, isProcessing, setIsProcessing, client } = useLLM()
-  const { toast } = useToast()
+  const {
+    settings,
+    updateSettings,
+    saveSettings,
+    isProcessing,
+    setIsProcessing,
+    client,
+  } = useLLM();
+  const { toast } = useToast();
 
   // Initialize with hardcoded default values to prevent errors
-  const [provider, setProvider] = useState<string>("openai")
-  const [model, setModel] = useState<string>("gpt-4o")
-  const [temperature, setTemperature] = useState<number>(0.7)
-  const [maxTokens, setMaxTokens] = useState<number>(1024)
-  const [topP, setTopP] = useState<number>(0.9)
-  const [frequencyPenalty, setFrequencyPenalty] = useState<number>(0)
-  const [presencePenalty, setPresencePenalty] = useState<number>(0)
-  const [maxAutonomousMessages, setMaxAutonomousMessages] = useState<number>(4)
-  const [conversationCooldown, setConversationCooldown] = useState<number>(5000)
-  const [systemFingerprint, setSystemFingerprint] = useState<boolean>(false)
-  const [apiKey, setApiKey] = useState<string>("")
-  const [hasStoredApiKey, setHasStoredApiKey] = useState<boolean>(false)
-  const [isValidatingApiKey, setIsValidatingApiKey] = useState<boolean>(false)
+  const [provider, setProvider] = useState<string>("openai");
+  const [model, setModel] = useState<string>("gpt-4o");
+  const [temperature, setTemperature] = useState<number>(0.7);
+  const [maxTokens, setMaxTokens] = useState<number>(1024);
+  const [topP, setTopP] = useState<number>(0.9);
+  const [frequencyPenalty, setFrequencyPenalty] = useState<number>(0);
+  const [presencePenalty, setPresencePenalty] = useState<number>(0);
+  const [maxAutonomousMessages, setMaxAutonomousMessages] = useState<number>(4);
+  const [conversationCooldown, setConversationCooldown] =
+    useState<number>(5000);
+  const [systemFingerprint, setSystemFingerprint] = useState<boolean>(false);
+  const [apiKey, setApiKey] = useState<string>("");
+  const [hasStoredApiKey, setHasStoredApiKey] = useState<boolean>(false);
+  const [isValidatingApiKey, setIsValidatingApiKey] = useState<boolean>(false);
 
   // Update local state when settings change
   useEffect(() => {
     if (settings) {
-      setProvider(settings.provider || "openai")
-      setModel(settings.model || "gpt-4o")
+      setProvider(settings.provider || "openai");
+      setModel(settings.model || "gpt-4o");
 
       // Ensure numeric parameters have proper default values if undefined
-      setTemperature(typeof settings.temperature === "number" ? settings.temperature : 0.7)
-      setMaxTokens(typeof settings.maxTokens === "number" ? settings.maxTokens : 1024)
-      setTopP(typeof settings.topP === "number" ? settings.topP : 0.9)
-      setFrequencyPenalty(typeof settings.frequencyPenalty === "number" ? settings.frequencyPenalty : 0)
-      setPresencePenalty(typeof settings.presencePenalty === "number" ? settings.presencePenalty : 0)
-      setMaxAutonomousMessages(typeof settings.maxAutonomousMessages === "number" ? settings.maxAutonomousMessages : 4)
-      setConversationCooldown(typeof settings.conversationCooldown === "number" ? settings.conversationCooldown : 5000)
+      setTemperature(
+        typeof settings.temperature === "number" ? settings.temperature : 0.7,
+      );
+      setMaxTokens(
+        typeof settings.maxTokens === "number" ? settings.maxTokens : 1024,
+      );
+      setTopP(typeof settings.topP === "number" ? settings.topP : 0.9);
+      setFrequencyPenalty(
+        typeof settings.frequencyPenalty === "number"
+          ? settings.frequencyPenalty
+          : 0,
+      );
+      setPresencePenalty(
+        typeof settings.presencePenalty === "number"
+          ? settings.presencePenalty
+          : 0,
+      );
+      setMaxAutonomousMessages(
+        typeof settings.maxAutonomousMessages === "number"
+          ? settings.maxAutonomousMessages
+          : 4,
+      );
+      setConversationCooldown(
+        typeof settings.conversationCooldown === "number"
+          ? settings.conversationCooldown
+          : 5000,
+      );
 
-      setSystemFingerprint(typeof settings.systemFingerprint === "boolean" ? settings.systemFingerprint : false)
+      setSystemFingerprint(
+        typeof settings.systemFingerprint === "boolean"
+          ? settings.systemFingerprint
+          : false,
+      );
 
       // Check if we have a stored API key
       const checkApiKeyValidity = async () => {
         if (settings.apiKeySessionId) {
-          setIsValidatingApiKey(true)
+          setIsValidatingApiKey(true);
           try {
-            const isValid = await validateStoredSession(settings.provider)
-            setHasStoredApiKey(isValid)
+            const isValid = await validateStoredSession(settings.provider);
+            setHasStoredApiKey(isValid);
           } catch (error) {
-            console.error("Error validating API key session:", error)
-            setHasStoredApiKey(false)
+            console.error("Error validating API key session:", error);
+            setHasStoredApiKey(false);
           } finally {
-            setIsValidatingApiKey(false)
+            setIsValidatingApiKey(false);
           }
         } else {
-          setHasStoredApiKey(false)
+          setHasStoredApiKey(false);
         }
-      }
+      };
 
-      checkApiKeyValidity()
+      checkApiKeyValidity();
 
       // Clear the API key input field - we don't display the actual API key for security
-      setApiKey("")
+      setApiKey("");
 
       logger.info("Settings page updated with settings:", {
         provider: settings.provider,
@@ -90,20 +134,20 @@ export default function SettingsPage() {
         conversationCooldown: settings.conversationCooldown,
         hasApiKeySessionId: !!settings.apiKeySessionId,
         apiKeySessionId: settings.apiKeySessionId,
-      })
+      });
     }
-  }, [settings])
+  }, [settings]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      setIsProcessing(true)
+      setIsProcessing(true);
 
       // Clean the API key (trim whitespace)
-      const cleanApiKey = apiKey.trim()
-      console.log("API key length after trimming:", cleanApiKey.length)
+      const cleanApiKey = apiKey.trim();
+      console.log("API key length after trimming:", cleanApiKey.length);
 
       // Create a new settings object with all the form values (except API key)
       const newSettings: LLMSettings = {
@@ -117,19 +161,19 @@ export default function SettingsPage() {
         systemFingerprint,
         maxAutonomousMessages,
         conversationCooldown,
-      }
+      };
 
       console.log("Submitting settings:", {
         ...newSettings,
         provider: newSettings.provider,
-      })
+      });
 
       // If a new API key was provided, store it securely
-      let apiKeySuccess = true
-      let sessionId = settings?.apiKeySessionId
+      let apiKeySuccess = true;
+      let sessionId = settings?.apiKeySessionId;
 
       if (cleanApiKey) {
-        logger.info("Setting new API key")
+        logger.info("Setting new API key");
         try {
           // Store the API key securely
           const response = await fetch("/api/api-key/store", {
@@ -141,35 +185,40 @@ export default function SettingsPage() {
               provider: newSettings.provider,
               apiKey: cleanApiKey,
             }),
-          })
+          });
 
           if (!response.ok) {
-            logger.error(`Error storing API key: HTTP ${response.status}`)
-            apiKeySuccess = false
+            logger.error(`Error storing API key: HTTP ${response.status}`);
+            apiKeySuccess = false;
           } else {
-            const data = await response.json()
+            const data = await response.json();
 
             if (!data.success) {
-              logger.error("Failed to store API key:", data.message)
-              apiKeySuccess = false
+              logger.error("Failed to store API key:", data.message);
+              apiKeySuccess = false;
             } else {
               // Get the session ID
-              sessionId = data.sessionId
-              logger.info("Received session ID:", sessionId)
+              sessionId = data.sessionId;
+              logger.info("Received session ID:", sessionId);
 
               // Store the session ID in localStorage only if it exists
               if (sessionId) {
-                localStorage.setItem(`api_session_${newSettings.provider}`, sessionId)
-                logger.info(`Stored session ID in localStorage with key: api_session_${newSettings.provider}`)
+                localStorage.setItem(
+                  `api_session_${newSettings.provider}`,
+                  sessionId,
+                );
+                logger.info(
+                  `Stored session ID in localStorage with key: api_session_${newSettings.provider}`,
+                );
               }
 
-              setHasStoredApiKey(true)
-              setApiKey("") // Clear the input field after successful storage
+              setHasStoredApiKey(true);
+              setApiKey(""); // Clear the input field after successful storage
             }
           }
         } catch (error) {
-          logger.error("Error setting API key:", error)
-          apiKeySuccess = false
+          logger.error("Error setting API key:", error);
+          apiKeySuccess = false;
         }
       }
 
@@ -179,55 +228,59 @@ export default function SettingsPage() {
           description: "Failed to securely store the API key.",
           variant: "destructive",
           duration: 5000,
-        })
+        });
       }
 
       // Add the session ID to the settings if we have one
       if (sessionId) {
-        newSettings.apiKeySessionId = sessionId
-        logger.info("Adding session ID to settings:", sessionId)
+        newSettings.apiKeySessionId = sessionId;
+        logger.info("Adding session ID to settings:", sessionId);
       }
 
       // Update settings in context
-      updateSettings(newSettings)
+      updateSettings(newSettings);
 
       // Force update the client settings
       if (client) {
-        client.updateSettings(newSettings)
+        client.updateSettings(newSettings);
       }
 
       // Save settings
-      const success = await saveSettings()
+      const success = await saveSettings();
 
       if (success && apiKeySuccess) {
         toast({
           title: "Settings saved",
           description: "Your LLM settings have been updated successfully.",
           duration: 3000,
-        })
+        });
       } else if (!success) {
         toast({
           title: "Error saving settings",
           description: "Failed to save LLM settings.",
           variant: "destructive",
           duration: 5000,
-        })
+        });
       }
     } catch (error) {
-      console.error("Error saving settings:", error)
+      console.error("Error saving settings:", error);
       toast({
         title: "Error saving settings",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
         duration: 5000,
-      })
+      });
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   // Available models by provider
-  const modelsByProvider: Record<string, Array<{ id: string; name: string }>> = {
+  const modelsByProvider: Record<
+    string,
+    Array<{ id: string; name: string }>
+  > = {
     openai: [
       { id: "gpt-4o", name: "GPT-4o" },
       { id: "gpt-4-turbo", name: "GPT-4 Turbo" },
@@ -241,19 +294,23 @@ export default function SettingsPage() {
       { id: "anthropic/claude-3-sonnet", name: "Anthropic Claude 3 Sonnet" },
       { id: "meta-llama/llama-3-70b-instruct", name: "Meta Llama 3 70B" },
     ],
-  }
+  };
 
   // Format number safely with fallback
-  const formatNumber = (value: number | undefined, decimals: number, fallback: number): string => {
-    if (typeof value !== "number") return fallback.toFixed(decimals)
-    return value.toFixed(decimals)
-  }
+  const formatNumber = (
+    value: number | undefined,
+    decimals: number,
+    fallback: number,
+  ): string => {
+    if (typeof value !== "number") return fallback.toFixed(decimals);
+    return value.toFixed(decimals);
+  };
 
   // Convert milliseconds to seconds for display
-  const msToSeconds = (ms: number): number => ms / 1000
+  const msToSeconds = (ms: number): number => ms / 1000;
 
   // Convert seconds to milliseconds for storage
-  const secondsToMs = (seconds: number): number => seconds * 1000
+  const secondsToMs = (seconds: number): number => seconds * 1000;
 
   return (
     <div className="min-h-screen p-4 text-white">
@@ -265,7 +322,9 @@ export default function SettingsPage() {
             <Card className="w-full">
               <CardHeader>
                 <CardTitle>Model Configuration</CardTitle>
-                <CardDescription>Configure the LLM model and parameters</CardDescription>
+                <CardDescription>
+                  Configure the LLM model and parameters
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -276,14 +335,14 @@ export default function SettingsPage() {
                     <Select
                       value={provider}
                       onValueChange={(value) => {
-                        logger.info("Provider changed to:", value)
-                        setProvider(value)
+                        logger.info("Provider changed to:", value);
+                        setProvider(value);
                         // Reset model when provider changes
                         if (modelsByProvider[value]) {
-                          setModel(modelsByProvider[value][0].id)
+                          setModel(modelsByProvider[value][0].id);
                         }
                         // Reset API key status when provider changes
-                        setHasStoredApiKey(false)
+                        setHasStoredApiKey(false);
                       }}
                     >
                       <SelectTrigger id="provider">
@@ -306,7 +365,10 @@ export default function SettingsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {modelsByProvider[provider]?.map((modelOption) => (
-                          <SelectItem key={modelOption.id} value={modelOption.id}>
+                          <SelectItem
+                            key={modelOption.id}
+                            value={modelOption.id}
+                          >
                             {modelOption.name}
                           </SelectItem>
                         ))}
@@ -316,14 +378,23 @@ export default function SettingsPage() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label htmlFor="api-key" className="text-sm font-medium flex items-center">
+                      <label
+                        htmlFor="api-key"
+                        className="text-sm font-medium flex items-center"
+                      >
                         API Key
                         {isValidatingApiKey ? (
                           <Spinner size={16} className="ml-2" />
                         ) : hasStoredApiKey ? (
-                          <ShieldCheck size={16} className="ml-2 text-green-500" />
+                          <ShieldCheck
+                            size={16}
+                            className="ml-2 text-green-500"
+                          />
                         ) : (
-                          <ShieldAlert size={16} className="ml-2 text-amber-500" />
+                          <ShieldAlert
+                            size={16}
+                            className="ml-2 text-amber-500"
+                          />
                         )}
                       </label>
                       {hasStoredApiKey && (
@@ -350,12 +421,16 @@ export default function SettingsPage() {
                         : "OpenRouter provides access to multiple LLM providers through a single API key."}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Your API key is stored securely and never exposed in the browser.
+                      Your API key is stored securely and never exposed in the
+                      browser.
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="temperature" className="text-sm font-medium">
+                    <label
+                      htmlFor="temperature"
+                      className="text-sm font-medium"
+                    >
                       Temperature: {formatNumber(temperature, 1, 0.7)}
                     </label>
                     <div className="flex items-center gap-2">
@@ -371,7 +446,8 @@ export default function SettingsPage() {
                       />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Controls randomness: Lower values are more deterministic, higher values are more creative.
+                      Controls randomness: Lower values are more deterministic,
+                      higher values are more creative.
                     </p>
                   </div>
 
@@ -408,11 +484,16 @@ export default function SettingsPage() {
                         className="w-full"
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">Controls diversity via nucleus sampling.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Controls diversity via nucleus sampling.
+                    </p>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="frequency-penalty" className="text-sm font-medium">
+                    <label
+                      htmlFor="frequency-penalty"
+                      className="text-sm font-medium"
+                    >
                       Frequency Penalty: {formatNumber(frequencyPenalty, 1, 0)}
                     </label>
                     <div className="flex items-center gap-2">
@@ -423,15 +504,22 @@ export default function SettingsPage() {
                         max="2"
                         step="0.1"
                         value={frequencyPenalty}
-                        onChange={(e) => setFrequencyPenalty(Number(e.target.value))}
+                        onChange={(e) =>
+                          setFrequencyPenalty(Number(e.target.value))
+                        }
                         className="w-full"
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">Reduces repetition of token sequences.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Reduces repetition of token sequences.
+                    </p>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="presence-penalty" className="text-sm font-medium">
+                    <label
+                      htmlFor="presence-penalty"
+                      className="text-sm font-medium"
+                    >
                       Presence Penalty: {formatNumber(presencePenalty, 1, 0)}
                     </label>
                     <div className="flex items-center gap-2">
@@ -442,15 +530,22 @@ export default function SettingsPage() {
                         max="2"
                         step="0.1"
                         value={presencePenalty}
-                        onChange={(e) => setPresencePenalty(Number(e.target.value))}
+                        onChange={(e) =>
+                          setPresencePenalty(Number(e.target.value))
+                        }
                         className="w-full"
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">Encourages talking about new topics.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Encourages talking about new topics.
+                    </p>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="max-autonomous-messages" className="text-sm font-medium">
+                    <label
+                      htmlFor="max-autonomous-messages"
+                      className="text-sm font-medium"
+                    >
                       Max Autonomous Messages: {maxAutonomousMessages}
                     </label>
                     <Input
@@ -459,16 +554,23 @@ export default function SettingsPage() {
                       min="1"
                       max="50"
                       value={maxAutonomousMessages}
-                      onChange={(e) => setMaxAutonomousMessages(Number(e.target.value))}
+                      onChange={(e) =>
+                        setMaxAutonomousMessages(Number(e.target.value))
+                      }
                     />
                     <p className="text-xs text-muted-foreground">
-                      Maximum number of messages in autonomous conversations before they automatically end.
+                      Maximum number of messages in autonomous conversations
+                      before they automatically end.
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="conversation-cooldown" className="text-sm font-medium">
-                      Conversation Cooldown: {msToSeconds(conversationCooldown)} seconds
+                    <label
+                      htmlFor="conversation-cooldown"
+                      className="text-sm font-medium"
+                    >
+                      Conversation Cooldown: {msToSeconds(conversationCooldown)}{" "}
+                      seconds
                     </label>
                     <Input
                       id="conversation-cooldown"
@@ -476,10 +578,15 @@ export default function SettingsPage() {
                       min="1"
                       max="300"
                       value={msToSeconds(conversationCooldown)}
-                      onChange={(e) => setConversationCooldown(secondsToMs(Number(e.target.value)))}
+                      onChange={(e) =>
+                        setConversationCooldown(
+                          secondsToMs(Number(e.target.value)),
+                        )
+                      }
                     />
                     <p className="text-xs text-muted-foreground">
-                      Time (in seconds) an agent must wait before starting a new autonomous conversation.
+                      Time (in seconds) an agent must wait before starting a new
+                      autonomous conversation.
                     </p>
                   </div>
 
@@ -492,13 +599,20 @@ export default function SettingsPage() {
                         onChange={(e) => setSystemFingerprint(e.target.checked)}
                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <label htmlFor="system-fingerprint" className="text-sm font-medium">
+                      <label
+                        htmlFor="system-fingerprint"
+                        className="text-sm font-medium"
+                      >
                         Include system fingerprint
                       </label>
                     </div>
                   )}
 
-                  <Button type="submit" className="w-full" disabled={isProcessing}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isProcessing}
+                  >
                     {isProcessing ? (
                       <>
                         <Spinner size={16} className="mr-2" />
@@ -519,5 +633,5 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -24,4 +24,4 @@ COPY docker/demo/demo_simulator.py ./
 ENV PYTHONPATH=/app
 
 # Run the demo simulator
-CMD ["python", "demo_simulator.py"] 
+CMD ["python", "demo_simulator.py"]

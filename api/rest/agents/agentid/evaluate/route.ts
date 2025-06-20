@@ -12,7 +12,7 @@ export async function POST(
     // 2. Run the readiness evaluator
     // 3. Store the results
     // 4. Return the updated score
-    
+
     // Simulate evaluation taking some time
     await new Promise(resolve => setTimeout(resolve, 2000))
 
@@ -65,7 +65,7 @@ export async function POST(
     newScore.metrics.goals.successful = Math.floor(
       newScore.metrics.goals.total_attempted * (Math.random() * 0.2 + 0.75)
     )
-    newScore.metrics.goals.success_rate = 
+    newScore.metrics.goals.success_rate =
       newScore.metrics.goals.successful / newScore.metrics.goals.total_attempted
 
     // Calculate successful interactions
@@ -76,20 +76,20 @@ export async function POST(
     // Calculate overall score
     const scores = newScore.scores
     const weights = [0.25, 0.20, 0.20, 0.20, 0.15]
-    scores.overall = 
+    scores.overall =
       scores.knowledge_maturity * weights[0] +
       scores.goal_achievement * weights[1] +
       scores.model_stability * weights[2] +
       scores.collaboration * weights[3] +
       scores.resource_management * weights[4]
-    
+
     // Check if ready (with some randomness for demo)
     newScore.is_ready = scores.overall >= 0.85 || Math.random() > 0.7
 
     // Generate recommendations if not ready
     if (!newScore.is_ready) {
       const recs = []
-      
+
       if (scores.knowledge_maturity < 0.85) {
         const needed = 1000 - newScore.metrics.knowledge.experience_count
         if (needed > 0) {
@@ -99,14 +99,14 @@ export async function POST(
           recs.push(`Extract more patterns: ${newScore.metrics.knowledge.pattern_count}/50 patterns`)
         }
       }
-      
+
       if (scores.goal_achievement < 0.9) {
         recs.push(`Improve goal success rate: ${(newScore.metrics.goals.success_rate * 100).toFixed(1)}% (target: 90%)`)
         if (newScore.metrics.goals.complex_completed < 5) {
           recs.push("Complete more complex goals for deployment readiness")
         }
       }
-      
+
       if (scores.model_stability < 0.8) {
         if (!newScore.metrics.model_stability.is_converged) {
           recs.push("Model has not converged - continue training")
@@ -115,7 +115,7 @@ export async function POST(
           recs.push(`Need more stable iterations: ${newScore.metrics.model_stability.stable_iterations}/100`)
         }
       }
-      
+
       if (scores.collaboration < 0.8) {
         if (newScore.metrics.collaboration.successful_interactions < 20) {
           recs.push("Engage in more successful collaborations")
@@ -124,13 +124,13 @@ export async function POST(
           recs.push("Share more knowledge with other agents")
         }
       }
-      
+
       if (scores.resource_management < 0.8) {
         if (newScore.metrics.resources.resource_efficiency < 0.8) {
           recs.push(`Improve resource efficiency: ${(newScore.metrics.resources.resource_efficiency * 100).toFixed(1)}%`)
         }
       }
-      
+
       newScore.recommendations = recs
     }
 
@@ -142,4 +142,4 @@ export async function POST(
       { status: 500 }
     )
   }
-} 
+}

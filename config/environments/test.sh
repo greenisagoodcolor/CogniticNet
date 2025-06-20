@@ -36,4 +36,4 @@ docker compose -f docker-compose.yml -f environments/docker/docker-compose.testi
 echo -e "${BLUE}Cleaning up test environment...${NC}"
 docker compose -f docker-compose.yml -f environments/docker/docker-compose.testing.yml down -v
 
-echo -e "${GREEN}All tests completed!${NC}" 
+echo -e "${GREEN}All tests completed!${NC}"

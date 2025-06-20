@@ -1,31 +1,35 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
-import { useLLM } from "@/contexts/llm-context"
+import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { useLLM } from "@/contexts/llm-context";
 
 export default function LLMTest() {
-  const { client, isProcessing, setIsProcessing, settings } = useLLM()
-  const [prompt, setPrompt] = useState<string>("Explain quantum computing in simple terms.")
-  const [response, setResponse] = useState<string>("")
-  const [debugInfo, setDebugInfo] = useState<string>("")
-  const [sessionDebug, setSessionDebug] = useState<string>("")
-  const [settingsDebug, setSettingsDebug] = useState<string>("")
+  const { client, isProcessing, setIsProcessing, settings } = useLLM();
+  const [prompt, setPrompt] = useState<string>(
+    "Explain quantum computing in simple terms.",
+  );
+  const [response, setResponse] = useState<string>("");
+  const [debugInfo, setDebugInfo] = useState<string>("");
+  const [sessionDebug, setSessionDebug] = useState<string>("");
+  const [settingsDebug, setSettingsDebug] = useState<string>("");
 
   // Add debug info on mount and when settings change
   useEffect(() => {
     const checkSessionId = async () => {
       if (!settings) {
-        setSessionDebug("Settings not available")
-        return
+        setSessionDebug("Settings not available");
+        return;
       }
 
       try {
         // Get session ID from localStorage
-        const localSessionId = localStorage.getItem(`api_session_${settings.provider}`)
+        const localSessionId = localStorage.getItem(
+          `api_session_${settings.provider}`,
+        );
 
         // Debug session info
         setSessionDebug(`
@@ -34,25 +38,29 @@ Settings has apiKeySessionId: ${!!settings.apiKeySessionId}
 Settings apiKeySessionId: ${settings.apiKeySessionId || "undefined"}
 Local storage sessionId: ${localSessionId || "undefined"}
 Settings keys: ${Object.keys(settings).join(", ")}
-`)
+`);
       } catch (error) {
-        console.error("Error checking session ID:", error)
-        setSessionDebug(`Error checking session ID: ${error instanceof Error ? error.message : "Unknown error"}`)
+        console.error("Error checking session ID:", error);
+        setSessionDebug(
+          `Error checking session ID: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
-    }
+    };
 
-    checkSessionId()
-  }, [settings])
+    checkSessionId();
+  }, [settings]);
 
   const debugSession = useCallback(() => {
     if (!settings) {
-      setSessionDebug("Settings not available")
-      return
+      setSessionDebug("Settings not available");
+      return;
     }
 
     try {
       // Get session ID from localStorage
-      const localSessionId = localStorage.getItem(`api_session_${settings.provider}`)
+      const localSessionId = localStorage.getItem(
+        `api_session_${settings.provider}`,
+      );
 
       // Debug session info
       setSessionDebug(`
@@ -63,16 +71,16 @@ Has API Key Session ID: ${!!settings.apiKeySessionId}
 API Key Session ID: ${settings.apiKeySessionId || "Not set"}
 Local Storage Session ID: ${localSessionId || "Not found"}
 Session ID Match: ${settings.apiKeySessionId === localSessionId ? "Yes" : "No"}
-      `)
+      `);
     } catch (error) {
-      setSessionDebug(`Error debugging session: ${error}`)
+      setSessionDebug(`Error debugging session: ${error}`);
     }
-  }, [settings])
+  }, [settings]);
 
   const debugSettings = useCallback(() => {
     if (!settings) {
-      setSettingsDebug("Settings not available")
-      return
+      setSettingsDebug("Settings not available");
+      return;
     }
 
     try {
@@ -85,29 +93,29 @@ Max Tokens: ${settings.maxTokens}
 Settings Object Keys: ${Object.keys(settings).join(", ")}
 Has API Key: ${!!settings.apiKey}
 API Key Length: ${settings.apiKey ? settings.apiKey.length : 0}
-      `
+      `;
     } catch (error) {
-      setSettingsDebug(`Error debugging settings: ${error}`)
+      setSettingsDebug(`Error debugging settings: ${error}`);
     }
-  }, [settings])
+  }, [settings]);
 
   const handleTest = async () => {
-    if (!prompt.trim() || isProcessing) return
+    if (!prompt.trim() || isProcessing) return;
 
     if (!settings) {
-      setResponse("Error: Settings not available")
-      return
+      setResponse("Error: Settings not available");
+      return;
     }
 
     if (!client) {
-      setResponse("Error: LLM client not available")
-      return
+      setResponse("Error: LLM client not available");
+      return;
     }
 
     try {
-      setIsProcessing(true)
-      setResponse("")
-      setDebugInfo("")
+      setIsProcessing(true);
+      setResponse("");
+      setDebugInfo("");
 
       // Log detailed debug info about settings and session
       console.log("Test settings debug:", {
@@ -115,25 +123,31 @@ API Key Length: ${settings.apiKey ? settings.apiKey.length : 0}
         hasApiKeySessionId: !!settings.apiKeySessionId,
         apiKeySessionId: settings.apiKeySessionId,
         settingsKeys: Object.keys(settings),
-        localStorageSessionId: localStorage.getItem(`api_session_${settings.provider}`),
-      })
+        localStorageSessionId: localStorage.getItem(
+          `api_session_${settings.provider}`,
+        ),
+      });
 
       // Check if API key session ID is available
-      const sessionId = settings.apiKeySessionId || localStorage.getItem(`api_session_${settings.provider}`)
+      const sessionId =
+        settings.apiKeySessionId ||
+        localStorage.getItem(`api_session_${settings.provider}`);
 
       if (!sessionId) {
         throw new Error(
           `API key is required for ${settings.provider} provider. Please add your API key in the Settings tab.`,
-        )
+        );
       }
 
       // If we have a session ID in localStorage but not in settings, update the settings
       if (!settings.apiKeySessionId && sessionId) {
-        console.log("Found session ID in localStorage but not in settings, updating settings")
+        console.log(
+          "Found session ID in localStorage but not in settings, updating settings",
+        );
         client.updateSettings({
           ...settings,
           apiKeySessionId: sessionId,
-        })
+        });
       }
 
       // Add debug info
@@ -146,40 +160,44 @@ Max tokens: ${settings.maxTokens}
 Top P: ${settings.topP}
 Frequency penalty: ${settings.frequencyPenalty}
 Presence penalty: ${settings.presencePenalty}
-System fingerprint: ${settings.systemFingerprint}`)
+System fingerprint: ${settings.systemFingerprint}`);
 
       // Force update the client settings before making the call
       client.updateSettings({
         ...settings,
         apiKeySessionId: sessionId,
-      })
+      });
 
       // Get the current settings directly from the client to ensure we're using the latest
-      const currentSettings = client.getSettings()
+      const currentSettings = client.getSettings();
       console.log("Current settings before test:", {
         provider: currentSettings.provider,
         model: currentSettings.model,
         hasApiKeySessionId: !!currentSettings.apiKeySessionId,
         apiKeySessionId: currentSettings.apiKeySessionId,
-      })
+      });
 
       try {
         const result = await client.generateResponse(
           "You are a helpful AI assistant that explains complex topics in simple terms.",
           prompt,
-        )
-        setResponse(result)
+        );
+        setResponse(result);
       } catch (error) {
-        console.error("Error in client.generateResponse:", error)
-        setResponse(`Error: ${error instanceof Error ? error.message : "Unknown error"}`)
+        console.error("Error in client.generateResponse:", error);
+        setResponse(
+          `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     } catch (error) {
-      console.error("Error testing LLM:", error)
-      setResponse(`Error: ${error instanceof Error ? error.message : "Unknown error"}`)
+      console.error("Error testing LLM:", error);
+      setResponse(
+        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   return (
     <Card className="w-full">
@@ -210,7 +228,11 @@ System fingerprint: ${settings.systemFingerprint}`)
             />
           </div>
 
-          <Button onClick={handleTest} disabled={isProcessing || !prompt.trim()} className="w-full">
+          <Button
+            onClick={handleTest}
+            disabled={isProcessing || !prompt.trim()}
+            className="w-full"
+          >
             {isProcessing ? (
               <>
                 <Spinner size={16} className="mr-2" />
@@ -233,11 +255,13 @@ System fingerprint: ${settings.systemFingerprint}`)
           {response && (
             <div className="space-y-2 mt-4">
               <h3 className="text-sm font-medium">Response:</h3>
-              <div className="p-4 bg-muted rounded-md whitespace-pre-wrap">{response}</div>
+              <div className="p-4 bg-muted rounded-md whitespace-pre-wrap">
+                {response}
+              </div>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

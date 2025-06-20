@@ -5,6 +5,7 @@ This document describes the Generalized Notation Notation (GNN) format used in F
 ## Overview
 
 GNN models are written in Markdown with YAML frontmatter. They are:
+
 - Human-readable and editable
 - Machine-parsable for execution
 - Version-controlled friendly
@@ -69,11 +70,13 @@ tags:
 ```
 
 **Required fields:**
+
 - `model_name`: Unique identifier for the model
 - `version`: Semantic version (major.minor)
 - `agent_class`: Base class (Explorer, Merchant, Scholar, Guardian, Custom)
 
 **Optional fields:**
+
 - `description`: One-line summary
 - `author`: Creator's name
 - `created`: Creation date (YYYY-MM-DD)
@@ -95,17 +98,20 @@ Beliefs represent what the agent thinks is true about the world:
 ```
 
 **Format:**
-- Use bullet points (-, *, or •)
+
+- Use bullet points (-, \*, or •)
 - Write in first person or general statements
 - Keep beliefs concise and clear
 - Order by importance
 
 **Good beliefs:**
+
 - ✓ "Exploration reveals new opportunities"
 - ✓ "Energy must be conserved for survival"
 - ✓ "Patterns in the environment can be learned"
 
 **Poor beliefs:**
+
 - ✗ "Maybe there could be something interesting somewhere"
 - ✗ "I think that possibly cooperation might be good sometimes"
 
@@ -127,12 +133,14 @@ Preferences define what the agent values and how strongly:
 ```
 
 **Format:**
+
 - Use `key: value` pairs
 - Numeric values typically 0.0-1.0
 - Can use integers for counts
 - Can use strings for categories
 
 **Common preferences:**
+
 - `curiosity_weight`: Drive to explore (0-1)
 - `safety_threshold`: Minimum safe energy (0-1)
 - `social_weight`: Importance of social interaction (0-1)
@@ -156,21 +164,25 @@ Policies define decision-making rules:
 ```
 
 **Format:**
+
 - Use bold for policy names: `**PolicyName**`
 - Follow with colon and description
 - Include trigger conditions
 - Specify concrete actions
 
 **Policy structure:**
+
 ```markdown
 - **PolicyName**: When [condition], then [action]
 ```
 
 **Good policies:**
+
 - ✓ `**Explore**: When energy > 50% and no threats detected, move to highest-value unexplored hex`
 - ✓ `**Trade**: When meeting merchant class agents, offer resources for information`
 
 **Poor policies:**
+
 - ✗ `**Do Something**: Sometimes do things`
 - ✗ `**Move**: Go places`
 
@@ -188,6 +200,7 @@ Defines relationships between internal variables:
 ```
 
 **Format:**
+
 - Use arrow notation: `source -> target`
 - Can specify connection strength: `source -0.8-> target`
 - Group related connections
@@ -204,13 +217,14 @@ Sets starting values for agent variables:
 - explored_hexes: 1
 - social_connections: 0
 - resources:
-    - materials: 10
-    - information: 0
+  - materials: 10
+  - information: 0
 - position: random
 - heading: north
 ```
 
 **Format:**
+
 - Use `key: value` pairs
 - Can nest structures with indentation
 - Specify units where relevant
@@ -223,12 +237,13 @@ Mathematical relationships for advanced models:
 ## Equations
 
 - free_energy = complexity - accuracy
-- exploration_value = curiosity_weight * uncertainty - risk_cost
-- social_benefit = (shared_knowledge * trust_level) / interaction_cost
-- learning_delta = learning_rate * (observation - prediction)
+- exploration_value = curiosity_weight \* uncertainty - risk_cost
+- social_benefit = (shared_knowledge \* trust_level) / interaction_cost
+- learning_delta = learning_rate \* (observation - prediction)
 ```
 
 **Format:**
+
 - Use standard mathematical notation
 - Define all variables used
 - Keep equations simple and computational
@@ -294,13 +309,13 @@ personality:
 - explored_hexes: 1
 - known_agents: 0
 - strategy_weights:
-    - random_walk: 0.33
-    - systematic_sweep: 0.33
-    - follow_edges: 0.34
+  - random_walk: 0.33
+  - systematic_sweep: 0.33
+  - follow_edges: 0.34
 - memory:
-    - successful_paths: []
-    - dangerous_locations: []
-    - helpful_agents: []
+  - successful_paths: []
+  - dangerous_locations: []
+  - helpful_agents: []
 ```
 
 ## Validation Rules
@@ -317,24 +332,28 @@ FreeAgentics validates GNN models for:
 ## Best Practices
 
 ### Writing Beliefs
+
 - Start with 3-7 core beliefs
 - Make them actionable
 - Avoid contradictions
 - Express as facts, not uncertainties
 
 ### Setting Preferences
+
 - Use 0-1 scale for weights
 - Define all referenced preferences
 - Balance competing values
 - Document unusual values
 
 ### Creating Policies
+
 - Order by priority/frequency
 - Make conditions specific
 - Define clear actions
 - Include failure cases
 
 ### Model Evolution
+
 - Increment version for changes
 - Document major updates
 - Preserve backward compatibility
@@ -347,8 +366,8 @@ FreeAgentics validates GNN models for:
 ```markdown
 ## Preferences
 
-- curiosity_weight: dynamic(0.5, 0.9)  # Varies based on success
-- risk_tolerance: adaptive(experience)   # Learns from outcomes
+- curiosity_weight: dynamic(0.5, 0.9) # Varies based on success
+- risk_tolerance: adaptive(experience) # Learns from outcomes
 ```
 
 ### Conditional Policies
@@ -374,16 +393,19 @@ FreeAgentics validates GNN models for:
 ## Tools and Utilities
 
 ### Validation
+
 ```bash
 python src/pipeline/main.py --only-steps 2 --models-dir models/
 ```
 
 ### Visualization
+
 View parsed models in the web interface at `/models`
 
 ### Testing
+
 Test models in isolated simulations before full deployment
 
 ---
 
-*For more examples, see the [models directory](../../models/) in the repository.* 
+_For more examples, see the [models directory](../../models/) in the repository._

@@ -21,6 +21,7 @@ from enum import Enum
 
 class FileType(Enum):
     """File type classification for filtering"""
+
     PYTHON = "python"
     JAVASCRIPT = "javascript"
     TYPESCRIPT = "typescript"
@@ -41,6 +42,7 @@ class FileInfo:
     Following Clean Code principles - simple data structure
     with clear, descriptive field names.
     """
+
     path: Path
     relative_path: Path
     size: int
@@ -66,9 +68,21 @@ class RepositoryTraverser:
 
     # File patterns to ignore by default (following .gitignore conventions)
     DEFAULT_IGNORE_PATTERNS = {
-        ".git", "__pycache__", ".pytest_cache", "node_modules",
-        ".next", ".vscode", ".idea", "*.pyc", "*.pyo", "*.pyd",
-        ".DS_Store", "Thumbs.db", "*.egg-info", "dist", "build"
+        ".git",
+        "__pycache__",
+        ".pytest_cache",
+        "node_modules",
+        ".next",
+        ".vscode",
+        ".idea",
+        "*.pyc",
+        "*.pyo",
+        "*.pyd",
+        ".DS_Store",
+        "Thumbs.db",
+        "*.egg-info",
+        "dist",
+        "build",
     }
 
     # File type mappings based on extensions
@@ -93,7 +107,7 @@ class RepositoryTraverser:
         root_path: Path,
         ignore_patterns: Optional[Set[str]] = None,
         file_filter: Optional[Callable[[Path], bool]] = None,
-        follow_symlinks: bool = False
+        follow_symlinks: bool = False,
     ):
         """
         Initialize repository traverser.
@@ -156,7 +170,9 @@ class RepositoryTraverser:
             try:
                 entries = list(directory.iterdir())
             except PermissionError:
-                self.logger.warning(f"Permission denied accessing directory: {directory}")
+                self.logger.warning(
+                    f"Permission denied accessing directory: {directory}"
+                )
                 return
             except OSError as e:
                 self.logger.warning(f"OS error accessing directory {directory}: {e}")
@@ -177,7 +193,9 @@ class RepositoryTraverser:
                     try:
                         resolved = entry.resolve()
                         if not resolved.is_relative_to(self.root_path):
-                            self.logger.debug(f"Symlink points outside repository: {entry}")
+                            self.logger.debug(
+                                f"Symlink points outside repository: {entry}"
+                            )
                             continue
                     except (OSError, RuntimeError):
                         self.logger.warning(f"Could not resolve symlink: {entry}")
@@ -221,6 +239,7 @@ class RepositoryTraverser:
         for pattern in self.ignore_patterns:
             if "*" in pattern:
                 import fnmatch
+
                 if fnmatch.fnmatch(name, pattern):
                     return True
 
@@ -250,7 +269,7 @@ class RepositoryTraverser:
                 modified_time=stat.st_mtime,
                 file_type=self._determine_file_type(file_path),
                 is_symlink=file_path.is_symlink(),
-                permissions=oct(stat.st_mode)[-3:]
+                permissions=oct(stat.st_mode)[-3:],
             )
         except OSError as e:
             self.logger.error(f"Could not access file {file_path}: {e}")
@@ -322,10 +341,25 @@ class RepositoryTraverser:
             bool: True if file appears to be binary
         """
         binary_extensions = {
-            ".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg",
-            ".pdf", ".zip", ".tar", ".gz", ".bz2",
-            ".exe", ".dll", ".so", ".dylib",
-            ".woff", ".woff2", ".ttf", ".eot"
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+            ".ico",
+            ".svg",
+            ".pdf",
+            ".zip",
+            ".tar",
+            ".gz",
+            ".bz2",
+            ".exe",
+            ".dll",
+            ".so",
+            ".dylib",
+            ".woff",
+            ".woff2",
+            ".ttf",
+            ".eot",
         }
 
         if file_path.suffix.lower() in binary_extensions:
@@ -334,10 +368,10 @@ class RepositoryTraverser:
         # For small files, check content
         if file_path.stat().st_size < 8192:  # 8KB threshold
             try:
-                with open(file_path, 'rb') as f:
+                with open(file_path, "rb") as f:
                     chunk = f.read(1024)
                     # Simple heuristic: if file contains null bytes, it's likely binary
-                    return b'\x00' in chunk
+                    return b"\x00" in chunk
             except (OSError, PermissionError):
                 pass
 
@@ -383,16 +417,16 @@ class RepositoryTraverser:
             "total_size": sum(f.size for f in files),
             "file_types": file_types,
             "largest_files": sorted(files, key=lambda f: f.size, reverse=True)[:10],
-            "most_recent": sorted(files, key=lambda f: f.modified_time, reverse=True)[:10]
+            "most_recent": sorted(files, key=lambda f: f.modified_time, reverse=True)[
+                :10
+            ],
         }
 
         return stats
 
 
 def create_traverser(
-    root_path: str,
-    ignore_patterns: Optional[Set[str]] = None,
-    **kwargs: Any
+    root_path: str, ignore_patterns: Optional[Set[str]] = None, **kwargs: Any
 ) -> RepositoryTraverser:
     """
     Factory function to create a repository traverser.
@@ -406,9 +440,7 @@ def create_traverser(
         RepositoryTraverser: Configured traverser instance
     """
     return RepositoryTraverser(
-        root_path=Path(root_path),
-        ignore_patterns=ignore_patterns,
-        **kwargs
+        root_path=Path(root_path), ignore_patterns=ignore_patterns, **kwargs
     )
 
 
@@ -423,7 +455,7 @@ if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     # Create traverser and run
@@ -433,7 +465,7 @@ if __name__ == "__main__":
         files = list(traverser.traverse())
         stats = traverser.get_stats()
 
-        print(f"Repository Analysis Complete:")
+        print("Repository Analysis Complete:")
         print(f"  Total files: {stats['total_files']}")
         print(f"  Total size: {stats['total_size']:,} bytes")
         print(f"  File types: {stats['file_types']}")

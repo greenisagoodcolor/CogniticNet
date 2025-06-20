@@ -82,15 +82,15 @@ async def world_updates_websocket(websocket: WebSocket):
     try:
         # Subscribe to world events
         subscription_id = event_bus.subscribe("world_updates")
-        
+
         while True:
             # Get updates from event bus
             updates = await event_bus.get_updates(subscription_id)
-            
+
             # Send to client
             if updates:
                 await websocket.send_json(updates)
-            
+
             # Small delay to prevent CPU spinning
             await asyncio.sleep(0.1)
     except WebSocketDisconnect:
@@ -173,4 +173,3 @@ Follow security best practices from industry experts. Conduct thorough security 
 ### Description: Implement automated checks and manual review processes to ensure all API and interface layer implementations strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architecture decision records.
 ### Details:
 Create automated linting rules and CI/CD checks that verify: 1) All API files are in the correct directories, 2) Naming conventions are followed, 3) No core domain modules import from interface layers, 4) All interface layer imports from core domain use proper abstractions. Include documentation on how to maintain architectural compliance.
-

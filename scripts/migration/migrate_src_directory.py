@@ -310,19 +310,19 @@ class SrcMigrator:
 
             # Update src.* imports to new locations
             import_mappings = {
-                "src.database": "infrastructure.database",
-                "src.hardware": "infrastructure.hardware",
-                "src.deployment": "infrastructure.deployment",
-                "src.export": "infrastructure.export",
-                "src.agents": "agents.core",  # Special case
-                "src.learning": "learning",
-                "src.simulation": "simulation",
-                "src.models": "models",
-                "src.knowledge": "knowledge",
-                "src.readiness": "readiness",
-                "src.monitoring": "monitoring",
-                "src.validation": "validation",
-                "src.pipeline": "scripts.pipeline",
+                "infrastructure.database": "infrastructure.database",
+                "infrastructure.hardware": "infrastructure.hardware",
+                "infrastructure.deployment": "infrastructure.deployment",
+                "infrastructure.export": "infrastructure.export",
+                "agents.core": "agents.core",  # Special case
+                "learning": "learning",
+                "simulation": "simulation",
+                "models": "models",
+                "knowledge": "knowledge",
+                "readiness": "readiness",
+                "monitoring": "monitoring",
+                "validation": "validation",
+                "scripts.pipeline": "scripts.pipeline",
             }
 
             for old_import, new_import in import_mappings.items():

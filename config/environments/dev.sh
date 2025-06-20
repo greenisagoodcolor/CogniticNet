@@ -21,4 +21,4 @@ fi
 echo -e "${BLUE}Starting Docker services...${NC}"
 docker compose -f docker-compose.yml -f environments/docker/docker-compose.local.yml up
 
-echo -e "${GREEN}Development environment stopped.${NC}" 
+echo -e "${GREEN}Development environment stopped.${NC}"

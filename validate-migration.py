@@ -107,9 +107,9 @@ def check_imports():
 
     # Python import patterns that should NOT exist
     bad_patterns = [
-        "from src.agents.basic_agent",
-        "import src.agents.basic_agent",
-        "from src.agents.active_inference",
+        "from agents.core.basic_agent",
+        "import agents.core.basic_agent",
+        "from agents.core.active_inference",
         "from src.gnn",
         "from src.world",
         "from src.tests",

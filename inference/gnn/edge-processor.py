@@ -8,11 +8,10 @@ and various edge attributes.
 
 import numpy as np
 import torch
-from typing import Dict, List, Tuple, Any, Optional, Union, Set
+from typing import Dict, List, Tuple, Any, Optional, Union
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
-from collections import defaultdict
 import scipy.sparse as sp
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 class EdgeType(Enum):
     """Types of edges in the graph"""
+
     DIRECTED = "directed"
     UNDIRECTED = "undirected"
     BIDIRECTIONAL = "bidirectional"
@@ -29,6 +29,7 @@ class EdgeType(Enum):
 
 class EdgeFeatureType(Enum):
     """Types of edge features"""
+
     WEIGHT = "weight"
     DISTANCE = "distance"
     SIMILARITY = "similarity"
@@ -41,6 +42,7 @@ class EdgeFeatureType(Enum):
 @dataclass
 class EdgeConfig:
     """Configuration for edge processing"""
+
     edge_type: EdgeType = EdgeType.DIRECTED
     feature_types: List[EdgeFeatureType] = field(default_factory=list)
     normalize_weights: bool = True
@@ -52,6 +54,7 @@ class EdgeConfig:
 @dataclass
 class Edge:
     """Represents an edge in the graph"""
+
     source: int
     target: int
     features: Dict[str, Any] = field(default_factory=dict)
@@ -63,6 +66,7 @@ class Edge:
 @dataclass
 class EdgeBatch:
     """Batch of edges for efficient processing"""
+
     edge_index: torch.Tensor  # Shape: [2, num_edges]
     edge_attr: Optional[torch.Tensor] = None  # Shape: [num_edges, num_features]
     edge_weight: Optional[torch.Tensor] = None  # Shape: [num_edges]
@@ -98,12 +102,14 @@ class EdgeProcessor:
     def _initialize_processors(self):
         """Initialize feature processors"""
         for feature_type in self.config.feature_types:
-            if feature_type in [EdgeFeatureType.WEIGHT, EdgeFeatureType.DISTANCE,
-                               EdgeFeatureType.SIMILARITY]:
+            if feature_type in [
+                EdgeFeatureType.WEIGHT,
+                EdgeFeatureType.DISTANCE,
+                EdgeFeatureType.SIMILARITY,
+            ]:
                 self.scalers[feature_type.value] = StandardScaler()
 
-    def process_edges(self, edges: List[Edge],
-                     num_nodes: int) -> EdgeBatch:
+    def process_edges(self, edges: List[Edge], num_nodes: int) -> EdgeBatch:
         """
         Process a list of edges into an efficient batch representation.
 
@@ -144,10 +150,10 @@ class EdgeProcessor:
             edge_weight=edge_weight,
             edge_type=edge_type,
             metadata={
-                'num_edges': edge_index.shape[1],
-                'num_nodes': num_nodes,
-                'has_self_loops': self._has_self_loops(edge_index)
-            }
+                "num_edges": edge_index.shape[1],
+                "num_nodes": num_nodes,
+                "has_self_loops": self._has_self_loops(edge_index),
+            },
         )
 
     def _convert_edge_type(self, edges: List[Edge]) -> List[Edge]:
@@ -174,7 +180,7 @@ class EdgeProcessor:
                     features=edge.features.copy(),
                     weight=edge.weight,
                     edge_type=edge.edge_type,
-                    metadata=edge.metadata.copy()
+                    metadata=edge.metadata.copy(),
                 )
                 undirected_edges.append(new_edge)
 
@@ -196,7 +202,7 @@ class EdgeProcessor:
                     features=edge.features.copy(),
                     weight=edge.weight,
                     edge_type=edge.edge_type,
-                    metadata=edge.metadata.copy()
+                    metadata=edge.metadata.copy(),
                 )
                 bidirectional_edges.append(reverse_edge)
 
@@ -313,7 +319,9 @@ class EdgeProcessor:
 
         return torch.tensor(similarities, dtype=torch.float32)
 
-    def _extract_categorical_features(self, edges: List[Edge]) -> Optional[torch.Tensor]:
+    def _extract_categorical_features(
+        self, edges: List[Edge]
+    ) -> Optional[torch.Tensor]:
         """Extract categorical edge features"""
         if not any("category" in edge.features for edge in edges):
             return None
@@ -369,7 +377,7 @@ class EdgeProcessor:
             dt.month / 12.0,
             (dt.year - 2000) / 100.0,
             float(dt.weekday() >= 5),
-            timestamp / 1e10
+            timestamp / 1e10,
         ]
 
     def _extract_embedding_features(self, edges: List[Edge]) -> Optional[torch.Tensor]:
@@ -406,8 +414,9 @@ class EdgeProcessor:
 
         return embeddings
 
-    def _extract_custom_features(self, edges: List[Edge],
-                                feature_name: str) -> Optional[torch.Tensor]:
+    def _extract_custom_features(
+        self, edges: List[Edge], feature_name: str
+    ) -> Optional[torch.Tensor]:
         """Extract custom features from edges"""
         features = []
 
@@ -429,8 +438,9 @@ class EdgeProcessor:
 
         # Add weights for self-loops if needed
         if self.config.self_loops:
-            num_self_loops = max(max(e.source for e in edges),
-                               max(e.target for e in edges)) + 1
+            num_self_loops = (
+                max(max(e.source for e in edges), max(e.target for e in edges)) + 1
+            )
             weights.extend([1.0] * num_self_loops)
 
         return torch.tensor(weights, dtype=torch.float32)
@@ -450,8 +460,9 @@ class EdgeProcessor:
 
         # Add types for self-loops if needed
         if self.config.self_loops:
-            default_type = self.edge_type_mapping.get("self_loop",
-                                                     len(self.edge_type_mapping))
+            default_type = self.edge_type_mapping.get(
+                "self_loop", len(self.edge_type_mapping)
+            )
             if "self_loop" not in self.edge_type_mapping:
                 self.edge_type_mapping["self_loop"] = default_type
 
@@ -460,34 +471,48 @@ class EdgeProcessor:
 
         return torch.tensor(edge_types, dtype=torch.long)
 
-    def _sample_edges(self, edge_index: torch.Tensor,
-                     edge_attr: Optional[torch.Tensor],
-                     edge_weight: torch.Tensor,
-                     num_nodes: int) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
+    def _sample_edges(
+        self,
+        edge_index: torch.Tensor,
+        edge_attr: Optional[torch.Tensor],
+        edge_weight: torch.Tensor,
+        num_nodes: int,
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
         """Sample edges based on configured strategy"""
         if self.config.edge_sampling_strategy == "random":
-            return self._random_sample_edges(edge_index, edge_attr, edge_weight, num_nodes)
+            return self._random_sample_edges(
+                edge_index, edge_attr, edge_weight, num_nodes
+            )
         elif self.config.edge_sampling_strategy == "importance":
-            return self._importance_sample_edges(edge_index, edge_attr, edge_weight, num_nodes)
+            return self._importance_sample_edges(
+                edge_index, edge_attr, edge_weight, num_nodes
+            )
         elif self.config.edge_sampling_strategy == "topk":
-            return self._topk_sample_edges(edge_index, edge_attr, edge_weight, num_nodes)
+            return self._topk_sample_edges(
+                edge_index, edge_attr, edge_weight, num_nodes
+            )
         else:
             return edge_index, edge_attr, edge_weight
 
-    def _random_sample_edges(self, edge_index: torch.Tensor,
-                           edge_attr: Optional[torch.Tensor],
-                           edge_weight: torch.Tensor,
-                           num_nodes: int) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
+    def _random_sample_edges(
+        self,
+        edge_index: torch.Tensor,
+        edge_attr: Optional[torch.Tensor],
+        edge_weight: torch.Tensor,
+        num_nodes: int,
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
         """Randomly sample edges per node"""
         sampled_indices = []
 
         for node in range(num_nodes):
             # Find edges connected to this node
-            node_edges = torch.where((edge_index[0] == node) | (edge_index[1] == node))[0]
+            node_edges = torch.where((edge_index[0] == node) | (edge_index[1] == node))[
+                0
+            ]
 
             if len(node_edges) > self.config.max_edges_per_node:
                 # Randomly sample
-                perm = torch.randperm(len(node_edges))[:self.config.max_edges_per_node]
+                perm = torch.randperm(len(node_edges))[: self.config.max_edges_per_node]
                 sampled_indices.extend(node_edges[perm].tolist())
             else:
                 sampled_indices.extend(node_edges.tolist())
@@ -504,16 +529,21 @@ class EdgeProcessor:
 
         return edge_index, edge_attr, edge_weight
 
-    def _importance_sample_edges(self, edge_index: torch.Tensor,
-                               edge_attr: Optional[torch.Tensor],
-                               edge_weight: torch.Tensor,
-                               num_nodes: int) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
+    def _importance_sample_edges(
+        self,
+        edge_index: torch.Tensor,
+        edge_attr: Optional[torch.Tensor],
+        edge_weight: torch.Tensor,
+        num_nodes: int,
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
         """Sample edges based on importance (weight)"""
         sampled_indices = []
 
         for node in range(num_nodes):
             # Find edges connected to this node
-            node_edges = torch.where((edge_index[0] == node) | (edge_index[1] == node))[0]
+            node_edges = torch.where((edge_index[0] == node) | (edge_index[1] == node))[
+                0
+            ]
 
             if len(node_edges) > self.config.max_edges_per_node:
                 # Sample based on weights
@@ -522,9 +552,11 @@ class EdgeProcessor:
                 probs = node_weights / node_weights.sum()
 
                 # Sample without replacement
-                sampled = torch.multinomial(probs,
-                                          min(self.config.max_edges_per_node, len(node_edges)),
-                                          replacement=False)
+                sampled = torch.multinomial(
+                    probs,
+                    min(self.config.max_edges_per_node, len(node_edges)),
+                    replacement=False,
+                )
                 sampled_indices.extend(node_edges[sampled].tolist())
             else:
                 sampled_indices.extend(node_edges.tolist())
@@ -541,22 +573,28 @@ class EdgeProcessor:
 
         return edge_index, edge_attr, edge_weight
 
-    def _topk_sample_edges(self, edge_index: torch.Tensor,
-                         edge_attr: Optional[torch.Tensor],
-                         edge_weight: torch.Tensor,
-                         num_nodes: int) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
+    def _topk_sample_edges(
+        self,
+        edge_index: torch.Tensor,
+        edge_attr: Optional[torch.Tensor],
+        edge_weight: torch.Tensor,
+        num_nodes: int,
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], torch.Tensor]:
         """Sample top-k edges by weight per node"""
         sampled_indices = []
 
         for node in range(num_nodes):
             # Find edges connected to this node
-            node_edges = torch.where((edge_index[0] == node) | (edge_index[1] == node))[0]
+            node_edges = torch.where((edge_index[0] == node) | (edge_index[1] == node))[
+                0
+            ]
 
             if len(node_edges) > self.config.max_edges_per_node:
                 # Get top-k by weight
                 node_weights = edge_weight[node_edges]
-                topk_values, topk_indices = torch.topk(node_weights,
-                                                      self.config.max_edges_per_node)
+                topk_values, topk_indices = torch.topk(
+                    node_weights, self.config.max_edges_per_node
+                )
                 sampled_indices.extend(node_edges[topk_indices].tolist())
             else:
                 sampled_indices.extend(node_edges.tolist())
@@ -594,25 +632,30 @@ class EdgeProcessor:
             edge_attr=None,
             edge_weight=edge_weight,
             edge_type=None,
-            metadata={'num_edges': edge_index.shape[1], 'num_nodes': num_nodes}
+            metadata={"num_edges": edge_index.shape[1], "num_nodes": num_nodes},
         )
 
-    def to_adjacency_matrix(self, edge_batch: EdgeBatch,
-                           num_nodes: int) -> sp.csr_matrix:
+    def to_adjacency_matrix(
+        self, edge_batch: EdgeBatch, num_nodes: int
+    ) -> sp.csr_matrix:
         """Convert edge batch to sparse adjacency matrix"""
         edge_index = edge_batch.edge_index.numpy()
-        weights = edge_batch.edge_weight.numpy() if edge_batch.edge_weight is not None else np.ones(edge_index.shape[1])
+        weights = (
+            edge_batch.edge_weight.numpy()
+            if edge_batch.edge_weight is not None
+            else np.ones(edge_index.shape[1])
+        )
 
         # Create sparse matrix
         adj_matrix = sp.csr_matrix(
-            (weights, (edge_index[0], edge_index[1])),
-            shape=(num_nodes, num_nodes)
+            (weights, (edge_index[0], edge_index[1])), shape=(num_nodes, num_nodes)
         )
 
         return adj_matrix
 
-    def compute_edge_statistics(self, edge_batch: EdgeBatch,
-                              num_nodes: int) -> Dict[str, Any]:
+    def compute_edge_statistics(
+        self, edge_batch: EdgeBatch, num_nodes: int
+    ) -> Dict[str, Any]:
         """Compute statistics about the edge batch"""
         edge_index = edge_batch.edge_index
 
@@ -623,10 +666,10 @@ class EdgeProcessor:
         # Edge weight statistics
         if edge_batch.edge_weight is not None:
             weight_stats = {
-                'mean_weight': edge_batch.edge_weight.mean().item(),
-                'std_weight': edge_batch.edge_weight.std().item(),
-                'min_weight': edge_batch.edge_weight.min().item(),
-                'max_weight': edge_batch.edge_weight.max().item()
+                "mean_weight": edge_batch.edge_weight.mean().item(),
+                "std_weight": edge_batch.edge_weight.std().item(),
+                "min_weight": edge_batch.edge_weight.min().item(),
+                "max_weight": edge_batch.edge_weight.max().item(),
             }
         else:
             weight_stats = {}
@@ -635,23 +678,22 @@ class EdgeProcessor:
         if edge_batch.edge_type is not None:
             edge_type_counts = torch.bincount(edge_batch.edge_type)
             edge_type_dist = {
-                f"type_{i}": count.item()
-                for i, count in enumerate(edge_type_counts)
+                f"type_{i}": count.item() for i, count in enumerate(edge_type_counts)
             }
         else:
             edge_type_dist = {}
 
         return {
-            'num_edges': edge_index.shape[1],
-            'num_nodes': num_nodes,
-            'avg_in_degree': in_degree.mean().item(),
-            'avg_out_degree': out_degree.mean().item(),
-            'max_in_degree': in_degree.max().item(),
-            'max_out_degree': out_degree.max().item(),
-            'num_self_loops': torch.sum(edge_index[0] == edge_index[1]).item(),
-            'density': edge_index.shape[1] / (num_nodes * num_nodes),
+            "num_edges": edge_index.shape[1],
+            "num_nodes": num_nodes,
+            "avg_in_degree": in_degree.mean().item(),
+            "avg_out_degree": out_degree.mean().item(),
+            "max_in_degree": in_degree.max().item(),
+            "max_out_degree": out_degree.max().item(),
+            "num_self_loops": torch.sum(edge_index[0] == edge_index[1]).item(),
+            "density": edge_index.shape[1] / (num_nodes * num_nodes),
             **weight_stats,
-            'edge_type_distribution': edge_type_dist
+            "edge_type_distribution": edge_type_dist,
         }
 
 
@@ -663,12 +705,12 @@ if __name__ == "__main__":
         feature_types=[
             EdgeFeatureType.WEIGHT,
             EdgeFeatureType.DISTANCE,
-            EdgeFeatureType.CATEGORICAL
+            EdgeFeatureType.CATEGORICAL,
         ],
         normalize_weights=True,
         self_loops=True,
         max_edges_per_node=10,
-        edge_sampling_strategy="importance"
+        edge_sampling_strategy="importance",
     )
 
     # Create edge processor
@@ -676,21 +718,39 @@ if __name__ == "__main__":
 
     # Example edges
     edges = [
-        Edge(source=0, target=1, weight=0.8,
-             features={"distance": 1.5, "category": "friend"}),
-        Edge(source=1, target=2, weight=0.6,
-             features={"distance": 2.0, "category": "colleague"}),
-        Edge(source=2, target=0, weight=0.9,
-             features={"distance": 1.2, "category": "friend"}),
-        Edge(source=0, target=3, weight=0.4,
-             features={"distance": 3.0, "category": "acquaintance"})
+        Edge(
+            source=0,
+            target=1,
+            weight=0.8,
+            features={"distance": 1.5, "category": "friend"},
+        ),
+        Edge(
+            source=1,
+            target=2,
+            weight=0.6,
+            features={"distance": 2.0, "category": "colleague"},
+        ),
+        Edge(
+            source=2,
+            target=0,
+            weight=0.9,
+            features={"distance": 1.2, "category": "friend"},
+        ),
+        Edge(
+            source=0,
+            target=3,
+            weight=0.4,
+            features={"distance": 3.0, "category": "acquaintance"},
+        ),
     ]
 
     # Process edges
     edge_batch = processor.process_edges(edges, num_nodes=4)
 
     print(f"Edge index shape: {edge_batch.edge_index.shape}")
-    print(f"Edge attributes shape: {edge_batch.edge_attr.shape if edge_batch.edge_attr is not None else None}")
+    print(
+        f"Edge attributes shape: {edge_batch.edge_attr.shape if edge_batch.edge_attr is not None else None}"
+    )
     print(f"Edge weights shape: {edge_batch.edge_weight.shape}")
 
     # Compute statistics

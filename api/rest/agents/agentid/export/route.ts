@@ -21,7 +21,7 @@ export async function POST(
     // 2. Check readiness status
     // 3. Build the export package using ExportPackageBuilder
     // 4. Compress and return the package
-    
+
     // For demo, create a mock export package
     const mockPackageContent = {
       manifest: {
@@ -105,4 +105,4 @@ export async function POST(
       { status: 500 }
     )
   }
-} 
+}

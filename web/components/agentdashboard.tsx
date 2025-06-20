@@ -1,57 +1,70 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { Agent } from "@/lib/types"
-import type { AgentDetails, AgentStatus } from "@/lib/types/agent-api"
-import { Grid3x3, List, RefreshCw, Search } from "lucide-react"
-import { useEffect, useState } from "react"
-import AgentActivityTimeline from "./agent-activity-timeline"
-import AgentCard from "./AgentCard"
-import AgentPerformanceChart from "./agent-performance-chart"
-import AgentRelationshipNetwork from "./agent-relationship-network"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Agent } from "@/lib/types";
+import type { AgentDetails, AgentStatus } from "@/lib/types/agent-api";
+import { Grid3x3, List, RefreshCw, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import AgentActivityTimeline from "./agent-activity-timeline";
+import AgentCard from "./AgentCard";
+import AgentPerformanceChart from "./agent-performance-chart";
+import AgentRelationshipNetwork from "./agent-relationship-network";
 
 interface AgentDashboardProps {
-  agents: Agent[]
-  onSelectAgent: (agent: Agent) => void
-  selectedAgent: Agent | null
-  onRefresh?: () => void
+  agents: Agent[];
+  onSelectAgent: (agent: Agent) => void;
+  selectedAgent: Agent | null;
+  onRefresh?: () => void;
 }
 
-type ViewMode = "grid" | "list"
-type FilterStatus = "all" | AgentStatus
+type ViewMode = "grid" | "list";
+type FilterStatus = "all" | AgentStatus;
 
 export default function AgentDashboard({
   agents,
   onSelectAgent,
   selectedAgent,
-  onRefresh
+  onRefresh,
 }: AgentDashboardProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("grid")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all")
-  const [agentDetails, setAgentDetails] = useState<Record<string, AgentDetails>>({})
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+  const [agentDetails, setAgentDetails] = useState<
+    Record<string, AgentDetails>
+  >({});
 
   // Mock data for agent details - in a real app, this would come from the API
   useEffect(() => {
-    const mockDetails: Record<string, AgentDetails> = {}
-    agents.forEach(agent => {
+    const mockDetails: Record<string, AgentDetails> = {};
+    agents.forEach((agent) => {
       mockDetails[agent.id] = {
         id: agent.id,
         name: agent.name,
-        status: ["idle", "moving", "interacting", "planning", "executing", "learning"][
-          Math.floor(Math.random() * 6)
-        ] as AgentStatus,
+        status: [
+          "idle",
+          "moving",
+          "interacting",
+          "planning",
+          "executing",
+          "learning",
+        ][Math.floor(Math.random() * 6)] as AgentStatus,
         position: agent.position,
         resources: {
           energy: Math.floor(Math.random() * 100),
           health: Math.floor(Math.random() * 100),
           memory_used: Math.floor(Math.random() * 80),
-          memory_capacity: 100
+          memory_capacity: 100,
         },
         goals: [
           {
@@ -59,35 +72,38 @@ export default function AgentDashboard({
             description: "Explore the environment",
             priority: "high",
             status: "active",
-            progress: Math.floor(Math.random() * 100)
+            progress: Math.floor(Math.random() * 100),
           },
           {
             id: "goal-2",
             description: "Gather resources",
             priority: "medium",
             status: "active",
-            progress: Math.floor(Math.random() * 100)
-          }
+            progress: Math.floor(Math.random() * 100),
+          },
         ],
         beliefs: [],
         memory: {
           short_term: [],
-          long_term: []
+          long_term: [],
         },
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-    })
-    setAgentDetails(mockDetails)
-  }, [agents])
+        updated_at: new Date().toISOString(),
+      };
+    });
+    setAgentDetails(mockDetails);
+  }, [agents]);
 
   // Filter agents based on search and status
-  const filteredAgents = agents.filter(agent => {
-    const matchesSearch = agent.name.toLowerCase().includes(searchQuery.toLowerCase())
-    const details = agentDetails[agent.id]
-    const matchesStatus = filterStatus === "all" || details?.status === filterStatus
-    return matchesSearch && matchesStatus
-  })
+  const filteredAgents = agents.filter((agent) => {
+    const matchesSearch = agent.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const details = agentDetails[agent.id];
+    const matchesStatus =
+      filterStatus === "all" || details?.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="flex flex-col h-full">
@@ -128,7 +144,12 @@ export default function AgentDashboard({
                     className="pl-9"
                   />
                 </div>
-                <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
+                <Select
+                  value={filterStatus}
+                  onValueChange={(value) =>
+                    setFilterStatus(value as FilterStatus)
+                  }
+                >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
@@ -166,7 +187,7 @@ export default function AgentDashboard({
               <ScrollArea className="flex-1">
                 {viewMode === "grid" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filteredAgents.map(agent => (
+                    {filteredAgents.map((agent) => (
                       <AgentCard
                         key={agent.id}
                         agent={agent}
@@ -178,7 +199,7 @@ export default function AgentDashboard({
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {filteredAgents.map(agent => (
+                    {filteredAgents.map((agent) => (
                       <AgentCard
                         key={agent.id}
                         agent={agent}
@@ -195,25 +216,35 @@ export default function AgentDashboard({
               {/* Summary Stats */}
               <div className="grid grid-cols-4 gap-4 pt-4 border-t">
                 <Card className="p-4">
-                  <div className="text-sm text-muted-foreground">Total Agents</div>
+                  <div className="text-sm text-muted-foreground">
+                    Total Agents
+                  </div>
                   <div className="text-2xl font-bold">{agents.length}</div>
                 </Card>
                 <Card className="p-4">
                   <div className="text-sm text-muted-foreground">Active</div>
                   <div className="text-2xl font-bold text-green-500">
-                    {Object.values(agentDetails).filter(d => d.status !== "offline" && d.status !== "error").length}
+                    {
+                      Object.values(agentDetails).filter(
+                        (d) => d.status !== "offline" && d.status !== "error",
+                      ).length
+                    }
                   </div>
                 </Card>
                 <Card className="p-4">
-                  <div className="text-sm text-muted-foreground">In Conversation</div>
+                  <div className="text-sm text-muted-foreground">
+                    In Conversation
+                  </div>
                   <div className="text-2xl font-bold text-blue-500">
-                    {agents.filter(a => a.inConversation).length}
+                    {agents.filter((a) => a.inConversation).length}
                   </div>
                 </Card>
                 <Card className="p-4">
-                  <div className="text-sm text-muted-foreground">Autonomous</div>
+                  <div className="text-sm text-muted-foreground">
+                    Autonomous
+                  </div>
                   <div className="text-2xl font-bold text-purple-500">
-                    {agents.filter(a => a.autonomyEnabled).length}
+                    {agents.filter((a) => a.autonomyEnabled).length}
                   </div>
                 </Card>
               </div>
@@ -221,11 +252,17 @@ export default function AgentDashboard({
           </TabsContent>
 
           <TabsContent value="activity" className="flex-1 overflow-hidden">
-            <AgentActivityTimeline agents={agents} agentDetails={agentDetails} />
+            <AgentActivityTimeline
+              agents={agents}
+              agentDetails={agentDetails}
+            />
           </TabsContent>
 
           <TabsContent value="performance" className="flex-1 overflow-hidden">
-            <AgentPerformanceChart agents={agents} agentDetails={agentDetails} />
+            <AgentPerformanceChart
+              agents={agents}
+              agentDetails={agentDetails}
+            />
           </TabsContent>
 
           <TabsContent value="relationships" className="flex-1 overflow-hidden">
@@ -234,5 +271,5 @@ export default function AgentDashboard({
         </Tabs>
       </CardContent>
     </div>
-  )
+  );
 }

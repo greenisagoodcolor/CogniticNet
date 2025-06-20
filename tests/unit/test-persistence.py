@@ -39,11 +39,11 @@ class TestAgentPersistence:
         agent.add_to_memory({'event': 'found_item', 'location': [30, 40]}, is_important=True)
         return agent
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_save_agent_new(self, mock_get_db_session, mock_session, sample_agent):
         """Test saving a new agent"""
         mock_get_db_session.return_value = mock_session
-        with patch('src.agents.basic_agent.persistence.DBAgent') as MockDBAgent:
+        with patch('agents.core.basic_agent.persistence.DBAgent') as MockDBAgent:
             persistence = AgentPersistence()
             result = persistence.save_agent(sample_agent)
             assert result is True
@@ -56,7 +56,7 @@ class TestAgentPersistence:
             assert call_kwargs['energy_level'] == 0.75
             assert call_kwargs['experience_points'] == 1
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_save_agent_update_existing(self, mock_get_db_session, mock_session, sample_agent):
         """Test updating an existing agent"""
         mock_db_agent = Mock()
@@ -69,7 +69,7 @@ class TestAgentPersistence:
         assert mock_db_agent.type == sample_agent.agent_type
         assert mock_session.commit.called
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_save_agent_exists_no_update(self, mock_get_db_session, mock_session, sample_agent):
         """Test saving when agent exists but update_if_exists=False"""
         mock_db_agent = Mock()
@@ -80,7 +80,7 @@ class TestAgentPersistence:
         assert result is False
         assert not mock_session.commit.called
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_save_agent_database_error(self, mock_get_db_session, mock_session, sample_agent):
         """Test handling database errors during save"""
         mock_session.commit.side_effect = SQLAlchemyError('Database error')
@@ -90,7 +90,7 @@ class TestAgentPersistence:
         assert result is False
         assert mock_session.rollback.called
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_load_agent_success(self, mock_get_db_session, mock_session):
         """Test loading an agent successfully"""
         mock_db_agent = Mock()
@@ -114,7 +114,7 @@ class TestAgentPersistence:
         assert agent.status == AgentStatus.MOVING
         assert AgentCapability.MOVEMENT in agent.capabilities
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_load_agent_not_found(self, mock_get_db_session, mock_session):
         """Test loading a non-existent agent"""
         mock_session.query.return_value.filter_by.return_value.first.return_value = None
@@ -123,7 +123,7 @@ class TestAgentPersistence:
         agent = persistence.load_agent('non-existent-agent')
         assert agent is None
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_load_all_agents(self, mock_get_db_session, mock_session):
         """Test loading all agents"""
         mock_db_agent1 = Mock()
@@ -153,7 +153,7 @@ class TestAgentPersistence:
         assert agents[1].agent_id == 'agent-2'
         assert isinstance(agents[1], ResourceAgent)
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_delete_agent_success(self, mock_get_db_session, mock_session):
         """Test deleting an agent successfully"""
         mock_db_agent = Mock()
@@ -165,7 +165,7 @@ class TestAgentPersistence:
         assert mock_session.delete.called_with(mock_db_agent)
         assert mock_session.commit.called
 
-    @patch('src.agents.basic_agent.persistence.get_db_session')
+    @patch('agents.core.basic_agent.persistence.get_db_session')
     def test_delete_agent_not_found(self, mock_get_db_session, mock_session):
         """Test deleting a non-existent agent"""
         mock_session.query.return_value.filter_by.return_value.first.return_value = None

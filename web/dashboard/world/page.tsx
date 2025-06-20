@@ -1,16 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { BackendGridWorld } from '@/components/backend-grid-world';
-import { SimulationControls } from '@/components/simulation-controls';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Map, Layers, Settings, Info, Mountain, Trees, Waves } from 'lucide-react';
+import { useState } from "react";
+import { BackendGridWorld } from "@/components/backend-grid-world";
+import { SimulationControls } from "@/components/simulation-controls";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  Map,
+  Layers,
+  Settings,
+  Info,
+  Mountain,
+  Trees,
+  Waves,
+} from "lucide-react";
 
 export default function WorldPage() {
   const [selectedHex, setSelectedHex] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'terrain' | 'resources' | 'agents'>('terrain');
+  const [viewMode, setViewMode] = useState<"terrain" | "resources" | "agents">(
+    "terrain",
+  );
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -97,7 +113,10 @@ export default function WorldPage() {
             <CardHeader className="pb-3">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-lg">World View</CardTitle>
-                <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
+                <Tabs
+                  value={viewMode}
+                  onValueChange={(v) => setViewMode(v as any)}
+                >
                   <TabsList className="grid w-[300px] grid-cols-3">
                     <TabsTrigger value="terrain">Terrain</TabsTrigger>
                     <TabsTrigger value="resources">Resources</TabsTrigger>
@@ -107,7 +126,10 @@ export default function WorldPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="relative bg-slate-900 rounded-lg overflow-hidden" style={{ height: '600px' }}>
+              <div
+                className="relative bg-slate-900 rounded-lg overflow-hidden"
+                style={{ height: "600px" }}
+              >
                 <BackendGridWorld
                   onHexClick={setSelectedHex}
                   selectedHex={selectedHex}
@@ -200,4 +222,4 @@ export default function WorldPage() {
       </div>
     </div>
   );
-} 
+}

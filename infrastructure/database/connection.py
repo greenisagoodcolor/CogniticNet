@@ -50,7 +50,7 @@ def get_db() -> Generator[Session, None, None]:
     Example:
         ```python
         from fastapi import Depends
-        from src.database import get_db
+        from infrastructure.database import get_db
 
         @app.get("/agents")
         def get_agents(db: Session = Depends(get_db)):

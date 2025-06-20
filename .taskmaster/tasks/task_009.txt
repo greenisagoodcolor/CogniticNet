@@ -145,4 +145,3 @@ Document the three-layer architecture (core domain, interface, infrastructure), 
 ### Description: Review and update all code examples in documentation to ensure they follow the canonical structure, respect dependency rules, and use correct naming conventions.
 ### Details:
 Audit existing examples for compliance with ADR-002, ADR-003, and ADR-004. Update file paths to match canonical structure. Ensure web interface examples are shown in `web/` directory and deployment examples in `deployment/` directory. Add comments explaining architectural decisions in examples.
-

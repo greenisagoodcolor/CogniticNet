@@ -19,16 +19,16 @@ For an architecture to remain "clean" and maintainable over time, the relationsh
 ## Considered Options
 
 1. **Unrestricted Dependencies**: Allow any module to import any other module.
-    - Pro: Fast in the very short term for trivial changes.
-    - Con: Leads directly to a highly coupled, unmaintainable system. This is the anti-pattern we are fixing. Completely unacceptable.
+   - Pro: Fast in the very short term for trivial changes.
+   - Con: Leads directly to a highly coupled, unmaintainable system. This is the anti-pattern we are fixing. Completely unacceptable.
 2. **Strict Layering**: Define a strict, linear hierarchy of layers where each layer can only depend on the layer directly below it.
-    - Pro: Simple to understand.
-    - Con: Can be too rigid. Sometimes a UI component might need a type defined in a shared/domain layer, and forcing it to go through an intermediate application layer adds unnecessary boilerplate.
+   - Pro: Simple to understand.
+   - Con: Can be too rigid. Sometimes a UI component might need a type defined in a shared/domain layer, and forcing it to go through an intermediate application layer adds unnecessary boilerplate.
 3. **The Dependency Inversion Principle (Clean Architecture)**: All dependencies must flow inwards, towards the central domain logic.
-    - Pro: Maximizes the independence of the core domain.
-    - Pro: Aligns perfectly with the principles of Clean Architecture and Domain-Driven Design.
-    - Pro: It is flexible yet powerful, providing a clear rule that handles most situations gracefully.
-    - Con: Requires developers to understand the principle of dependency inversion.
+   - Pro: Maximizes the independence of the core domain.
+   - Pro: Aligns perfectly with the principles of Clean Architecture and Domain-Driven Design.
+   - Pro: It is flexible yet powerful, providing a clear rule that handles most situations gracefully.
+   - Con: Requires developers to understand the principle of dependency inversion.
 
 ## Decision Outcome
 
@@ -54,23 +54,23 @@ _(Note: This is a conceptual model. The Application layer is an implicit set of 
 
 1. **`agents/`, `inference/`, `coalitions/`, `world/` (The Domain Core)**:
 
-    - These directories represent the center of the architecture.
-    - They **MUST NOT** depend on any other layer. They cannot import from `api`, `web`, `infrastructure`, `config`, etc.
-    - They can depend on each other (e.g., `coalitions` can depend on `agents`), but this should be modeled carefully.
-    - They must not have any knowledge of databases, UI frameworks, or specific external services.
+   - These directories represent the center of the architecture.
+   - They **MUST NOT** depend on any other layer. They cannot import from `api`, `web`, `infrastructure`, `config`, etc.
+   - They can depend on each other (e.g., `coalitions` can depend on `agents`), but this should be modeled carefully.
+   - They must not have any knowledge of databases, UI frameworks, or specific external services.
 
 2. **`api/`, `web/` (The Interface Layer)**:
 
-    - This layer is the entry point for external systems (users, other services).
-    - It **CAN** depend on the Domain Core (`agents`, etc.). It orchestrates the domain logic to fulfill requests.
-    - It **MUST NOT** be depended upon by the Domain Core.
-    - It contains framework-specific code (e.g., FastAPI, Next.js). The domain core knows nothing of these frameworks.
+   - This layer is the entry point for external systems (users, other services).
+   - It **CAN** depend on the Domain Core (`agents`, etc.). It orchestrates the domain logic to fulfill requests.
+   - It **MUST NOT** be depended upon by the Domain Core.
+   - It contains framework-specific code (e.g., FastAPI, Next.js). The domain core knows nothing of these frameworks.
 
 3. **`infrastructure/`, `config/`, `data/` (The Infrastructure & Configuration Layer)**:
-    - This layer contains concrete implementations and configurations (e.g., Dockerfiles, database connection details, environment variables).
-    - It is the most volatile and outermost layer.
-    - It "depends" on the rest of the application in the sense that it provides the environment and tools to run it.
-    - No part of the application logic (Domain or Interface) should depend directly on this layer. Instead, interfaces defined in the domain are implemented by classes that might use configuration from this layer.
+   - This layer contains concrete implementations and configurations (e.g., Dockerfiles, database connection details, environment variables).
+   - It is the most volatile and outermost layer.
+   - It "depends" on the rest of the application in the sense that it provides the environment and tools to run it.
+   - No part of the application logic (Domain or Interface) should depend directly on this layer. Instead, interfaces defined in the domain are implemented by classes that might use configuration from this layer.
 
 ### Positive Consequences
 

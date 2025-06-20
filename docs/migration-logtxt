@@ -3,12 +3,12 @@ FreeAgentics Migration Log - Wed Jun 18 23:36:21 CEST 2025
 [0;32m[MIGRATE][0m Starting FreeAgentics migration...
 [0;32m[MIGRATE][0m Timestamp: Wed Jun 18 23:36:21 CEST 2025
 [0;32m[MIGRATE][0m Created rollback tag: pre-freeagentics-migration
-[0;32m[MIGRATE][0m 
+[0;32m[MIGRATE][0m
 Stage 1: Core Agent Structure
 [0;32m[MIGRATE][0m ----------------------------------------
 [0;32m[MIGRATE][0m Moved: src/agents/basic_agent → agents/base
 [0;32m[MIGRATE][0m Moved: src/agents/agent_conversation.py → agents/base/communication.py
-[0;32m[MIGRATE][0m 
+[0;32m[MIGRATE][0m
 Stage 2: Active Inference Engine
 [0;32m[MIGRATE][0m ----------------------------------------
 [0;32m[MIGRATE][0m Moved: src/agents/active_inference/inference.py → inference/engine/active-inference.py
@@ -26,7 +26,7 @@ Stage 2: Active Inference Engine
 [0;32m[MIGRATE][0m Moved: src/agents/active_inference/temporal_planning.py → inference/engine/temporal_planning.py
 [0;32m[MIGRATE][0m Moved: src/gnn → inference/gnn
 [0;32m[MIGRATE][0m Moved: src/llm → inference/llm
-[0;32m[MIGRATE][0m 
+[0;32m[MIGRATE][0m
 Stage 3: Coalition & World
 [0;32m[MIGRATE][0m ----------------------------------------
 [0;31m[ERROR][0m Failed to move: src/agents/coalition/coalition_criteria.py

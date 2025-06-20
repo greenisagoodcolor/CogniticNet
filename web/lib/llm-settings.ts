@@ -19,7 +19,7 @@ export interface LLMSettings {
 
 export const defaultSettings: LLMSettings = {
   provider: "openai",
-  model: "gpt-4o", 
+  model: "gpt-4o",
   temperature: 0.7,
   maxTokens: 1024,
   topP: 0.9,

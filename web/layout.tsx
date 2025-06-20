@@ -1,30 +1,35 @@
-import type React from "react"
-import "./globals.css"
-import { Poppins } from "next/font/google"
-import { ThemeProvider } from "@/components/ThemeProvider"
-import { LLMProvider } from "@/contexts/llm-context"
+import type React from "react";
+import "./globals.css";
+import { Poppins } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { LLMProvider } from "@/contexts/llm-context";
 // Make sure we're explicitly importing from the .tsx file
-import { IsSendingProvider } from "@/contexts/is-sending-context"
-import NavBar from "@/components/NavBar"
+import { IsSendingProvider } from "@/contexts/is-sending-context";
+import NavBar from "@/components/NavBar";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
-})
+});
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  console.log("RootLayout rendering")
-  console.log("IsSendingProvider rendered")
-  console.log("LLMProvider rendered")
-  
+  console.log("RootLayout rendering");
+  console.log("IsSendingProvider rendered");
+  console.log("LLMProvider rendered");
+
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <IsSendingProvider>
             <LLMProvider>
               <NavBar />
@@ -34,9 +39,9 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
 
 export const metadata = {
-      generator: 'v0.dev'
-    };
+  generator: "v0.dev",
+};

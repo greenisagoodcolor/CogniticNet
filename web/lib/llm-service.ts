@@ -223,7 +223,7 @@ export async function generateResponse(
         apiKey: completeSettings.apiKey,
       });
       const model = openaiProvider(completeSettings.model);
-      
+
       // Add timeout to the OpenAI call
       const result = await withTimeout(
         generateText({
@@ -523,7 +523,7 @@ export async function validateResponse(response: string): Promise<{ valid: boole
 
 // Enhanced implementation for extracting beliefs
 export async function extractBeliefs(
-  
+
   conversationText: string,
   agentName: string,
   extractionPriorities: string,
@@ -539,7 +539,7 @@ Focus on extracting factual information, preferences, opinions, and relationship
 
 IMPORTANT: Format your response using Obsidian-style markdown. Use [[double brackets]] around important concepts, entities, and categories that should be tagged.`
 
-    const userPrompt = `The following is a conversation involving ${agentName}. 
+    const userPrompt = `The following is a conversation involving ${agentName}.
 Extract potential new knowledge or beliefs that ${agentName} should remember from this conversation.
 Pay special attention to: ${extractionPriorities}
 

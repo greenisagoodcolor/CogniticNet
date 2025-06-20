@@ -197,4 +197,4 @@ case $ENVIRONMENT in
         ;;
 esac
 
-print_success "Environment setup complete!" 
+print_success "Environment setup complete!"

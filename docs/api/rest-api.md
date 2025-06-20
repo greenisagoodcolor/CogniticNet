@@ -25,6 +25,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
@@ -34,6 +35,7 @@ Response:
 ```
 
 Use token in subsequent requests:
+
 ```http
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 ```
@@ -47,12 +49,14 @@ GET /api/agents
 ```
 
 Query parameters:
+
 - `status`: Filter by status (active, inactive, all)
 - `class`: Filter by agent class
 - `limit`: Number of results (default: 20)
 - `offset`: Pagination offset
 
 Response:
+
 ```json
 {
   "agents": [
@@ -95,6 +99,7 @@ GET /api/agents/{agent_id}
 ```
 
 Response includes full agent data with GNN model:
+
 ```json
 {
   "id": "agent_123",
@@ -147,6 +152,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "id": "agent_456",
@@ -181,15 +187,16 @@ GET /api/agents/{agent_id}/gnn
 ```
 
 Response:
+
 ```markdown
 ---
 model_name: WiseScholar
 version: 1.0
 agent_class: Scholar
-...
 ---
 
 ## Beliefs
+
 ...
 ```
 
@@ -211,6 +218,7 @@ GET /api/world
 ```
 
 Response:
+
 ```json
 {
   "dimensions": {
@@ -246,6 +254,7 @@ GET /api/world/hex/{hex_id}
 ```
 
 Response:
+
 ```json
 {
   "hex_id": "8928308280fffff",
@@ -314,6 +323,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "simulation_id": "sim_789",
@@ -347,6 +357,7 @@ GET /api/simulation/status
 ```
 
 Response:
+
 ```json
 {
   "simulation_id": "sim_789",
@@ -378,6 +389,7 @@ GET /api/agents/{agent_id}/knowledge
 ```
 
 Response:
+
 ```json
 {
   "nodes": [
@@ -458,11 +470,13 @@ GET /api/conversations
 ```
 
 Query parameters:
+
 - `agent_id`: Filter by participant
 - `since`: Timestamp for recent conversations
 - `limit`: Number of results
 
 Response:
+
 ```json
 {
   "conversations": [
@@ -518,6 +532,7 @@ GET /api/models
 ```
 
 Response:
+
 ```json
 {
   "models": [
@@ -548,13 +563,12 @@ Content-Type: text/markdown
 ```
 
 Response:
+
 ```json
 {
   "valid": true,
   "errors": [],
-  "warnings": [
-    "High neuroticism may cause frequent belief updates"
-  ]
+  "warnings": ["High neuroticism may cause frequent belief updates"]
 }
 ```
 
@@ -580,6 +594,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "backstory": "Born in the shadow of ancient ruins...",
@@ -597,6 +612,7 @@ GET /api/health
 ```
 
 Response:
+
 ```json
 {
   "status": "healthy",
@@ -616,6 +632,7 @@ GET /api/stats
 ```
 
 Response:
+
 ```json
 {
   "agents": {
@@ -658,6 +675,7 @@ All endpoints return consistent error responses:
 ```
 
 Common error codes:
+
 - `UNAUTHORIZED`: Missing or invalid token
 - `FORBIDDEN`: Insufficient permissions
 - `NOT_FOUND`: Resource not found
@@ -668,10 +686,12 @@ Common error codes:
 ## Rate Limiting
 
 API requests are rate limited:
+
 - Authenticated: 1000 requests/hour
 - Unauthenticated: 100 requests/hour
 
 Rate limit headers:
+
 ```http
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
@@ -697,4 +717,4 @@ Events are sent as POST requests with signature verification.
 
 ---
 
-*For WebSocket API documentation, see [WebSocket API](websocket_api.md)* 
+_For WebSocket API documentation, see [WebSocket API](websocket_api.md)_

@@ -43,25 +43,25 @@ class ImportUpdater:
         """Create mapping of old imports to new imports"""
         return {
             # Infrastructure Layer
-            "src.database": "infrastructure.database",
-            "src.hardware": "infrastructure.hardware",
-            "src.deployment": "infrastructure.deployment",
-            "src.export": "infrastructure.export",
+            "infrastructure.database": "infrastructure.database",
+            "infrastructure.hardware": "infrastructure.hardware",
+            "infrastructure.deployment": "infrastructure.deployment",
+            "infrastructure.export": "infrastructure.export",
             # Core Layer - Special handling for agents
-            "src.agents.active_inference": "agents.core.active_inference",
-            "src.agents.movement_perception": "agents.core.movement_perception",
-            "src.agents.testing": "agents.testing",
-            "src.agents": "agents.core",  # Default for unspecified src.agents imports
+            "agents.core.active_inference": "agents.core.active_inference",
+            "agents.core.movement_perception": "agents.core.movement_perception",
+            "agents.core.testing": "agents.testing",
+            "agents.core": "agents.core",  # Default for unspecified agents.core imports
             # Supporting Layer
-            "src.learning": "learning",
-            "src.simulation": "simulation",
-            "src.models": "models",
-            "src.knowledge": "knowledge",
-            "src.readiness": "readiness",
-            "src.monitoring": "monitoring",
-            "src.validation": "validation",
+            "learning": "learning",
+            "simulation": "simulation",
+            "models": "models",
+            "knowledge": "knowledge",
+            "readiness": "readiness",
+            "monitoring": "monitoring",
+            "validation": "validation",
             # Interface Layer
-            "src.pipeline": "scripts.pipeline",
+            "scripts.pipeline": "scripts.pipeline",
         }
 
     def _find_python_files(self) -> List[Path]:

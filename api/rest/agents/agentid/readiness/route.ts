@@ -108,7 +108,7 @@ export async function GET(
     // 1. Fetch the agent from database
     // 2. Run the readiness evaluator
     // 3. Return the results
-    
+
     // For now, return mock data
     const readinessScore = mockReadinessScores[agentId] || {
       agent_id: agentId,
@@ -158,20 +158,20 @@ export async function GET(
     if (readinessScore.scores.overall === 0) {
       const scores = readinessScore.scores
       const weights = [0.25, 0.20, 0.20, 0.20, 0.15]
-      scores.overall = 
+      scores.overall =
         scores.knowledge_maturity * weights[0] +
         scores.goal_achievement * weights[1] +
         scores.model_stability * weights[2] +
         scores.collaboration * weights[3] +
         scores.resource_management * weights[4]
-      
+
       readinessScore.is_ready = scores.overall >= 0.85
     }
 
     // Generate recommendations if not ready
     if (!readinessScore.is_ready && readinessScore.recommendations.length === 0) {
       const recs = []
-      
+
       if (readinessScore.scores.knowledge_maturity < 0.8) {
         recs.push("Increase knowledge maturity through more experiences and pattern extraction")
       }
@@ -187,7 +187,7 @@ export async function GET(
       if (readinessScore.scores.resource_management < 0.8) {
         recs.push("Optimize resource usage for better efficiency")
       }
-      
+
       readinessScore.recommendations = recs
     }
 
@@ -199,4 +199,4 @@ export async function GET(
       { status: 500 }
     )
   }
-} 
+}

@@ -5,12 +5,12 @@ Unit tests for Active Inference temporal planning
 import pytest
 import torch
 import numpy as np
-from typing import List, Tuple
 
 # Import modules to test
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from agents.active_inference import (
     DiscreteGenerativeModel,
@@ -19,7 +19,7 @@ from agents.active_inference import (
     VariationalMessagePassing,
     InferenceConfig,
     DiscreteExpectedFreeEnergy,
-    PolicyConfig
+    PolicyConfig,
 )
 from agents.active_inference.temporal_planning import (
     PlanningConfig,
@@ -29,7 +29,7 @@ from agents.active_inference.temporal_planning import (
     AStarPlanner,
     TrajectorySampling,
     AdaptiveHorizonPlanner,
-    create_temporal_planner
+    create_temporal_planner,
 )
 
 
@@ -43,7 +43,7 @@ class TestPlanningConfig:
         assert config.planning_horizon == 10
         assert config.max_depth == 5
         assert config.branching_factor == 3
-        assert config.search_type == 'mcts'
+        assert config.search_type == "mcts"
         assert config.num_simulations == 100
         assert config.num_trajectories == 50
         assert config.enable_pruning is True
@@ -60,10 +60,7 @@ class TestPlanningConfig:
     def test_custom_config(self):
         """Test custom configuration"""
         config = PlanningConfig(
-            planning_horizon=20,
-            num_simulations=200,
-            discount_factor=0.9,
-            use_gpu=False
+            planning_horizon=20, num_simulations=200, discount_factor=0.9, use_gpu=False
         )
 
         assert config.planning_horizon == 20
@@ -87,7 +84,7 @@ class TestTreeNode:
         assert len(node.children) == 0
         assert node.visits == 0
         assert node.value == 0.0
-        assert node.expected_free_energy == float('inf')
+        assert node.expected_free_energy == float("inf")
 
     def test_node_relationships(self):
         """Test parent-child relationships"""
@@ -165,11 +162,13 @@ class TestMonteCarloTreeSearch:
 
         # Set up simple transition model
         self.model.B[:, :, 0] = torch.eye(3)  # Action 0: stay
-        self.model.B[:, :, 1] = torch.tensor([  # Action 1: rotate
-            [0., 0., 1.],
-            [1., 0., 0.],
-            [0., 1., 0.]
-        ])
+        self.model.B[:, :, 1] = torch.tensor(
+            [  # Action 1: rotate
+                [0.0, 0.0, 1.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+            ]
+        )
 
         # Create inference and policy selector
         inf_config = InferenceConfig(use_gpu=False)
@@ -180,12 +179,11 @@ class TestMonteCarloTreeSearch:
 
         # Create planner
         self.config = PlanningConfig(
-            planning_horizon=3,
-            num_simulations=20,
-            max_depth=3,
-            use_gpu=False
+            planning_horizon=3, num_simulations=20, max_depth=3, use_gpu=False
         )
-        self.planner = MonteCarloTreeSearch(self.config, self.policy_selector, self.inference)
+        self.planner = MonteCarloTreeSearch(
+            self.config, self.policy_selector, self.inference
+        )
 
     def test_mcts_planning(self):
         """Test basic MCTS planning"""
@@ -245,7 +243,9 @@ class TestMonteCarloTreeSearch:
         root.add_child(child1)
         root.add_child(child2)
 
-        grandchild = TreeNode(torch.tensor([0.0, 0.0, 1.0]), action=1, parent=child1, depth=2)
+        grandchild = TreeNode(
+            torch.tensor([0.0, 0.0, 1.0]), action=1, parent=child1, depth=2
+        )
         grandchild.visits = 8
         child1.add_child(grandchild)
 
@@ -258,7 +258,9 @@ class TestMonteCarloTreeSearch:
     def test_node_limit(self):
         """Test node count limit"""
         self.config.max_nodes = 10
-        self.planner = MonteCarloTreeSearch(self.config, self.policy_selector, self.inference)
+        self.planner = MonteCarloTreeSearch(
+            self.config, self.policy_selector, self.inference
+        )
 
         beliefs = torch.tensor([0.33, 0.33, 0.34])
         policy, value = self.planner.plan(beliefs, self.model)
@@ -284,12 +286,10 @@ class TestBeamSearchPlanner:
         self.policy_selector = DiscreteExpectedFreeEnergy(policy_config, self.inference)
 
         # Create planner
-        self.config = PlanningConfig(
-            planning_horizon=3,
-            beam_width=5,
-            use_gpu=False
+        self.config = PlanningConfig(planning_horizon=3, beam_width=5, use_gpu=False)
+        self.planner = BeamSearchPlanner(
+            self.config, self.policy_selector, self.inference
         )
-        self.planner = BeamSearchPlanner(self.config, self.policy_selector, self.inference)
 
     def test_beam_search_planning(self):
         """Test basic beam search"""
@@ -305,7 +305,9 @@ class TestBeamSearchPlanner:
         """Test beam width constraint"""
         # Use small beam width
         self.config.beam_width = 2
-        self.planner = BeamSearchPlanner(self.config, self.policy_selector, self.inference)
+        self.planner = BeamSearchPlanner(
+            self.config, self.policy_selector, self.inference
+        )
 
         beliefs = torch.tensor([0.33, 0.33, 0.34])
         policy, value = self.planner.plan(beliefs, self.model)
@@ -347,11 +349,7 @@ class TestAStarPlanner:
         self.policy_selector = DiscreteExpectedFreeEnergy(policy_config, self.inference)
 
         # Create planner
-        self.config = PlanningConfig(
-            planning_horizon=3,
-            max_nodes=100,
-            use_gpu=False
-        )
+        self.config = PlanningConfig(planning_horizon=3, max_nodes=100, use_gpu=False)
         self.planner = AStarPlanner(self.config, self.policy_selector, self.inference)
 
     def test_astar_planning(self):
@@ -421,11 +419,11 @@ class TestTrajectorySampling:
 
         # Create planner
         self.config = PlanningConfig(
-            planning_horizon=3,
-            num_trajectories=10,
-            use_gpu=False
+            planning_horizon=3, num_trajectories=10, use_gpu=False
         )
-        self.planner = TrajectorySampling(self.config, self.policy_selector, self.inference)
+        self.planner = TrajectorySampling(
+            self.config, self.policy_selector, self.inference
+        )
 
     def test_trajectory_sampling(self):
         """Test basic trajectory sampling"""
@@ -449,8 +447,8 @@ class TestTrajectorySampling:
 
         # Check trajectory consistency
         for i in range(len(trajectory) - 1):
-            assert trajectory[i+1].parent == trajectory[i]
-            assert trajectory[i+1].depth == trajectory[i].depth + 1
+            assert trajectory[i + 1].parent == trajectory[i]
+            assert trajectory[i + 1].depth == trajectory[i].depth + 1
 
     def test_trajectory_evaluation(self):
         """Test trajectory evaluation"""
@@ -499,11 +497,11 @@ class TestAdaptiveHorizonPlanner:
 
         # Create base planner
         planning_config = PlanningConfig(
-            planning_horizon=5,
-            num_simulations=10,
-            use_gpu=False
+            planning_horizon=5, num_simulations=10, use_gpu=False
         )
-        base_planner = MonteCarloTreeSearch(planning_config, self.policy_selector, self.inference)
+        base_planner = MonteCarloTreeSearch(
+            planning_config, self.policy_selector, self.inference
+        )
 
         # Create adaptive planner
         self.planner = AdaptiveHorizonPlanner(
@@ -558,36 +556,34 @@ class TestTemporalPlannerFactory:
         self.policy_selector = DiscreteExpectedFreeEnergy(policy_config, self.inference)
 
         self.kwargs = {
-            'policy_selector': self.policy_selector,
-            'inference_algorithm': self.inference
+            "policy_selector": self.policy_selector,
+            "inference_algorithm": self.inference,
         }
 
     def test_create_mcts_planner(self):
         """Test MCTS planner creation"""
-        planner = create_temporal_planner('mcts', **self.kwargs)
+        planner = create_temporal_planner("mcts", **self.kwargs)
         assert isinstance(planner, MonteCarloTreeSearch)
 
     def test_create_beam_planner(self):
         """Test beam search planner creation"""
-        planner = create_temporal_planner('beam', **self.kwargs)
+        planner = create_temporal_planner("beam", **self.kwargs)
         assert isinstance(planner, BeamSearchPlanner)
 
     def test_create_astar_planner(self):
         """Test A* planner creation"""
-        planner = create_temporal_planner('astar', **self.kwargs)
+        planner = create_temporal_planner("astar", **self.kwargs)
         assert isinstance(planner, AStarPlanner)
 
     def test_create_sampling_planner(self):
         """Test trajectory sampling planner creation"""
-        planner = create_temporal_planner('sampling', **self.kwargs)
+        planner = create_temporal_planner("sampling", **self.kwargs)
         assert isinstance(planner, TrajectorySampling)
 
     def test_create_adaptive_planner(self):
         """Test adaptive planner creation"""
         planner = create_temporal_planner(
-            'adaptive',
-            base_planner_type='mcts',
-            **self.kwargs
+            "adaptive", base_planner_type="mcts", **self.kwargs
         )
         assert isinstance(planner, AdaptiveHorizonPlanner)
         assert isinstance(planner.base_planner, MonteCarloTreeSearch)
@@ -595,21 +591,17 @@ class TestTemporalPlannerFactory:
     def test_invalid_planner_type(self):
         """Test invalid planner type"""
         with pytest.raises(ValueError):
-            create_temporal_planner('invalid', **self.kwargs)
+            create_temporal_planner("invalid", **self.kwargs)
 
     def test_missing_components(self):
         """Test missing required components"""
         with pytest.raises(ValueError):
-            create_temporal_planner('mcts')  # Missing policy_selector and inference
+            create_temporal_planner("mcts")  # Missing policy_selector and inference
 
     def test_custom_config(self):
         """Test creation with custom config"""
-        config = PlanningConfig(
-            planning_horizon=20,
-            num_simulations=200,
-            use_gpu=False
-        )
-        planner = create_temporal_planner('mcts', config=config, **self.kwargs)
+        config = PlanningConfig(planning_horizon=20, num_simulations=200, use_gpu=False)
+        planner = create_temporal_planner("mcts", config=config, **self.kwargs)
 
         assert planner.config.planning_horizon == 20
         assert planner.config.num_simulations == 200

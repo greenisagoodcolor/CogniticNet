@@ -1,79 +1,118 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import type { Agent } from "@/lib/types"
-import type { AgentDetails } from "@/lib/types/agent-api"
+import { Badge } from "@/components/ui/badge";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Agent } from "@/lib/types";
+import type { AgentDetails } from "@/lib/types/agent-api";
 import {
-    Activity,
-    Brain,
-    Clock,
-    MessageSquare,
-    Navigation,
-    Target,
-    Zap
-} from "lucide-react"
-import type React from "react"
+  Activity,
+  Brain,
+  Clock,
+  MessageSquare,
+  Navigation,
+  Target,
+  Zap,
+} from "lucide-react";
+import type React from "react";
 
 interface AgentActivityTimelineProps {
-  agents: Agent[]
-  agentDetails: Record<string, AgentDetails>
+  agents: Agent[];
+  agentDetails: Record<string, AgentDetails>;
 }
 
 interface IActivityEvent {
-  id: string
-  agentId: string
-  agentName: string
-  type: "status_change" | "interaction" | "goal_update" | "learning" | "movement" | "resource_change"
-  description: string
-  timestamp: Date
-  icon: React.ElementType
-  color: string
+  id: string;
+  agentId: string;
+  agentName: string;
+  type:
+    | "status_change"
+    | "interaction"
+    | "goal_update"
+    | "learning"
+    | "movement"
+    | "resource_change";
+  description: string;
+  timestamp: Date;
+  icon: React.ElementType;
+  color: string;
 }
 
 // Generate mock activity events
-function generateMockActivities(agents: Agent[], agentDetails: Record<string, AgentDetails>): IActivityEvent[] {
-  const activities: IActivityEvent[] = []
-  const now = new Date()
+function generateMockActivities(
+  agents: Agent[],
+  agentDetails: Record<string, AgentDetails>,
+): IActivityEvent[] {
+  const activities: IActivityEvent[] = [];
+  const now = new Date();
 
   const eventTypes = [
-    { type: "status_change", icon: Activity, color: "text-blue-500", template: "changed status to" },
-    { type: "interaction", icon: MessageSquare, color: "text-green-500", template: "interacted with" },
-    { type: "goal_update", icon: Target, color: "text-yellow-500", template: "completed goal:" },
-    { type: "learning", icon: Brain, color: "text-purple-500", template: "learned new pattern:" },
-    { type: "movement", icon: Navigation, color: "text-orange-500", template: "moved to position" },
-    { type: "resource_change", icon: Zap, color: "text-red-500", template: "resource update:" }
-  ] as const
+    {
+      type: "status_change",
+      icon: Activity,
+      color: "text-blue-500",
+      template: "changed status to",
+    },
+    {
+      type: "interaction",
+      icon: MessageSquare,
+      color: "text-green-500",
+      template: "interacted with",
+    },
+    {
+      type: "goal_update",
+      icon: Target,
+      color: "text-yellow-500",
+      template: "completed goal:",
+    },
+    {
+      type: "learning",
+      icon: Brain,
+      color: "text-purple-500",
+      template: "learned new pattern:",
+    },
+    {
+      type: "movement",
+      icon: Navigation,
+      color: "text-orange-500",
+      template: "moved to position",
+    },
+    {
+      type: "resource_change",
+      icon: Zap,
+      color: "text-red-500",
+      template: "resource update:",
+    },
+  ] as const;
 
   // Generate 20 random activities
   for (let i = 0; i < 20; i++) {
-    const agent = agents[Math.floor(Math.random() * agents.length)]
-    const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)]
-    const minutesAgo = Math.floor(Math.random() * 60)
+    const agent = agents[Math.floor(Math.random() * agents.length)];
+    const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+    const minutesAgo = Math.floor(Math.random() * 60);
 
-    let description = ""
+    let description = "";
     switch (eventType.type) {
       case "status_change":
-        const details = agentDetails[agent.id]
-        description = `${eventType.template} ${details?.status || "idle"}`
-        break
+        const details = agentDetails[agent.id];
+        description = `${eventType.template} ${details?.status || "idle"}`;
+        break;
       case "interaction":
-        const otherAgent = agents.find(a => a.id !== agent.id)
-        description = `${eventType.template} ${otherAgent?.name || "unknown"}`
-        break
+        const otherAgent = agents.find((a) => a.id !== agent.id);
+        description = `${eventType.template} ${otherAgent?.name || "unknown"}`;
+        break;
       case "goal_update":
-        description = `${eventType.template} "Explore sector 7"`
-        break
+        description = `${eventType.template} "Explore sector 7"`;
+        break;
       case "learning":
-        description = `${eventType.template} "Optimal pathfinding"`
-        break
+        description = `${eventType.template} "Optimal pathfinding"`;
+        break;
       case "movement":
-        description = `${eventType.template} (${agent.position.x}, ${agent.position.y})`
-        break
+        description = `${eventType.template} (${agent.position.x}, ${agent.position.y})`;
+        break;
       case "resource_change":
-        description = `${eventType.template} Energy +15%`
-        break
+        description = `${eventType.template} Energy +15%`;
+        break;
     }
 
     activities.push({
@@ -84,32 +123,34 @@ function generateMockActivities(agents: Agent[], agentDetails: Record<string, Ag
       description,
       timestamp: new Date(now.getTime() - minutesAgo * 60000),
       icon: eventType.icon,
-      color: eventType.color
-    })
+      color: eventType.color,
+    });
   }
 
   // Sort by timestamp descending
-  return activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+  return activities.sort(
+    (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
+  );
 }
 
 function formatTimeAgo(date: Date): string {
-  const now = new Date()
-  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (seconds < 60) return `${seconds}s ago`
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
 export default function AgentActivityTimeline({
   agents,
-  agentDetails
+  agentDetails,
 }: AgentActivityTimelineProps) {
-  const activities = generateMockActivities(agents, agentDetails)
+  const activities = generateMockActivities(agents, agentDetails);
 
   return (
     <div className="h-full flex flex-col">
@@ -120,7 +161,7 @@ export default function AgentActivityTimeline({
         <ScrollArea className="h-full pr-4">
           <div className="space-y-4">
             {activities.map((activity) => {
-              const Icon = activity.icon
+              const Icon = activity.icon;
               return (
                 <div key={activity.id} className="flex items-start gap-3">
                   <div className={`mt-1 ${activity.color}`}>
@@ -144,11 +185,11 @@ export default function AgentActivityTimeline({
                     </div>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         </ScrollArea>
       </CardContent>
     </div>
-  )
+  );
 }

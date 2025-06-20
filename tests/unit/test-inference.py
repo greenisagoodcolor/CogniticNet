@@ -4,19 +4,18 @@ Unit tests for Active Inference inference algorithms
 
 import pytest
 import torch
-import numpy as np
-from typing import Tuple
 
 # Import modules to test
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from agents.active_inference import (
     DiscreteGenerativeModel,
     ContinuousGenerativeModel,
     ModelDimensions,
-    ModelParameters
+    ModelParameters,
 )
 from agents.active_inference.inference import (
     InferenceConfig,
@@ -26,7 +25,7 @@ from agents.active_inference.inference import (
     NaturalGradientInference,
     ExpectationMaximization,
     ParticleFilterInference,
-    create_inference_algorithm
+    create_inference_algorithm,
 )
 
 
@@ -49,11 +48,7 @@ class TestInferenceConfig:
 
     def test_custom_config(self):
         """Test custom configuration"""
-        config = InferenceConfig(
-            num_iterations=32,
-            learning_rate=0.01,
-            use_gpu=False
-        )
+        config = InferenceConfig(num_iterations=32, learning_rate=0.01, use_gpu=False)
 
         assert config.num_iterations == 32
         assert config.learning_rate == 0.01
@@ -84,7 +79,7 @@ class TestVariationalMessagePassing:
         self.model.A[1, 2] = 0.05
         self.model.A[2, 2] = 0.9
 
-        self.model.A[:, 3] = 1/3  # Uniform for state 3
+        self.model.A[:, 3] = 1 / 3  # Uniform for state 3
 
         self.config = InferenceConfig(use_gpu=False, num_iterations=10)
         self.vmp = VariationalMessagePassing(self.config)
@@ -190,9 +185,7 @@ class TestBeliefPropagation:
         action = torch.tensor(0)
 
         beliefs = self.bp.infer_states(
-            observation, self.model,
-            actions=action,
-            previous_states=previous_beliefs
+            observation, self.model, actions=action, previous_states=previous_beliefs
         )
 
         assert beliefs.shape == (3,)
@@ -384,7 +377,9 @@ class TestParticleFilterInference:
 
         assert new_particles.shape == particles.shape
         assert torch.allclose(new_weights.sum(), torch.tensor(1.0))
-        assert torch.allclose(new_weights, torch.ones(50) / 50)  # Should be uniform after resampling
+        assert torch.allclose(
+            new_weights, torch.ones(50) / 50
+        )  # Should be uniform after resampling
 
     def test_continuous_model_particles(self):
         """Test particle filter with continuous model"""
@@ -421,44 +416,44 @@ class TestInferenceFactory:
 
     def test_create_vmp(self):
         """Test VMP creation"""
-        algo = create_inference_algorithm('vmp')
+        algo = create_inference_algorithm("vmp")
         assert isinstance(algo, VariationalMessagePassing)
 
     def test_create_bp(self):
         """Test BP creation"""
-        algo = create_inference_algorithm('bp')
+        algo = create_inference_algorithm("bp")
         assert isinstance(algo, BeliefPropagation)
 
     def test_create_gradient(self):
         """Test gradient descent creation"""
-        algo = create_inference_algorithm('gradient')
+        algo = create_inference_algorithm("gradient")
         assert isinstance(algo, GradientDescentInference)
 
     def test_create_natural(self):
         """Test natural gradient creation"""
-        algo = create_inference_algorithm('natural')
+        algo = create_inference_algorithm("natural")
         assert isinstance(algo, NaturalGradientInference)
 
     def test_create_em(self):
         """Test EM creation"""
-        algo = create_inference_algorithm('em')
+        algo = create_inference_algorithm("em")
         assert isinstance(algo, ExpectationMaximization)
 
     def test_create_particle(self):
         """Test particle filter creation"""
-        algo = create_inference_algorithm('particle', num_particles=100)
+        algo = create_inference_algorithm("particle", num_particles=100)
         assert isinstance(algo, ParticleFilterInference)
         assert algo.num_particles == 100
 
     def test_invalid_algorithm(self):
         """Test invalid algorithm type"""
         with pytest.raises(ValueError):
-            create_inference_algorithm('invalid')
+            create_inference_algorithm("invalid")
 
     def test_custom_config(self):
         """Test creation with custom config"""
         config = InferenceConfig(num_iterations=50, use_gpu=False)
-        algo = create_inference_algorithm('vmp', config=config)
+        algo = create_inference_algorithm("vmp", config=config)
 
         assert algo.config.num_iterations == 50
         assert algo.config.use_gpu is False

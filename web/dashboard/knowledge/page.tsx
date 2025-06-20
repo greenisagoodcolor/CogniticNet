@@ -1,17 +1,39 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { KnowledgeGraphViz } from '@/components/knowledge-graph-viz';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Brain, Network, TrendingUp, Share2, Filter, Download, Maximize2 } from 'lucide-react';
+import { useState } from "react";
+import { KnowledgeGraphViz } from "@/components/knowledge-graph-viz";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Brain,
+  Network,
+  TrendingUp,
+  Share2,
+  Filter,
+  Download,
+  Maximize2,
+} from "lucide-react";
 
 export default function KnowledgePage() {
-  const [selectedAgent, setSelectedAgent] = useState<string>('agent_123');
-  const [graphMode, setGraphMode] = useState<'individual' | 'collective'>('individual');
-  const [filterType, setFilterType] = useState<string>('all');
+  const [selectedAgent, setSelectedAgent] = useState<string>("agent_123");
+  const [graphMode, setGraphMode] = useState<"individual" | "collective">(
+    "individual",
+  );
+  const [filterType, setFilterType] = useState<string>("all");
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -69,7 +91,9 @@ export default function KnowledgePage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Shared Knowledge</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Shared Knowledge
+            </CardTitle>
             <Share2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -88,7 +112,10 @@ export default function KnowledgePage() {
               <div className="flex justify-between items-center">
                 <CardTitle>Knowledge Graph Visualization</CardTitle>
                 <div className="flex gap-2">
-                  <Select value={graphMode} onValueChange={(v) => setGraphMode(v as any)}>
+                  <Select
+                    value={graphMode}
+                    onValueChange={(v) => setGraphMode(v as any)}
+                  >
                     <SelectTrigger className="w-[150px]">
                       <SelectValue />
                     </SelectTrigger>
@@ -97,13 +124,18 @@ export default function KnowledgePage() {
                       <SelectItem value="collective">Collective</SelectItem>
                     </SelectContent>
                   </Select>
-                  {graphMode === 'individual' && (
-                    <Select value={selectedAgent} onValueChange={setSelectedAgent}>
+                  {graphMode === "individual" && (
+                    <Select
+                      value={selectedAgent}
+                      onValueChange={setSelectedAgent}
+                    >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="agent_123">CuriousExplorer</SelectItem>
+                        <SelectItem value="agent_123">
+                          CuriousExplorer
+                        </SelectItem>
                         <SelectItem value="agent_456">WiseScholar</SelectItem>
                         <SelectItem value="agent_789">BravePioneer</SelectItem>
                       </SelectContent>
@@ -113,9 +145,14 @@ export default function KnowledgePage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="relative bg-slate-900 rounded-lg overflow-hidden" style={{ height: '600px' }}>
+              <div
+                className="relative bg-slate-900 rounded-lg overflow-hidden"
+                style={{ height: "600px" }}
+              >
                 <KnowledgeGraphViz
-                  agentId={graphMode === 'individual' ? selectedAgent : undefined}
+                  agentId={
+                    graphMode === "individual" ? selectedAgent : undefined
+                  }
                   mode={graphMode}
                   filter={filterType}
                 />
@@ -204,7 +241,9 @@ export default function KnowledgePage() {
               <div className="space-y-3">
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Resource Clustering</span>
+                    <span className="text-sm font-medium">
+                      Resource Clustering
+                    </span>
                     <span className="text-xs text-green-600">92%</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -213,7 +252,9 @@ export default function KnowledgePage() {
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Agent Cooperation</span>
+                    <span className="text-sm font-medium">
+                      Agent Cooperation
+                    </span>
                     <span className="text-xs text-green-600">87%</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -222,7 +263,9 @@ export default function KnowledgePage() {
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Path Optimization</span>
+                    <span className="text-sm font-medium">
+                      Path Optimization
+                    </span>
                     <span className="text-xs text-yellow-600">76%</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -257,4 +300,4 @@ export default function KnowledgePage() {
       </div>
     </div>
   );
-} 
+}

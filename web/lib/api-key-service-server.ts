@@ -40,7 +40,7 @@ export async function storeApiKey(provider: string, apiKey: string): Promise<str
   try {
     const sessionId = crypto.randomUUID();
     const encryptedApiKey = encrypt(apiKey);
-    
+
     const cookieStore = await cookies();
     cookieStore.set(`api_key_${provider}_${sessionId}`, encryptedApiKey, {
       httpOnly: true,
@@ -48,7 +48,7 @@ export async function storeApiKey(provider: string, apiKey: string): Promise<str
       sameSite: 'strict',
       maxAge: 60 * 60 * 24, // 24 hours
     });
-    
+
     console.log(`[API-KEY-SERVICE] API key stored with session ID: ${sessionId}`);
     return sessionId;
   } catch (error) {
@@ -61,12 +61,12 @@ export async function retrieveApiKey(provider: string, sessionId: string): Promi
   try {
     const cookieStore = await cookies();
     const encryptedApiKey = cookieStore.get(`api_key_${provider}_${sessionId}`)?.value;
-    
+
     if (!encryptedApiKey) {
       console.log(`[API-KEY-SERVICE] No API key found for provider: ${provider}, session: ${sessionId}`);
       return null;
     }
-    
+
     const decryptedKey = decrypt(encryptedApiKey);
     console.log(`[API-KEY-SERVICE] Retrieved API key for provider: ${provider}`);
     return decryptedKey;

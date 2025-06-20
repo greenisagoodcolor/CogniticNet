@@ -365,7 +365,7 @@ python src/main.py
    ```python
    from fastapi import APIRouter, Depends
    from sqlalchemy.orm import Session
-   from src.database.connection import get_db
+   from infrastructure.database.connection import get_db
 
    router = APIRouter(prefix="/api/v1/agents", tags=["agents"])
 

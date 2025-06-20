@@ -31,6 +31,7 @@ app/api/agents/
 ## Key Features
 
 ### 1. Agent Management
+
 - **Create**: Instantiate new agents with custom personalities and capabilities
 - **List**: Query agents with filtering, pagination, and sorting
 - **Get**: Retrieve detailed information about specific agents
@@ -38,18 +39,21 @@ app/api/agents/
 - **Delete**: Remove agents and clean up resources
 
 ### 2. State Management
+
 - Track agent state transitions with full history
 - Validate state changes based on allowed transitions
 - Force state changes when necessary
 - Real-time state monitoring
 
 ### 3. Command Execution
+
 - Execute commands synchronously or asynchronously
 - Track command history and results
 - Support for various command types (move, interact, observe, etc.)
 - Command status polling for async operations
 
 ### 4. Memory Operations
+
 - Query agent memories with filtering
 - Add new memories with importance scoring
 - Delete specific memories
@@ -57,6 +61,7 @@ app/api/agents/
 - Support for different memory types (event, interaction, location, pattern)
 
 ### 5. Security & Rate Limiting
+
 - Session-based authentication required for all endpoints
 - Rate limiting to prevent abuse:
   - Read operations: 20/minute
@@ -70,8 +75,8 @@ app/api/agents/
 All endpoints use session-based authentication through the `validateSession` function:
 
 ```typescript
-const sessionId = request.cookies.get('session')?.value
-const isValid = sessionId ? await validateSession('session', sessionId) : false
+const sessionId = request.cookies.get("session")?.value;
+const isValid = sessionId ? await validateSession("session", sessionId) : false;
 ```
 
 ### Rate Limiting
@@ -82,7 +87,7 @@ Rate limiting is implemented using the `rateLimit` utility:
 const limiter = rateLimit({
   interval: 60 * 1000, // 1 minute
   uniqueTokenPerInterval: 500,
-})
+});
 ```
 
 ### Request Validation
@@ -97,7 +102,7 @@ const CreateAgentSchema = z.object({
     // ... other personality traits
   }),
   // ... other fields
-})
+});
 ```
 
 ### Error Handling
@@ -108,16 +113,16 @@ Consistent error responses across all endpoints:
 // Validation errors
 if (error instanceof z.ZodError) {
   return NextResponse.json(
-    { error: 'Invalid request', details: error.errors },
-    { status: 400 }
-  )
+    { error: "Invalid request", details: error.errors },
+    { status: 400 },
+  );
 }
 
 // General errors
 return NextResponse.json(
-  { error: 'Failed to perform operation' },
-  { status: 500 }
-)
+  { error: "Failed to perform operation" },
+  { status: 500 },
+);
 ```
 
 ## Usage Examples
@@ -169,6 +174,7 @@ curl -X GET "http://localhost:3000/api/agents/agent-123/memory?type=location&min
 ### Database Integration
 
 Currently using mock data. In production, integrate with:
+
 - PostgreSQL/MySQL for persistent storage
 - Redis for caching and real-time data
 - Vector database for memory similarity search
@@ -176,6 +182,7 @@ Currently using mock data. In production, integrate with:
 ### Agent System Integration
 
 Connect to the actual agent system:
+
 - Agent state manager
 - Command executor
 - Memory system
@@ -184,6 +191,7 @@ Connect to the actual agent system:
 ### WebSocket Support
 
 For real-time updates, implement WebSocket endpoints:
+
 - State change notifications
 - Command execution progress
 - Resource updates
@@ -192,21 +200,25 @@ For real-time updates, implement WebSocket endpoints:
 ## Future Enhancements
 
 1. **Batch Operations**
+
    - Create multiple agents
    - Execute commands on agent groups
    - Bulk memory operations
 
 2. **Advanced Querying**
+
    - Full-text search on agent properties
    - Geospatial queries for agent positions
    - Complex filtering with AND/OR conditions
 
 3. **Performance Optimization**
+
    - Response caching
    - Query optimization
    - Connection pooling
 
 4. **Monitoring & Analytics**
+
    - Agent performance metrics
    - Command execution analytics
    - Memory usage statistics
@@ -223,12 +235,12 @@ For real-time updates, implement WebSocket endpoints:
 Test individual route handlers:
 
 ```typescript
-describe('Agent API', () => {
-  test('should create agent with valid data', async () => {
-    const response = await POST(mockRequest)
-    expect(response.status).toBe(201)
-  })
-})
+describe("Agent API", () => {
+  test("should create agent with valid data", async () => {
+    const response = await POST(mockRequest);
+    expect(response.status).toBe(201);
+  });
+});
 ```
 
 ### Integration Tests
@@ -236,14 +248,14 @@ describe('Agent API', () => {
 Test full API workflows:
 
 ```typescript
-describe('Agent Lifecycle', () => {
-  test('should create, update, and delete agent', async () => {
+describe("Agent Lifecycle", () => {
+  test("should create, update, and delete agent", async () => {
     // Create agent
     // Update properties
     // Execute commands
     // Delete agent
-  })
-})
+  });
+});
 ```
 
 ### Load Testing
@@ -251,12 +263,12 @@ describe('Agent Lifecycle', () => {
 Use tools like k6 or Artillery:
 
 ```javascript
-import http from 'k6/http'
-import { check } from 'k6'
+import http from "k6/http";
+import { check } from "k6";
 
-export default function() {
-  const res = http.get('http://localhost:3000/api/agents')
-  check(res, { 'status is 200': (r) => r.status === 200 })
+export default function () {
+  const res = http.get("http://localhost:3000/api/agents");
+  check(res, { "status is 200": (r) => r.status === 200 });
 }
 ```
 
@@ -280,6 +292,7 @@ When adding new endpoints:
 ## Support
 
 For questions or issues:
+
 - Check the [main documentation](../../../docs/README.md)
 - Review [troubleshooting guide](../../../docs/troubleshooting.md)
 - Contact the development team

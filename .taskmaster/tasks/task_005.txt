@@ -16,7 +16,7 @@ Implement comprehensive naming consistency across the repository in strict accor
 
 2. File naming conventions (per ADR-004):
    - Python files: kebab-case.py (e.g., belief-update.py)
-   - TypeScript/JavaScript files: 
+   - TypeScript/JavaScript files:
      - Components: PascalCase.tsx (e.g., AgentCreator.tsx)
      - Utilities: camelCase.ts (e.g., beliefUtils.ts)
    - Configuration files: kebab-case.yml (e.g., development.yml)
@@ -101,4 +101,3 @@ Configure pre-commit tools to run linting and naming checks. Revise onboarding g
 ### Description: Develop a validation tool that checks all naming changes against the architectural decision records to ensure ongoing compliance with project standards.
 ### Details:
 Build a tool that can be run manually or integrated into CI/CD pipelines to validate file names, locations, and code naming against ADR specifications. Include reporting features to identify non-compliant elements and suggest corrections.
-

@@ -10,7 +10,7 @@ from pathlib import Path
 import json
 import tempfile
 
-from src.readiness.readiness_evaluator import (
+from readiness.readiness_evaluator import (
     AgentReadinessEvaluator,
     ReadinessThresholds,
     ReadinessScore,

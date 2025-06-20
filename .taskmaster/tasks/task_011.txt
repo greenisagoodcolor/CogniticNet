@@ -17,7 +17,7 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
    ```bash
    # Generate detailed file listing with sizes and types
    find src/ -type f -exec file {} \; > src_inventory.txt
-   
+
    # Extract all Python imports to understand dependencies
    grep -r "^import\|^from" src/ > src_imports.txt
    ```
@@ -44,19 +44,19 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
    import os
    import subprocess
    from pathlib import Path
-   
+
    MIGRATIONS = {
        'src/agents': 'agents',
        'src/models': 'inference/models',
        'src/database': 'infrastructure/persistence',
        # ... complete mapping
    }
-   
+
    def migrate_with_history(src_path, dest_path):
        """Move files preserving git history using git mv"""
        # Ensure destination directory exists
        Path(dest_path).parent.mkdir(parents=True, exist_ok=True)
-       
+
        # Use git mv to preserve history
        subprocess.run(['git', 'mv', src_path, dest_path], check=True)
    ```
@@ -66,14 +66,14 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
    # update_imports.py
    import re
    from pathlib import Path
-   
+
    IMPORT_MAPPINGS = {
        'from src.agents': 'from agents',
        'import src.agents': 'import agents',
        'from src.database': 'from infrastructure.persistence',
        # ... complete mappings
    }
-   
+
    def update_file_imports(filepath):
        """Update all imports in a file"""
        content = Path(filepath).read_text()
@@ -100,13 +100,13 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
    ```bash
    # Example for agents module
    git mv src/agents agents/
-   
+
    # Update imports in moved files
    find agents/ -name "*.py" -exec python update_imports.py {} \;
-   
+
    # Update imports in rest of codebase
    find . -name "*.py" -not -path "./src/*" -exec python update_imports.py {} \;
-   
+
    # Run tests to verify
    pytest tests/agents/
    ```
@@ -118,7 +118,7 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
    import ast
    import sys
    from pathlib import Path
-   
+
    def check_imports(filepath):
        """Verify all imports in a Python file are valid"""
        try:
@@ -143,7 +143,7 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
    ```bash
    # Verify src/ is empty
    find src/ -type f | wc -l  # Should be 0
-   
+
    # Remove directory
    git rm -r src/
    git commit -m "Remove empty src/ directory after migration to canonical structure"
@@ -159,12 +159,12 @@ Execute a systematic migration of the legacy src/ directory to the canonical str
 2. Create migration report:
    ```markdown
    # Legacy src/ Migration Report
-   
+
    ## Summary
    - Files migrated: X
    - Import statements updated: Y
    - Git history preserved: ✓
-   
+
    ## Mapping Details
    | Original Path | New Path | Domain Classification |
    |--------------|----------|---------------------|
@@ -220,7 +220,7 @@ For each migrated module:
   def test_no_circular_dependencies():
       """Ensure no circular imports exist"""
       # Implementation
-  
+
   def test_layer_dependencies():
       """Verify core domain doesn't import from infrastructure"""
       # Check that agents/ doesn't import from infrastructure/
@@ -302,4 +302,3 @@ Validation checklist: 1) Run full test suite and compare with baseline, 2) Check
 ### Description: Complete the migration by removing the empty src/ directory, creating comprehensive migration documentation, and ensuring the canonical structure is fully implemented and enforced.
 ### Details:
 Final steps: 1) Verify src/ directory is completely empty (no remaining files), 2) Remove src/ directory with git rm -r src/, 3) Create migration report documenting what was moved where, 4) Update architectural compliance validation scripts to prevent future src/ usage, 5) Add pre-commit hooks to enforce canonical structure, 6) Create team communication about the new structure, 7) Final commit and merge to main branch.
-

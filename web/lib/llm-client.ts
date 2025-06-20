@@ -214,7 +214,7 @@ export class LLMClient {
         hasApiKeySessionId: !!settingsCopy.apiKeySessionId,
       })
       return settingsCopy
-      
+
     } catch (error) {
       logger.error("Error in LLMClient.getSettings:", error)
       // Return a safe default if there's an error
@@ -511,7 +511,7 @@ export class LLMClient {
 
         // Call the new streaming API endpoint
         logger.info("[LLM CLIENT] Calling streaming API endpoint")
-        
+
         const response = await fetch("/api/llm/stream", {
           method: "POST",
           headers: {
@@ -558,7 +558,7 @@ export class LLMClient {
                     fullResponse += chunkData.text
                     safeCallback(chunkData.text, false)
                   }
-                  
+
                   // Check if this is the completion signal
                   if (chunkData.isComplete) {
                     logger.info("[LLM CLIENT] Stream completed")

@@ -8,7 +8,7 @@ asyncio-redis==0.16.0
 colorlog==6.7.0
 python-json-logger==2.0.7
 
-# Performance monitoring  
+# Performance monitoring
 psutil==5.9.8
 py-spy==0.3.14
 
@@ -29,4 +29,4 @@ seaborn==0.13.0
 
 # Demo-specific ML libraries (lighter versions)
 scikit-learn==1.3.2
-torch==2.1.2+cpu  # CPU-only version for demos 
+torch==2.1.2+cpu  # CPU-only version for demos

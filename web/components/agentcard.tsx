@@ -1,11 +1,20 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import type { Agent } from "@/lib/types"
-import type { AgentGoal, AgentResources, AgentStatus } from "@/lib/types/agent-api"
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { Agent } from "@/lib/types";
+import type {
+  AgentGoal,
+  AgentResources,
+  AgentStatus,
+} from "@/lib/types/agent-api";
 import {
   Activity,
   AlertCircle,
@@ -18,21 +27,21 @@ import {
   PowerOff,
   Target,
   Users,
-  Zap
-} from "lucide-react"
-import type React from "react"
+  Zap,
+} from "lucide-react";
+import type React from "react";
 
 interface AgentCardProps {
-  agent: Agent
+  agent: Agent;
   agentData?: {
-    status: AgentStatus
-    resources: AgentResources
-    goals: AgentGoal[]
-    activity?: string
-  }
-  isSelected?: boolean
-  onClick?: () => void
-  className?: string
+    status: AgentStatus;
+    resources: AgentResources;
+    goals: AgentGoal[];
+    activity?: string;
+  };
+  isSelected?: boolean;
+  onClick?: () => void;
+  className?: string;
 }
 
 const statusColors: Record<AgentStatus, string> = {
@@ -43,8 +52,8 @@ const statusColors: Record<AgentStatus, string> = {
   executing: "bg-orange-500",
   learning: "bg-purple-500",
   error: "bg-red-500",
-  offline: "bg-gray-700"
-}
+  offline: "bg-gray-700",
+};
 
 const statusIcons: Record<AgentStatus, React.ElementType> = {
   idle: Clock,
@@ -54,23 +63,29 @@ const statusIcons: Record<AgentStatus, React.ElementType> = {
   executing: Zap,
   learning: Brain,
   error: AlertCircle,
-  offline: PowerOff
-}
+  offline: PowerOff,
+};
 
 export default function AgentCard({
   agent,
   agentData,
   isSelected = false,
   onClick,
-  className = ""
+  className = "",
 }: AgentCardProps) {
-  const status = agentData?.status || "offline"
-  const resources = agentData?.resources || { energy: 0, health: 0, memory_used: 0, memory_capacity: 100 }
-  const StatusIcon = statusIcons[status]
+  const status = agentData?.status || "offline";
+  const resources = agentData?.resources || {
+    energy: 0,
+    health: 0,
+    memory_used: 0,
+    memory_capacity: 100,
+  };
+  const StatusIcon = statusIcons[status];
 
-  const memoryUsagePercent = resources.memory_capacity > 0
-    ? (resources.memory_used / resources.memory_capacity) * 100
-    : 0
+  const memoryUsagePercent =
+    resources.memory_capacity > 0
+      ? (resources.memory_used / resources.memory_capacity) * 100
+      : 0;
 
   return (
     <TooltipProvider>
@@ -100,7 +115,9 @@ export default function AgentCard({
                   )}
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Autonomy: {agent.autonomyEnabled ? "Enabled" : "Disabled"}</p>
+                  <p>
+                    Autonomy: {agent.autonomyEnabled ? "Enabled" : "Disabled"}
+                  </p>
                 </TooltipContent>
               </Tooltip>
 
@@ -163,7 +180,10 @@ export default function AgentCard({
                   <Brain className="w-4 h-4 text-purple-500" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Memory Usage: {resources.memory_used}MB / {resources.memory_capacity}MB</p>
+                  <p>
+                    Memory Usage: {resources.memory_used}MB /{" "}
+                    {resources.memory_capacity}MB
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <Progress value={memoryUsagePercent} className="flex-1" />
@@ -176,7 +196,8 @@ export default function AgentCard({
           {/* Current Activity */}
           {agentData?.activity && (
             <div className="text-sm">
-              <span className="text-muted-foreground">Activity:</span> {agentData.activity}
+              <span className="text-muted-foreground">Activity:</span>{" "}
+              {agentData.activity}
             </div>
           )}
 
@@ -189,7 +210,10 @@ export default function AgentCard({
               </div>
               <div className="space-y-1">
                 {agentData.goals.slice(0, 2).map((goal) => (
-                  <div key={goal.id} className="text-xs flex items-center gap-1">
+                  <div
+                    key={goal.id}
+                    className="text-xs flex items-center gap-1"
+                  >
                     {goal.status === "completed" ? (
                       <CheckCircle className="w-3 h-3 text-green-500" />
                     ) : (
@@ -214,5 +238,5 @@ export default function AgentCard({
         </CardContent>
       </Card>
     </TooltipProvider>
-  )
+  );
 }

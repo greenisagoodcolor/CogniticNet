@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Info } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface AboutButtonProps {
-  onClick: () => void
+  onClick: () => void;
 }
 
 export default function AboutButton({ onClick }: AboutButtonProps) {
@@ -18,5 +18,5 @@ export default function AboutButton({ onClick }: AboutButtonProps) {
     >
       <Info size={12} />
     </Button>
-  )
+  );
 }

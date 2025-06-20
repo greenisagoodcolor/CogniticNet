@@ -1,6 +1,7 @@
 # Explorer Cautious Model
 
 ## Metadata
+
 - Version: 1.0.0
 - Author: FreeAgentics Team
 - Created: 2024-01-15T10:00:00Z
@@ -8,18 +9,21 @@
 - Tags: [explorer, cautious, efficient]
 
 ## Description
+
 This model implements a cautious explorer agent that prioritizes safety while
 systematically exploring unknown territories. It uses GraphSAGE architecture
 for efficient neighborhood aggregation and maintains a balance between
 exploration and self-preservation.
 
 The agent exhibits the following behavioral characteristics:
+
 - Systematic exploration patterns
 - Risk-averse decision making
 - Efficient resource management
 - Collaborative information sharing
 
 ## Architecture
+
 ```gnn
 architecture {
   type: "GraphSAGE"
@@ -34,6 +38,7 @@ architecture {
 ```
 
 ## Parameters
+
 ```gnn
 parameters {
   learning_rate: 0.001
@@ -57,6 +62,7 @@ parameters {
 ```
 
 ## Active Inference Mapping
+
 ```gnn
 active_inference {
   beliefs {
@@ -88,6 +94,7 @@ active_inference {
 ```
 
 ## Node Features
+
 ```gnn
 node_features {
   spatial: ["x", "y", "region_id"]
@@ -113,6 +120,7 @@ node_features {
 ```
 
 ## Edge Features
+
 ```gnn
 edge_features {
   type: "directed"
@@ -131,6 +139,7 @@ edge_features {
 ```
 
 ## Constraints
+
 ```gnn
 constraints {
   max_nodes: 5000
@@ -148,6 +157,7 @@ constraints {
 ```
 
 ## Validation Rules
+
 ```gnn
 validation {
   graph_connectivity: "connected"
@@ -182,3 +192,4 @@ validation {
     }
   ]
 }
+```

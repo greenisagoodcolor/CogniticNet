@@ -50,4 +50,4 @@ EXPOSE 3000
 ENV PORT 3000
 
 # Start the application with demo flag
-CMD ["node", "server.js"] 
+CMD ["node", "server.js"]

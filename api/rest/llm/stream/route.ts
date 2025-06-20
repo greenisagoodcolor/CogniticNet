@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // Create a ReadableStream that will send chunks of the response
     const encoder = new TextEncoder()
-    
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
             // Send each chunk as a JSON object with text and completion status
             const chunkData = JSON.stringify(chunk) + "\n"
             controller.enqueue(encoder.encode(chunkData))
-            
+
             // If this is the completion signal, close the stream
             if (chunk.isComplete) {
               controller.close()
@@ -60,4 +60,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-} 
+}

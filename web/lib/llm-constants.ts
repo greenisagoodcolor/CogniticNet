@@ -8,4 +8,3 @@ export const defaultSettings = {
     presencePenalty: 0,
     systemFingerprint: false,
   };
-  

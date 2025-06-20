@@ -1,254 +1,269 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { 
-  Download, 
-  CheckCircle2, 
-  XCircle, 
-  AlertCircle, 
-  Cpu, 
-  Brain, 
-  Target, 
-  Users, 
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Download,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Cpu,
+  Brain,
+  Target,
+  Users,
   Battery,
   TrendingUp,
   Sparkles,
   Trophy,
-  Rocket
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+  Rocket,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface IReadinessScore {
-  agent_id: string
-  timestamp: string
+  agent_id: string;
+  timestamp: string;
   scores: {
-    knowledge_maturity: number
-    goal_achievement: number
-    model_stability: number
-    collaboration: number
-    resource_management: number
-    overall: number
-  }
-  is_ready: boolean
+    knowledge_maturity: number;
+    goal_achievement: number;
+    model_stability: number;
+    collaboration: number;
+    resource_management: number;
+    overall: number;
+  };
+  is_ready: boolean;
   metrics: {
     knowledge?: {
-      experience_count: number
-      pattern_count: number
-      avg_pattern_confidence: number
-    }
+      experience_count: number;
+      pattern_count: number;
+      avg_pattern_confidence: number;
+    };
     goals?: {
-      total_attempted: number
-      successful: number
-      success_rate: number
-      complex_completed: number
-    }
+      total_attempted: number;
+      successful: number;
+      success_rate: number;
+      complex_completed: number;
+    };
     model_stability?: {
-      update_count: number
-      is_converged: boolean
-      stable_iterations: number
-    }
+      update_count: number;
+      is_converged: boolean;
+      stable_iterations: number;
+    };
     collaboration?: {
-      total_interactions: number
-      successful_interactions: number
-      knowledge_shared: number
-      unique_collaborators: number
-    }
+      total_interactions: number;
+      successful_interactions: number;
+      knowledge_shared: number;
+      unique_collaborators: number;
+    };
     resources?: {
-      energy_efficiency: number
-      resource_efficiency: number
-      sustainability_score: number
-    }
-  }
-  recommendations: string[]
+      energy_efficiency: number;
+      resource_efficiency: number;
+      sustainability_score: number;
+    };
+  };
+  recommendations: string[];
 }
 
 interface HardwareTarget {
-  id: string
-  name: string
-  platform: string
-  cpu_arch: string
-  ram_gb: number
-  storage_gb: number
-  accelerators: string[]
+  id: string;
+  name: string;
+  platform: string;
+  cpu_arch: string;
+  ram_gb: number;
+  storage_gb: number;
+  accelerators: string[];
 }
 
 interface ReadinessPanelProps {
-  agentId: string
-  className?: string
+  agentId: string;
+  className?: string;
 }
 
 const HARDWARE_TARGETS: HardwareTarget[] = [
   {
-    id: 'raspberry_pi_4b',
-    name: 'Raspberry Pi 4B',
-    platform: 'raspberrypi',
-    cpu_arch: 'arm64',
+    id: "raspberry_pi_4b",
+    name: "Raspberry Pi 4B",
+    platform: "raspberrypi",
+    cpu_arch: "arm64",
     ram_gb: 8,
     storage_gb: 32,
-    accelerators: ['coral_tpu']
+    accelerators: ["coral_tpu"],
   },
   {
-    id: 'mac_mini_m2',
-    name: 'Mac Mini M2',
-    platform: 'mac',
-    cpu_arch: 'arm64',
+    id: "mac_mini_m2",
+    name: "Mac Mini M2",
+    platform: "mac",
+    cpu_arch: "arm64",
     ram_gb: 8,
     storage_gb: 256,
-    accelerators: ['metal']
+    accelerators: ["metal"],
   },
   {
-    id: 'jetson_nano',
-    name: 'NVIDIA Jetson Nano',
-    platform: 'jetson',
-    cpu_arch: 'arm64',
+    id: "jetson_nano",
+    name: "NVIDIA Jetson Nano",
+    platform: "jetson",
+    cpu_arch: "arm64",
     ram_gb: 4,
     storage_gb: 16,
-    accelerators: ['cuda']
-  }
-]
+    accelerators: ["cuda"],
+  },
+];
 
 const DIMENSION_INFO = {
   knowledge_maturity: {
-    label: 'Knowledge Maturity',
+    label: "Knowledge Maturity",
     icon: Brain,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
-    description: 'Experience and pattern recognition capabilities'
+    color: "text-purple-600",
+    bgColor: "bg-purple-100",
+    description: "Experience and pattern recognition capabilities",
   },
   goal_achievement: {
-    label: 'Goal Achievement',
+    label: "Goal Achievement",
     icon: Target,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-    description: 'Success rate and complex goal completion'
+    color: "text-green-600",
+    bgColor: "bg-green-100",
+    description: "Success rate and complex goal completion",
   },
   model_stability: {
-    label: 'Model Stability',
+    label: "Model Stability",
     icon: TrendingUp,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    description: 'GNN convergence and stability'
+    color: "text-blue-600",
+    bgColor: "bg-blue-100",
+    description: "GNN convergence and stability",
   },
   collaboration: {
-    label: 'Collaboration',
+    label: "Collaboration",
     icon: Users,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-100',
-    description: 'Interaction success and knowledge sharing'
+    color: "text-orange-600",
+    bgColor: "bg-orange-100",
+    description: "Interaction success and knowledge sharing",
   },
   resource_management: {
-    label: 'Resource Management',
+    label: "Resource Management",
     icon: Battery,
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-100',
-    description: 'Efficiency and sustainability'
-  }
-}
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-100",
+    description: "Efficiency and sustainability",
+  },
+};
 
 export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
-  const [readinessScore, setReadinessScore] = useState<IReadinessScore | null>(null)
-  const [selectedTarget, setSelectedTarget] = useState<string>('raspberry_pi_4b')
-  const [isLoading, setIsLoading] = useState(true)
-  const [isEvaluating, setIsEvaluating] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
-  const [showCelebration, setShowCelebration] = useState(false)
+  const [readinessScore, setReadinessScore] = useState<IReadinessScore | null>(
+    null,
+  );
+  const [selectedTarget, setSelectedTarget] =
+    useState<string>("raspberry_pi_4b");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
-    fetchReadinessScore()
-  }, [agentId])
+    fetchReadinessScore();
+  }, [agentId]);
 
   const fetchReadinessScore = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch(`/api/agents/${agentId}/readiness`)
+      const response = await fetch(`/api/agents/${agentId}/readiness`);
       if (response.ok) {
-        const data = await response.json()
-        setReadinessScore(data)
-        
+        const data = await response.json();
+        setReadinessScore(data);
+
         // Show celebration if agent just became ready
         if (data.is_ready && !readinessScore?.is_ready) {
-          setShowCelebration(true)
-          setTimeout(() => setShowCelebration(false), 5000)
+          setShowCelebration(true);
+          setTimeout(() => setShowCelebration(false), 5000);
         }
       }
     } catch (error) {
-      console.error('Failed to fetch readiness score:', error)
+      console.error("Failed to fetch readiness score:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleEvaluate = async () => {
-    setIsEvaluating(true)
+    setIsEvaluating(true);
     try {
       const response = await fetch(`/api/agents/${agentId}/evaluate`, {
-        method: 'POST'
-      })
+        method: "POST",
+      });
       if (response.ok) {
-        const data = await response.json()
-        setReadinessScore(data)
-        
+        const data = await response.json();
+        setReadinessScore(data);
+
         if (data.is_ready && !readinessScore?.is_ready) {
-          setShowCelebration(true)
-          setTimeout(() => setShowCelebration(false), 5000)
+          setShowCelebration(true);
+          setTimeout(() => setShowCelebration(false), 5000);
         }
       }
     } catch (error) {
-      console.error('Failed to evaluate agent:', error)
+      console.error("Failed to evaluate agent:", error);
     } finally {
-      setIsEvaluating(false)
+      setIsEvaluating(false);
     }
-  }
+  };
 
   const handleExport = async () => {
-    if (!readinessScore?.is_ready) return
-    
-    setIsExporting(true)
+    if (!readinessScore?.is_ready) return;
+
+    setIsExporting(true);
     try {
       const response = await fetch(`/api/agents/${agentId}/export`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ target: selectedTarget })
-      })
-      
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target: selectedTarget }),
+      });
+
       if (response.ok) {
         // Download the export package
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${agentId}_${selectedTarget}_export.tar.gz`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${agentId}_${selectedTarget}_export.tar.gz`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('Failed to export agent:', error)
+      console.error("Failed to export agent:", error);
     } finally {
-      setIsExporting(false)
+      setIsExporting(false);
     }
-  }
+  };
 
   const getScoreColor = (score: number) => {
-    if (score >= 0.8) return 'text-green-600'
-    if (score >= 0.6) return 'text-yellow-600'
-    return 'text-red-600'
-  }
+    if (score >= 0.8) return "text-green-600";
+    if (score >= 0.6) return "text-yellow-600";
+    return "text-red-600";
+  };
 
   const getScoreIcon = (score: number) => {
-    if (score >= 0.8) return CheckCircle2
-    if (score >= 0.6) return AlertCircle
-    return XCircle
-  }
+    if (score >= 0.8) return CheckCircle2;
+    if (score >= 0.6) return AlertCircle;
+    return XCircle;
+  };
 
   if (isLoading) {
     return (
@@ -260,7 +275,7 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -283,7 +298,9 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
             <div>
               <CardTitle className="flex items-center gap-2">
                 Agent Readiness Evaluation
-                {readinessScore?.is_ready && <Rocket className="h-5 w-5 text-green-600" />}
+                {readinessScore?.is_ready && (
+                  <Rocket className="h-5 w-5 text-green-600" />
+                )}
               </CardTitle>
               <CardDescription>
                 Comprehensive evaluation across 5 key dimensions
@@ -294,7 +311,7 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
               disabled={isEvaluating}
               variant="outline"
             >
-              {isEvaluating ? 'Evaluating...' : 'Re-evaluate'}
+              {isEvaluating ? "Evaluating..." : "Re-evaluate"}
             </Button>
           </div>
         </CardHeader>
@@ -304,41 +321,49 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
               {/* Overall Score */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "rounded-full p-3",
-                    readinessScore.is_ready ? "bg-green-100" : "bg-red-100"
-                  )}>
+                  <div
+                    className={cn(
+                      "rounded-full p-3",
+                      readinessScore.is_ready ? "bg-green-100" : "bg-red-100",
+                    )}
+                  >
                     {React.createElement(
                       readinessScore.is_ready ? CheckCircle2 : XCircle,
                       {
                         className: cn(
                           "h-8 w-8",
-                          readinessScore.is_ready ? "text-green-600" : "text-red-600"
-                        )
-                      }
+                          readinessScore.is_ready
+                            ? "text-green-600"
+                            : "text-red-600",
+                        ),
+                      },
                     )}
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
                       {(readinessScore.scores.overall * 100).toFixed(1)}%
                     </p>
-                    <p className="text-sm text-muted-foreground">Overall Readiness</p>
+                    <p className="text-sm text-muted-foreground">
+                      Overall Readiness
+                    </p>
                   </div>
                 </div>
                 <Badge
                   variant={readinessScore.is_ready ? "default" : "secondary"}
                   className={cn(
                     "text-lg px-4 py-2",
-                    readinessScore.is_ready && "bg-green-600"
+                    readinessScore.is_ready && "bg-green-600",
                   )}
                 >
-                  {readinessScore.is_ready ? 'READY FOR DEPLOYMENT' : 'NOT READY'}
+                  {readinessScore.is_ready
+                    ? "READY FOR DEPLOYMENT"
+                    : "NOT READY"}
                 </Badge>
               </div>
 
               {/* Progress Bar */}
-              <Progress 
-                value={readinessScore.scores.overall * 100} 
+              <Progress
+                value={readinessScore.scores.overall * 100}
                 className="h-3"
               />
             </div>
@@ -355,36 +380,49 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
         </TabsList>
 
         <TabsContent value="scores" className="space-y-4">
-          {readinessScore && Object.entries(DIMENSION_INFO).map(([key, info]) => {
-            const score = readinessScore.scores[key as keyof typeof readinessScore.scores]
-            const Icon = info.icon
-            const ScoreIcon = getScoreIcon(score)
-            
-            return (
-              <Card key={key}>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className={cn("rounded-lg p-2", info.bgColor)}>
-                        <Icon className={cn("h-5 w-5", info.color)} />
+          {readinessScore &&
+            Object.entries(DIMENSION_INFO).map(([key, info]) => {
+              const score =
+                readinessScore.scores[
+                  key as keyof typeof readinessScore.scores
+                ];
+              const Icon = info.icon;
+              const ScoreIcon = getScoreIcon(score);
+
+              return (
+                <Card key={key}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={cn("rounded-lg p-2", info.bgColor)}>
+                          <Icon className={cn("h-5 w-5", info.color)} />
+                        </div>
+                        <div>
+                          <p className="font-semibold">{info.label}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {info.description}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold">{info.label}</p>
-                        <p className="text-sm text-muted-foreground">{info.description}</p>
+                      <div className="flex items-center gap-2">
+                        <ScoreIcon
+                          className={cn("h-5 w-5", getScoreColor(score))}
+                        />
+                        <span
+                          className={cn(
+                            "text-lg font-bold",
+                            getScoreColor(score),
+                          )}
+                        >
+                          {(score * 100).toFixed(1)}%
+                        </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <ScoreIcon className={cn("h-5 w-5", getScoreColor(score))} />
-                      <span className={cn("text-lg font-bold", getScoreColor(score))}>
-                        {(score * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-                  <Progress value={score * 100} className="h-2" />
-                </CardContent>
-              </Card>
-            )
-          })}
+                    <Progress value={score * 100} className="h-2" />
+                  </CardContent>
+                </Card>
+              );
+            })}
         </TabsContent>
 
         <TabsContent value="metrics" className="space-y-4">
@@ -402,19 +440,29 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
                         <p className="text-2xl font-bold">
                           {readinessScore.metrics.knowledge.experience_count}
                         </p>
-                        <p className="text-sm text-muted-foreground">Experiences</p>
+                        <p className="text-sm text-muted-foreground">
+                          Experiences
+                        </p>
                       </div>
                       <div>
                         <p className="text-2xl font-bold">
                           {readinessScore.metrics.knowledge.pattern_count}
                         </p>
-                        <p className="text-sm text-muted-foreground">Patterns</p>
+                        <p className="text-sm text-muted-foreground">
+                          Patterns
+                        </p>
                       </div>
                       <div>
                         <p className="text-2xl font-bold">
-                          {(readinessScore.metrics.knowledge.avg_pattern_confidence * 100).toFixed(1)}%
+                          {(
+                            readinessScore.metrics.knowledge
+                              .avg_pattern_confidence * 100
+                          ).toFixed(1)}
+                          %
                         </p>
-                        <p className="text-sm text-muted-foreground">Avg Confidence</p>
+                        <p className="text-sm text-muted-foreground">
+                          Avg Confidence
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -431,21 +479,31 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <p className="text-2xl font-bold">
-                          {readinessScore.metrics.goals.successful}/{readinessScore.metrics.goals.total_attempted}
+                          {readinessScore.metrics.goals.successful}/
+                          {readinessScore.metrics.goals.total_attempted}
                         </p>
-                        <p className="text-sm text-muted-foreground">Goals Completed</p>
+                        <p className="text-sm text-muted-foreground">
+                          Goals Completed
+                        </p>
                       </div>
                       <div>
                         <p className="text-2xl font-bold">
-                          {(readinessScore.metrics.goals.success_rate * 100).toFixed(1)}%
+                          {(
+                            readinessScore.metrics.goals.success_rate * 100
+                          ).toFixed(1)}
+                          %
                         </p>
-                        <p className="text-sm text-muted-foreground">Success Rate</p>
+                        <p className="text-sm text-muted-foreground">
+                          Success Rate
+                        </p>
                       </div>
                       <div>
                         <p className="text-2xl font-bold">
                           {readinessScore.metrics.goals.complex_completed}
                         </p>
-                        <p className="text-sm text-muted-foreground">Complex Goals</p>
+                        <p className="text-sm text-muted-foreground">
+                          Complex Goals
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -462,7 +520,8 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
                 <Rocket className="h-4 w-4" />
                 <AlertTitle>Ready for Deployment!</AlertTitle>
                 <AlertDescription>
-                  Your agent has met all readiness criteria and can be exported to hardware.
+                  Your agent has met all readiness criteria and can be exported
+                  to hardware.
                 </AlertDescription>
               </Alert>
 
@@ -474,7 +533,10 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Select value={selectedTarget} onValueChange={setSelectedTarget}>
+                  <Select
+                    value={selectedTarget}
+                    onValueChange={setSelectedTarget}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -495,7 +557,9 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
 
                   <div className="rounded-lg border p-4">
                     {(() => {
-                      const target = HARDWARE_TARGETS.find(t => t.id === selectedTarget)
+                      const target = HARDWARE_TARGETS.find(
+                        (t) => t.id === selectedTarget,
+                      );
                       return target ? (
                         <div className="space-y-2">
                           <p className="font-semibold">{target.name}</p>
@@ -507,11 +571,11 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
                           </div>
                           {target.accelerators.length > 0 && (
                             <p className="text-sm">
-                              Accelerators: {target.accelerators.join(', ')}
+                              Accelerators: {target.accelerators.join(", ")}
                             </p>
                           )}
                         </div>
-                      ) : null
+                      ) : null;
                     })()}
                   </div>
 
@@ -541,8 +605,8 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Not Ready for Export</AlertTitle>
               <AlertDescription>
-                Your agent needs to meet all readiness criteria before it can be exported.
-                Review the recommendations below to improve readiness.
+                Your agent needs to meet all readiness criteria before it can be
+                exported. Review the recommendations below to improve readiness.
               </AlertDescription>
             </Alert>
           )}
@@ -573,5 +637,5 @@ export function ReadinessPanel({ agentId, className }: ReadinessPanelProps) {
         </TabsContent>
       </Tabs>
     </div>
-  )
-} 
+  );
+}

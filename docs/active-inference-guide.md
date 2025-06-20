@@ -15,6 +15,7 @@ Free Energy = Complexity - Accuracy
 ```
 
 Where:
+
 - **Complexity**: The difference between prior and posterior beliefs
 - **Accuracy**: How well beliefs predict observations
 
@@ -25,13 +26,13 @@ Each agent maintains a generative model of its environment, specified in GNN for
 ```gnn
 Model: AgentCognition
   States: s ∈ S
-  Observations: o ∈ O  
+  Observations: o ∈ O
   Actions: a ∈ A
-  
+
   Generative Process:
     P(o|s): observation model
     P(s'|s,a): transition model
-    
+
   Preferences:
     C(o): preferred observations
 ```
@@ -56,11 +57,11 @@ class ActiveInferenceAgent:
         self.model = gnn_model
         self.beliefs = self.initialize_beliefs()
         self.free_energy_history = []
-    
+
     def perceive(self, observation):
         # Update beliefs to minimize free energy
         self.beliefs = self.update_beliefs(observation)
-    
+
     def act(self):
         # Select action that minimizes expected free energy
         return self.select_action(self.beliefs)
@@ -74,10 +75,10 @@ The system calculates free energy for belief evaluation:
 def calculate_free_energy(beliefs, observation, model):
     # Complexity term
     complexity = kl_divergence(beliefs, model.prior)
-    
-    # Accuracy term  
+
+    # Accuracy term
     accuracy = expected_log_likelihood(observation, beliefs, model)
-    
+
     return complexity - accuracy
 ```
 
@@ -89,7 +90,7 @@ Agents learn by updating their generative models to better predict observations:
 def learn_from_experience(experience, model):
     # Extract patterns that reduce prediction error
     patterns = extract_patterns(experience)
-    
+
     # Update model parameters
     if pattern.reduces_free_energy():
         model.integrate_pattern(pattern)
@@ -105,13 +106,13 @@ Explorers minimize uncertainty about the environment:
 Preferences:
   C_location: uniform  # No location preference
   C_information: high  # Prefer informative observations
-  
+
 Action Policy:
   IF uncertainty(location) > threshold:
     THEN explore_unknown_areas()
 ```
 
-### Merchant Agent  
+### Merchant Agent
 
 Merchants minimize surprise about resource availability:
 
@@ -119,7 +120,7 @@ Merchants minimize surprise about resource availability:
 Preferences:
   C_resources: high    # Prefer resource-rich observations
   C_trade: positive    # Prefer successful trades
-  
+
 Action Policy:
   IF expected_resources(location) > current:
     THEN move_to(location)
@@ -134,9 +135,9 @@ Agents can use hierarchical generative models for complex reasoning:
 ```gnn
 Model: HierarchicalCognition
   Level 1: immediate_environment
-  Level 2: local_patterns  
+  Level 2: local_patterns
   Level 3: global_understanding
-  
+
   Each level minimizes free energy at its scale
 ```
 
@@ -148,7 +149,7 @@ When agents interact, they model each other's beliefs:
 Model: SocialCognition
   Own_beliefs: μ_self
   Other_beliefs: μ_other
-  
+
   Joint_free_energy = F(μ_self) + F(μ_other|μ_self)
 ```
 
@@ -169,4 +170,4 @@ Model: SocialCognition
 
 - [GNN Model Format](./gnn_models/model_format.md)
 - [Agent Implementation Guide](./architecture.md#agents)
-- [Example Models](./gnn_models/examples/) 
+- [Example Models](./gnn_models/examples/)

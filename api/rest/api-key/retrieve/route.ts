@@ -4,7 +4,7 @@ import { retrieveApiKey } from "@/lib/api-key-service-server"
 export async function POST(request: NextRequest) {
   try {
     const { provider, sessionId } = await request.json()
-    
+
     // Validate input
     if (!provider || !sessionId) {
       return NextResponse.json(
@@ -12,10 +12,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-    
+
     // Retrieve the API key
     const apiKey = await retrieveApiKey(provider, sessionId)
-    
+
     if (!apiKey) {
       console.warn(`[API] API key not found for provider: ${provider}`)
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
-    
+
     return NextResponse.json({ apiKey })
   } catch (error) {
     console.error("[API] Error retrieving API key:", error)

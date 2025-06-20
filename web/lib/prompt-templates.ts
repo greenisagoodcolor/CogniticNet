@@ -137,7 +137,7 @@ Focus on extracting factual information, preferences, opinions, and relationship
 
 IMPORTANT: Format your response using Obsidian-style markdown. Use [[double brackets]] around important concepts, entities, and categories that should be tagged.`,
 
-  userPromptPrefix: `The following is a conversation involving {{agentName}}. 
+  userPromptPrefix: `The following is a conversation involving {{agentName}}.
 Extract potential new knowledge or beliefs that {{agentName}} should remember from this conversation.
 Pay special attention to: {{extractionPriorities}}`,
 

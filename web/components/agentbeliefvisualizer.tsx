@@ -1,18 +1,23 @@
-"use client"
+"use client";
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import type { Agent } from "@/lib/types"
-import type { AgentBelief, AgentMemory } from "@/lib/types/agent-api"
-import { AlertCircle, Brain, Eye, Lightbulb, Target } from "lucide-react"
-import type React from "react"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import type { Agent } from "@/lib/types";
+import type { AgentBelief, AgentMemory } from "@/lib/types/agent-api";
+import { AlertCircle, Brain, Eye, Lightbulb, Target } from "lucide-react";
+import type React from "react";
 
 interface AgentBeliefVisualizerProps {
-  agent: Agent
-  beliefs?: AgentBelief[]
-  memory?: AgentMemory
+  agent: Agent;
+  beliefs?: AgentBelief[];
+  memory?: AgentMemory;
 }
 
 // Mock belief data generator
@@ -24,7 +29,7 @@ function generateMockBeliefs(): AgentBelief[] {
       confidence: 0.85,
       type: "environmental",
       source: "observation",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
     {
       id: "belief-2",
@@ -32,7 +37,7 @@ function generateMockBeliefs(): AgentBelief[] {
       confidence: 0.92,
       type: "social",
       source: "interaction",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
     {
       id: "belief-3",
@@ -40,7 +45,7 @@ function generateMockBeliefs(): AgentBelief[] {
       confidence: 0.67,
       type: "strategic",
       source: "inference",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
     {
       id: "belief-4",
@@ -48,44 +53,51 @@ function generateMockBeliefs(): AgentBelief[] {
       confidence: 0.95,
       type: "policy",
       source: "learning",
-      timestamp: new Date().toISOString()
-    }
-  ]
+      timestamp: new Date().toISOString(),
+    },
+  ];
 }
 
 const beliefTypeIcons: Record<string, React.ElementType> = {
   environmental: Eye,
   social: Target,
   strategic: Lightbulb,
-  policy: Brain
-}
+  policy: Brain,
+};
 
 const beliefTypeColors: Record<string, string> = {
   environmental: "bg-green-500",
   social: "bg-blue-500",
   strategic: "bg-yellow-500",
-  policy: "bg-purple-500"
-}
+  policy: "bg-purple-500",
+};
 
 export default function AgentBeliefVisualizer({
   agent,
   beliefs = generateMockBeliefs(),
-  memory
+  memory,
 }: AgentBeliefVisualizerProps) {
   // Group beliefs by type
-  const beliefsByType = beliefs.reduce((acc, belief) => {
-    const type = belief.type || "other"
-    if (!acc[type]) acc[type] = []
-    acc[type].push(belief)
-    return acc
-  }, {} as Record<string, AgentBelief[]>)
+  const beliefsByType = beliefs.reduce(
+    (acc, belief) => {
+      const type = belief.type || "other";
+      if (!acc[type]) acc[type] = [];
+      acc[type].push(belief);
+      return acc;
+    },
+    {} as Record<string, AgentBelief[]>,
+  );
 
   // Calculate average confidence by type
-  const avgConfidenceByType = Object.entries(beliefsByType).reduce((acc, [type, beliefs]) => {
-    const avg = beliefs.reduce((sum, b) => sum + b.confidence, 0) / beliefs.length
-    acc[type] = avg
-    return acc
-  }, {} as Record<string, number>)
+  const avgConfidenceByType = Object.entries(beliefsByType).reduce(
+    (acc, [type, beliefs]) => {
+      const avg =
+        beliefs.reduce((sum, b) => sum + b.confidence, 0) / beliefs.length;
+      acc[type] = avg;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
     <Card className="h-full flex flex-col">
@@ -95,9 +107,7 @@ export default function AgentBeliefVisualizer({
             <Brain className="w-5 h-5" />
             <CardTitle>Belief State: {agent.name}</CardTitle>
           </div>
-          <Badge variant="secondary">
-            {beliefs.length} beliefs
-          </Badge>
+          <Badge variant="secondary">{beliefs.length} beliefs</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-auto">
@@ -107,7 +117,7 @@ export default function AgentBeliefVisualizer({
             <h3 className="text-sm font-medium mb-3">Confidence by Category</h3>
             <div className="space-y-2">
               {Object.entries(avgConfidenceByType).map(([type, confidence]) => {
-                const Icon = beliefTypeIcons[type] || AlertCircle
+                const Icon = beliefTypeIcons[type] || AlertCircle;
                 return (
                   <div key={type} className="flex items-center gap-3">
                     <Icon className="w-4 h-4 text-muted-foreground" />
@@ -117,7 +127,7 @@ export default function AgentBeliefVisualizer({
                       {(confidence * 100).toFixed(0)}%
                     </span>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -150,7 +160,8 @@ export default function AgentBeliefVisualizer({
                                 {belief.source}
                               </Badge>
                               <span className="text-xs text-muted-foreground">
-                                Confidence: {(belief.confidence * 100).toFixed(0)}%
+                                Confidence:{" "}
+                                {(belief.confidence * 100).toFixed(0)}%
                               </span>
                             </div>
                           </div>
@@ -169,7 +180,9 @@ export default function AgentBeliefVisualizer({
               <h3 className="text-sm font-medium mb-3">Memory Overview</h3>
               <div className="grid grid-cols-2 gap-4">
                 <Card className="p-3">
-                  <div className="text-xs text-muted-foreground">Short-term</div>
+                  <div className="text-xs text-muted-foreground">
+                    Short-term
+                  </div>
                   <div className="text-lg font-medium">
                     {memory.short_term?.length || 0} items
                   </div>
@@ -186,5 +199,5 @@ export default function AgentBeliefVisualizer({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

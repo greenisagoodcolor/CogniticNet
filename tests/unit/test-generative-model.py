@@ -4,13 +4,12 @@ Unit tests for Active Inference Generative Models
 
 import pytest
 import torch
-import numpy as np
-from typing import List
 
 # Import modules to test
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from agents.active_inference import (
     ModelDimensions,
@@ -19,7 +18,7 @@ from agents.active_inference import (
     ContinuousGenerativeModel,
     HierarchicalGenerativeModel,
     FactorizedGenerativeModel,
-    create_generative_model
+    create_generative_model,
 )
 
 
@@ -28,11 +27,7 @@ class TestModelDimensions:
 
     def test_basic_dimensions(self):
         """Test basic dimension initialization"""
-        dims = ModelDimensions(
-            num_states=10,
-            num_observations=8,
-            num_actions=4
-        )
+        dims = ModelDimensions(num_states=10, num_observations=8, num_actions=4)
 
         assert dims.num_states == 10
         assert dims.num_observations == 8
@@ -49,7 +44,7 @@ class TestModelDimensions:
             num_actions=5,
             num_modalities=2,
             num_factors=3,
-            time_horizon=10
+            time_horizon=10,
         )
 
         assert dims.num_modalities == 2
@@ -75,10 +70,7 @@ class TestModelParameters:
     def test_custom_parameters(self):
         """Test custom parameter values"""
         params = ModelParameters(
-            learning_rate=0.1,
-            use_sparse=True,
-            use_gpu=False,
-            temperature=0.5
+            learning_rate=0.1, use_sparse=True, use_gpu=False, temperature=0.5
         )
 
         assert params.learning_rate == 0.1
@@ -93,10 +85,7 @@ class TestDiscreteGenerativeModel:
     def setup_method(self):
         """Set up test model"""
         self.dims = ModelDimensions(
-            num_states=5,
-            num_observations=4,
-            num_actions=3,
-            time_horizon=5
+            num_states=5, num_observations=4, num_actions=3, time_horizon=5
         )
         self.params = ModelParameters(use_gpu=False)
         self.model = DiscreteGenerativeModel(self.dims, self.params)
@@ -152,7 +141,7 @@ class TestDiscreteGenerativeModel:
     def test_preferences(self):
         """Test preference setting and retrieval"""
         # Set preferences
-        prefs = torch.tensor([0., 0., 10., 0.])  # Prefer observation 2
+        prefs = torch.tensor([0.0, 0.0, 10.0, 0.0])  # Prefer observation 2
         self.model.set_preferences(prefs)
 
         # Check all timesteps updated
@@ -160,7 +149,7 @@ class TestDiscreteGenerativeModel:
             assert torch.allclose(self.model.get_preferences(t), prefs)
 
         # Set timestep-specific preference
-        prefs_t2 = torch.tensor([5., 0., 0., 5.])
+        prefs_t2 = torch.tensor([5.0, 0.0, 0.0, 5.0])
         self.model.set_preferences(prefs_t2, timestep=2)
 
         assert torch.allclose(self.model.get_preferences(2), prefs_t2)
@@ -195,22 +184,18 @@ class TestContinuousGenerativeModel:
 
     def setup_method(self):
         """Set up test model"""
-        self.dims = ModelDimensions(
-            num_states=4,
-            num_observations=3,
-            num_actions=2
-        )
+        self.dims = ModelDimensions(num_states=4, num_observations=3, num_actions=2)
         self.params = ModelParameters(use_gpu=False)
         self.model = ContinuousGenerativeModel(self.dims, self.params, hidden_dim=32)
 
     def test_initialization(self):
         """Test model initialization"""
         # Check network components exist
-        assert hasattr(self.model, 'obs_net')
-        assert hasattr(self.model, 'trans_net')
-        assert hasattr(self.model, 'C')
-        assert hasattr(self.model, 'D_mean')
-        assert hasattr(self.model, 'D_log_var')
+        assert hasattr(self.model, "obs_net")
+        assert hasattr(self.model, "trans_net")
+        assert hasattr(self.model, "C")
+        assert hasattr(self.model, "D_mean")
+        assert hasattr(self.model, "D_log_var")
 
         # Check dimensions
         assert self.model.C.shape == (3, 1)  # Default time horizon
@@ -246,7 +231,7 @@ class TestContinuousGenerativeModel:
         assert torch.all(next_var > 0)
 
         # With one-hot action
-        action_onehot = torch.tensor([1., 0.])
+        action_onehot = torch.tensor([1.0, 0.0])
         next_mean2, next_var2 = self.model.transition_model(state, action_onehot)
 
         assert next_mean2.shape == (4,)
@@ -258,13 +243,13 @@ class TestContinuousGenerativeModel:
 
         outputs = self.model.forward(states, actions)
 
-        assert 'obs_mean' in outputs
-        assert 'obs_var' in outputs
-        assert 'next_mean' in outputs
-        assert 'next_var' in outputs
+        assert "obs_mean" in outputs
+        assert "obs_var" in outputs
+        assert "next_mean" in outputs
+        assert "next_var" in outputs
 
-        assert outputs['obs_mean'].shape == (5, 3)
-        assert outputs['next_mean'].shape == (5, 4)
+        assert outputs["obs_mean"].shape == (5, 3)
+        assert outputs["next_mean"].shape == (5, 4)
 
 
 class TestHierarchicalGenerativeModel:
@@ -300,11 +285,7 @@ class TestHierarchicalGenerativeModel:
     def test_hierarchical_observation_model(self):
         """Test hierarchical observation computation"""
         # Create state distributions for each level
-        states = [
-            torch.ones(8) / 8,
-            torch.ones(4) / 4,
-            torch.ones(2) / 2
-        ]
+        states = [torch.ones(8) / 8, torch.ones(4) / 4, torch.ones(2) / 2]
 
         observations = self.model.hierarchical_observation_model(states)
 
@@ -319,11 +300,7 @@ class TestHierarchicalGenerativeModel:
 
     def test_hierarchical_transition_model(self):
         """Test hierarchical state transitions"""
-        states = [
-            torch.ones(8) / 8,
-            torch.ones(4) / 4,
-            torch.ones(2) / 2
-        ]
+        states = [torch.ones(8) / 8, torch.ones(4) / 4, torch.ones(2) / 2]
         actions = [0, 1, 0]
 
         next_states = self.model.hierarchical_transition_model(states, actions)
@@ -381,11 +358,7 @@ class TestFactorizedGenerativeModel:
     def test_factorized_transition(self):
         """Test factorized state transitions"""
         # Create factor states
-        factor_states = [
-            torch.ones(3) / 3,
-            torch.ones(4) / 4,
-            torch.ones(2) / 2
-        ]
+        factor_states = [torch.ones(3) / 3, torch.ones(4) / 4, torch.ones(2) / 2]
 
         next_factor_states = self.model.factorized_transition(factor_states, action=0)
 
@@ -405,7 +378,7 @@ class TestModelFactory:
     def test_create_discrete_model(self):
         """Test discrete model creation"""
         dims = ModelDimensions(num_states=10, num_observations=8, num_actions=4)
-        model = create_generative_model('discrete', dimensions=dims)
+        model = create_generative_model("discrete", dimensions=dims)
 
         assert isinstance(model, DiscreteGenerativeModel)
         assert model.dims.num_states == 10
@@ -413,7 +386,7 @@ class TestModelFactory:
     def test_create_continuous_model(self):
         """Test continuous model creation"""
         dims = ModelDimensions(num_states=5, num_observations=3, num_actions=2)
-        model = create_generative_model('continuous', dimensions=dims, hidden_dim=64)
+        model = create_generative_model("continuous", dimensions=dims, hidden_dim=64)
 
         assert isinstance(model, ContinuousGenerativeModel)
         assert model.hidden_dim == 64
@@ -424,7 +397,7 @@ class TestModelFactory:
             ModelDimensions(num_states=8, num_observations=6, num_actions=4),
             ModelDimensions(num_states=4, num_observations=3, num_actions=2),
         ]
-        model = create_generative_model('hierarchical', dimensions_list=dims_list)
+        model = create_generative_model("hierarchical", dimensions_list=dims_list)
 
         assert isinstance(model, HierarchicalGenerativeModel)
         assert model.num_levels == 2
@@ -432,10 +405,7 @@ class TestModelFactory:
     def test_create_factorized_model(self):
         """Test factorized model creation"""
         model = create_generative_model(
-            'factorized',
-            factor_dimensions=[3, 4],
-            num_observations=10,
-            num_actions=3
+            "factorized", factor_dimensions=[3, 4], num_observations=10, num_actions=3
         )
 
         assert isinstance(model, FactorizedGenerativeModel)
@@ -444,7 +414,7 @@ class TestModelFactory:
     def test_invalid_model_type(self):
         """Test invalid model type raises error"""
         with pytest.raises(ValueError):
-            create_generative_model('invalid_type')
+            create_generative_model("invalid_type")
 
 
 if __name__ == "__main__":

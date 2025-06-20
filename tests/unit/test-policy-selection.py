@@ -4,13 +4,12 @@ Unit tests for Active Inference policy selection
 
 import pytest
 import torch
-import numpy as np
-from typing import List, Tuple
 
 # Import modules to test
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from agents.active_inference import (
     DiscreteGenerativeModel,
@@ -18,7 +17,7 @@ from agents.active_inference import (
     ModelDimensions,
     ModelParameters,
     VariationalMessagePassing,
-    InferenceConfig
+    InferenceConfig,
 )
 from agents.active_inference.policy_selection import (
     PolicyConfig,
@@ -27,7 +26,7 @@ from agents.active_inference.policy_selection import (
     ContinuousExpectedFreeEnergy,
     HierarchicalPolicySelector,
     SophisticatedInference,
-    create_policy_selector
+    create_policy_selector,
 )
 
 
@@ -56,10 +55,7 @@ class TestPolicyConfig:
     def test_custom_config(self):
         """Test custom configuration"""
         config = PolicyConfig(
-            planning_horizon=10,
-            num_policies=50,
-            epistemic_weight=0.5,
-            use_gpu=False
+            planning_horizon=10, num_policies=50, epistemic_weight=0.5, use_gpu=False
         )
 
         assert config.planning_horizon == 10
@@ -114,22 +110,16 @@ class TestDiscreteExpectedFreeEnergy:
         # Action 0: stay in same state
         self.model.B[:, :, 0] = torch.eye(3)
         # Action 1: rotate states (0->1, 1->2, 2->0)
-        self.model.B[:, :, 1] = torch.tensor([
-            [0., 0., 1.],
-            [1., 0., 0.],
-            [0., 1., 0.]
-        ])
+        self.model.B[:, :, 1] = torch.tensor(
+            [[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]
+        )
 
         # Create inference
         inf_config = InferenceConfig(use_gpu=False)
         self.inference = VariationalMessagePassing(inf_config)
 
         # Create policy selector
-        self.config = PolicyConfig(
-            planning_horizon=3,
-            policy_length=1,
-            use_gpu=False
-        )
+        self.config = PolicyConfig(planning_horizon=3, policy_length=1, use_gpu=False)
         self.selector = DiscreteExpectedFreeEnergy(self.config, self.inference)
 
     def test_enumerate_policies_single_step(self):
@@ -189,11 +179,15 @@ class TestDiscreteExpectedFreeEnergy:
 
         # Policy that moves to preferred state
         policy1 = Policy([1])  # 0->1
-        G1 = self.selector.compute_expected_free_energy(policy1, beliefs, self.model, preferences)
+        G1 = self.selector.compute_expected_free_energy(
+            policy1, beliefs, self.model, preferences
+        )
 
         # Policy that stays
         policy0 = Policy([0])  # Stay at 0
-        G0 = self.selector.compute_expected_free_energy(policy0, beliefs, self.model, preferences)
+        G0 = self.selector.compute_expected_free_energy(
+            policy0, beliefs, self.model, preferences
+        )
 
         # Moving to preferred state should have lower free energy
         assert G1 < G0
@@ -256,15 +250,13 @@ class TestContinuousExpectedFreeEnergy:
 
         # Create inference
         from agents.active_inference.inference import GradientDescentInference
+
         inf_config = InferenceConfig(use_gpu=False)
         self.inference = GradientDescentInference(inf_config)
 
         # Create policy selector
         self.config = PolicyConfig(
-            planning_horizon=3,
-            policy_length=2,
-            num_policies=10,
-            use_gpu=False
+            planning_horizon=3, policy_length=2, num_policies=10, use_gpu=False
         )
         self.selector = ContinuousExpectedFreeEnergy(self.config, self.inference)
 
@@ -354,9 +346,7 @@ class TestHierarchicalPolicySelector:
         # Create hierarchical selector
         self.config = PolicyConfig(use_gpu=False)
         self.selector = HierarchicalPolicySelector(
-            self.config,
-            [selector_high, selector_low],
-            [10, 3]
+            self.config, [selector_high, selector_low], [10, 3]
         )
 
     def test_hierarchical_selection(self):
@@ -364,7 +354,7 @@ class TestHierarchicalPolicySelector:
         # Beliefs at each level
         beliefs = [
             torch.tensor([0.6, 0.4]),  # High level
-            torch.ones(4) / 4  # Low level
+            torch.ones(4) / 4,  # Low level
         ]
 
         models = [self.model_high, self.model_low]
@@ -384,15 +374,9 @@ class TestHierarchicalPolicySelector:
 
     def test_hierarchical_free_energy(self):
         """Test hierarchical free energy computation"""
-        beliefs = [
-            torch.tensor([0.7, 0.3]),
-            torch.tensor([0.25, 0.25, 0.25, 0.25])
-        ]
+        beliefs = [torch.tensor([0.7, 0.3]), torch.tensor([0.25, 0.25, 0.25, 0.25])]
 
-        policies = [
-            Policy([0]),
-            Policy([1])
-        ]
+        policies = [Policy([0]), Policy([1])]
 
         models = [self.model_high, self.model_low]
 
@@ -421,7 +405,9 @@ class TestSophisticatedInference:
         self.base_selector = DiscreteExpectedFreeEnergy(config, self.inference)
 
         # Create sophisticated selector
-        self.selector = SophisticatedInference(config, self.inference, self.base_selector)
+        self.selector = SophisticatedInference(
+            config, self.inference, self.base_selector
+        )
 
     def test_sophisticated_selection(self):
         """Test sophisticated policy selection"""
@@ -476,60 +462,55 @@ class TestPolicyFactory:
     def test_create_discrete_selector(self):
         """Test discrete selector creation"""
         selector = create_policy_selector(
-            'discrete',
-            inference_algorithm=self.inference
+            "discrete", inference_algorithm=self.inference
         )
         assert isinstance(selector, DiscreteExpectedFreeEnergy)
 
     def test_create_continuous_selector(self):
         """Test continuous selector creation"""
         from agents.active_inference.inference import GradientDescentInference
+
         inf_config = InferenceConfig(use_gpu=False)
         cont_inference = GradientDescentInference(inf_config)
 
         selector = create_policy_selector(
-            'continuous',
-            inference_algorithm=cont_inference
+            "continuous", inference_algorithm=cont_inference
         )
         assert isinstance(selector, ContinuousExpectedFreeEnergy)
 
     def test_create_hierarchical_selector(self):
         """Test hierarchical selector creation"""
         # Create level selectors
-        sel1 = create_policy_selector('discrete', inference_algorithm=self.inference)
-        sel2 = create_policy_selector('discrete', inference_algorithm=self.inference)
+        sel1 = create_policy_selector("discrete", inference_algorithm=self.inference)
+        sel2 = create_policy_selector("discrete", inference_algorithm=self.inference)
 
         selector = create_policy_selector(
-            'hierarchical',
-            level_selectors=[sel1, sel2],
-            level_horizons=[10, 5]
+            "hierarchical", level_selectors=[sel1, sel2], level_horizons=[10, 5]
         )
         assert isinstance(selector, HierarchicalPolicySelector)
         assert selector.num_levels == 2
 
     def test_create_sophisticated_selector(self):
         """Test sophisticated selector creation"""
-        base = create_policy_selector('discrete', inference_algorithm=self.inference)
+        base = create_policy_selector("discrete", inference_algorithm=self.inference)
 
         selector = create_policy_selector(
-            'sophisticated',
-            inference_algorithm=self.inference,
-            base_selector=base
+            "sophisticated", inference_algorithm=self.inference, base_selector=base
         )
         assert isinstance(selector, SophisticatedInference)
 
     def test_invalid_selector_type(self):
         """Test invalid selector type"""
         with pytest.raises(ValueError):
-            create_policy_selector('invalid')
+            create_policy_selector("invalid")
 
     def test_missing_parameters(self):
         """Test missing required parameters"""
         with pytest.raises(ValueError):
-            create_policy_selector('discrete')  # Missing inference
+            create_policy_selector("discrete")  # Missing inference
 
         with pytest.raises(ValueError):
-            create_policy_selector('hierarchical')  # Missing level_selectors
+            create_policy_selector("hierarchical")  # Missing level_selectors
 
 
 if __name__ == "__main__":

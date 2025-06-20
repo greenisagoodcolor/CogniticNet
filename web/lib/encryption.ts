@@ -8,21 +8,21 @@ import { createCipheriv, createDecipheriv, randomBytes } from "crypto"
  */
 function getEncryptionKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY
-  
+
   if (!key) {
     throw new Error("ENCRYPTION_KEY environment variable is not set")
   }
-  
+
   // Ensure key is 64 hex characters (32 bytes for AES-256)
   if (key.length !== 64) {
     throw new Error("ENCRYPTION_KEY must be 64 hex characters (32 bytes)")
   }
-  
+
   // Validate it's valid hex
   if (!/^[0-9a-fA-F]{64}$/.test(key)) {
     throw new Error("ENCRYPTION_KEY must contain only hex characters")
   }
-  
+
   return Buffer.from(key, "hex")
 }
 
@@ -35,7 +35,7 @@ export async function encrypt(text: string): Promise<string> {
   try {
     // Generate a random initialization vector
     const iv = randomBytes(16)
-    
+
     // Get encryption key from environment
     const encryptionKey = getEncryptionKey()
 
@@ -70,7 +70,7 @@ export async function decrypt(text: string): Promise<string> {
 
     // Convert IV from hex to Buffer
     const iv = Buffer.from(ivHex, "hex")
-    
+
     // Get encryption key from environment
     const encryptionKey = getEncryptionKey()
 

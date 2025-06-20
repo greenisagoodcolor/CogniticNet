@@ -89,4 +89,3 @@
 - `./web/src/components/ui/carousel.tsx`: Event handler 'onSelect' should start with 'handle' not 'on'
 - `./web/src/hooks/use-mobile.tsx`: Event handler 'onChange' should start with 'handle' not 'on'
 - `./web/src/hooks/use-conversation-orchestrator.ts`: Event handler 'onSendMessageRef' should start with 'handle' not 'on'
-

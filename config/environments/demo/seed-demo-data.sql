@@ -118,14 +118,14 @@ INSERT INTO agents.messages (conversation_id, sender_id, content, message_type) 
 
 -- Insert initial demo events
 INSERT INTO demo.events (scenario_id, event_type, agent_id, description, data) VALUES
-('s1111111-1111-1111-1111-111111111111', 'scenario_start', 'a1111111-1111-1111-1111-111111111111', 
+('s1111111-1111-1111-1111-111111111111', 'scenario_start', 'a1111111-1111-1111-1111-111111111111',
  'Explorer Nova begins resource discovery mission', '{"start_location": "8928308280fffff"}'),
 ('s3333333-3333-3333-3333-333333333333', 'knowledge_shared', 'a3333333-3333-3333-3333-333333333333',
  'Scholar Sage shares research findings with the community', '{"knowledge_type": "theory", "recipients": 3}');
 
 -- Create a view for agent readiness dashboard
 CREATE OR REPLACE VIEW demo.agent_readiness_summary AS
-SELECT 
+SELECT
     a.id,
     a.name,
     a.class,
@@ -135,24 +135,24 @@ SELECT
     s.experience_count,
     s.successful_goals,
     s.total_goals_attempted,
-    CASE 
-        WHEN s.total_goals_attempted > 0 
+    CASE
+        WHEN s.total_goals_attempted > 0
         THEN ROUND((s.successful_goals::numeric / s.total_goals_attempted) * 100, 1)
         ELSE 0
     END as success_rate
 FROM agents.agents a
 LEFT JOIN agents.agent_stats s ON a.id = s.agent_id
 LEFT JOIN LATERAL (
-    SELECT * FROM agents.readiness_evaluations 
-    WHERE agent_id = a.id 
-    ORDER BY evaluated_at DESC 
+    SELECT * FROM agents.readiness_evaluations
+    WHERE agent_id = a.id
+    ORDER BY evaluated_at DESC
     LIMIT 1
 ) r ON true
 ORDER BY r.overall_score DESC NULLS LAST;
 
 -- Create a view for active scenarios
 CREATE OR REPLACE VIEW demo.active_scenarios AS
-SELECT 
+SELECT
     s.name,
     s.description,
     s.duration_seconds,
@@ -164,4 +164,4 @@ FROM demo.scenarios s
 LEFT JOIN demo.events e ON s.id = e.scenario_id
 WHERE s.is_active = true
 GROUP BY s.id, s.name, s.description, s.duration_seconds, s.last_run, s.run_count
-ORDER BY s.name; 
+ORDER BY s.name;

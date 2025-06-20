@@ -16,7 +16,7 @@ let cleanupTimer: NodeJS.Timeout | null = null
 
 function startCleanupTimer() {
   if (cleanupTimer) return
-  
+
   cleanupTimer = setInterval(() => {
     const now = new Date()
     for (const [sessionId, session] of apiKeyStorage.entries()) {
@@ -210,14 +210,14 @@ function generateSecureSessionId(): string {
 export async function clearExpiredSessions(): Promise<number> {
   let cleared = 0
   const now = new Date()
-  
+
   for (const [sessionId, session] of apiKeyStorage.entries()) {
     if (now.getTime() - session.createdAt.getTime() > SESSION_LIFETIME) {
       apiKeyStorage.delete(sessionId)
       cleared++
     }
   }
-  
+
   console.log(`[API-KEY-STORAGE] Cleared ${cleared} expired sessions`)
   return cleared
-} 
+}

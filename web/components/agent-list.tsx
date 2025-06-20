@@ -1,51 +1,72 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import type React from "react"
+"use client";
+import { Button } from "@/components/ui/button";
+import type React from "react";
 
-import { ScrollArea } from "@/components/ui/scroll-area"
-import type { Agent } from "@/lib/types"
-import type { LLMSettings } from "@/lib/llm-settings"
-import { Plus, Trash, UserPlus, UserMinus, Power, PowerOff, Download, Upload, AlertCircle } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { useState, useRef } from "react"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Spinner } from "@/components/ui/spinner"
-import JSZip from "jszip"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Agent } from "@/lib/types";
+import type { LLMSettings } from "@/lib/llm-settings";
+import {
+  Plus,
+  Trash,
+  UserPlus,
+  UserMinus,
+  Power,
+  PowerOff,
+  Download,
+  Upload,
+  AlertCircle,
+} from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { useState, useRef } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Spinner } from "@/components/ui/spinner";
+import JSZip from "jszip";
 
 interface AgentListProps {
-  agents: Agent[]
-  selectedAgent: Agent | null
-  onSelectAgent: (agent: Agent) => void
-  onCreateAgent: () => void
-  onCreateAgentWithName: (name: string) => void
-  onDeleteAgent: (agentId: string) => void
-  onAddToConversation: (agentId: string) => void
-  onRemoveFromConversation: (agentId: string) => void
-  onUpdateAgentColor: (agentId: string, color: string) => void
-  onToggleAutonomy: (agentId: string, enabled: boolean) => void
+  agents: Agent[];
+  selectedAgent: Agent | null;
+  onSelectAgent: (agent: Agent) => void;
+  onCreateAgent: () => void;
+  onCreateAgentWithName: (name: string) => void;
+  onDeleteAgent: (agentId: string) => void;
+  onAddToConversation: (agentId: string) => void;
+  onRemoveFromConversation: (agentId: string) => void;
+  onUpdateAgentColor: (agentId: string, color: string) => void;
+  onToggleAutonomy: (agentId: string, enabled: boolean) => void;
   onExportAgents: (
     agentIds: string[],
     options: {
-      includeSettings: boolean
-      includeApiKeys: boolean
-      includeConversations: boolean // New option
+      includeSettings: boolean;
+      includeApiKeys: boolean;
+      includeConversations: boolean; // New option
     },
-  ) => void
+  ) => void;
   onImportAgents: (
     file: File,
     options: {
-      mode: "replace" | "new" | "merge" | "settings-only"
-      importSettings: boolean
-      importApiKeys: boolean
-      importConversations: boolean // New option
+      mode: "replace" | "new" | "merge" | "settings-only";
+      importSettings: boolean;
+      importApiKeys: boolean;
+      importConversations: boolean; // New option
     },
-  ) => void
-  activeConversation: boolean
-  llmSettings?: LLMSettings
+  ) => void;
+  activeConversation: boolean;
+  llmSettings?: LLMSettings;
 }
 
 // Predefined color palette
@@ -62,7 +83,7 @@ const colorPalette = [
   "#f97316", // orange
   "#14b8a6", // teal
   "#8b5cf6", // purple
-]
+];
 
 export default function AgentList({
   agents,
@@ -80,145 +101,154 @@ export default function AgentList({
   activeConversation,
   llmSettings,
 }: AgentListProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [newAgentName, setNewAgentName] = useState("")
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newAgentName, setNewAgentName] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // State for export dialog
-  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
-  const [selectedAgentsForExport, setSelectedAgentsForExport] = useState<Record<string, boolean>>({})
-  const [exportAllAgents, setExportAllAgents] = useState(true)
-  const [includeSettings, setIncludeSettings] = useState(false)
-  const [includeApiKeys, setIncludeApiKeys] = useState(false)
-  const [includeConversations, setIncludeConversations] = useState(false) // New state for conversations
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [selectedAgentsForExport, setSelectedAgentsForExport] = useState<
+    Record<string, boolean>
+  >({});
+  const [exportAllAgents, setExportAllAgents] = useState(true);
+  const [includeSettings, setIncludeSettings] = useState(false);
+  const [includeApiKeys, setIncludeApiKeys] = useState(false);
+  const [includeConversations, setIncludeConversations] = useState(false); // New state for conversations
 
   // State for import dialog
-  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
-  const [importFile, setImportFile] = useState<File | null>(null)
-  const [importMode, setImportMode] = useState<"replace" | "new" | "merge" | "settings-only">("new")
-  const [importSettings, setImportSettings] = useState(true)
-  const [importApiKeys, setImportApiKeys] = useState(false)
-  const [importConversations, setImportConversations] = useState(false) // New state for conversations
-  const [isImporting, setIsImporting] = useState(false)
-  const [importError, setImportError] = useState<string | null>(null)
-  const [hasSettingsInImport, setHasSettingsInImport] = useState(false)
-  const [hasApiKeysInImport, setHasApiKeysInImport] = useState(false)
-  const [hasConversationsInImport, setHasConversationsInImport] = useState(false) // New state for conversations
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importMode, setImportMode] = useState<
+    "replace" | "new" | "merge" | "settings-only"
+  >("new");
+  const [importSettings, setImportSettings] = useState(true);
+  const [importApiKeys, setImportApiKeys] = useState(false);
+  const [importConversations, setImportConversations] = useState(false); // New state for conversations
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [hasSettingsInImport, setHasSettingsInImport] = useState(false);
+  const [hasApiKeysInImport, setHasApiKeysInImport] = useState(false);
+  const [hasConversationsInImport, setHasConversationsInImport] =
+    useState(false); // New state for conversations
 
   // Handle export dialog open
   const handleExportClick = () => {
     // Initialize with all agents selected
     const initialSelection = agents.reduce(
       (acc, agent) => {
-        acc[agent.id] = true
-        return acc
+        acc[agent.id] = true;
+        return acc;
       },
       {} as Record<string, boolean>,
-    )
-    setSelectedAgentsForExport(initialSelection)
-    setExportAllAgents(true)
-    setIncludeSettings(false)
-    setIncludeApiKeys(false)
-    setIncludeConversations(false) // Initialize conversation export option
-    setIsExportDialogOpen(true)
-  }
+    );
+    setSelectedAgentsForExport(initialSelection);
+    setExportAllAgents(true);
+    setIncludeSettings(false);
+    setIncludeApiKeys(false);
+    setIncludeConversations(false); // Initialize conversation export option
+    setIsExportDialogOpen(true);
+  };
 
   // Handle export confirmation
   const handleExportConfirm = () => {
-    let agentIdsToExport: string[] = []
+    let agentIdsToExport: string[] = [];
 
     if (exportAllAgents) {
       // Export all agents
-      agentIdsToExport = agents.map((agent) => agent.id)
+      agentIdsToExport = agents.map((agent) => agent.id);
     } else {
       // Export only selected agents
       agentIdsToExport = Object.entries(selectedAgentsForExport)
         .filter(([_, isSelected]) => isSelected)
-        .map(([agentId]) => agentId)
+        .map(([agentId]) => agentId);
     }
 
     onExportAgents(agentIdsToExport, {
       includeSettings,
       includeApiKeys: includeSettings && includeApiKeys,
       includeConversations, // Pass the new option
-    })
-    setIsExportDialogOpen(false)
-  }
+    });
+    setIsExportDialogOpen(false);
+  };
 
   // Toggle selection of an agent for export
   const toggleAgentSelection = (agentId: string) => {
     setSelectedAgentsForExport((prev) => ({
       ...prev,
       [agentId]: !prev[agentId],
-    }))
-  }
+    }));
+  };
 
   // Handle import button click
   const handleImportClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click()
+      fileInputRef.current.click();
     }
-  }
+  };
 
   // Handle file selection
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      setImportFile(file)
-      setImportError(null)
+      setImportFile(file);
+      setImportError(null);
 
       // Check if the file contains settings and conversations
       try {
-        const zip = new JSZip()
-        const zipContent = await zip.loadAsync(file)
+        const zip = new JSZip();
+        const zipContent = await zip.loadAsync(file);
 
         // Check if settings.json exists in the zip
-        const hasSettings = !!zipContent.files["settings.json"]
-        setHasSettingsInImport(hasSettings)
+        const hasSettings = !!zipContent.files["settings.json"];
+        setHasSettingsInImport(hasSettings);
 
         // Check if conversations folder exists in the zip
         const hasConversations = Object.keys(zipContent.files).some(
-          (path) => path.startsWith("conversations/") && path !== "conversations/",
-        )
-        setHasConversationsInImport(hasConversations)
-        console.log("Import file check - Has conversations:", hasConversations)
+          (path) =>
+            path.startsWith("conversations/") && path !== "conversations/",
+        );
+        setHasConversationsInImport(hasConversations);
+        console.log("Import file check - Has conversations:", hasConversations);
 
         // If settings exist, check if they contain API keys
         if (hasSettings) {
-          const settingsJSON = await zipContent.files["settings.json"].async("string")
-          const settings = JSON.parse(settingsJSON)
+          const settingsJSON =
+            await zipContent.files["settings.json"].async("string");
+          const settings = JSON.parse(settingsJSON);
           setHasApiKeysInImport(
-            !!settings.apiKey && typeof settings.apiKey === "string" && settings.apiKey.trim() !== "",
-          )
+            !!settings.apiKey &&
+              typeof settings.apiKey === "string" &&
+              settings.apiKey.trim() !== "",
+          );
         } else {
-          setHasApiKeysInImport(false)
+          setHasApiKeysInImport(false);
         }
       } catch (error) {
-        console.error("Error checking zip contents:", error)
-        setHasSettingsInImport(false)
-        setHasApiKeysInImport(false)
-        setHasConversationsInImport(false)
+        console.error("Error checking zip contents:", error);
+        setHasSettingsInImport(false);
+        setHasApiKeysInImport(false);
+        setHasConversationsInImport(false);
       }
 
-      setImportSettings(true)
-      setImportApiKeys(false)
-      setImportConversations(false) // Initialize conversation import option
-      setImportMode("new")
-      setIsImportDialogOpen(true)
+      setImportSettings(true);
+      setImportApiKeys(false);
+      setImportConversations(false); // Initialize conversation import option
+      setImportMode("new");
+      setIsImportDialogOpen(true);
     }
 
     // Reset the input so the same file can be selected again
     if (e.target) {
-      e.target.value = ""
+      e.target.value = "";
     }
-  }
+  };
 
   // Handle import confirmation
   const handleImportConfirm = () => {
-    if (!importFile) return
+    if (!importFile) return;
 
-    setIsImporting(true)
-    setImportError(null)
+    setIsImporting(true);
+    setImportError(null);
 
     try {
       // Pass the file and import options to the parent component
@@ -227,19 +257,23 @@ export default function AgentList({
         importSettings: importSettings && hasSettingsInImport,
         importApiKeys: importSettings && importApiKeys && hasApiKeysInImport,
         importConversations: importConversations && hasConversationsInImport, // Pass the new option
-      })
+      });
 
       // Close the dialog after a short delay to allow the toast to show
       setTimeout(() => {
-        setIsImportDialogOpen(false)
-        setImportFile(null)
-      }, 500)
+        setIsImportDialogOpen(false);
+        setImportFile(null);
+      }, 500);
     } catch (error) {
-      setImportError(error instanceof Error ? error.message : "Unknown error occurred during import")
+      setImportError(
+        error instanceof Error
+          ? error.message
+          : "Unknown error occurred during import",
+      );
     } finally {
-      setIsImporting(false)
+      setIsImporting(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -267,7 +301,13 @@ export default function AgentList({
             </Button>
 
             {/* Hidden file input */}
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".zip" className="hidden" />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".zip"
+              className="hidden"
+            />
           </div>
         </div>
       </div>
@@ -278,7 +318,9 @@ export default function AgentList({
             <div
               key={agent.id}
               className={`p-3 rounded-md border cursor-pointer transition-colors ${
-                selectedAgent?.id === agent.id ? "border-primary bg-primary/10" : "border-border hover:bg-muted"
+                selectedAgent?.id === agent.id
+                  ? "border-primary bg-primary/10"
+                  : "border-border hover:bg-muted"
               }`}
               onClick={() => onSelectAgent(agent)}
             >
@@ -293,37 +335,56 @@ export default function AgentList({
                         title="Change agent color"
                       />
                     </PopoverTrigger>
-                    <PopoverContent className="w-64" align="start" side="right" onClick={(e) => e.stopPropagation()}>
+                    <PopoverContent
+                      className="w-64"
+                      align="start"
+                      side="right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="space-y-2">
-                        <h4 className="font-medium text-sm">Select agent color</h4>
+                        <h4 className="font-medium text-sm">
+                          Select agent color
+                        </h4>
                         <div className="grid grid-cols-6 gap-2">
                           {colorPalette.map((color) => (
                             <div
                               key={color}
                               className={`w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform ${
-                                agent.color === color ? "ring-2 ring-primary ring-offset-2" : ""
+                                agent.color === color
+                                  ? "ring-2 ring-primary ring-offset-2"
+                                  : ""
                               }`}
                               style={{ backgroundColor: color }}
-                              onClick={() => onUpdateAgentColor(agent.id, color)}
+                              onClick={() =>
+                                onUpdateAgentColor(agent.id, color)
+                              }
                             />
                           ))}
                         </div>
                         <div className="pt-2">
-                          <label htmlFor={`custom-color-${agent.id}`} className="text-xs text-muted-foreground">
+                          <label
+                            htmlFor={`custom-color-${agent.id}`}
+                            className="text-xs text-muted-foreground"
+                          >
                             Custom color:
                           </label>
                           <input
                             id={`custom-color-${agent.id}`}
                             type="color"
                             value={agent.color}
-                            onChange={(e) => onUpdateAgentColor(agent.id, e.target.value)}
+                            onChange={(e) =>
+                              onUpdateAgentColor(agent.id, e.target.value)
+                            }
                             className="w-full h-8 mt-1 cursor-pointer"
                           />
                         </div>
                       </div>
                     </PopoverContent>
                   </Popover>
-                  <span className="font-medium text-white" title="Select agent to edit name and details">
+                  <span
+                    className="font-medium text-white"
+                    title="Select agent to edit name and details"
+                  >
                     {agent.name}
                   </span>
                 </div>
@@ -331,12 +392,20 @@ export default function AgentList({
                   {/* Autonomy status indicator */}
                   <div
                     className={`w-3 h-3 rounded-full ${agent.autonomyEnabled ? "bg-green-500" : "bg-gray-300"}`}
-                    title={agent.autonomyEnabled ? "Autonomy enabled" : "Autonomy disabled"}
+                    title={
+                      agent.autonomyEnabled
+                        ? "Autonomy enabled"
+                        : "Autonomy disabled"
+                    }
                   />
                   {/* Conversation status indicator */}
                   <div
                     className={`w-3 h-3 rounded-full ${agent.inConversation ? "bg-green-500" : "bg-gray-300"}`}
-                    title={agent.inConversation ? "In conversation" : "Not in conversation"}
+                    title={
+                      agent.inConversation
+                        ? "In conversation"
+                        : "Not in conversation"
+                    }
                   />
                 </div>
               </div>
@@ -345,8 +414,8 @@ export default function AgentList({
                   variant="destructive"
                   size="sm"
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onDeleteAgent(agent.id)
+                    e.stopPropagation();
+                    onDeleteAgent(agent.id);
                   }}
                 >
                   <Trash size={14} />
@@ -357,8 +426,8 @@ export default function AgentList({
                   variant="outline"
                   size="sm"
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onToggleAutonomy(agent.id, !agent.autonomyEnabled)
+                    e.stopPropagation();
+                    onToggleAutonomy(agent.id, !agent.autonomyEnabled);
                   }}
                   className={`${
                     agent.autonomyEnabled
@@ -384,8 +453,8 @@ export default function AgentList({
                     variant="outline"
                     size="sm"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      onRemoveFromConversation(agent.id)
+                      e.stopPropagation();
+                      onRemoveFromConversation(agent.id);
                     }}
                     className="bg-purple-900/50 border-purple-500 text-white hover:bg-purple-800 hover:text-white"
                   >
@@ -396,10 +465,13 @@ export default function AgentList({
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={!activeConversation && agents.some((a) => a.inConversation)}
+                    disabled={
+                      !activeConversation &&
+                      agents.some((a) => a.inConversation)
+                    }
                     onClick={(e) => {
-                      e.stopPropagation()
-                      onAddToConversation(agent.id)
+                      e.stopPropagation();
+                      onAddToConversation(agent.id);
                     }}
                     className="bg-purple-900/50 border-purple-500 text-white hover:bg-purple-800 hover:text-white"
                   >
@@ -424,7 +496,10 @@ export default function AgentList({
               <DialogTitle>Create New Agent</DialogTitle>
             </DialogHeader>
             <div className="py-4">
-              <label htmlFor="new-agent-name" className="text-sm font-medium block mb-2">
+              <label
+                htmlFor="new-agent-name"
+                className="text-sm font-medium block mb-2"
+              >
                 Agent Name
               </label>
               <Input
@@ -442,9 +517,9 @@ export default function AgentList({
               <Button
                 onClick={() => {
                   if (newAgentName.trim()) {
-                    onCreateAgentWithName(newAgentName.trim())
-                    setNewAgentName("")
-                    setIsDialogOpen(false)
+                    onCreateAgentWithName(newAgentName.trim());
+                    setNewAgentName("");
+                    setIsDialogOpen(false);
                   }
                 }}
               >
@@ -468,7 +543,7 @@ export default function AgentList({
                   id="export-all"
                   checked={exportAllAgents}
                   onCheckedChange={(checked) => {
-                    setExportAllAgents(checked === true)
+                    setExportAllAgents(checked === true);
                   }}
                 />
                 <Label htmlFor="export-all">Export all agents</Label>
@@ -477,7 +552,9 @@ export default function AgentList({
 
             {!exportAllAgents && (
               <div className="space-y-2">
-                <p className="text-sm font-medium mb-2">Select agents to export:</p>
+                <p className="text-sm font-medium mb-2">
+                  Select agents to export:
+                </p>
                 {agents.map((agent) => (
                   <div key={agent.id} className="flex items-center space-x-2">
                     <Checkbox
@@ -485,8 +562,14 @@ export default function AgentList({
                       checked={selectedAgentsForExport[agent.id] || false}
                       onCheckedChange={() => toggleAgentSelection(agent.id)}
                     />
-                    <Label htmlFor={`export-agent-${agent.id}`} className="flex items-center">
-                      <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: agent.color }} />
+                    <Label
+                      htmlFor={`export-agent-${agent.id}`}
+                      className="flex items-center"
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full mr-2"
+                        style={{ backgroundColor: agent.color }}
+                      />
                       {agent.name}
                     </Label>
                   </div>
@@ -502,9 +585,9 @@ export default function AgentList({
                   id="include-settings"
                   checked={includeSettings}
                   onCheckedChange={(checked) => {
-                    setIncludeSettings(checked === true)
+                    setIncludeSettings(checked === true);
                     if (checked === false) {
-                      setIncludeApiKeys(false)
+                      setIncludeApiKeys(false);
                     }
                   }}
                 />
@@ -517,16 +600,22 @@ export default function AgentList({
                     <Checkbox
                       id="include-api-keys"
                       checked={includeApiKeys}
-                      onCheckedChange={(checked) => setIncludeApiKeys(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setIncludeApiKeys(checked === true)
+                      }
                     />
-                    <Label htmlFor="include-api-keys" className="flex items-center">
+                    <Label
+                      htmlFor="include-api-keys"
+                      className="flex items-center"
+                    >
                       Include API keys
                       <span className="text-red-500 ml-1">*</span>
                     </Label>
                   </div>
                   {includeApiKeys && (
                     <p className="text-xs text-red-500 mt-1">
-                      Warning: API keys are sensitive information. Only export them if you're sure about security.
+                      Warning: API keys are sensitive information. Only export
+                      them if you're sure about security.
                     </p>
                   )}
                 </div>
@@ -537,9 +626,13 @@ export default function AgentList({
                 <Checkbox
                   id="include-conversations"
                   checked={includeConversations}
-                  onCheckedChange={(checked) => setIncludeConversations(checked === true)}
+                  onCheckedChange={(checked) =>
+                    setIncludeConversations(checked === true)
+                  }
                 />
-                <Label htmlFor="include-conversations">Include conversation histories</Label>
+                <Label htmlFor="include-conversations">
+                  Include conversation histories
+                </Label>
               </div>
             </div>
           </div>
@@ -549,7 +642,11 @@ export default function AgentList({
             </DialogClose>
             <Button
               onClick={handleExportConfirm}
-              disabled={!exportAllAgents && Object.values(selectedAgentsForExport).filter(Boolean).length === 0}
+              disabled={
+                !exportAllAgents &&
+                Object.values(selectedAgentsForExport).filter(Boolean)
+                  .length === 0
+              }
             >
               <Download size={16} className="mr-2" />
               Export
@@ -563,10 +660,10 @@ export default function AgentList({
         open={isImportDialogOpen}
         onOpenChange={(open) => {
           if (!open) {
-            setImportFile(null)
-            setImportError(null)
+            setImportFile(null);
+            setImportError(null);
           }
-          setIsImportDialogOpen(open)
+          setIsImportDialogOpen(open);
         }}
       >
         <DialogContent>
@@ -591,9 +688,9 @@ export default function AgentList({
                     id="import-settings"
                     checked={importSettings}
                     onCheckedChange={(checked) => {
-                      setImportSettings(checked === true)
+                      setImportSettings(checked === true);
                       if (checked === false) {
-                        setImportApiKeys(false)
+                        setImportApiKeys(false);
                       }
                     }}
                   />
@@ -606,7 +703,9 @@ export default function AgentList({
                       <Checkbox
                         id="import-api-keys"
                         checked={importApiKeys}
-                        onCheckedChange={(checked) => setImportApiKeys(checked === true)}
+                        onCheckedChange={(checked) =>
+                          setImportApiKeys(checked === true)
+                        }
                       />
                       <Label htmlFor="import-api-keys">Import API keys</Label>
                     </div>
@@ -621,16 +720,22 @@ export default function AgentList({
                 <Checkbox
                   id="import-conversations"
                   checked={importConversations}
-                  onCheckedChange={(checked) => setImportConversations(checked === true)}
+                  onCheckedChange={(checked) =>
+                    setImportConversations(checked === true)
+                  }
                   disabled={!hasConversationsInImport}
                 />
                 <Label
                   htmlFor="import-conversations"
-                  className={!hasConversationsInImport ? "text-muted-foreground" : ""}
+                  className={
+                    !hasConversationsInImport ? "text-muted-foreground" : ""
+                  }
                 >
                   Import conversation histories
                   {!hasConversationsInImport && (
-                    <span className="ml-2 text-xs text-muted-foreground">(No conversations found in import file)</span>
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      (No conversations found in import file)
+                    </span>
                   )}
                 </Label>
               </div>
@@ -641,12 +746,21 @@ export default function AgentList({
                 <p className="text-sm font-medium mb-2">Import mode:</p>
                 <RadioGroup
                   value={importMode}
-                  onValueChange={(value) => setImportMode(value as "replace" | "new" | "merge" | "settings-only")}
+                  onValueChange={(value) =>
+                    setImportMode(
+                      value as "replace" | "new" | "merge" | "settings-only",
+                    )
+                  }
                 >
                   {hasSettingsInImport && (
                     <div className="flex items-center space-x-2 mb-2">
-                      <RadioGroupItem value="settings-only" id="import-settings-only" />
-                      <Label htmlFor="import-settings-only">Import settings only (no agents)</Label>
+                      <RadioGroupItem
+                        value="settings-only"
+                        id="import-settings-only"
+                      />
+                      <Label htmlFor="import-settings-only">
+                        Import settings only (no agents)
+                      </Label>
                     </div>
                   )}
                   <div className="flex items-center space-x-2 mb-2">
@@ -655,11 +769,15 @@ export default function AgentList({
                   </div>
                   <div className="flex items-center space-x-2 mb-2">
                     <RadioGroupItem value="replace" id="import-replace" />
-                    <Label htmlFor="import-replace">Replace existing agents with same ID</Label>
+                    <Label htmlFor="import-replace">
+                      Replace existing agents with same ID
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="merge" id="import-merge" />
-                    <Label htmlFor="import-merge">Merge knowledge with existing agents</Label>
+                    <Label htmlFor="import-merge">
+                      Merge knowledge with existing agents
+                    </Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -667,7 +785,10 @@ export default function AgentList({
 
             {importError && (
               <div className="mt-4 p-3 bg-red-500/20 border border-red-500 rounded-md flex items-start">
-                <AlertCircle className="text-red-500 mr-2 mt-0.5 flex-shrink-0" size={16} />
+                <AlertCircle
+                  className="text-red-500 mr-2 mt-0.5 flex-shrink-0"
+                  size={16}
+                />
                 <p className="text-sm text-red-500">{importError}</p>
               </div>
             )}
@@ -676,7 +797,10 @@ export default function AgentList({
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button onClick={handleImportConfirm} disabled={!importFile || isImporting}>
+            <Button
+              onClick={handleImportConfirm}
+              disabled={!importFile || isImporting}
+            >
               {isImporting ? (
                 <>
                   <Spinner size={16} className="mr-2" />
@@ -693,5 +817,5 @@ export default function AgentList({
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

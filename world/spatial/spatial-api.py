@@ -7,12 +7,11 @@ including neighbor calculation, pathfinding, resource distribution, and observat
 
 import h3
 import numpy as np
-from typing import List, Dict, Tuple, Optional, Set, Any, Union, Callable
+from typing import List, Dict, Tuple, Optional, Set, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 import heapq
 import math
-import json
 import logging
 from collections import defaultdict, deque
 
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SpatialCoordinate:
     """Represents a coordinate in the spatial system."""
+
     hex_id: str
     lat: float = field(init=False)
     lng: float = field(init=False)
@@ -31,22 +31,23 @@ class SpatialCoordinate:
         self.lat, self.lng = h3.h3_to_geo(self.hex_id)
 
     @classmethod
-    def from_lat_lng(cls, lat: float, lng: float, resolution: int = 7) -> 'SpatialCoordinate':
+    def from_lat_lng(
+        cls, lat: float, lng: float, resolution: int = 7
+    ) -> "SpatialCoordinate":
         """Create from latitude/longitude."""
         hex_id = h3.geo_to_h3(lat, lng, resolution)
         return cls(hex_id=hex_id)
 
-    def distance_to(self, other: 'SpatialCoordinate') -> float:
+    def distance_to(self, other: "SpatialCoordinate") -> float:
         """Calculate great circle distance in km."""
         return h3.great_circle_distance(
-            (self.lat, self.lng),
-            (other.lat, other.lng),
-            unit='km'
+            (self.lat, self.lng), (other.lat, other.lng), unit="km"
         )
 
 
 class ResourceType(Enum):
     """Types of resources available in the spatial system."""
+
     FOOD = "food"
     WATER = "water"
     MATERIALS = "materials"
@@ -58,6 +59,7 @@ class ResourceType(Enum):
 @dataclass
 class ResourceDistribution:
     """Defines how resources are distributed spatially."""
+
     resource_type: ResourceType
     base_amount: float
     variance: float
@@ -68,15 +70,15 @@ class ResourceDistribution:
 
     def calculate_amount(self, hex_id: str, distance_from_origin: float = 0) -> float:
         """Calculate resource amount for a specific hex."""
-        if self.distribution_pattern == 'uniform':
+        if self.distribution_pattern == "uniform":
             return np.random.normal(self.base_amount, self.variance)
 
-        elif self.distribution_pattern == 'clustered':
+        elif self.distribution_pattern == "clustered":
             if not self.cluster_centers:
                 return 0
 
             # Find distance to nearest cluster center
-            min_distance = float('inf')
+            min_distance = float("inf")
             for center in self.cluster_centers:
                 distance = h3.h3_distance(hex_id, center)
                 min_distance = min(min_distance, distance)
@@ -85,7 +87,7 @@ class ResourceDistribution:
             amount = self.base_amount * math.exp(-min_distance * 0.3)
             return max(0, np.random.normal(amount, self.variance))
 
-        elif self.distribution_pattern == 'gradient':
+        elif self.distribution_pattern == "gradient":
             if not self.gradient_origin:
                 return self.base_amount
 
@@ -101,20 +103,23 @@ class ResourceDistribution:
 @dataclass
 class ObservationModel:
     """Models visibility and observation capabilities."""
+
     base_range: int = 2  # Hexagon rings visible
     elevation_bonus: float = 0.001  # Bonus range per meter of elevation
-    terrain_modifiers: Dict[str, float] = field(default_factory=lambda: {
-        'flat': 1.0,
-        'hills': 0.8,
-        'mountains': 0.5,
-        'forest': 0.7,
-        'water': 1.0
-    })
+    terrain_modifiers: Dict[str, float] = field(
+        default_factory=lambda: {
+            "flat": 1.0,
+            "hills": 0.8,
+            "mountains": 0.5,
+            "forest": 0.7,
+            "water": 1.0,
+        }
+    )
     weather_modifier: float = 1.0  # 0-1, affects visibility
 
-    def calculate_visibility_range(self,
-                                 observer_elevation: float,
-                                 observer_terrain: str) -> int:
+    def calculate_visibility_range(
+        self, observer_elevation: float, observer_terrain: str
+    ) -> int:
         """Calculate visibility range based on conditions."""
         terrain_mod = self.terrain_modifiers.get(observer_terrain, 1.0)
         elevation_bonus = int(observer_elevation * self.elevation_bonus)
@@ -124,15 +129,17 @@ class ObservationModel:
 
         return max(1, total_range)
 
-    def is_visible(self,
-                  observer_hex: str,
-                  target_hex: str,
-                  observer_elevation: float,
-                  target_elevation: float,
-                  terrain_heights: Dict[str, float]) -> bool:
+    def is_visible(
+        self,
+        observer_hex: str,
+        target_hex: str,
+        observer_elevation: float,
+        target_elevation: float,
+        terrain_heights: Dict[str, float],
+    ) -> bool:
         """Check if target is visible from observer considering line of sight."""
         # Get visibility range
-        visibility_range = self.calculate_visibility_range(observer_elevation, 'flat')
+        visibility_range = self.calculate_visibility_range(observer_elevation, "flat")
 
         # Check if within range
         distance = h3.h3_distance(observer_hex, target_hex)
@@ -209,7 +216,7 @@ class SpatialAPI:
 
     def get_hex_area(self, hex_id: str) -> float:
         """Get area of a hex in km²."""
-        return h3.cell_area(hex_id, unit='km^2')
+        return h3.cell_area(hex_id, unit="km^2")
 
     # === Neighbor Operations ===
 
@@ -275,11 +282,13 @@ class SpatialAPI:
         """Find simple direct path between hexes."""
         return h3.h3_line(start, goal)
 
-    def find_path_astar(self,
-                       start: str,
-                       goal: str,
-                       movement_costs: Dict[str, float],
-                       obstacles: Optional[Set[str]] = None) -> Optional[List[str]]:
+    def find_path_astar(
+        self,
+        start: str,
+        goal: str,
+        movement_costs: Dict[str, float],
+        obstacles: Optional[Set[str]] = None,
+    ) -> Optional[List[str]]:
         """
         Find optimal path using A* algorithm.
 
@@ -342,15 +351,13 @@ class SpatialAPI:
 
     # === Resource Distribution ===
 
-    def add_resource_distribution(self,
-                                name: str,
-                                distribution: ResourceDistribution):
+    def add_resource_distribution(self, name: str, distribution: ResourceDistribution):
         """Add a resource distribution pattern."""
         self.resource_distributions[name] = distribution
 
-    def generate_resources(self,
-                         hexes: List[str],
-                         distributions: Optional[List[str]] = None) -> Dict[str, Dict[str, float]]:
+    def generate_resources(
+        self, hexes: List[str], distributions: Optional[List[str]] = None
+    ) -> Dict[str, Dict[str, float]]:
         """
         Generate resources for given hexes.
 
@@ -373,11 +380,13 @@ class SpatialAPI:
 
         return dict(resources)
 
-    def find_nearest_resource(self,
-                            start: str,
-                            resource_type: ResourceType,
-                            available_resources: Dict[str, Dict[str, float]],
-                            max_distance: int = 10) -> Optional[str]:
+    def find_nearest_resource(
+        self,
+        start: str,
+        resource_type: ResourceType,
+        available_resources: Dict[str, Dict[str, float]],
+        max_distance: int = 10,
+    ) -> Optional[str]:
         """Find nearest hex with specified resource."""
         visited = {start}
         queue = deque([(start, 0)])
@@ -408,10 +417,12 @@ class SpatialAPI:
         """Set the observation model."""
         self.observation_model = model
 
-    def get_visible_hexes(self,
-                        observer_hex: str,
-                        observer_elevation: float = 0,
-                        terrain_heights: Optional[Dict[str, float]] = None) -> Set[str]:
+    def get_visible_hexes(
+        self,
+        observer_hex: str,
+        observer_elevation: float = 0,
+        terrain_heights: Optional[Dict[str, float]] = None,
+    ) -> Set[str]:
         """Get all hexes visible from observer position."""
         terrain_heights = terrain_heights or {}
         visible = set()
@@ -419,7 +430,7 @@ class SpatialAPI:
         # Get visibility range
         range_rings = self.observation_model.calculate_visibility_range(
             observer_elevation,
-            'flat'  # TODO: pass actual terrain
+            "flat",  # TODO: pass actual terrain
         )
 
         # Check each hex in range
@@ -428,9 +439,11 @@ class SpatialAPI:
                 target_elevation = terrain_heights.get(hex_id, 0)
 
                 if self.observation_model.is_visible(
-                    observer_hex, hex_id,
-                    observer_elevation, target_elevation,
-                    terrain_heights
+                    observer_hex,
+                    hex_id,
+                    observer_elevation,
+                    target_elevation,
+                    terrain_heights,
                 ):
                     visible.add(hex_id)
 
@@ -438,10 +451,12 @@ class SpatialAPI:
 
     # === Spatial Queries ===
 
-    def query_region(self,
-                   center: str,
-                   radius_hexes: int,
-                   filter_func: Optional[Callable[[str], bool]] = None) -> List[str]:
+    def query_region(
+        self,
+        center: str,
+        radius_hexes: int,
+        filter_func: Optional[Callable[[str], bool]] = None,
+    ) -> List[str]:
         """Query hexes in a region with optional filtering."""
         hexes = []
 
@@ -451,10 +466,9 @@ class SpatialAPI:
 
         return hexes
 
-    def find_clusters(self,
-                    points: List[str],
-                    min_cluster_size: int = 3,
-                    max_distance: int = 2) -> List[List[str]]:
+    def find_clusters(
+        self, points: List[str], min_cluster_size: int = 3, max_distance: int = 2
+    ) -> List[List[str]]:
         """Find spatial clusters of hexes."""
         clusters = []
         unvisited = set(points)
@@ -470,7 +484,10 @@ class SpatialAPI:
 
                 # Check neighbors
                 for neighbor in self.get_neighbors(current):
-                    if neighbor in unvisited and self.hex_distance(start, neighbor) <= max_distance:
+                    if (
+                        neighbor in unvisited
+                        and self.hex_distance(start, neighbor) <= max_distance
+                    ):
                         unvisited.remove(neighbor)
                         cluster.append(neighbor)
                         to_check.append(neighbor)
@@ -492,9 +509,9 @@ class SpatialAPI:
     def get_cache_stats(self) -> Dict[str, int]:
         """Get cache statistics."""
         return {
-            'neighbor_cache': len(self._neighbor_cache),
-            'distance_cache': len(self._distance_cache),
-            'path_cache': len(self._path_cache)
+            "neighbor_cache": len(self._neighbor_cache),
+            "distance_cache": len(self._distance_cache),
+            "path_cache": len(self._path_cache),
         }
 
 
@@ -521,11 +538,11 @@ if __name__ == "__main__":
         resource_type=ResourceType.FOOD,
         base_amount=50,
         variance=10,
-        distribution_pattern='clustered',
-        cluster_centers=[sf_hex]
+        distribution_pattern="clustered",
+        cluster_centers=[sf_hex],
     )
 
-    api.add_resource_distribution('food', food_dist)
+    api.add_resource_distribution("food", food_dist)
 
     # Generate resources
     test_hexes = api.get_neighbors_at_distance(sf_hex, 3)

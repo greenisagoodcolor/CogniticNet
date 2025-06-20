@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Frontend Next.js application
@@ -95,4 +95,4 @@ volumes:
 networks:
   freeagentics:
     driver: bridge
-    name: freeagentics_dev_network 
+    name: freeagentics_dev_network

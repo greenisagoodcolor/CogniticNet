@@ -15,11 +15,13 @@ http://localhost:8080
 ## 📋 Features
 
 ### Pre-Populated Demo Data
+
 - **4 Demo Agents**: Explorer, Merchant, Scholar, and Guardian classes
 - **Varied Readiness Levels**: From training to deployment-ready
 - **Rich History**: Pre-seeded interactions, discoveries, and achievements
 
 ### Automated Scenarios
+
 1. **Explorer Discovery**: Watch agents autonomously explore and discover resources
 2. **Merchant Trading**: See dynamic negotiations and market analysis
 3. **Scholar Research**: Observe knowledge creation and theory formulation
@@ -27,6 +29,7 @@ http://localhost:8080
 5. **Multi-Agent Collaboration**: Marvel at complex teamwork and goal achievement
 
 ### Enhanced Visualization
+
 - **10x Simulation Speed**: See days of agent activity in minutes
 - **Real-Time Updates**: WebSocket-powered live data streaming
 - **Visual Highlights**: Color-coded events and achievements
@@ -49,25 +52,33 @@ demo-nginx (8080)
 ## 🛠️ Services
 
 ### demo-web
+
 The main FreeAgentics application running in demo mode with:
+
 - Enhanced UI animations
 - Demo-specific features enabled
 - Pre-configured for optimal presentation
 
 ### demo-simulator
+
 Python service that:
+
 - Runs agents at 10x normal speed
 - Simulates realistic agent behaviors
 - Generates continuous activity
 
 ### demo-scenarios
+
 Orchestrates compelling demonstration scenarios:
+
 - Runs every 5 minutes (configurable)
 - Showcases different agent capabilities
 - Creates engaging narratives
 
 ### demo-monitor
+
 Dedicated monitoring dashboard showing:
+
 - Real-time agent activities
 - Scenario progress
 - System metrics
@@ -76,34 +87,44 @@ Dedicated monitoring dashboard showing:
 ## 📊 Demo Scenarios
 
 ### Explorer Discovery (3 minutes)
+
 Demonstrates autonomous exploration and resource discovery:
+
 - Dynamic pathfinding
 - Resource identification
 - Knowledge sharing
 
 ### Merchant Trade (4 minutes)
+
 Shows economic simulation capabilities:
+
 - Market analysis
 - Price negotiation
 - Trade execution
 - Profit tracking
 
 ### Scholar Research (5 minutes)
+
 Highlights knowledge creation:
+
 - Data collection
 - Pattern analysis
 - Theory formulation
 - Knowledge dissemination
 
 ### Guardian Patrol (4 minutes)
+
 Displays security and protection behaviors:
+
 - Territory establishment
 - Threat detection
 - Response coordination
 - Incident reporting
 
 ### Multi-Agent Collaboration (6 minutes)
+
 The grand finale showing teamwork:
+
 - Team formation
 - Role assignment
 - Coordinated execution
@@ -112,11 +133,13 @@ The grand finale showing teamwork:
 ## 🎮 Usage
 
 ### Starting the Demo
+
 ```bash
 ./scripts/demo/start-demo.sh
 ```
 
 ### Monitoring
+
 ```bash
 # View all logs
 docker-compose -f docker/demo/docker-compose.yml logs -f
@@ -126,11 +149,13 @@ docker-compose -f docker/demo/docker-compose.yml logs -f demo-simulator
 ```
 
 ### Stopping
+
 ```bash
 ./scripts/demo/stop-demo.sh
 ```
 
 ### Resetting
+
 ```bash
 # Complete reset (deletes all data)
 ./scripts/demo/reset-demo.sh
@@ -139,12 +164,15 @@ docker-compose -f docker/demo/docker-compose.yml logs -f demo-simulator
 ## 🔧 Configuration
 
 ### Environment Variables
+
 Edit `docker/demo/docker-compose.yml` to adjust:
+
 - `SIMULATION_SPEED`: How fast agents act (default: 10x)
 - `SCENARIO_INTERVAL`: Time between scenarios (default: 300s)
 - `AUTO_PLAY`: Auto-start scenarios (default: true)
 
 ### Demo Data
+
 - Initial agents: `docker/demo/seed-demo-data.sql`
 - Scenarios: `docker/demo/scenario_runner.py`
 - UI config: `docker/demo/demo-config.json`
@@ -152,16 +180,19 @@ Edit `docker/demo/docker-compose.yml` to adjust:
 ## 📈 Customization
 
 ### Adding New Scenarios
+
 1. Add scenario to `seed-demo-data.sql`
 2. Implement handler in `scenario_runner.py`
 3. Update `demo-config.json`
 
 ### Modifying Agents
+
 1. Edit agent data in `seed-demo-data.sql`
 2. Adjust stats for desired readiness levels
 3. Rebuild with `docker-compose build`
 
 ### UI Enhancements
+
 1. Edit `demo-config.json` for colors/animations
 2. Modify notification settings
 3. Adjust highlight thresholds
@@ -169,6 +200,7 @@ Edit `docker/demo/docker-compose.yml` to adjust:
 ## 🐛 Troubleshooting
 
 ### Services Not Starting
+
 ```bash
 # Check service status
 docker-compose -f docker/demo/docker-compose.yml ps
@@ -178,6 +210,7 @@ docker-compose -f docker/demo/docker-compose.yml logs [service-name]
 ```
 
 ### Database Connection Issues
+
 ```bash
 # Check database is running
 docker exec -it freeagentics-demo-db psql -U demo -d freeagentics_demo
@@ -187,6 +220,7 @@ SELECT COUNT(*) FROM agents.agents;
 ```
 
 ### Performance Issues
+
 - Reduce `SIMULATION_SPEED` to lower values
 - Increase `SCENARIO_INTERVAL` for fewer scenarios
 - Check Docker resource allocation
@@ -194,6 +228,7 @@ SELECT COUNT(*) FROM agents.agents;
 ## 🎯 Demo Script Suggestions
 
 ### For Investors (15 minutes)
+
 1. Start with Character Creator - show personality sliders
 2. Run Explorer Discovery - highlight autonomous behavior
 3. Show Knowledge Graph - demonstrate learning
@@ -202,6 +237,7 @@ SELECT COUNT(*) FROM agents.agents;
 6. Export agent package - demonstrate hardware deployment
 
 ### For Technical Audience (30 minutes)
+
 1. Deep dive into GNN architecture
 2. Show real-time model updates
 3. Demonstrate Active Inference in action
@@ -210,6 +246,7 @@ SELECT COUNT(*) FROM agents.agents;
 6. Discuss hardware optimization
 
 ### For General Audience (10 minutes)
+
 1. Quick agent creation
 2. Watch automated scenarios
 3. Show agent conversations
@@ -219,23 +256,28 @@ SELECT COUNT(*) FROM agents.agents;
 ## 🚀 Advanced Features
 
 ### WebSocket Events
+
 Connect to WebSocket for real-time updates:
+
 ```javascript
-const ws = new WebSocket('ws://localhost:8080/ws');
-ws.on('message', (data) => {
+const ws = new WebSocket("ws://localhost:8080/ws");
+ws.on("message", (data) => {
   const event = JSON.parse(data);
-  console.log('Event:', event);
+  console.log("Event:", event);
 });
 ```
 
 ### Redis Pub/Sub
+
 Monitor events directly:
+
 ```bash
 docker exec -it freeagentics-demo-redis redis-cli
 > SUBSCRIBE demo:events:all
 ```
 
 ### Direct Database Access
+
 ```bash
 psql postgresql://demo:demo123@localhost:5433/freeagentics_demo
 ```
@@ -251,6 +293,7 @@ psql postgresql://demo:demo123@localhost:5433/freeagentics_demo
 ## 🤝 Contributing
 
 To improve the demo environment:
+
 1. Test changes locally first
 2. Document new features
 3. Update demo scripts if needed
@@ -258,4 +301,4 @@ To improve the demo environment:
 
 ---
 
-Happy Demonstrating! 🎉 
+Happy Demonstrating! 🎉

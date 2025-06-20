@@ -1,91 +1,102 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { Agent } from "@/lib/types"
-import type { AgentDetails } from "@/lib/types/agent-api"
-import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Agent } from "@/lib/types";
+import type { AgentDetails } from "@/lib/types/agent-api";
+import { useState } from "react";
 
 interface AgentPerformanceChartProps {
-  agents: Agent[]
-  agentDetails: Record<string, AgentDetails>
+  agents: Agent[];
+  agentDetails: Record<string, AgentDetails>;
 }
 
-type MetricType = "resources" | "goals" | "activity" | "efficiency"
+type MetricType = "resources" | "goals" | "activity" | "efficiency";
 
 export default function AgentPerformanceChart({
   agents,
-  agentDetails
+  agentDetails,
 }: AgentPerformanceChartProps) {
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>("resources")
-  const [selectedAgent, setSelectedAgent] = useState<string>("all")
+  const [selectedMetric, setSelectedMetric] = useState<MetricType>("resources");
+  const [selectedAgent, setSelectedAgent] = useState<string>("all");
 
   // Calculate metrics for visualization
   const getMetricData = () => {
-    const filteredAgents = selectedAgent === "all"
-      ? agents
-      : agents.filter(a => a.id === selectedAgent)
+    const filteredAgents =
+      selectedAgent === "all"
+        ? agents
+        : agents.filter((a) => a.id === selectedAgent);
 
     switch (selectedMetric) {
       case "resources":
-        return filteredAgents.map(agent => {
-          const details = agentDetails[agent.id]
+        return filteredAgents.map((agent) => {
+          const details = agentDetails[agent.id];
           return {
             name: agent.name,
             energy: details?.resources.energy || 0,
             health: details?.resources.health || 0,
-            memory: details?.resources.memory_used || 0
-          }
-        })
+            memory: details?.resources.memory_used || 0,
+          };
+        });
 
       case "goals":
-        return filteredAgents.map(agent => {
-          const details = agentDetails[agent.id]
-          const goals = details?.goals || []
-          const completed = goals.filter(g => g.status === "completed").length
-          const active = goals.filter(g => g.status === "active").length
+        return filteredAgents.map((agent) => {
+          const details = agentDetails[agent.id];
+          const goals = details?.goals || [];
+          const completed = goals.filter(
+            (g) => g.status === "completed",
+          ).length;
+          const active = goals.filter((g) => g.status === "active").length;
           return {
             name: agent.name,
             completed,
             active,
-            total: goals.length
-          }
-        })
+            total: goals.length,
+          };
+        });
 
       case "activity":
-        return filteredAgents.map(agent => {
-          const details = agentDetails[agent.id]
+        return filteredAgents.map((agent) => {
+          const details = agentDetails[agent.id];
           // Mock activity scores
           return {
             name: agent.name,
             interactions: Math.floor(Math.random() * 20),
             movements: Math.floor(Math.random() * 50),
-            learningEvents: Math.floor(Math.random() * 10)
-          }
-        })
+            learningEvents: Math.floor(Math.random() * 10),
+          };
+        });
 
       case "efficiency":
-        return filteredAgents.map(agent => {
-          const details = agentDetails[agent.id]
-          const energyEfficiency = details ? (100 - details.resources.energy) : 0
+        return filteredAgents.map((agent) => {
+          const details = agentDetails[agent.id];
+          const energyEfficiency = details ? 100 - details.resources.energy : 0;
           const memoryEfficiency = details
-            ? (details.resources.memory_used / details.resources.memory_capacity) * 100
-            : 0
+            ? (details.resources.memory_used /
+                details.resources.memory_capacity) *
+              100
+            : 0;
           return {
             name: agent.name,
             energyEfficiency,
             memoryEfficiency,
-            overallScore: (energyEfficiency + memoryEfficiency) / 2
-          }
-        })
+            overallScore: (energyEfficiency + memoryEfficiency) / 2,
+          };
+        });
     }
-  }
+  };
 
-  const data = getMetricData()
+  const data = getMetricData();
 
   // Simple bar chart visualization
   const renderBars = (value: number, maxValue: number, color: string) => {
-    const percentage = (value / maxValue) * 100
+    const percentage = (value / maxValue) * 100;
     return (
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
@@ -93,8 +104,8 @@ export default function AgentPerformanceChart({
           style={{ width: `${percentage}%` }}
         />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -102,7 +113,10 @@ export default function AgentPerformanceChart({
         <div className="flex items-center justify-between">
           <CardTitle>Performance Metrics</CardTitle>
           <div className="flex gap-2">
-            <Select value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as MetricType)}>
+            <Select
+              value={selectedMetric}
+              onValueChange={(value) => setSelectedMetric(value as MetricType)}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select metric" />
               </SelectTrigger>
@@ -119,7 +133,7 @@ export default function AgentPerformanceChart({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Agents</SelectItem>
-                {agents.map(agent => (
+                {agents.map((agent) => (
                   <SelectItem key={agent.id} value={agent.id}>
                     {agent.name}
                   </SelectItem>
@@ -171,12 +185,20 @@ export default function AgentPerformanceChart({
                   <h4 className="font-medium mb-3">{item.name}</h4>
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <div className="text-2xl font-bold text-green-500">{item.completed}</div>
-                      <div className="text-sm text-muted-foreground">Completed</div>
+                      <div className="text-2xl font-bold text-green-500">
+                        {item.completed}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Completed
+                      </div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-blue-500">{item.active}</div>
-                      <div className="text-sm text-muted-foreground">Active</div>
+                      <div className="text-2xl font-bold text-blue-500">
+                        {item.active}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Active
+                      </div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold">{item.total}</div>
@@ -235,7 +257,9 @@ export default function AgentPerformanceChart({
                     <div className="mt-3 pt-3 border-t">
                       <div className="flex justify-between">
                         <span className="font-medium">Overall Score</span>
-                        <span className="font-bold text-lg">{item.overallScore.toFixed(1)}%</span>
+                        <span className="font-bold text-lg">
+                          {item.overallScore.toFixed(1)}%
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -246,5 +270,5 @@ export default function AgentPerformanceChart({
         </div>
       </CardContent>
     </div>
-  )
+  );
 }

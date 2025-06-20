@@ -63,7 +63,7 @@ class TestGNNStructure(unittest.TestCase):
         try:
             from ....freeagentics_new.inference.engine.--init-- import ActiveInferenceAgent
             from ....freeagentics_new.agents.movement-perception import MovementPerceptionSystem
-            from src.agents.agents.base.communication import AgentConversation
+            from agents.core.agents.base.communication import AgentConversation
         except ImportError as e:
             self.fail(f'Failed to import agent modules: {e}')
 
@@ -77,8 +77,8 @@ class TestGNNStructure(unittest.TestCase):
     def test_knowledge_modules_can_be_imported(self):
         """Test that knowledge modules can be imported."""
         try:
-            from src.knowledge.knowledge_graph import AgentKnowledgeGraph
-            from src.knowledge.knowledge_sharing import KnowledgeSharingProtocol
+            from knowledge.knowledge_graph import AgentKnowledgeGraph
+            from knowledge.knowledge_sharing import KnowledgeSharingProtocol
         except ImportError as e:
             self.fail(f'Failed to import knowledge modules: {e}')
 

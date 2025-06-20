@@ -23,11 +23,11 @@ def plan_file_movements():
     canonical_structure = load_adr('002-canonical-directory-structure.md')
     naming_conventions = load_adr('004-naming-conventions.md')
     dependency_rules = load_adr('003-dependency-rules.md')
-    
+
     # Load file inventory and dependency graph from Task 1
     inventory = load_inventory()
     dependencies = load_dependency_graph()
-    
+
     # Create mapping of current to target locations
     file_mapping = {}
     for file_path in inventory:
@@ -37,13 +37,13 @@ def plan_file_movements():
         target_path = ensure_naming_compliance(target_path, naming_conventions)
         if target_path != file_path:
             file_mapping[file_path] = target_path
-    
+
     # Validate dependencies comply with architectural rules
     validate_dependencies(file_mapping, dependencies, dependency_rules)
-    
+
     # Sort files by dependency order (least dependencies first)
     sorted_files = topological_sort(file_mapping.keys(), dependencies)
-    
+
     # Generate movement commands
     commands = []
     for file in sorted_files:
@@ -55,7 +55,7 @@ def plan_file_movements():
                 'affected_files': find_files_importing(file),
                 'compliance_check': verify_architectural_compliance(file_mapping[file])
             })
-    
+
     return commands
 ```
 
@@ -115,7 +115,7 @@ Use 'git mv' and related commands to retain file history. Document procedures fo
 ### Details:
 Define batch sizes based on complexity analysis. Automate the cycle: move files, update imports, run tests, and commit. Roll back and adjust as needed if failures occur. Document each batch for traceability.
 <info added on 2025-06-20T09:14:00.971Z>
-Migration execution completed with 280+ files successfully moved across 56+ batches. Implemented AST-based import path rewriting to automatically update all import statements throughout the codebase. Each batch was processed with automated rollback capabilities - if any test failures occurred, the batch would automatically revert and flag for manual intervention. 
+Migration execution completed with 280+ files successfully moved across 56+ batches. Implemented AST-based import path rewriting to automatically update all import statements throughout the codebase. Each batch was processed with automated rollback capabilities - if any test failures occurred, the batch would automatically revert and flag for manual intervention.
 
 Encountered and resolved several technical challenges including destination conflicts where empty placeholder files existed from previous partial moves, and branch naming issues that required special handling. The batch processing system maintained code functionality throughout by running tests after each move and only committing successful batches.
 
@@ -134,7 +134,7 @@ Script and document rollback steps for each batch. Integrate with CI/CD pipeline
 ### Details:
 Based on the principles outlined by the Expert Committee (Feathers, Fowler, Troy), this task involves:
 1. Identifying obsolete files using git history and dependency analysis
-2. Identifying and removing true duplicate files 
+2. Identifying and removing true duplicate files
 3. Removing empty directories left over from the migration
 4. Cleaning build artifacts (.pyc, __pycache__, node_modules)
 5. Updating .gitignore to prevent future clutter
@@ -164,4 +164,3 @@ Create a compliance report identifying:
 4. A remediation plan for each non-compliant item
 
 This validation ensures the final structure fully adheres to the established architecture standards.
-

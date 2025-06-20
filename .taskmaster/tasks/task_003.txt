@@ -115,5 +115,3 @@ Organize focused, time-bound review sessions. Gather and address feedback from a
 ### Dependencies: None
 ### Description: Systematically iterate through all 'pending' tasks in tasks.json. For each task, prepend a critical directive to its 'details' field, mandating that all file creation and code placement must strictly adhere to the project's canonical structure defined in 'docs/architecture/decisions/002-canonical-directory-structure.md'. This ensures the architectural standard is a non-negotiable requirement for all future work.
 ### Details:
-
-

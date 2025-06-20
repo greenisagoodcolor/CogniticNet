@@ -5,7 +5,7 @@ export function getSessionId(provider: string): string | null {
     console.log('getSessionId called on server, returning null');
     return null;
   }
-  
+
   try {
     const sessionId = localStorage.getItem(`api_session_${provider}`)
     console.log(`Retrieved session ID for provider ${provider}:`, sessionId)
@@ -21,7 +21,7 @@ export function setSessionId(provider: string, sessionId: string): void {
     console.log('setSessionId called on server, skipping');
     return;
   }
-  
+
   try {
     localStorage.setItem(`api_session_${provider}`, sessionId)
     console.log(`Stored session ID for provider ${provider}:`, sessionId)
@@ -35,7 +35,7 @@ export function clearSessionId(provider: string): void {
     console.log('clearSessionId called on server, skipping');
     return;
   }
-  
+
   try {
     localStorage.removeItem(`api_session_${provider}`)
     console.log(`Cleared session ID for provider ${provider}`)
@@ -49,7 +49,7 @@ export function storeSessionId(provider: string, sessionId: string): void {
     console.log('storeSessionId called on server, skipping');
     return;
   }
-  
+
   try {
     localStorage.setItem(`api_session_${provider}`, sessionId)
     console.log(`Stored session ID for provider ${provider}:`, sessionId)
@@ -62,13 +62,13 @@ export async function getApiKeyFromSession(provider: string): Promise<string | n
   try {
     const sessionId = getSessionId(provider);
     if (!sessionId) return null;
-    
+
     const response = await fetch("/api/api-key/retrieve", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ provider, sessionId })
     });
-    
+
     if (!response.ok) return null;
     const data = await response.json();
     return data.apiKey;

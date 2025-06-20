@@ -41,44 +41,44 @@ Example implementation structure:
 # File: inference/active_inference_engine.py
 class ActiveInferenceEngine:
     """Core implementation of Active Inference for agent cognition."""
-    
+
     def __init__(self, precision: float = 1.0):
         self.precision = precision  # Controls exploration vs. exploitation
         self._belief_updater = BeliefUpdater()
         self._free_energy_calculator = FreeEnergyCalculator()
-    
-    def update_beliefs(self, 
-                      agent: Agent, 
+
+    def update_beliefs(self,
+                      agent: Agent,
                       observations: Observations) -> None:
         """Update agent beliefs based on new observations."""
         prior_beliefs = agent.beliefs
         likelihood = self._compute_likelihood(observations)
-        
+
         # Bayesian belief update
         posterior_beliefs = self._belief_updater.update(
-            prior_beliefs, 
-            likelihood, 
+            prior_beliefs,
+            likelihood,
             observations
         )
-        
+
         # Update agent's belief state
         agent.beliefs = posterior_beliefs
-    
-    def select_policy(self, 
-                     agent: Agent, 
+
+    def select_policy(self,
+                     agent: Agent,
                      available_policies: List[Policy]) -> Policy:
         """Select policy that minimizes expected free energy."""
         free_energies = []
-        
+
         for policy in available_policies:
             # Calculate expected free energy for this policy
             ef = self._free_energy_calculator.calculate(
-                agent.beliefs, 
-                policy, 
+                agent.beliefs,
+                policy,
                 self.precision
             )
             free_energies.append((policy, ef))
-        
+
         # Select policy with minimum free energy
         selected_policy = min(free_energies, key=lambda x: x[1])[0]
         return selected_policy
@@ -143,4 +143,3 @@ Write API docs in `docs/api/inference/`, usage guides, and architectural overvie
 ### Description: Create automated checks to ensure all Active Inference components comply with the canonical directory structure, naming conventions, and dependency rules.
 ### Details:
 Implement validation scripts that verify: 1) All inference code is properly placed in `inference/` directory, 2) Naming conventions from ADR-004 are followed, 3) Dependency rules from ADR-003 are respected (no core->infrastructure dependencies), 4) Integration points use proper dependency inversion. Add these checks to CI/CD pipeline.
-

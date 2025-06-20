@@ -16,6 +16,7 @@ Our vision is to make Active Inference accessible to researchers, developers, an
 ### Active Inference
 
 Active Inference is a theory of cognition where agents:
+
 - Minimize free energy (prediction error)
 - Act to confirm their predictions
 - Update beliefs based on observations
@@ -24,6 +25,7 @@ Active Inference is a theory of cognition where agents:
 ### GNN (Generalized Notation Notation)
 
 FreeAgentics builds on GNN principles:
+
 - Natural language model specification
 - Human-readable yet machine-parsable
 - Standardized representation of cognitive models
@@ -32,6 +34,7 @@ FreeAgentics builds on GNN principles:
 ### Multi-Agent Systems
 
 The platform supports:
+
 - Multiple agents with unique personalities
 - Emergent social behaviors
 - Knowledge sharing and communication
@@ -40,6 +43,7 @@ The platform supports:
 ## Platform Components
 
 ### 1. Core Engine (`src/`)
+
 - GNN model parsing and validation
 - Active Inference implementation
 - Agent simulation and physics
@@ -47,6 +51,7 @@ The platform supports:
 - Learning algorithms
 
 ### 2. Web Interface (`app/`, `components/`)
+
 - Agent Creator with personality sliders
 - H3 hexagonal world visualization
 - Real-time conversation monitoring
@@ -54,12 +59,14 @@ The platform supports:
 - Simulation controls
 
 ### 3. Model Library (`models/`)
+
 - Base agent templates
 - Community-contributed models
 - Example configurations
 - Personality archetypes
 
 ### 4. Deployment Pipeline
+
 - Hardware export capabilities
 - Docker containerization
 - Environment configurations
@@ -68,24 +75,28 @@ The platform supports:
 ## Key Features
 
 ### Agent Design
+
 - **Personality-Based Creation**: Use Big Five traits to generate agents
 - **Backstory Generation**: AI-powered narrative creation
 - **Visual Preview**: See GNN models and agent appearance
 - **Validation**: Ensure models are well-formed
 
 ### World Simulation
+
 - **H3 Hexagonal Grid**: Realistic spatial representation
 - **Multiple Biomes**: Varied terrain and resources
 - **Physics Simulation**: Movement, visibility, interactions
 - **Resource Management**: Energy, materials, knowledge
 
 ### Knowledge Systems
+
 - **Graph Construction**: NetworkX-based knowledge representation
 - **Pattern Extraction**: Learn from experiences
 - **Belief Updates**: Dynamic cognitive evolution
 - **Visualization**: Force-directed graph rendering
 
 ### Communication
+
 - **Natural Language**: Agents communicate in English
 - **Intent Recognition**: Understand conversation goals
 - **Belief Extraction**: Update knowledge from dialogue
@@ -94,6 +105,7 @@ The platform supports:
 ## Technical Architecture
 
 ### Frontend Stack
+
 - **React 19**: Latest features and optimizations
 - **Next.js 15**: App Router, Server Components
 - **TypeScript**: Type safety throughout
@@ -101,6 +113,7 @@ The platform supports:
 - **Shadcn UI**: Beautiful components
 
 ### Backend Stack
+
 - **Python 3.11+**: Core engine
 - **FastAPI**: High-performance API
 - **NetworkX**: Graph algorithms
@@ -108,6 +121,7 @@ The platform supports:
 - **Pydantic**: Data validation
 
 ### Infrastructure
+
 - **Docker**: Containerized deployment
 - **PostgreSQL**: Persistent storage
 - **Redis**: Caching and queues
@@ -116,24 +130,28 @@ The platform supports:
 ## Use Cases
 
 ### Research
+
 - Test Active Inference theories
 - Explore emergent behaviors
 - Validate cognitive models
 - Publish reproducible experiments
 
 ### Education
+
 - Teach Active Inference concepts
 - Interactive demonstrations
 - Student projects
 - Visual learning
 
 ### Development
+
 - Prototype AI agents
 - Test multi-agent algorithms
 - Build cognitive architectures
 - Deploy to hardware
 
 ### Entertainment
+
 - Create story-driven simulations
 - Design game AI
 - Generate emergent narratives
@@ -150,6 +168,7 @@ The platform supports:
 ## Community
 
 FreeAgentics is open source and welcomes contributions:
+
 - Model templates
 - Visualization improvements
 - New algorithms
@@ -168,4 +187,4 @@ Join us in making Active Inference accessible to everyone!
 
 ---
 
-*"Making Active Inference accessible, visual, and deployable"* 
+_"Making Active Inference accessible, visual, and deployable"_

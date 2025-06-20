@@ -1,21 +1,27 @@
-"use client"
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  Map, 
-  Brain, 
-  MessageSquare, 
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  Map,
+  Brain,
+  MessageSquare,
   Activity,
   TrendingUp,
   Sparkles,
   ArrowRight,
   Play,
-  Settings
-} from 'lucide-react';
+  Settings,
+} from "lucide-react";
 
 export default function HomePage() {
   const router = useRouter();
@@ -33,14 +39,19 @@ export default function HomePage() {
             FreeAgentics
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Create, simulate, and deploy Active Inference agents in a rich hexagonal world
+            Create, simulate, and deploy Active Inference agents in a rich
+            hexagonal world
           </p>
           <div className="flex gap-4 justify-center pt-4">
-            <Button size="lg" onClick={() => router.push('/agents')}>
+            <Button size="lg" onClick={() => router.push("/agents")}>
               <Users className="h-5 w-5 mr-2" />
               Create Agent
             </Button>
-            <Button size="lg" variant="outline" onClick={() => router.push('/world')}>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => router.push("/world")}
+            >
               <Play className="h-5 w-5 mr-2" />
               Start Simulation
             </Button>
@@ -51,7 +62,9 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Agents</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Agents
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -64,7 +77,9 @@ export default function HomePage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">World Activity</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                World Activity
+              </CardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -76,7 +91,9 @@ export default function HomePage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Knowledge Nodes</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Knowledge Nodes
+              </CardTitle>
               <Brain className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -88,21 +105,24 @@ export default function HomePage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversations</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Conversations
+              </CardTitle>
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">
-                Active dialogues
-              </p>
+              <p className="text-xs text-muted-foreground">Active dialogues</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Features */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => router.push('/agents')}>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push("/agents")}
+          >
             <CardHeader>
               <Users className="h-8 w-8 mb-2 text-primary" />
               <CardTitle>Agent Creator</CardTitle>
@@ -118,7 +138,10 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => router.push('/world')}>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push("/world")}
+          >
             <CardHeader>
               <Map className="h-8 w-8 mb-2 text-primary" />
               <CardTitle>World Simulation</CardTitle>
@@ -134,7 +157,10 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => router.push('/knowledge')}>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push("/knowledge")}
+          >
             <CardHeader>
               <Brain className="h-8 w-8 mb-2 text-primary" />
               <CardTitle>Knowledge Graphs</CardTitle>
@@ -150,7 +176,10 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => router.push('/conversations')}>
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push("/conversations")}
+          >
             <CardHeader>
               <MessageSquare className="h-8 w-8 mb-2 text-primary" />
               <CardTitle>Conversations</CardTitle>
@@ -191,7 +220,8 @@ export default function HomePage() {
                   <div className="flex-1">
                     <p className="text-sm font-medium">Resource Discovered</p>
                     <p className="text-xs text-muted-foreground">
-                      BravePioneer found knowledge crystals in the eastern mountains
+                      BravePioneer found knowledge crystals in the eastern
+                      mountains
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground">5m ago</span>
@@ -201,7 +231,8 @@ export default function HomePage() {
                   <div className="flex-1">
                     <p className="text-sm font-medium">Pattern Extracted</p>
                     <p className="text-xs text-muted-foreground">
-                      TerrainMapper identified optimal paths through desert regions
+                      TerrainMapper identified optimal paths through desert
+                      regions
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground">8m ago</span>
@@ -216,19 +247,35 @@ export default function HomePage() {
               <CardDescription>Common tasks and settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/agents')}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/agents")}
+              >
                 <Users className="h-4 w-4 mr-2" />
                 Create New Agent
               </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/world')}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/world")}
+              >
                 <Play className="h-4 w-4 mr-2" />
                 Resume Simulation
               </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/knowledge')}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/knowledge")}
+              >
                 <Brain className="h-4 w-4 mr-2" />
                 Analyze Knowledge Graphs
               </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/settings')}>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/settings")}
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Platform Settings
               </Button>

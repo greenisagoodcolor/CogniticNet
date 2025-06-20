@@ -1,6 +1,7 @@
 """
 Unit tests for Active Inference Diagnostics
 """
+
 import pytest
 import torch
 import numpy as np
@@ -8,15 +9,21 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import tempfile
 import shutil
-from unittest.mock import Mock, patch, MagicMock
-from .......inference.engine.diagnostics import DiagnosticConfig, BeliefTracker, FreeEnergyMonitor, GradientAnalyzer, InferenceVisualizer, DiagnosticSuite
+from .......inference.engine.diagnostics import (
+    DiagnosticConfig,
+    BeliefTracker,
+    FreeEnergyMonitor,
+    GradientAnalyzer,
+    InferenceVisualizer,
+    DiagnosticSuite,
+)
+
 
 class TestDiagnosticConfig:
-
     def test_default_config(self):
         """Test default diagnostic configuration"""
         config = DiagnosticConfig()
-        assert config.log_level == 'INFO'
+        assert config.log_level == "INFO"
         assert config.figure_size == (10, 8)
         assert config.buffer_size == 1000
         assert config.track_beliefs is True
@@ -24,24 +31,31 @@ class TestDiagnosticConfig:
 
     def test_custom_config(self):
         """Test custom diagnostic configuration"""
-        config = DiagnosticConfig(log_level='DEBUG', buffer_size=500, figure_size=(12, 10), track_gradients=False)
-        assert config.log_level == 'DEBUG'
+        config = DiagnosticConfig(
+            log_level="DEBUG",
+            buffer_size=500,
+            figure_size=(12, 10),
+            track_gradients=False,
+        )
+        assert config.log_level == "DEBUG"
         assert config.buffer_size == 500
         assert config.figure_size == (12, 10)
         assert config.track_gradients is False
 
-class TestBeliefTracker:
 
+class TestBeliefTracker:
     def setup_method(self):
         """Setup for tests"""
         self.config = DiagnosticConfig(save_figures=False)
-        self.tracker = BeliefTracker(self.config, num_states=4, state_labels=['A', 'B', 'C', 'D'])
+        self.tracker = BeliefTracker(
+            self.config, num_states=4, state_labels=["A", "B", "C", "D"]
+        )
 
     def test_initialization(self):
         """Test belief tracker initialization"""
         assert self.tracker.num_states == 4
         assert len(self.tracker.state_labels) == 4
-        assert self.tracker.state_labels[0] == 'A'
+        assert self.tracker.state_labels[0] == "A"
         assert self.tracker.total_updates == 0
 
     def test_record_belief(self):
@@ -69,7 +83,7 @@ class TestBeliefTracker:
             belief = belief / belief.sum()
             self.tracker.record_belief(belief, timestamp=i * 0.1)
         with tempfile.TemporaryDirectory() as tmpdir:
-            save_path = Path(tmpdir) / 'test_plot.png'
+            save_path = Path(tmpdir) / "test_plot.png"
             fig = self.tracker.plot_belief_evolution(save_path=save_path)
             assert fig is not None
             assert save_path.exists()
@@ -87,18 +101,23 @@ class TestBeliefTracker:
 
     def test_get_statistics(self):
         """Test statistics computation"""
-        beliefs = [torch.tensor([0.9, 0.05, 0.03, 0.02]), torch.tensor([0.1, 0.8, 0.05, 0.05]), torch.tensor([0.25, 0.25, 0.25, 0.25]), torch.tensor([0.05, 0.05, 0.05, 0.85])]
+        beliefs = [
+            torch.tensor([0.9, 0.05, 0.03, 0.02]),
+            torch.tensor([0.1, 0.8, 0.05, 0.05]),
+            torch.tensor([0.25, 0.25, 0.25, 0.25]),
+            torch.tensor([0.05, 0.05, 0.05, 0.85]),
+        ]
         for belief in beliefs:
             self.tracker.record_belief(belief)
         stats = self.tracker.get_statistics()
-        assert stats['total_updates'] == 4
-        assert 'mean_entropy' in stats
-        assert 'std_entropy' in stats
-        assert 'dominant_states' in stats
-        assert len(stats['dominant_states']) > 0
+        assert stats["total_updates"] == 4
+        assert "mean_entropy" in stats
+        assert "std_entropy" in stats
+        assert "dominant_states" in stats
+        assert len(stats["dominant_states"]) > 0
+
 
 class TestFreeEnergyMonitor:
-
     def setup_method(self):
         """Setup for tests"""
         self.config = DiagnosticConfig(save_figures=False)
@@ -117,30 +136,36 @@ class TestFreeEnergyMonitor:
     def test_record_efe(self):
         """Test recording expected free energy"""
         efe_values = torch.tensor([1.2, 0.8, 1.5])
-        action_labels = ['Left', 'Right', 'Stay']
+        action_labels = ["Left", "Right", "Stay"]
         self.monitor.record_efe(efe_values, action_labels)
         assert len(self.monitor.efe_history) == 1
         assert self.monitor.efe_history[0] == 0.8
         assert len(self.monitor.action_efe_history) == 3
-        assert self.monitor.action_efe_history['Right'][0] == 0.8
+        assert self.monitor.action_efe_history["Right"][0] == 0.8
 
     def test_plot_free_energy_components(self):
         """Test free energy plotting"""
         for i in range(15):
-            self.monitor.record_vfe(accuracy=np.random.randn() * 0.1, complexity=0.5 + np.random.randn() * 0.05, timestamp=i * 0.1)
+            self.monitor.record_vfe(
+                accuracy=np.random.randn() * 0.1,
+                complexity=0.5 + np.random.randn() * 0.05,
+                timestamp=i * 0.1,
+            )
             efe = torch.randn(3)
             self.monitor.record_efe(efe, timestamp=i * 0.1)
         fig = self.monitor.plot_free_energy_components()
         assert fig is not None
         plt.close(fig)
 
-class TestGradientAnalyzer:
 
+class TestGradientAnalyzer:
     def setup_method(self):
         """Setup for tests"""
         self.config = DiagnosticConfig()
         self.analyzer = GradientAnalyzer(self.config)
-        self.model = torch.nn.Sequential(torch.nn.Linear(10, 5), torch.nn.ReLU(), torch.nn.Linear(5, 2))
+        self.model = torch.nn.Sequential(
+            torch.nn.Linear(10, 5), torch.nn.ReLU(), torch.nn.Linear(5, 2)
+        )
 
     def test_analyze_gradients(self):
         """Test gradient analysis"""
@@ -160,7 +185,7 @@ class TestGradientAnalyzer:
                 param.grad = torch.zeros_like(param) + 1e-08
             self.analyzer.analyze_gradients(self.model)
         issues = self.analyzer.check_gradient_health()
-        assert len(issues['vanishing_gradients']) > 0
+        assert len(issues["vanishing_gradients"]) > 0
 
     def test_plot_gradient_flow(self):
         """Test gradient flow plotting"""
@@ -172,8 +197,8 @@ class TestGradientAnalyzer:
         assert fig is not None
         plt.close(fig)
 
-class TestInferenceVisualizer:
 
+class TestInferenceVisualizer:
     def setup_method(self):
         """Setup for tests"""
         self.config = DiagnosticConfig(save_figures=False)
@@ -181,8 +206,8 @@ class TestInferenceVisualizer:
 
     def test_visualize_inference_graph(self):
         """Test inference graph visualization"""
-        states = ['S1', 'S2', 'S3']
-        observations = ['O1', 'O2']
+        states = ["S1", "S2", "S3"]
+        observations = ["O1", "O2"]
         A = torch.tensor([[0.9, 0.1, 0.0], [0.1, 0.8, 0.1]])
         B = torch.rand(3, 3, 2)
         B = B / B.sum(dim=0, keepdim=True)
@@ -190,12 +215,16 @@ class TestInferenceVisualizer:
         assert fig is not None
         plt.close(fig)
 
-class TestDiagnosticSuite:
 
+class TestDiagnosticSuite:
     def setup_method(self):
         """Setup for tests"""
         self.temp_dir = tempfile.mkdtemp()
-        self.config = DiagnosticConfig(log_dir=Path(self.temp_dir) / 'logs', figure_dir=Path(self.temp_dir) / 'figures', save_figures=False)
+        self.config = DiagnosticConfig(
+            log_dir=Path(self.temp_dir) / "logs",
+            figure_dir=Path(self.temp_dir) / "figures",
+            save_figures=False,
+        )
         self.suite = DiagnosticSuite(self.config)
 
     def teardown_method(self):
@@ -204,64 +233,87 @@ class TestDiagnosticSuite:
 
     def test_create_belief_tracker(self):
         """Test creating belief tracker"""
-        tracker = self.suite.create_belief_tracker('agent1', num_states=3, state_labels=['A', 'B', 'C'])
-        assert 'agent1' in self.suite.belief_trackers
+        tracker = self.suite.create_belief_tracker(
+            "agent1", num_states=3, state_labels=["A", "B", "C"]
+        )
+        assert "agent1" in self.suite.belief_trackers
         assert tracker.num_states == 3
 
     def test_log_inference_step(self):
         """Test logging inference step"""
-        step_data = {'timestep': 10, 'action': 'move_left', 'belief': [0.3, 0.4, 0.3], 'computation_time': 0.015}
+        step_data = {
+            "timestep": 10,
+            "action": "move_left",
+            "belief": [0.3, 0.4, 0.3],
+            "computation_time": 0.015,
+        }
         self.suite.log_inference_step(step_data)
-        assert len(self.suite.performance_stats['inference_time']) == 1
-        assert self.suite.performance_stats['inference_time'][0] == 0.015
+        assert len(self.suite.performance_stats["inference_time"]) == 1
+        assert self.suite.performance_stats["inference_time"][0] == 0.015
 
     def test_generate_report(self):
         """Test report generation"""
-        tracker = self.suite.create_belief_tracker('test', num_states=2)
+        tracker = self.suite.create_belief_tracker("test", num_states=2)
         for i in range(5):
             belief = torch.rand(2)
             belief = belief / belief.sum()
             tracker.record_belief(belief)
         self.suite.fe_monitor.record_vfe(0.5, 0.3)
         report = self.suite.generate_report()
-        assert 'timestamp' in report
-        assert 'belief_statistics' in report
-        assert 'test' in report['belief_statistics']
-        assert report['belief_statistics']['test']['total_updates'] == 5
+        assert "timestamp" in report
+        assert "belief_statistics" in report
+        assert "test" in report["belief_statistics"]
+        assert report["belief_statistics"]["test"]["total_updates"] == 5
 
     def test_create_summary_plots(self):
         """Test summary plot creation"""
-        tracker = self.suite.create_belief_tracker('agent', num_states=3)
+        tracker = self.suite.create_belief_tracker("agent", num_states=3)
         for i in range(10):
             belief = torch.rand(3)
             belief = belief / belief.sum()
             tracker.record_belief(belief)
         for i in range(10):
-            self.suite.fe_monitor.record_vfe(accuracy=0.5 + np.random.randn() * 0.1, complexity=0.3 + np.random.randn() * 0.05)
+            self.suite.fe_monitor.record_vfe(
+                accuracy=0.5 + np.random.randn() * 0.1,
+                complexity=0.3 + np.random.randn() * 0.05,
+            )
         plots = self.suite.create_summary_plots()
-        assert 'agent_evolution' in plots
-        assert 'agent_heatmap' in plots
-        assert 'free_energy' in plots
+        assert "agent_evolution" in plots
+        assert "agent_heatmap" in plots
+        assert "free_energy" in plots
         for fig in plots.values():
             if fig is not None:
                 plt.close(fig)
 
     def test_integration(self):
         """Test integrated diagnostic workflow"""
-        tracker = self.suite.create_belief_tracker('main', num_states=4, state_labels=['Explore', 'Exploit', 'Rest', 'Flee'])
+        tracker = self.suite.create_belief_tracker(
+            "main", num_states=4, state_labels=["Explore", "Exploit", "Rest", "Flee"]
+        )
         for t in range(20):
             belief = torch.rand(4)
             belief = belief / belief.sum()
             tracker.record_belief(belief)
-            self.suite.fe_monitor.record_vfe(accuracy=-0.5 + np.random.randn() * 0.1, complexity=1.0 + np.random.randn() * 0.05)
-            self.suite.log_inference_step({'timestep': t, 'belief': belief.tolist(), 'computation_time': 0.01 + np.random.rand() * 0.01})
+            self.suite.fe_monitor.record_vfe(
+                accuracy=-0.5 + np.random.randn() * 0.1,
+                complexity=1.0 + np.random.randn() * 0.05,
+            )
+            self.suite.log_inference_step(
+                {
+                    "timestep": t,
+                    "belief": belief.tolist(),
+                    "computation_time": 0.01 + np.random.rand() * 0.01,
+                }
+            )
         plots = self.suite.create_summary_plots()
         report = self.suite.generate_report()
         assert len(plots) > 0
-        assert report['belief_statistics']['main']['total_updates'] == 20
-        assert len(report['performance_metrics']['inference_time']) > 0
+        assert report["belief_statistics"]["main"]["total_updates"] == 20
+        assert len(report["performance_metrics"]["inference_time"]) > 0
         for fig in plots.values():
             if fig is not None:
                 plt.close(fig)
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     pytest.main([__file__])

@@ -18,9 +18,9 @@ Design and implement a comprehensive agent system architecture following the can
 # File: agents/core/base_agent.py
 class BaseAgent:
     """Foundation for all agent types in the system."""
-    
-    def __init__(self, 
-                agent_id: str, 
+
+    def __init__(self,
+                agent_id: str,
                 personality: Dict[str, float] = None):
         self.id = agent_id
         self.personality = personality or {}
@@ -28,22 +28,22 @@ class BaseAgent:
         self.active_inference = ActiveInferenceEngine()  # From agents/core/active_inference.py
         self.location = None  # H3 cell location
         self.energy = 100.0   # Resource management
-    
+
     def perceive(self, observations: Observations) -> None:
         """Process observations and update beliefs."""
         self.active_inference.update_beliefs(self, observations)
-    
+
     def decide(self) -> Policy:
         """Select best policy using Active Inference."""
         available_policies = self._get_available_policies()
         return self.active_inference.select_policy(self, available_policies)
-    
+
     def act(self, world: World) -> ActionResult:
         """Execute selected policy in the world."""
         policy = self.decide()
         action = policy.get_next_action(self.beliefs)
         return world.execute_action(self, action)
-    
+
     def _get_available_policies(self) -> List[Policy]:
         """Get policies available to this agent type."""
         raise NotImplementedError("Subclasses must implement")
@@ -67,7 +67,7 @@ class BaseAgent:
 # File: coalitions/core/coalition.py
 class Coalition:
     """Represents a group of agents working together."""
-    
+
     def __init__(self, coalition_id: str, name: str = None):
         self.id = coalition_id
         self.name = name or f"Coalition-{coalition_id}"
@@ -75,25 +75,25 @@ class Coalition:
         self.resources = {}    # Shared resources
         self.business_model = None  # From coalitions/core/business_model.py
         self.contracts = {}    # Agreements between members
-    
+
     def add_member(self, agent: BaseAgent) -> bool:
         """Add agent to coalition if mutually beneficial."""
         # Calculate expected value for agent joining
         agent_benefit = self._calculate_agent_benefit(agent)
         coalition_benefit = self._calculate_coalition_benefit(agent)
-        
+
         # Only add if Pareto improvement (both benefit)
         if agent_benefit > 0 and coalition_benefit > 0:
             self.members.add(agent.id)
             self._create_contract(agent)
             return True
         return False
-    
+
     def operate(self) -> BusinessResults:
         """Run coalition business operations."""
         if not self.business_model:
             raise ValueError("No business model defined")
-        
+
         return self.business_model.execute(self)
 ```
 
@@ -161,4 +161,3 @@ Apply complexity metrics (e.g., cyclomatic complexity), conduct code reviews, an
 ### Description: Conduct a comprehensive review to ensure all agent system components strictly adhere to the canonical directory structure, naming conventions, and dependency rules defined in the architectural decision records.
 ### Details:
 Review all created files and directories against `docs/architecture/decisions/002-canonical-directory-structure.md`, `004-naming-conventions.md`, and `003-dependency-rules.md`. Create automated checks to prevent future violations. Document any necessary adjustments to the architecture.
-
