@@ -21,7 +21,7 @@ from enum import Enum
 from collections import defaultdict, Counter
 try:
     from .traversal import FileInfo, FileType
-    from .metadata-extractor import ExtendedMetadata
+    from .metadata_extractor import ExtendedMetadata
 except ImportError:
     from traversal import FileInfo, FileType
     from metadata_extractor import ExtendedMetadata

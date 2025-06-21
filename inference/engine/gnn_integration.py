@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import logging
 from abc import ABC, abstractmethod
-from .generative-model import GenerativeModel, DiscreteGenerativeModel, ContinuousGenerativeModel
+from .generative_model import GenerativeModel, DiscreteGenerativeModel, ContinuousGenerativeModel
 from .inference import InferenceAlgorithm
 try:
     from ...gnn.layers import GCNLayer, GATLayer, GraphSAGELayer
@@ -448,7 +448,7 @@ def create_gnn_adapter(adapter_type: str, config: Optional[GNNIntegrationConfig]
     else:
         raise ValueError(f'Unknown adapter type: {adapter_type}')
 if __name__ == '__main__':
-    from .generative-model import ModelDimensions, ModelParameters
+    from .generative_model import ModelDimensions, ModelParameters
     from .inference import VariationalMessagePassing, InferenceConfig
     config = GNNIntegrationConfig(gnn_type='gcn', num_layers=3, hidden_dim=64, output_dim=32, use_gpu=False)
 

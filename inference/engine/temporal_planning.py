@@ -14,9 +14,9 @@ import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict, deque
 import heapq
-from .generative-model import GenerativeModel, DiscreteGenerativeModel
+from .generative_model import GenerativeModel, DiscreteGenerativeModel
 from .inference import InferenceAlgorithm
-from .policy-selection import Policy, PolicySelector, DiscreteExpectedFreeEnergy
+from .policy_selection import Policy, PolicySelector, DiscreteExpectedFreeEnergy
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -513,9 +513,9 @@ def create_temporal_planner(planner_type: str, config: Optional[PlanningConfig]=
     else:
         raise ValueError(f'Unknown planner type: {planner_type}')
 if __name__ == '__main__':
-    from .generative-model import ModelDimensions, ModelParameters
+    from .generative_model import ModelDimensions, ModelParameters
     from .inference import VariationalMessagePassing, InferenceConfig
-    from .policy-selection import PolicyConfig
+    from .policy_selection import PolicyConfig
     dims = ModelDimensions(num_states=4, num_observations=3, num_actions=2)
     params = ModelParameters(use_gpu=False)
     model = DiscreteGenerativeModel(dims, params)

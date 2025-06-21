@@ -13,8 +13,8 @@ from collections import defaultdict
 import logging
 from torch_geometric.data import Data, Batch
 from torch.nn.utils.rnn import pad_sequence
-from .feature-extractor import NodeFeatureExtractor, ExtractionResult
-from .edge-processor import EdgeProcessor, EdgeBatch, Edge
+from .feature_extractor import NodeFeatureExtractor, ExtractionResult
+from .edge_processor import EdgeProcessor, EdgeBatch, Edge
 logger = logging.getLogger(__name__)
 
 @dataclass

@@ -21,7 +21,7 @@ import json
 import networkx as nx
 try:
     from .traversal import FileInfo
-    from .metadata-extractor import ExtendedMetadata
+    from .metadata_extractor import ExtendedMetadata
 except ImportError:
     from traversal import FileInfo
     from metadata_extractor import ExtendedMetadata
@@ -507,7 +507,7 @@ if __name__ == '__main__':
         sys.exit(1)
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     from .traversal import create_traverser
-    from .metadata-extractor import create_extractor
+    from .metadata_extractor import create_extractor
     project_root = Path(sys.argv[1])
     print(f'Analyzing dependencies for project: {project_root}')
     traverser = create_traverser(str(project_root))

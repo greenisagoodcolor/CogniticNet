@@ -12,9 +12,9 @@ from dataclasses import dataclass, field
 import numpy as np
 import logging
 from abc import ABC, abstractmethod
-from .generative-model import GenerativeModel, DiscreteGenerativeModel, ContinuousGenerativeModel
+from .generative_model import GenerativeModel, DiscreteGenerativeModel, ContinuousGenerativeModel
 from .inference import InferenceAlgorithm, VariationalMessagePassing, BeliefPropagation
-from .gnn-integration import GNNActiveInferenceAdapter, GraphFeatureAggregator
+from .gnn_integration import GNNActiveInferenceAdapter, GraphFeatureAggregator
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -346,7 +346,7 @@ def create_belief_updater(updater_type: str, config: Optional[BeliefUpdateConfig
     else:
         raise ValueError(f'Unknown updater type: {updater_type}')
 if __name__ == '__main__':
-    from .generative-model import DiscreteGenerativeModel, ModelDimensions, ModelParameters
+    from .generative_model import DiscreteGenerativeModel, ModelDimensions, ModelParameters
     from .inference import VariationalMessagePassing, InferenceConfig
     config = BeliefUpdateConfig(update_method='hybrid', feature_weighting='learned', temporal_integration=True, use_gpu=False)
     dims = ModelDimensions(num_states=4, num_observations=3, num_actions=2)

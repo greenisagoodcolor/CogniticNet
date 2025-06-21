@@ -5,8 +5,8 @@ import unittest
 import threading
 import time
 from datetime import datetime
-from .......agents.base.data-model import Agent, AgentStatus, Position
-from .......agents.base.state-manager import AgentStateManager, StateTransitionValidator, StateTransitionError, StateEvent, StateEventType, StateObserver, StateCondition, StateMonitor
+from .......agents.base.data_model import Agent, AgentStatus, Position
+from .......agents.base.state_manager import AgentStateManager, StateTransitionValidator, StateTransitionError, StateEvent, StateEventType, StateObserver, StateCondition, StateMonitor
 
 class TestStateObserver(StateObserver):
     """Test observer for tracking state changes"""

@@ -4,7 +4,7 @@ Unit tests for Agent Data Model
 import unittest
 import numpy as np
 from datetime import datetime, timedelta
-from .......agents.base.data-model import Agent, Position, Orientation, AgentStatus, AgentCapability, AgentPersonality, AgentResources, SocialRelationship, AgentGoal, ResourceAgent, SocialAgent
+from .......agents.base.data_model import Agent, Position, Orientation, AgentStatus, AgentCapability, AgentPersonality, AgentResources, SocialRelationship, AgentGoal, ResourceAgent, SocialAgent
 
 class TestPosition(unittest.TestCase):
     """Test Position class"""

@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import logging
 from abc import ABC, abstractmethod
-from .generative-model import GenerativeModel, DiscreteGenerativeModel
+from .generative_model import GenerativeModel, DiscreteGenerativeModel
 from .inference import InferenceAlgorithm
 logger = logging.getLogger(__name__)
 
@@ -409,7 +409,7 @@ def create_policy_selector(selector_type: str, config: Optional[PolicyConfig]=No
     else:
         raise ValueError(f'Unknown selector type: {selector_type}')
 if __name__ == '__main__':
-    from .generative-model import ModelDimensions, ModelParameters
+    from .generative_model import ModelDimensions, ModelParameters
     from .inference import VariationalMessagePassing, InferenceConfig
     dims = ModelDimensions(num_states=4, num_observations=3, num_actions=2)
     params = ModelParameters(use_gpu=False)

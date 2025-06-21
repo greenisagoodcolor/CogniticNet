@@ -15,8 +15,8 @@ from enum import Enum
 import heapq
 import math
 from collections import defaultdict
-from .data-model import Agent, Position, AgentStatus
-from .state-manager import AgentStateManager
+from .data_model import Agent, Position, AgentStatus
+from .state_manager import AgentStateManager
 
 class MovementMode(Enum):
     """Different movement modes for agents"""

@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import numpy as np
 from unittest.mock import Mock, patch, MagicMock
 from sqlalchemy.exc import SQLAlchemyError
-from .......agents.base.data-model import Agent, Position, Orientation, AgentStatus, AgentCapability, AgentPersonality, AgentResources, SocialRelationship, AgentGoal, ResourceAgent, SocialAgent
+from .......agents.base.data_model import Agent, Position, Orientation, AgentStatus, AgentCapability, AgentPersonality, AgentResources, SocialRelationship, AgentGoal, ResourceAgent, SocialAgent
 from .......agents.base.persistence import AgentPersistence, AgentSnapshot, AGENT_SCHEMA_VERSION
 
 class TestAgentPersistence:

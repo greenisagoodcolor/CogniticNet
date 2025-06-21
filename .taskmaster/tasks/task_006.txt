@@ -144,4 +144,4 @@ Write API docs in `docs/api/inference/`, usage guides, and architectural overvie
 ### Dependencies: 6.7
 ### Description: Create automated checks to ensure all Active Inference components comply with the canonical directory structure, naming conventions, and dependency rules.
 ### Details:
-Implement validation scripts that verify: 1) All inference code is properly placed in `inference/` directory, 2) Naming conventions from ADR-004 are followed, 3) Dependency rules from ADR-003 are respected (no core->infrastructure dependencies), 4) Integration points use proper dependency inversion. Add these checks to CI/CD pipeline.
+Implement validation scripts that verify: 1) All inference code is properly placed in `inference/` directory, 2) Naming conventions from ADR-004 are followed, 3) Dependency rules from ADR-003 are respected (no core->infrastructure dependencies) 4) Integration points use proper dependency inversion. Add these checks to CI/CD pipeline.

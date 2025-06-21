@@ -15,8 +15,8 @@ from enum import Enum
 import math
 from collections import defaultdict, deque
 from datetime import datetime, timedelta
-from .data-model import Agent, Position, AgentCapability
-from .state-manager import AgentStateManager
+from .data_model import Agent, Position, AgentCapability
+from .state_manager import AgentStateManager
 
 class PerceptionType(Enum):
     """Types of perception available to agents"""

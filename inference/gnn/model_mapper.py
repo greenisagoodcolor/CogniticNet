@@ -14,8 +14,8 @@ import networkx as nx
 from collections import defaultdict
 import logging
 from .layers import GCNLayer, GATLayer, SAGELayer, GINLayer, EdgeConvLayer, GNNStack, LayerConfig, AggregationType
-from .feature-extractor import NodeFeatureExtractor, FeatureConfig, FeatureType
-from .edge-processor import EdgeProcessor, EdgeConfig, EdgeType, EdgeFeatureType
+from .feature_extractor import NodeFeatureExtractor, FeatureConfig, FeatureType
+from .edge_processor import EdgeProcessor, EdgeConfig, EdgeType, EdgeFeatureType
 logger = logging.getLogger(__name__)
 
 class GraphTaskType(Enum):

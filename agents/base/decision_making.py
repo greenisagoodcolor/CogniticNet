@@ -15,8 +15,8 @@ from enum import Enum
 import math
 from collections import defaultdict
 import heapq
-from .data-model import Agent, AgentGoal, AgentStatus, Position, AgentCapability
-from .state-manager import AgentStateManager
+from .data_model import Agent, AgentGoal, AgentStatus, Position, AgentCapability
+from .state_manager import AgentStateManager
 from .perception import Percept, PerceptionSystem, StimulusType
 from .movement import MovementController
 try:

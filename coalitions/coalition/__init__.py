@@ -9,7 +9,7 @@ from .coalition_models import Coalition, CoalitionMember, CoalitionRole, Coaliti
 from .business_opportunities import BusinessOpportunity, OpportunityDetector, OpportunityMetrics, OpportunityValidator
 
 __all__ = [
-    'CoalitionFormationCriteria', 'CompatibilityMetric', 'FormationTrigger', 'DissolutionCondition', 
+    'CoalitionFormationCriteria', 'CompatibilityMetric', 'FormationTrigger', 'DissolutionCondition',
     'Coalition', 'CoalitionMember', 'CoalitionRole', 'CoalitionStatus', 'CoalitionGoal', 'CoalitionGoalStatus',
     'BusinessOpportunity', 'OpportunityDetector', 'OpportunityMetrics', 'OpportunityValidator'
 ]

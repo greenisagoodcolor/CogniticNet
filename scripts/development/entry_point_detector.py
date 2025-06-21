@@ -21,8 +21,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 try:
     from .traversal import FileInfo, FileType
-    from .metadata-extractor import ExtendedMetadata
-    from .dependency-analyzer import DependencyGraph, DependencyAnalyzer
+    from .metadata_extractor import ExtendedMetadata
+    from .dependency_analyzer import DependencyGraph, DependencyAnalyzer
 except ImportError:
     from traversal import FileInfo, FileType
     from metadata_extractor import ExtendedMetadata

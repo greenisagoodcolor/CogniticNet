@@ -13,7 +13,7 @@ import numpy as np
 import logging
 from abc import ABC, abstractmethod
 from collections import deque
-from .generative-model import GenerativeModel, DiscreteGenerativeModel, ContinuousGenerativeModel
+from .generative_model import GenerativeModel, DiscreteGenerativeModel, ContinuousGenerativeModel
 from .inference import InferenceAlgorithm
 logger = logging.getLogger(__name__)
 
@@ -414,7 +414,7 @@ def create_parameter_learner(learner_type: str, config: Optional[LearningConfig]
     else:
         raise ValueError(f'Unknown learner type: {learner_type}')
 if __name__ == '__main__':
-    from .generative-model import DiscreteGenerativeModel, ModelDimensions, ModelParameters
+    from .generative_model import DiscreteGenerativeModel, ModelDimensions, ModelParameters
     config = LearningConfig(learning_rate_A=0.01, use_bayesian_learning=True, use_experience_replay=True, use_gpu=False)
     dims = ModelDimensions(num_states=4, num_observations=3, num_actions=2)
     params = ModelParameters(use_gpu=False)

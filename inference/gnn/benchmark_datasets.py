@@ -11,7 +11,7 @@ import random
 import networkx as nx
 from pathlib import Path
 import json
-from .batch-processor import GraphData
+from .batch_processor import GraphData
 
 @dataclass
 class DatasetInfo:

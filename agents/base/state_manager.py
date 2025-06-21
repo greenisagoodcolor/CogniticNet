@@ -16,7 +16,7 @@ from datetime import datetime
 from enum import Enum
 import asyncio
 from collections import deque
-from .data-model import Agent, AgentStatus, Position
+from .data_model import Agent, AgentStatus, Position
 logger = logging.getLogger(__name__)
 
 class StateTransitionError(Exception):

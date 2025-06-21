@@ -4,9 +4,9 @@ Unit tests for Agent Movement System
 import unittest
 import numpy as np
 import math
-from .......agents.base.data-model import Agent, Position, AgentStatus
-from .......agents.base.state-manager import AgentStateManager
-from .......agents.base.movement import MovementController, MovementConstraints, MovementState, MovementMode, CollisionSystem, PathfindingGrid, SteeringBehaviors, TerrainType
+from agents.base.data_model import Agent, Position, AgentStatus
+from agents.base.state_manager import AgentStateManager
+from agents.base.movement import MovementController, MovementConstraints, MovementState, MovementMode, CollisionSystem, PathfindingGrid, SteeringBehaviors, TerrainType
 
 class TestMovementConstraints(unittest.TestCase):
     """Test movement constraints"""

@@ -17,7 +17,7 @@ try:
 except ImportError:
     FLASK_AVAILABLE = False
 from .monitoring import get_monitor, get_logger
-from .metrics-collector import get_metrics_collector
+from .metrics_collector import get_metrics_collector
 logger = get_logger().logger
 
 class MonitoringDashboard:

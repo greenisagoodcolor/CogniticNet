@@ -12,7 +12,7 @@ import threading
 import queue
 import uuid
 import logging
-from .data-model import Agent, AgentStatus, Position, AgentResources
+from .data_model import Agent, AgentStatus, Position, AgentResources
 from .perception import Percept, StimulusType
 logger = logging.getLogger(__name__)
 

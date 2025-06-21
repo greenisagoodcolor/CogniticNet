@@ -15,11 +15,11 @@ import json
 import os
 from pathlib import Path
 from .parser import GNNParser
-from .feature-extractor import NodeFeatureExtractor
-from .edge-processor import EdgeProcessor
+from .feature_extractor import NodeFeatureExtractor
+from .edge_processor import EdgeProcessor
 from .layers import GNNStack
-from .model-mapper import GraphToModelMapper
-from .batch-processor import GraphBatchProcessor, GraphData, BatchedGraphData
+from .model_mapper import GraphToModelMapper
+from .batch_processor import GraphBatchProcessor, GraphData, BatchedGraphData
 logger = logging.getLogger(__name__)
 
 @dataclass

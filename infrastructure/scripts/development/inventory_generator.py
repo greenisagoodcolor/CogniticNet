@@ -20,11 +20,11 @@ from typing import Dict, List, Set, Optional, Tuple, Any, Union
 from dataclasses import dataclass, field, asdict
 try:
     from .traversal import RepositoryTraverser, FileInfo, create_traverser
-    from .hash-calculator import MD5Calculator, create_calculator
-    from .metadata-extractor import MetadataExtractor, ExtendedMetadata, create_extractor
-    from .dependency-analyzer import DependencyAnalyzer, DependencyGraph, create_analyzer
-    from .entry-point-detector import EntryPointDetector, EntryPointAnalysis, create_detector
-    from .naming-analyzer import NamingAnalyzer, NamingAnalysis, create_analyzer as create_naming_analyzer
+    from .hash_calculator import MD5Calculator, create_calculator
+    from .metadata_extractor import MetadataExtractor, ExtendedMetadata, create_extractor
+    from .dependency_analyzer import DependencyAnalyzer, DependencyGraph, create_analyzer
+    from .entry_point_detector import EntryPointDetector, EntryPointAnalysis, create_detector
+    from .naming_analyzer import NamingAnalyzer, NamingAnalysis, create_analyzer as create_naming_analyzer
 except ImportError:
     from traversal import RepositoryTraverser, FileInfo, create_traverser
     from hash_calculator import MD5Calculator, create_calculator

@@ -12,4 +12,4 @@ from .coalition_formation_algorithms import (
 __all__ = [
     'CoalitionFormationEngine', 'AgentProfile', 'FormationResult', 'FormationStrategy',
     'ActiveInferenceFormation', 'CapabilityBasedFormation', 'ResourceOptimizationFormation'
-] 
+]

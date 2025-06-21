@@ -5,8 +5,8 @@ import unittest
 import numpy as np
 import math
 from datetime import datetime, timedelta
-from .......agents.base.data-model import Agent, Position, Orientation
-from .......agents.base.state-manager import AgentStateManager
+from .......agents.base.data_model import Agent, Position, Orientation
+from .......agents.base.state_manager import AgentStateManager
 from .......agents.base.perception import PerceptionSystem, PerceptionCapabilities, PerceptionType, Stimulus, StimulusType, Percept, PerceptionMemory, VisualSensor, AuditorySensor, ProximitySensor, ImportanceFilter, AttentionFilter
 
 class TestStimulus(unittest.TestCase):

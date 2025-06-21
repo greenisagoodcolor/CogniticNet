@@ -18,8 +18,8 @@ import heapq
 import json
 import pickle
 from pathlib import Path
-from .data-model import Agent, AgentGoal, Position, AgentStatus
-from .decision-making import Action, ActionType, DecisionContext
+from .data_model import Agent, AgentGoal, Position, AgentStatus
+from .decision_making import Action, ActionType, DecisionContext
 from .perception import Percept, StimulusType
 
 class MemoryType(Enum):

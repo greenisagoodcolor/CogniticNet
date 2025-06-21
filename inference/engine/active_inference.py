@@ -12,7 +12,7 @@ from dataclasses import dataclass
 import numpy as np
 import logging
 from abc import ABC, abstractmethod
-from .generative-model import GenerativeModel, DiscreteGenerativeModel
+from .generative_model import GenerativeModel, DiscreteGenerativeModel
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -512,7 +512,7 @@ def create_inference_algorithm(algorithm_type: str, config: Optional[InferenceCo
     else:
         raise ValueError(f'Unknown algorithm type: {algorithm_type}')
 if __name__ == '__main__':
-    from .generative-model import DiscreteGenerativeModel, ModelDimensions, ModelParameters
+    from .generative_model import DiscreteGenerativeModel, ModelDimensions, ModelParameters
     dims = ModelDimensions(num_states=5, num_observations=3, num_actions=2)
     params = ModelParameters(use_gpu=False)
     model = DiscreteGenerativeModel(dims, params)
