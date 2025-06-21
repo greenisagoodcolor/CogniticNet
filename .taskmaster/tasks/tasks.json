@@ -615,14 +615,14 @@
       {
         "id": 12,
         "title": "Fix Pre-Commit Hook Errors: File Naming and Import Syntax Compliance",
-        "description": "Resolve all pre-commit hook errors related to file naming by enforcing kebab-case for Python files as required by ADR-004 and the output of Task 5. Immediate pre-commit failures have been fixed: all flagged files have been renamed to kebab-case, import references updated, and git history preserved. All pre-commit hooks now pass and tests are successful. The next phase is to systematically audit the remaining Python files with underscores in their names (143+ identified), distinguishing actual violations from valid exceptions (such as __init__.py, alembic migrations, and compliant test files) per ADR-004. Begin the audit with the foundational agents/base/ directory, addressing clear violations such as active_inference_integration.py, agent_factory.py, and data_model.py, then expand outward to other directories. Develop and document a systematic, staged plan to address any remaining violations, ensuring all changes are consistent with project-wide naming conventions and properly tracked in git.",
+        "description": "Resolve all pre-commit hook errors related to file naming by enforcing a revised naming convention that addresses a critical architectural conflict discovered in ADR-004. ADR-004 originally mandated kebab-case for all Python files, but this breaks Python's import system for modules, as hyphens are not supported in import statements and require complex workarounds (e.g., importlib.util.spec_from_file_location). The previous approach of renaming modules to kebab-case and updating imports proved unworkable and was reverted to maintain codebase functionality. The new approach is as follows: actively imported Python modules must use snake_case; standalone scripts (not imported) may use kebab-case; test files (which use importlib) may use kebab-case. Immediate pre-commit failures were addressed, but all module renames to kebab-case have been reverted to snake_case. The next phase is to update ADR-004 and project documentation to reflect these exceptions, systematically audit the codebase for compliance with the revised convention, and ensure all changes are properly tracked in git. The updated ADR-004 must specify:\n- Python modules (imported by other code): Use snake_case\n- Standalone Python scripts (not imported): Use kebab-case\n- Test files (using importlib): May use kebab-case\n- All other files (TypeScript, config, etc.): Follow existing kebab-case rules\nAdditionally, the architectural rationale for these exceptions must be documented in ADR-004 and project documentation updated accordingly.",
         "status": "in-progress",
         "dependencies": [
           5
         ],
         "priority": "high",
-        "details": "1. Immediate pre-commit failures have been resolved: all 5 flagged files were renamed to kebab-case, import references updated, and git history preserved using git mv.\n2. All pre-commit hooks now pass and all tests are successful, with no syntax or import errors.\n3. Next, conduct a systematic audit of the remaining 143+ Python files with underscores in their names. Use ADR-004 to determine which files are actual violations (e.g., agents/base/active_inference_integration.py, agent_factory.py, data_model.py) and which are valid exceptions (e.g., __init__.py, alembic migrations, certain test files).\n4. Start the audit with the foundational agents/base/ directory, then expand outward to other directories.\n5. Document all renames and exceptions, referencing ADR-004 and Task 5 outputs to ensure consistency with project-wide naming conventions.\n6. Develop a systematic, staged renaming plan to address any additional violations found in the audit, minimizing risk to the codebase.\n7. Ensure all file renames are properly tracked in git to preserve history.",
-        "testStrategy": "1. Run pre-commit hooks on the entire codebase to verify that all file naming errors are resolved, starting with the immediate pre-commit failures (already completed).\n2. Systematically audit the remaining Python files with underscores to confirm that all required files use kebab-case and that no naming convention violations remain, with special attention to ADR-004 exceptions (e.g., __init__.py, alembic migrations, compliant test files).\n3. Execute the project's test suite to ensure that all modules load correctly and that no import errors are introduced by any further renaming.\n4. Review the git history to confirm that file renames preserve history and that all changes are properly tracked.",
+        "details": "1. Immediate pre-commit failures were addressed, but all module renames to kebab-case have been reverted to snake_case to maintain import functionality.\n2. All pre-commit hooks now pass and all tests are successful, with no syntax or import errors.\n3. ADR-004 must be updated to reflect the following exceptions: actively imported Python modules must use snake_case; standalone scripts (not imported) may use kebab-case; test files (which use importlib) may use kebab-case; all other files (TypeScript, config, etc.) continue to use kebab-case as per existing rules.\n4. Document the architectural rationale for these exceptions in ADR-004 and update project documentation to reflect the corrected naming standards.\n5. Conduct a systematic audit of the codebase to ensure compliance with the revised naming convention, distinguishing between modules, scripts, and test files.\n6. Document all renames, reversions, and exceptions, referencing ADR-004 and Task 5 outputs to ensure consistency with project-wide naming conventions.\n7. Develop a systematic, staged plan to address any additional violations or confusion found in the audit, minimizing risk to the codebase.\n8. Ensure all file renames and reversions are properly tracked in git to preserve history.",
+        "testStrategy": "1. Run pre-commit hooks on the entire codebase to verify that all file naming errors are resolved, with special attention to the revised naming convention and exceptions.\n2. Systematically audit all Python files to confirm that actively imported modules use snake_case, standalone scripts use kebab-case, and test files using importlib may use kebab-case. Confirm that all other files (TypeScript, config, etc.) use kebab-case as per existing rules.\n3. Execute the project's test suite to ensure that all modules load correctly and that no import errors are introduced by any further renaming or reversion.\n4. Review the git history to confirm that file renames and reversions preserve history and that all changes are properly tracked.\n5. Confirm that ADR-004 and related documentation are updated to reflect the new naming convention, exceptions, and architectural rationale.",
         "subtasks": [
           {
             "id": "12.1",
@@ -633,7 +633,7 @@
           {
             "id": "12.2",
             "title": "Coordinate Naming Changes with Project Conventions",
-            "description": "Ensure all file renames are consistent with ADR-004 and Task 5, and that changes are communicated to the team. Clarify and document which files are exceptions to the kebab-case rule per ADR-004, including __init__.py, alembic migrations, and certain test files.",
+            "description": "Ensure all file renames are consistent with the revised ADR-004 and Task 5. Communicate and document the following exceptions to the kebab-case rule: actively imported Python modules must use snake_case; standalone Python scripts (not imported) may use kebab-case; test files (which use importlib) may use kebab-case; all other files (TypeScript, config, etc.) continue to use kebab-case as per existing rules. Update ADR-004 and project documentation to reflect these exceptions and the architectural rationale.",
             "status": "todo"
           },
           {
@@ -645,14 +645,26 @@
           {
             "id": "12.4",
             "title": "Systematic Audit: agents/base/ Directory",
-            "description": "Begin the systematic audit with the agents/base/ directory. Identify all Python files with underscores in their names, distinguish between clear violations (e.g., active_inference_integration.py, agent_factory.py, data_model.py) and valid exceptions, and prepare a list of required renames and exceptions for this directory.",
+            "description": "Begin the systematic audit with the agents/base/ directory. Identify all Python files with underscores in their names, distinguish between modules (which must remain snake_case), scripts (which may use kebab-case), and test files (which may use kebab-case if using importlib). Prepare a list of required renames, reversions, and exceptions for this directory.",
             "status": "todo"
           },
           {
             "id": "12.5",
             "title": "Expand Audit to Remaining Directories",
-            "description": "After completing the agents/base/ audit, expand the systematic review to other directories containing Python files with underscores. Apply the same process: identify violations, document exceptions, and prepare staged renaming plans.",
+            "description": "After completing the agents/base/ audit, expand the systematic review to other directories containing Python files with underscores or hyphens. Apply the revised convention: modules must use snake_case, scripts may use kebab-case, test files using importlib may use kebab-case, and all other files (TypeScript, config, etc.) must use kebab-case. Document all actions and update staged renaming/reversion plans.",
             "status": "todo"
+          },
+          {
+            "id": "12.6",
+            "title": "Revert Incompatible Module Renames",
+            "description": "Revert any Python module renames from kebab-case back to snake_case if they are actively imported by other code, to restore import functionality. Ensure all import statements are updated accordingly and verify that the codebase is functional after each reversion.",
+            "status": "todo"
+          },
+          {
+            "id": "12.7",
+            "title": "Update ADR-004 and Project Documentation for Naming Exceptions",
+            "description": "Update ADR-004 to specify the following naming standards: Python modules (imported by other code) must use snake_case; standalone Python scripts (not imported) may use kebab-case; test files (using importlib) may use kebab-case; all other files (TypeScript, config, etc.) must use kebab-case. Clearly document the architectural rationale for these exceptions and ensure project documentation is updated to reflect the corrected standards.",
+            "status": "in-progress"
           }
         ]
       }

@@ -24,7 +24,11 @@ Implement comprehensive naming conventions across all languages and establish au
 
 #### File Naming
 
-- **Python**: kebab-case for all files (`belief-update.py`)
+- **Python**:
+  - **Modules** (imported by other code): snake_case (`belief_update.py`)
+  - **Standalone scripts** (not imported): kebab-case (`audit-naming.py`)
+  - **Test files** (using importlib): kebab-case (`test-agent-creation.py`)
+  - **Special files**: Preserve standard names (`__init__.py`, `setup.py`)
 - **TypeScript Components**: PascalCase (`AgentDashboard.tsx`)
 - **TypeScript Utilities**: camelCase (`apiClient.ts`)
 - **TypeScript Hooks**: camelCase with 'use' prefix (`useAgentState.ts`)
@@ -64,6 +68,23 @@ All gaming terminology replaced with professional multi-agent system terms:
 - spawn() → initialize()
 - GameWorld → Environment
 
+### Python File Naming Rationale
+
+**CRITICAL ARCHITECTURAL CONSIDERATION**: Python's import system does not support hyphens in module names when using standard import statements. Modules with hyphens require complex workarounds using `importlib.util.spec_from_file_location()`, which would necessitate rewriting hundreds of import statements throughout the codebase.
+
+**The Solution**: Distinguish between different Python file types:
+
+1. **Modules** (files imported by other Python code): Must use `snake_case` to maintain normal import functionality
+   - Example: `agents/base/state_manager.py` can be imported as `from .state_manager import AgentStateManager`
+
+2. **Standalone Scripts** (executable files not imported): May use `kebab-case` for consistency with other languages
+   - Example: `scripts/audit-naming.py` is executed directly, not imported
+
+3. **Test Files** (using importlib for dynamic imports): May use `kebab-case`
+   - Example: `tests/unit/test-agent-creation.py` uses `importlib.util.spec_from_file_location()`
+
+This approach maintains **both** the professional kebab-case aesthetic for non-imported files **and** the functional requirements of Python's import system for modules.
+
 ## Implementation
 
 ### Phase 1: Documentation (Completed)
@@ -91,11 +112,19 @@ All gaming terminology replaced with professional multi-agent system terms:
 - Used git mv to preserve history
 - Updated all import references
 
-### Phase 4: Documentation Updates (Current)
+### Phase 4: Python Naming Correction (Current)
 
-- Updated all documentation to reflect new conventions
-- Created this ADR for permanent record
-- Updated README and setup guides
+- **Discovery**: Original "kebab-case for all Python files" broke import system
+- **Analysis**: 143+ Python files with underscores, hundreds of import statements affected
+- **Solution**: Implemented differentiated naming based on file usage patterns
+- **Reverted**: Module renames back to snake_case to restore functionality
+- **Updated**: ADR-004 with architectural rationale and proper exceptions
+
+### Phase 5: Documentation Updates (Planned)
+
+- Update all documentation to reflect corrected conventions
+- Update CONTRIBUTING.md with Python naming exceptions
+- Update tooling to enforce differentiated Python naming
 
 ## Consequences
 
@@ -138,10 +167,12 @@ All gaming terminology replaced with professional multi-agent system terms:
 
 ## Next Steps
 
-1. Implement pre-commit hooks (Subtask 2.5)
-2. Add CI/CD enforcement (Subtask 2.5)
-3. Fix remaining lower-priority violations
-4. Regular audits to prevent regression
+1. Complete systematic audit with corrected Python naming rules
+2. Update tooling (audit-naming.py, fix-naming.py) to enforce differentiated Python naming
+3. Update CONTRIBUTING.md and naming-conventions.json with corrected standards
+4. Implement pre-commit hooks with proper Python file type detection
+5. Add CI/CD enforcement for differentiated naming conventions
+6. Regular audits to prevent regression
 
 ## References
 
@@ -150,8 +181,22 @@ All gaming terminology replaced with professional multi-agent system terms:
 - [audit-naming.py](/scripts/audit-naming.py) - Audit tool
 - [fix-naming.py](/scripts/fix-naming.py) - Automated fixes
 
+## Revision History
+
+**Version 1.1** (2025-06-21): Critical Python naming correction
+- Added architectural rationale for Python file naming exceptions
+- Corrected "kebab-case for all Python files" to differentiated naming
+- Distinguished modules (snake_case) vs scripts (kebab-case) vs tests (kebab-case)
+- Updated implementation phases and next steps
+
+**Version 1.0** (2025-06-18): Initial naming convention establishment
+- Established baseline naming standards across all languages
+- Replaced gaming terminology with professional terms
+- Implemented initial tooling and audit processes
+
 ---
 
-_Decision made by: Robert Martin (Clean Code Lead)_
-_Date: 2025-06-18_
-_Version: 1.0_
+_Original Decision: Robert Martin (Clean Code Lead)_
+_Python Naming Correction: Task Master AI Analysis_
+_Date: 2025-06-21_
+_Version: 1.1_
