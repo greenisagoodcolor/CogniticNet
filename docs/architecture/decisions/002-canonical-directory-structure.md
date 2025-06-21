@@ -35,7 +35,7 @@ The repository root `freeagentics/` shall contain the following directories, lis
 - **Layer**: Core Domain
 - **Key Contents**:
   - `base/`: Defines the foundational `Agent` class, shared behaviors, and common interfaces that all agents implement.
-  - `explorer/`, `merchant/`, `scholar/`, `guardian/`: Individual directories for each specific agent type, containing their unique implementation (`.py`), behavior specifications, unit tests (`.test.py`), and documentation (`README.md`).
+  - `explorer/`, `merchant/`, `scholar/`, `guardian/`: Individual directories for each specific agent type, containing their unique implementation (`.py`), behavior specifications, unit tests (`test_*.py`), and documentation (`README.md`).
 
 ### 3. `api/`
 
@@ -110,7 +110,7 @@ The repository root `freeagentics/` shall contain the following directories, lis
 
 ### 11. `tests/`
 
-- **Purpose**: A centralized location for all non-unit tests. While unit tests live alongside the code they test (e.g., `agents/explorer/explorer.test.py`), this directory holds tests that span multiple components.
+- **Purpose**: A centralized location for all non-unit tests. While unit tests live alongside the code they test (e.g., `agents/explorer/test_explorer.py`), this directory holds tests that span multiple components.
 - **Layer**: Supporting
 - **Key Contents**:
   - `integration/`: Tests for interactions between different components.

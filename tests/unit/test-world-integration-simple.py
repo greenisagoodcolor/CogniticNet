@@ -20,7 +20,7 @@ sys.path.insert(0, project_root)
 import importlib.util
 spec = importlib.util.spec_from_file_location(
     "world_integration",
-    os.path.join(project_root, "agents", "base", "world-integration.py")
+    os.path.join(project_root, "agents", "base", "world_integration.py")
 )
 world_integration = importlib.util.module_from_spec(spec)
 

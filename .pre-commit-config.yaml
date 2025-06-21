@@ -8,7 +8,7 @@ repos:
       # Enhanced naming convention validation
       - id: enhanced-naming-check
         name: Enhanced Naming Convention Check
-        entry: python3 scripts/enhanced_check_naming.py
+        entry: python3 scripts/enhanced-check-naming.py
         language: system
         files: \.py$
         pass_filenames: false
@@ -17,7 +17,7 @@ repos:
       # Enhanced prohibited terms check
       - id: enhanced-prohibited-terms
         name: Enhanced Prohibited Terms Check
-        entry: python3 scripts/enhanced_prohibited_terms.py
+        entry: python3 scripts/enhanced-prohibited-terms.py
         language: system
         files: \.(py|js|ts|tsx|md)$
         description: 'Checks for prohibited gaming and old project terminology'
@@ -25,7 +25,7 @@ repos:
       # Validate architectural dependencies per ADR-003
       - id: validate-dependencies
         name: Validate Architectural Dependencies
-        entry: python3 scripts/validate_dependencies.py
+        entry: python3 scripts/validate-dependencies.py
         language: system
         files: \.py$
         pass_filenames: false
@@ -35,7 +35,7 @@ repos:
       # File naming validation
       - id: file-naming-validation
         name: File Naming Validation
-        entry: python3 scripts/check_file_naming.py
+        entry: python3 scripts/check-file-naming.py
         language: system
         files: \.(py|js|ts|tsx)$
         description: 'Validates file names match ADR-004 conventions'

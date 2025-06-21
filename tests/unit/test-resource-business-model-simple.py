@@ -18,7 +18,7 @@ sys.path.insert(0, project_root)
 import importlib.util
 spec = importlib.util.spec_from_file_location(
     "resource_business_model",
-    os.path.join(project_root, "agents", "base", "resource-business-model.py")
+    os.path.join(project_root, "agents", "base", "resource_business_model.py")
 )
 resource_business_model = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(resource_business_model)

@@ -26,15 +26,15 @@ mkdir -p agents/guardian
 mkdir -p agents/base
 touch agents/explorer/__init__.py
 touch agents/explorer/explorer.py
-touch agents/explorer/explorer-behavior.py
-touch agents/explorer/explorer.test.py
+touch agents/explorer/explorer_behavior.py
+touch agents/explorer/test_explorer.py
 touch agents/explorer/README.md
 # Repeat for other agent types
 for agent in merchant scholar guardian; do
     touch agents/$agent/__init__.py
     touch agents/$agent/$agent.py
-    touch agents/$agent/$agent-behavior.py
-    touch agents/$agent/$agent.test.py
+    touch agents/$agent/${agent}_behavior.py
+    touch agents/$agent/test_$agent.py
     touch agents/$agent/README.md
 done
 touch agents/base/agent.py

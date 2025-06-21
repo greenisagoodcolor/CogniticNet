@@ -1,4 +1,3 @@
-
 Here's the comprehensive prompt for transforming FreeAgentics into a seed-ready MVP:
 
 PROMPT: FreeAgentics Repository Transformation - Expert Committee Forensic Analysis & MVP Refactoring
@@ -397,7 +396,7 @@ freeagentics/
 
 │ │ ├── explorer-behavior.py # Behavior specifications
 
-│ │ ├── explorer.test.py # Unit tests
+│ │ ├── test_explorer.py # Unit tests
 
 │ │ └── README.md # Agent-specific documentation
 
