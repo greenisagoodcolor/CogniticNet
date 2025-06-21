@@ -615,31 +615,43 @@
       {
         "id": 12,
         "title": "Fix Pre-Commit Hook Errors: File Naming and Import Syntax Compliance",
-        "description": "Resolve remaining pre-commit hook errors by correcting file naming to kebab-case where required, referencing ADR-004 and the output of Task 5. Begin with the specific files flagged by the latest pre-commit errors:\n- agents/base/resource_business_model.py → agents/base/resource-business-model.py\n- agents/base/world_integration.py → agents/base/world-integration.py\n- tests/unit/test_resource_business_model_simple.py → tests/unit/test-resource-business-model-simple.py\n\nConduct a careful audit of the codebase for Python files with underscores in their names, but only rename those that are actual violations per ADR-004. Exclude valid exceptions such as __init__.py and test files that are compliant with standard conventions. Use ADR-004 to clarify which files are required to use kebab-case and which are exempt. Develop a systematic, staged renaming plan that starts with the immediate pre-commit failures and then addresses other clear violations, minimizing risk to the codebase. Ensure all changes are consistent with project-wide naming conventions and properly tracked in git to preserve history.",
+        "description": "Resolve all pre-commit hook errors related to file naming by enforcing kebab-case for Python files as required by ADR-004 and the output of Task 5. Immediate pre-commit failures have been fixed: all flagged files have been renamed to kebab-case, import references updated, and git history preserved. All pre-commit hooks now pass and tests are successful. The next phase is to systematically audit the remaining Python files with underscores in their names (143+ identified), distinguishing actual violations from valid exceptions (such as __init__.py, alembic migrations, and compliant test files) per ADR-004. Begin the audit with the foundational agents/base/ directory, addressing clear violations such as active_inference_integration.py, agent_factory.py, and data_model.py, then expand outward to other directories. Develop and document a systematic, staged plan to address any remaining violations, ensuring all changes are consistent with project-wide naming conventions and properly tracked in git.",
         "status": "in-progress",
         "dependencies": [
           5
         ],
         "priority": "high",
-        "details": "1. Start by addressing the specific files flagged by the latest pre-commit errors:\n   - agents/base/resource_business_model.py\n   - agents/base/world_integration.py\n   - tests/unit/test_resource_business_model_simple.py\n2. Audit the codebase for Python files with underscores in their names. Use ADR-004 to determine which files must be renamed to kebab-case and which are valid exceptions (e.g., __init__.py, certain test files).\n3. Document all renames and exceptions, referencing ADR-004 and Task 5 outputs to ensure consistency with project-wide naming conventions.\n4. Develop a systematic, staged renaming plan to address additional clear violations after the immediate pre-commit failures are resolved.\n5. Ensure all file renames are properly tracked in git to preserve history.\n\nNote: All import statement syntax errors and debug statement parsing issues have already been resolved. Tests currently run successfully without syntax errors, and resource business model and world integration modules work properly.",
-        "testStrategy": "1. Run pre-commit hooks on the entire codebase to verify that all file naming errors are resolved, starting with the immediate pre-commit failures.\n2. Manually inspect the corrected files to confirm that all required Python files use kebab-case and that no naming convention violations remain, with special attention to ADR-004 exceptions (e.g., __init__.py, compliant test files).\n3. Execute the project's test suite to ensure that all modules load correctly and that no import errors are introduced by the renaming.\n4. Review the git history to confirm that file renames preserve history and that all changes are properly tracked.",
+        "details": "1. Immediate pre-commit failures have been resolved: all 5 flagged files were renamed to kebab-case, import references updated, and git history preserved using git mv.\n2. All pre-commit hooks now pass and all tests are successful, with no syntax or import errors.\n3. Next, conduct a systematic audit of the remaining 143+ Python files with underscores in their names. Use ADR-004 to determine which files are actual violations (e.g., agents/base/active_inference_integration.py, agent_factory.py, data_model.py) and which are valid exceptions (e.g., __init__.py, alembic migrations, certain test files).\n4. Start the audit with the foundational agents/base/ directory, then expand outward to other directories.\n5. Document all renames and exceptions, referencing ADR-004 and Task 5 outputs to ensure consistency with project-wide naming conventions.\n6. Develop a systematic, staged renaming plan to address any additional violations found in the audit, minimizing risk to the codebase.\n7. Ensure all file renames are properly tracked in git to preserve history.",
+        "testStrategy": "1. Run pre-commit hooks on the entire codebase to verify that all file naming errors are resolved, starting with the immediate pre-commit failures (already completed).\n2. Systematically audit the remaining Python files with underscores to confirm that all required files use kebab-case and that no naming convention violations remain, with special attention to ADR-004 exceptions (e.g., __init__.py, alembic migrations, compliant test files).\n3. Execute the project's test suite to ensure that all modules load correctly and that no import errors are introduced by any further renaming.\n4. Review the git history to confirm that file renames preserve history and that all changes are properly tracked.",
         "subtasks": [
           {
             "id": "12.1",
             "title": "Audit and Rename Python Files to Kebab-Case",
-            "description": "Identify all Python files that do not follow the kebab-case naming convention and rename them accordingly, referencing ADR-004 and Task 5 outputs. Begin with the following files flagged by the latest pre-commit error:\n- agents/base/resource_business_model.py → agents/base/resource-business-model.py\n- agents/base/world_integration.py → agents/base/world-integration.py\n- tests/unit/test_resource_business_model_simple.py → tests/unit/test-resource-business-model-simple.py\n\nDuring the audit, use ADR-004 to determine which files are valid exceptions (e.g., __init__.py, certain test files) and should not be renamed. Document all renames and exceptions. Develop a staged plan to address additional clear violations after the immediate pre-commit failures.",
-            "status": "todo"
+            "description": "Immediate pre-commit failures have been resolved: the following files were renamed to kebab-case and all import references updated:\n- agents/base/resource_business_model.py → resource-business-model.py\n- agents/base/world_integration.py → world-integration.py\n- tests/unit/test_resource_business_model_simple.py → test-resource-business-model-simple.py\n- tests/unit/test_world_integration.py → test-world-integration.py\n- tests/unit/test_world_integration_simple.py → test-world-integration-simple.py\n\nNext, conduct a systematic audit of the remaining 143+ Python files with underscores in their names. Begin with the foundational agents/base/ directory, addressing clear violations such as active_inference_integration.py, agent_factory.py, and data_model.py. Use ADR-004 to determine which files are valid exceptions (e.g., __init__.py, alembic migrations, certain test files) and which are actual violations. Document all renames and exceptions. Develop a staged plan to address any additional violations found in the audit.",
+            "status": "in-progress"
           },
           {
             "id": "12.2",
             "title": "Coordinate Naming Changes with Project Conventions",
-            "description": "Ensure all file renames are consistent with ADR-004 and Task 5, and that changes are communicated to the team. Clarify and document which files are exceptions to the kebab-case rule per ADR-004.",
+            "description": "Ensure all file renames are consistent with ADR-004 and Task 5, and that changes are communicated to the team. Clarify and document which files are exceptions to the kebab-case rule per ADR-004, including __init__.py, alembic migrations, and certain test files.",
             "status": "todo"
           },
           {
             "id": "12.3",
             "title": "Preserve Git History During Renames",
             "description": "Use git commands that preserve file history during renaming operations.",
+            "status": "done"
+          },
+          {
+            "id": "12.4",
+            "title": "Systematic Audit: agents/base/ Directory",
+            "description": "Begin the systematic audit with the agents/base/ directory. Identify all Python files with underscores in their names, distinguish between clear violations (e.g., active_inference_integration.py, agent_factory.py, data_model.py) and valid exceptions, and prepare a list of required renames and exceptions for this directory.",
+            "status": "todo"
+          },
+          {
+            "id": "12.5",
+            "title": "Expand Audit to Remaining Directories",
+            "description": "After completing the agents/base/ audit, expand the systematic review to other directories containing Python files with underscores. Apply the same process: identify violations, document exceptions, and prepare staged renaming plans.",
             "status": "todo"
           }
         ]
