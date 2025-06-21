@@ -19,8 +19,8 @@ sys.path.insert(0, project_root)
 # Import the world integration module directly
 import importlib.util
 spec = importlib.util.spec_from_file_location(
-    "world_integration", 
-    os.path.join(project_root, "agents", "base", "world_integration.py")
+    "world_integration",
+    os.path.join(project_root, "agents", "base", "world-integration.py")
 )
 world_integration = importlib.util.module_from_spec(spec)
 
@@ -48,21 +48,21 @@ ActionResult = world_integration.ActionResult
 
 class MockH3World:
     """Mock H3World for testing"""
-    
+
     def __init__(self):
         self.resolution = 7
         self.cells = {}
-        
+
     def get_cell(self, hex_id: str):
         """Get a mock cell"""
         if hex_id not in self.cells:
             self.cells[hex_id] = MockHexCell(hex_id)
         return self.cells[hex_id]
-    
+
     def get_neighbors(self, hex_id: str):
         """Get mock neighbors"""
         return [MockHexCell(f"{hex_id}_neighbor_{i}") for i in range(3)]
-    
+
     def get_visible_cells(self, hex_id: str):
         """Get mock visible cells"""
         return [MockHexCell(f"{hex_id}_visible_{i}") for i in range(5)]
@@ -70,7 +70,7 @@ class MockH3World:
 
 class MockHexCell:
     """Mock HexCell for testing"""
-    
+
     def __init__(self, hex_id: str):
         self.hex_id = hex_id
         self.resources = {"water": 50.0, "food": 30.0, "materials": 20.0}
@@ -84,42 +84,42 @@ class MockHexCell:
 
 class TestWorldEventSystem(unittest.TestCase):
     """Test the world event system"""
-    
+
     def setUp(self):
         """Set up test fixtures"""
         self.event_system = WorldEventSystem()
         self.test_events = []
-        
+
     def test_subscribe_to_events(self):
         """Test event subscription"""
         def callback(event):
             self.test_events.append(event)
-        
+
         self.event_system.subscribe_to_events("agent1", [EventType.AGENT_MOVED], callback)
-        
+
         # Check that agent is subscribed
         self.assertIn("agent1", self.event_system.subscribers[EventType.AGENT_MOVED])
-        
+
     def test_publish_event(self):
         """Test event publishing"""
         def callback(event):
             self.test_events.append(event)
-        
+
         self.event_system.subscribe_to_events("agent1", [EventType.AGENT_MOVED], callback)
-        
+
         event = WorldEvent(
             event_type=EventType.AGENT_MOVED,
             location="test_hex",
             agent_id="agent2",
             data={"from": "old_hex", "to": "test_hex"}
         )
-        
+
         self.event_system.publish_event(event)
-        
+
         # Check that event was received
         self.assertEqual(len(self.test_events), 1)
         self.assertEqual(self.test_events[0].event_type, EventType.AGENT_MOVED)
-        
+
     def test_get_recent_events(self):
         """Test getting recent events"""
         event = WorldEvent(
@@ -127,9 +127,9 @@ class TestWorldEventSystem(unittest.TestCase):
             location="test_hex",
             agent_id="agent1"
         )
-        
+
         self.event_system.publish_event(event)
-        
+
         recent_events = self.event_system.get_recent_events("test_hex", 10)
         self.assertEqual(len(recent_events), 1)
         self.assertEqual(recent_events[0].event_type, EventType.RESOURCE_DEPLETED)
@@ -137,81 +137,81 @@ class TestWorldEventSystem(unittest.TestCase):
 
 class TestAgentWorldManager(unittest.TestCase):
     """Test the main agent world manager"""
-    
+
     def setUp(self):
         """Set up test fixtures"""
         self.world = MockH3World()
         self.manager = AgentWorldManager(self.world)
-        
+
     def test_place_agent(self):
         """Test placing an agent in the world"""
         success = self.manager.place_agent("agent1", "hex_123")
-        
+
         self.assertTrue(success)
         self.assertEqual(self.manager.agent_locations["agent1"], "hex_123")
         self.assertEqual(self.manager.agent_energy["agent1"], 100.0)
-        
+
     def test_place_agent_invalid_location(self):
         """Test placing agent at invalid location"""
         # Mock world to return None for invalid hex
         self.world.get_cell = Mock(return_value=None)
-        
+
         success = self.manager.place_agent("agent1", "invalid_hex")
-        
+
         self.assertFalse(success)
         self.assertNotIn("agent1", self.manager.agent_locations)
-        
+
     def test_remove_agent(self):
         """Test removing an agent from the world"""
         self.manager.place_agent("agent1", "hex_123")
         self.manager.remove_agent("agent1")
-        
+
         self.assertNotIn("agent1", self.manager.agent_locations)
         self.assertNotIn("agent1", self.manager.agent_resources)
         self.assertNotIn("agent1", self.manager.agent_energy)
-        
+
     def test_perceive_environment(self):
         """Test agent environment perception"""
         self.manager.place_agent("agent1", "hex_123")
         self.manager.place_agent("agent2", "hex_123_visible_1")  # Nearby agent
-        
+
         perception = self.manager.perceive_environment("agent1")
-        
+
         self.assertIsNotNone(perception)
         self.assertEqual(perception.current_location, "hex_123")
         self.assertIn("agent2", perception.nearby_agents)
         self.assertIn("water", perception.available_resources)
         self.assertGreater(len(perception.movement_options), 0)
-        
+
     def test_perform_move_action(self):
         """Test movement action"""
         self.manager.place_agent("agent1", "hex_123")
-        
+
         result = self.manager.perform_action(
-            "agent1", 
-            ActionType.MOVE, 
+            "agent1",
+            ActionType.MOVE,
             {"target_hex": "hex_123_neighbor_0"}
         )
-        
+
         self.assertTrue(result.success)
         self.assertEqual(result.action_type, ActionType.MOVE)
         self.assertEqual(self.manager.agent_locations["agent1"], "hex_123_neighbor_0")
         self.assertLess(self.manager.agent_energy["agent1"], 100.0)  # Energy consumed
-        
+
     def test_perform_harvest_action(self):
         """Test resource harvesting"""
         self.manager.place_agent("agent1", "hex_123")
-        
+
         result = self.manager.perform_action(
             "agent1",
             ActionType.HARVEST_RESOURCE,
             {"resource_type": "water", "amount": 10.0}
         )
-        
+
         self.assertTrue(result.success)
         self.assertEqual(result.action_type, ActionType.HARVEST_RESOURCE)
         self.assertEqual(self.manager.agent_resources["agent1"]["water"], 10.0)
-        
+
         # Check world state updated
         cell = self.world.get_cell("hex_123")
         self.assertEqual(cell.resources["water"], 40.0)  # 50 - 10
@@ -219,7 +219,7 @@ class TestAgentWorldManager(unittest.TestCase):
 
 class TestWorldIntegrationDataStructures(unittest.TestCase):
     """Test world integration data structures"""
-    
+
     def test_world_event_creation(self):
         """Test WorldEvent creation and attributes"""
         event = WorldEvent(
@@ -228,13 +228,13 @@ class TestWorldIntegrationDataStructures(unittest.TestCase):
             agent_id="agent1",
             data={"from": "hex_456", "to": "hex_123"}
         )
-        
+
         self.assertEqual(event.event_type, EventType.AGENT_MOVED)
         self.assertEqual(event.location, "hex_123")
         self.assertEqual(event.agent_id, "agent1")
         self.assertEqual(event.data["from"], "hex_456")
         self.assertIsInstance(event.timestamp, datetime)
-        
+
     def test_action_result_creation(self):
         """Test ActionResult creation and attributes"""
         result = ActionResult(
@@ -244,7 +244,7 @@ class TestWorldIntegrationDataStructures(unittest.TestCase):
             effects={"new_location": "hex_123"},
             message="Move successful"
         )
-        
+
         self.assertTrue(result.success)
         self.assertEqual(result.action_type, ActionType.MOVE)
         self.assertEqual(result.cost, 10.0)
@@ -253,4 +253,4 @@ class TestWorldIntegrationDataStructures(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main() 
+    unittest.main()
