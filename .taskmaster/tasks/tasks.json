@@ -519,7 +519,7 @@
               4
             ],
             "details": "Define interfaces for world perception and action. Implement event-driven updates between agents and the world. Ensure agents can access and modify world state as needed. After implementation, create and run focused tests for the specific component, debug and fix any issues, run pre-commit hooks (bypass if necessary due to pre-existing issues), git commit, push, and update subtask status to done.",
-            "status": "in-progress"
+            "status": "done"
           },
           {
             "id": 6,
@@ -533,7 +533,7 @@
               5
             ],
             "details": "Develop resource schemas, transaction protocols, and business rules. Enable agents to trade, consume, and produce resources according to their roles and coalitions. After implementation, create and run focused tests for the specific component, debug and fix any issues, run pre-commit hooks (bypass if necessary due to pre-existing issues), git commit, push, and update subtask status to done.",
-            "status": "pending"
+            "status": "in-progress"
           },
           {
             "id": 7,
@@ -628,7 +628,7 @@
     ],
     "metadata": {
       "created": "2025-06-20T11:10:19.836Z",
-      "updated": "2025-06-21T06:04:22.831Z",
+      "updated": "2025-06-21T06:17:41.976Z",
       "description": "Tasks for master context"
     }
   }

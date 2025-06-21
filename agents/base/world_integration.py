@@ -8,7 +8,7 @@ and be affected by environmental changes in the H3 world system.
 import logging
 from typing import Dict, List, Optional, Set, Any, Callable, Tuple, Union
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from abc import ABC, abstractmethod
 from enum import Enum
 import asyncio
@@ -64,7 +64,7 @@ class WorldEvent:
     location: str  # hex_id where event occurred
     agent_id: Optional[str] = None
     data: Dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     affected_agents: Set[str] = field(default_factory=set)
 
 
@@ -79,7 +79,7 @@ class Perception:
     movement_options: List[str]  # valid adjacent hex_ids to move to
     environmental_conditions: Dict[str, Any]
     recent_events: List[WorldEvent]
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -212,7 +212,7 @@ class WorldEventSystem(IWorldEventSystem):
 
     def get_recent_events(self, location: str, time_window_minutes: int = 10) -> List[WorldEvent]:
         """Get recent events near a location."""
-        cutoff_time = datetime.utcnow().timestamp() - (time_window_minutes * 60)
+        cutoff_time = datetime.now(timezone.utc).timestamp() - (time_window_minutes * 60)
 
         recent_events = []
         for event in reversed(self.event_history):  # Most recent first
@@ -612,7 +612,7 @@ class AgentWorldManager:
         # Add structure
         self.structures[location][structure_type] = {
             "built_by": agent_id,
-            "built_at": datetime.utcnow(),
+            "built_at": datetime.now(timezone.utc),
             "durability": 100
         }
 
@@ -1093,7 +1093,7 @@ class AgentWorldManager:
         # Add structure
         self.structures[location][structure_type] = {
             "built_by": agent_id,
-            "built_at": datetime.utcnow(),
+            "built_at": datetime.now(timezone.utc),
             "durability": 100
         }
 
