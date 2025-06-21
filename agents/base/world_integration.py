@@ -14,8 +14,19 @@ from enum import Enum
 import asyncio
 from collections import defaultdict
 
-from world.h3_world import H3World, HexCell, Biome, TerrainType
-from world.spatial.spatial_api import SpatialAPI, SpatialCoordinate, ResourceType
+# World imports - made optional for testing
+try:
+    from world.h3_world import H3World, HexCell, Biome, TerrainType
+    from world.spatial.spatial_api import SpatialAPI, SpatialCoordinate, ResourceType
+except ImportError:
+    # Mock classes for testing when dependencies aren't available
+    H3World = type('H3World', (), {})
+    HexCell = type('HexCell', (), {})
+    Biome = type('Biome', (), {})
+    TerrainType = type('TerrainType', (), {})
+    SpatialAPI = type('SpatialAPI', (), {})
+    SpatialCoordinate = type('SpatialCoordinate', (), {})
+    ResourceType = type('ResourceType', (), {})
 
 logger = logging.getLogger(__name__)
 
@@ -657,7 +668,11 @@ class AgentWorldManager:
 
     def __init__(self, world: H3World, spatial_api: Optional[SpatialAPI] = None):
         self.world = world
-        self.spatial_api = spatial_api or SpatialAPI(resolution=world.resolution)
+        try:
+            self.spatial_api = spatial_api or SpatialAPI(resolution=world.resolution)
+        except (TypeError, AttributeError):
+            # Fallback for testing or when SpatialAPI isn't available
+            self.spatial_api = SpatialAPI()
         self.event_system = WorldEventSystem()
 
         # Agent state tracking

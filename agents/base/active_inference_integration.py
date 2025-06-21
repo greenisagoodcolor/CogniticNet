@@ -20,8 +20,8 @@ from inference.engine import GenerativeModel, InferenceAlgorithm, PolicySelector
 from inference.engine.generative_model import ModelDimensions, ModelParameters
 from inference.engine.inference import InferenceConfig
 from inference.engine.policy_selection import PolicyConfig, Policy
-from .......inference.engine.temporal-planning import PlanningConfig
-from .......inference.engine.precision import PrecisionConfig
+from inference.engine.temporal_planning import PlanningConfig
+from inference.engine.precision import PrecisionConfig
 from inference.engine.belief_update import BeliefUpdateConfig
 logger = logging.getLogger(__name__)
 
